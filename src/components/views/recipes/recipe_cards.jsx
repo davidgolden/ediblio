@@ -25,7 +25,7 @@ class RecipeCards extends React.Component {
       target.parentElement.parentElement.classList.add('recipe-card-disabled');
       setTimeout(function() {
         target.parentElement.parentElement.style.display = 'none';
-      }, 1000);
+      }, 500);
       let xml = new XMLHttpRequest();
       xml.open("POST", "/recipes/add", true);
       xml.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
@@ -43,7 +43,7 @@ class RecipeCards extends React.Component {
       target.parentElement.parentElement.parentElement.classList.add('recipe-card-disabled');
       setTimeout(function() {
         target.parentElement.parentElement.parentElement.style.display = 'none';
-      }, 1000);
+      }, 500);
       let xml = new XMLHttpRequest();
       xml.open("POST", "/recipes/remove", true);
       xml.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
@@ -62,6 +62,7 @@ class RecipeCards extends React.Component {
       const RecipeList = this.props.recipes.map((recipe, i) => {
         return (
           <div key={recipe._id} className='recipe-card'>
+          <input type='hidden' name='tags' value={recipe.tags} />
           <button onClick={(e) => this.props.showRecipe(true, i)}>
             <div>
               <img src={recipe.image} className='recipe-card-image'/>

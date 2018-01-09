@@ -36,7 +36,7 @@ class BrowseRecipes extends React.Component {
   render() {
     return (
       <div>
-        <RecipeContainer recipes={this.state.recipes} user={this.state.user} />
+        <RecipeContainer recipes={this.state.recipes} user={this.state.user} tags={this.props.tags} />
       </div>
     )
   }

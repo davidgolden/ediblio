@@ -48,7 +48,7 @@ class UserRecipes extends React.Component {
     } else {
       return (
         <div>
-          <RecipeContainer recipes={this.state.recipes} user={this.state.user} />
+          <RecipeContainer recipes={this.state.recipes} user={this.state.user} tags={this.props.tags} />
         </div>
       )
     }

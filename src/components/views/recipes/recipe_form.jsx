@@ -5,7 +5,7 @@ import AddIngredients from './add_ingredients';
 const allTags = ['Dinner', 'Breakfast', 'Dessert', 'Quick/Easy', 'Vegetarian', 'Vegan', 'Dairy-Free', 'Gluten-Free'];
 
 const AddTags = (props) => {
-  const TagList = allTags.map((tag, i) => {
+  const TagList = props.tags.map((tag, i) => {
     return (
       <div className='tag'>
       <label key={i} className="form-check-label">
@@ -139,7 +139,7 @@ class RecipeForm extends React.Component {
         handleUpdateIngredient={this.handleUpdateIngredient}
         handleDeleteIngredient={this.handleDeleteIngredient}
       />
-      <AddTags toggleTag={this.toggleTag} />
+    <AddTags toggleTag={this.toggleTag} tags={this.props.tags} />
       <div className='form-group'>
         <button className='btn btn-lg btn-success' onClick={(e) => this.handleSubmit(e)}>Submit Recipe!</button>
       </div>

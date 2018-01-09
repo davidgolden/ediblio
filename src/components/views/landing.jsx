@@ -1,34 +1,29 @@
 import React from 'react';
-import addrecipe from '../../images/addrecipe.png';
-import recipebook from '../../images/recipebook.png';
-import storemode from '../../images/storemode.png';
-import populatelist from '../../images/populatelist.png';
 
 
 const Info = () => {
   return (
-    <div>
-      <div className='landing-container'>
-        <div className='landing1'>
-          <h6>Add recipes to your recipe cloud, then easily populate your grocery list with their ingredients.</h6>
-          <img src={addrecipe} className='' />
+    <div className='info-container'>
+
+        <div className='info-box'>
+          <i className="fas fa-cloud-upload-alt info-icon"></i>
+          <h6><span className='info-block'>Add recipes</span> to your recipe cloud, then easily populate your grocery list with their ingredients.</h6>
         </div>
-        <div className='landing2'>
-          <h6>Browse yours or others recipes by tag, then easily add those recipes to your recipe cloud.</h6>
-          <img src={recipebook} className='' />
+        <div className='info-box'>
+          <i className="fas fa-search-plus info-icon"></i>
+          <h6><span className='info-block'>Browse yours</span> or others&#39; recipes by tag, then easily add those recipes to your recipe cloud.</h6>
+        </div>
+
+        <div className='info-box'>
+          <i className="fas fa-list-ol info-icon"></i>
+          <h6><span className='info-block'>Add ingredients</span> to your list and recipes to your menu with a single click. Duplicate ingredients are automatically totaled.</h6>
+        </div>
+        <div className='info-box'>
+          <i className="fas fa-shopping-cart info-icon"></i>
+          <h6><span className='info-block'>Switch to store mode</span> to view and delete ingredients on your phone as you shop.</h6>
         </div>
       </div>
-      <div className='landing-container'>
-        <div className='landing3'>
-          <h6>Add ingredients to your list and recipes to your menu with a single click. Duplicate ingredients are automatically totaled.</h6>
-          <img src={populatelist} className='' />
-        </div>
-        <div className='landing4'>
-          <h6>Switch to store mode to view and delete ingredients as you shop.</h6>
-          <img src={storemode} className='' />
-        </div>
-      </div>
-    </div>
+
   )
 }
 
@@ -108,9 +103,7 @@ class SignUpForm extends React.Component {
 
 const Landing = (props) => (
   <div className='landing-container'>
-    <div className='info-container'>
       <Info />
-    </div>
     <div className='signup-container'>
       <SignUpForm />
     </div>

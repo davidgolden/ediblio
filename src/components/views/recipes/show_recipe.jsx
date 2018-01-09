@@ -2,10 +2,14 @@ import React from 'react';
 import AddIngredients from './add_ingredients';
 
 const RecipeTitle = (props) => {
+  const RecipeTags = props.tags.map((tag, i) => {
+    return <span key={i} className='tag'>{tag}</span>
+  })
   return (
     <div>
       <h1>{props.name}</h1>
       <h5>Submitted by {props.author.username}. <a href={props.url} target='_blank'>View Original Recipe</a></h5>
+      {RecipeTags}
     </div>
   )
 }

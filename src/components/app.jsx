@@ -15,7 +15,9 @@ class App extends Component {
     this.state= {
       view: 'recipecloud',
       loggedIn: false,
-      user: {}
+      user: {},
+      tags: ['Dinner', 'Breakfast', 'Dessert', 'Quick/Easy', 'Vegetarian', 'Vegan', 'Dairy-Free', 'Gluten-Free']
+
     }
 
     this.setLoginState = (state, user) => {
@@ -40,16 +42,16 @@ class App extends Component {
           return <Landing setLoginState={this.setLoginState} />
         }
         else if(this.state.view === 'recipecloud') {
-          return <UserRecipes user={this.state.user} setView={this.setView} />
+          return <UserRecipes user={this.state.user} setView={this.setView} tags={this.state.tags} />
         }
         else if(this.state.view === 'grocerylist') {
           return <GroceryList user={this.state.user} />
         }
         else if(this.state.view === 'addrecipe') {
-          return <RecipeForm user={this.state.user} setView={this.setView} />
+          return <RecipeForm user={this.state.user} setView={this.setView} tags={this.state.tags} />
         }
         else if(this.state.view === 'browserecipes') {
-          return <BrowseRecipes user={this.state.user} setView={this.setView} />
+          return <BrowseRecipes user={this.state.user} setView={this.setView} tags={this.state.tags} />
         }
         else if(this.state.view === 'userprofile') {
           return <UserProfile setView={this.setView} user={this.state.user} />
