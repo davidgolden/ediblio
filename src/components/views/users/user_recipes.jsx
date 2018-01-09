@@ -48,6 +48,7 @@ class UserRecipes extends React.Component {
     } else {
       return (
         <div>
+          <h1 className='text-center title'>My Recipe Cloud</h1>
           <RecipeContainer recipes={this.state.recipes} user={this.state.user} tags={this.props.tags} />
         </div>
       )

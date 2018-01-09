@@ -123,6 +123,7 @@ class RecipeForm extends React.Component {
   render() {
     return (
       <form>
+        <h1 className='text-center title'>Submit a Recipe</h1>
         <RecipeInformation
           name={this.state.name}
           link={this.state.link}

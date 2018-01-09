@@ -3,6 +3,7 @@ import React from 'react';
 const SendEmailForm = (props) => {
   return (
     <div>
+      <h1 className='text-center'>Reset Password</h1>
       <form onSubmit={(e) => props.sendResetEmail(e)} className='small-form'>
         <h6>Enter your email, click submit, and we will email you a password reset token. You can use that token to change your password.</h6>
         <div className='form-group'>

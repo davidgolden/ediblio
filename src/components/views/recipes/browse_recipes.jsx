@@ -36,6 +36,7 @@ class BrowseRecipes extends React.Component {
   render() {
     return (
       <div>
+        <h1 className='text-center title'>Browse All Recipes</h1>
         <RecipeContainer recipes={this.state.recipes} user={this.state.user} tags={this.props.tags} />
       </div>
     )

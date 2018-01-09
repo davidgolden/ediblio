@@ -67,6 +67,7 @@ class GroceryList extends React.Component {
   render() {
     return (
       <div>
+        <h1 className='text-center title'>My Grocery List</h1>
         <AddIngredients
           ingredients={this.state.ingredients}
           handleAddIngredient={this.handleAddIngredient}
