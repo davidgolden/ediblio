@@ -104,8 +104,8 @@ router.post('/forgot', function(req, res) {
                         rejectUnauthorized: false
                     },
                     auth: {
-                        user: 'david@tabletofarmcompost',
-                        pass: 'Dasabija92'
+                        user: process.env.DREAMUSER,
+                        pass: process.env.DREAMPASS
                     }
                 });
 
@@ -121,7 +121,7 @@ router.post('/forgot', function(req, res) {
 
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
-                        return res.status(404).send('Problem sending email')
+                        return res.status(404).send(error)
                     } else {
                         return res.status(200).send('Success!')
                     }
