@@ -100,7 +100,7 @@ class App extends Component {
               user={this.state.user}
             />
             <div className='container'>
-              {this.state.loggedIn ? this.changeView() : <Landing />}
+              {this.state.loggedIn ? this.changeView() : (this.state.view === 'forgot' ? <ForgotPassword setView={this.setView} setLoginState={this.setLoginState} /> : <Landing /> ) }
             </div>
           </div>
     )

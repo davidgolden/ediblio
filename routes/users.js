@@ -6,16 +6,36 @@ const express = require('express'),
     ing = require('../js/conversions');
 
 // SHOW USER'S RECIPES
-router.get('/users/:user_id', middleware.isLoggedIn, function(req, res) {
+// router.get('/users/:user_id', middleware.isLoggedIn, function(req, res) {
+//
+//     User.findById(req.params.user_id).populate('recipes').exec(function(err, user) {
+//         if (err) {
+//             return res.status(404).send(err)
+//         }
+//         else {
+//             // return res.status(200).send({ user: user, recipes: req.user.recipes });
+//
+//             User.findById(req.params.user_id, function(err, user) {
+//               if(err) {
+//                 return res.status(404).send(err)
+//               }
+//               return res.status(200).send({ recipes: recipes, user: user });
+//             })
+//         }
+//     });
+// });
 
-    User.findById(req.params.user_id).populate('recipes').exec(function(err, user) {
-        if (err) {
-            return res.status(404).send(err)
-        }
-        else {
-            return res.status(200).send({ user: user });
-        }
-    });
+router.get('/users/:user_id', middleware.isLoggedIn, function(req, res) {
+  let myRecipes = req.user.recipes;
+  // find all recipes in user's recipe cloud
+  Recipe.find({ '_id': { $in: myRecipes } }, function(err, recipes) {
+    if (err) {
+      return res.status(404).send(err)
+    }
+    else {
+      return res.status(200).send({ recipes: recipes, user: req.user });
+    }
+  });
 });
 
 // DISPLAY GROCERY LIST

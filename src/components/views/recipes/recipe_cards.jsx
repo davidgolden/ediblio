@@ -7,11 +7,11 @@ const RecipeCardButtons = (props) => {
         props.user._id === props.recipe.author.id ? <button className='btn btn-sm btn-success disabled'><i className="fas fa-book"></i></button> : (
           <div>
             <button className='btn btn-sm btn-success disabled'><i className="fas fa-book"></i></button>
-            <button className='btn btn-sm btn-danger' onClick={() => props.removeFromCloud(props.recipe)}><i className="fas fa-minus"></i></button>
+            <button className='btn btn-sm btn-danger' onClick={(e) => props.removeFromCloud(e.currentTarget, props.recipe)}><i className="fas fa-minus"></i></button>
           </div>
         )
       ) : (
-        <button className='btn btn-sm btn-warning' onClick={() => props.addToCloud(props.recipe)}><i className="fas fa-plus"></i></button>
+        <button className='btn btn-sm btn-warning' onClick={(e) => props.addToCloud(e.currentTarget, props.recipe)}><i className="fas fa-plus"></i></button>
       )}
     </div>
   )
@@ -21,7 +21,11 @@ class RecipeCards extends React.Component {
   constructor(props) {
     super(props);
 
-    this.addToCloud = (recipe) => {
+    this.addToCloud = (target, recipe) => {
+      target.parentElement.parentElement.classList.add('recipe-card-disabled');
+      setTimeout(function() {
+        target.parentElement.parentElement.style.display = 'none';
+      }, 1000);
       let xml = new XMLHttpRequest();
       xml.open("POST", "/recipes/add", true);
       xml.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
@@ -35,7 +39,11 @@ class RecipeCards extends React.Component {
       }
     }
 
-    this.removeFromCloud = (recipe) => {
+    this.removeFromCloud = (target, recipe) => {
+      target.parentElement.parentElement.parentElement.classList.add('recipe-card-disabled');
+      setTimeout(function() {
+        target.parentElement.parentElement.parentElement.style.display = 'none';
+      }, 1000);
       let xml = new XMLHttpRequest();
       xml.open("POST", "/recipes/remove", true);
       xml.setRequestHeader('Content-Type', 'application/json; charset=utf-8');

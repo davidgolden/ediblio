@@ -12,9 +12,6 @@ class RecipeContainer extends React.Component {
       recipe: {}
     }
 
-    // this.updateUser = (user) => {
-    //   this.setState(user: user)
-    // }
 
     this.showRecipe = (show, i) => {
       this.setState({show: show, recipe: this.props.recipes[i]})

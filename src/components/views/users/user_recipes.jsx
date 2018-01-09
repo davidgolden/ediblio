@@ -6,7 +6,8 @@ class UserRecipes extends React.Component {
     super(props);
 
     this.state = {
-      recipes: []
+      recipes: [],
+      user: props.user
     }
 
     this.updateRecipes = () => {
@@ -18,10 +19,7 @@ class UserRecipes extends React.Component {
       xml.onreadystatechange = () => {
         if(xml.readyState === 4 && xml.status === 200) {
           let response = JSON.parse(xml.response);
-          this.setState({recipes: response.user.recipes});
-        }
-        else {
-          console.log(xml.response.error)
+          this.setState({recipes: response.recipes, user: response.user});
         }
       }
     }
@@ -50,7 +48,7 @@ class UserRecipes extends React.Component {
     } else {
       return (
         <div>
-          <RecipeContainer recipes={this.state.recipes} user={this.props.user} />
+          <RecipeContainer recipes={this.state.recipes} user={this.state.user} />
         </div>
       )
     }

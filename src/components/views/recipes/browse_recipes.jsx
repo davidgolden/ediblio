@@ -6,7 +6,8 @@ class BrowseRecipes extends React.Component {
     super(props);
 
     this.state = {
-      recipes: []
+      recipes: [],
+      user: props.user
     }
 
     this.updateRecipes = () => {
@@ -18,11 +19,8 @@ class BrowseRecipes extends React.Component {
       xml.onreadystatechange = () => {
         if(xml.readyState === 4 && xml.status === 200) {
           let response = JSON.parse(xml.response);
-          this.setState({recipes: response.recipes});
+          this.setState({recipes: response.recipes, user: response.user});
         }
-        // if(xml.readyState === 4 && xml.status !== 200) {
-        //   return alert(xml.response)
-        // }
       }
     }
   }
@@ -38,7 +36,7 @@ class BrowseRecipes extends React.Component {
   render() {
     return (
       <div>
-        <RecipeContainer recipes={this.state.recipes} user={this.props.user} />
+        <RecipeContainer recipes={this.state.recipes} user={this.state.user} />
       </div>
     )
   }

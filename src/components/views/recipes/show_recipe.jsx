@@ -58,21 +58,23 @@ class ShowRecipe extends React.Component {
     }
 
     this.deleteRecipe = () => {
-      let xml = new XMLHttpRequest();
-      xml.open("POST", `/recipes/${this.props.recipe._id}?_method=DELETE`, true);
-      xml.setRequestHeader("Content-Type", "application/json");
-      xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-      xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-      xml.send();
-      xml.onreadystatechange = () => {
-        if(xml.readyState === 4 && xml.status === 200) {
-          alert('Deleted Recipe!')
-          return this.props.showRecipe(false);
-        }
-        if(xml.readyState === 4 && xml.status !== 200) {
-          alert('There was a problem with your request!')
+      if(confirm('Are you sure you want to do that?')) {
+        let xml = new XMLHttpRequest();
+        xml.open("POST", `/recipes/${this.props.recipe._id}?_method=DELETE`, true);
+        xml.setRequestHeader("Content-Type", "application/json");
+        xml.setRequestHeader('Access-Control-Allow-Headers', '*');
+        xml.setRequestHeader('Access-Control-Allow-Origin', '*');
+        xml.send();
+        xml.onreadystatechange = () => {
+          if(xml.readyState === 4 && xml.status === 200) {
+            return this.props.showRecipe(false);
+          }
+          if(xml.readyState === 4 && xml.status !== 200) {
+            alert('There was a problem with your request!')
+          }
         }
       }
+
     }
 
   }
@@ -98,11 +100,13 @@ class ShowRecipe extends React.Component {
             handleUpdateIngredient={this.handleUpdateIngredient}
             handleDeleteIngredient={this.handleDeleteIngredient}
           />
-          <div className='show-recipe-buttons'>
+        <div className='show-recipe-buttons form-group'>
             <button className='btn btn-success btn-md' onClick={(event) => this.addToGroceryList(event)}>Add To Grocery List</button>
             {
               this.props.recipe.author.id === this.props.user._id && (
-                <button className='btn btn-success btn-md' onClick={this.deleteRecipe}>Delete Recipe</button>
+                <div className='form-group'>
+                <button className='btn btn-primary btn-md' onClick={this.deleteRecipe}>Delete Recipe</button>
+                </div>
               )
             }
           </div>

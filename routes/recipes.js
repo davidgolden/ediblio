@@ -15,7 +15,7 @@ router.get('/recipes', middleware.isLoggedIn, function(req, res) {
       return res.status(404).send(err)
     }
     else {
-      return res.status(200).send({ recipes: recipes });
+      return res.status(200).send({ recipes: recipes, user: req.user });
     }
   });
 });
