@@ -104,8 +104,8 @@ router.post('/forgot', function(req, res) {
                         rejectUnauthorized: false
                     },
                     auth: {
-                        user: process.env.DREAMUSER,
-                        pass: process.env.DREAMPASS
+                        user: 'david@tabletofarmcompost.com',
+                        pass: 'Dasabija92'
                     }
                 });
 

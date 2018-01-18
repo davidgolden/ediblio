@@ -6,25 +6,6 @@ const express = require('express'),
     ing = require('../js/conversions');
 
 // SHOW USER'S RECIPES
-// router.get('/users/:user_id', middleware.isLoggedIn, function(req, res) {
-//
-//     User.findById(req.params.user_id).populate('recipes').exec(function(err, user) {
-//         if (err) {
-//             return res.status(404).send(err)
-//         }
-//         else {
-//             // return res.status(200).send({ user: user, recipes: req.user.recipes });
-//
-//             User.findById(req.params.user_id, function(err, user) {
-//               if(err) {
-//                 return res.status(404).send(err)
-//               }
-//               return res.status(200).send({ recipes: recipes, user: user });
-//             })
-//         }
-//     });
-// });
-
 router.get('/users/:user_id', middleware.isLoggedIn, function(req, res) {
   let myRecipes = req.user.recipes;
   // find all recipes in user's recipe cloud
@@ -51,6 +32,7 @@ router.get('/grocery-list', middleware.isLoggedIn, function(req, res) {
 // UPDATE GROCERY LIST
 router.put('/grocery-list', middleware.isLoggedIn, function(req, res) {
     let ingredients = req.body.ingredients;
+    let menu = req.body.menu;
 
     User.findById(req.user._id, function(err, user) {
       if(err) {
@@ -60,21 +42,20 @@ router.put('/grocery-list', middleware.isLoggedIn, function(req, res) {
       ingredients.forEach((item) => {
         user.groceryList.push(item);
       })
-      user.save();
-      return res.status(200).send(JSON.stringify({ groceryList: user.groceryList }));
+
+      user.menu.splice(0, user.menu.length);
+      menu.forEach((item) => {
+        user.menu.push(item);
+      })
+      user.populate('menu', function(err, user) {
+        if (err) {
+            return res.status(404).send(err)
+        }
+        user.save();
+        return res.status(200).send(JSON.stringify({ groceryList: user.groceryList, menu: user.menu }));
+      })
     })
 });
-
-
-// // DISPLAY GROCERY LIST STORE VERSION
-// router.get('/grocery-list-text', middleware.isLoggedIn, function(req, res) {
-//     User.findById(req.user._id).populate('menu').exec(function(err, user) {
-//         if (err) {
-//             return res.redirect('back');
-//         }
-//         res.render('grocery-list-text', { groceryList: user.groceryList, menu: user.menu });
-//     });
-// });
 //
 //
 // // EDIT USER ROUTE

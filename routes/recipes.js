@@ -161,7 +161,7 @@ router.post('/scrape', function(req, res) {
         if (err) {
           return res.status(404).send(err)
         }
-        // user.menu.push(recipe);
+        user.menu.push(recipe);
         user.save();
       });
 
