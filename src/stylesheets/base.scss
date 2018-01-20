@@ -364,3 +364,16 @@ i:hover {
   padding: 20px;
   border: 2px solid $dark;
 }
+
+#login-form {
+  display: block;
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  .nav-div {
+    float: right;
+    margin-top: 10px;
+  }
+}
