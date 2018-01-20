@@ -8,7 +8,7 @@ const TagFilter = (props) => {
     return <button onClick={() => props.sortByTag(tag)} className='tag btn btn-md btn-success' key={tag}>{tag}</button>
   })
   return (
-    <div className='text-center title'>
+    <div className='text-center'>
       <button onClick={() => props.sortByTag('all')} className='tag btn btn-md btn-success'>All</button>
       {TagButtonList}
     </div>
@@ -115,7 +115,6 @@ class RecipeContainer extends React.Component {
             }, 500);
           });
       })
-
     }
   }
 

@@ -330,6 +330,7 @@ i:hover {
   color: white;
   display: inline-block;
   margin-right: 10px;
+  margin-bottom: 3px;
   border-radius: 5px;
 }
 
@@ -347,6 +348,10 @@ i:hover {
     position: absolute;
     right: 0;
     top: 0;
+
+    @media(max-width: 550px) {
+      position: relative;
+    }
 
     button:nth-of-type(1) {
       margin-right: 10px;

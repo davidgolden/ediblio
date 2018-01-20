@@ -40,8 +40,6 @@ class UserRecipes extends React.Component {
     }
   }
 
-  //<i className="fa-spin fas fa-sync"></i>
-
   componentDidMount() {
     this.updateRecipes();
   }
