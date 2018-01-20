@@ -6,17 +6,17 @@ middlewareObj.isLoggedIn = (req, res, next) => {
   if(req.isAuthenticated()) {
     return next();
   }
-  req.flash('error', 'You need to be logged in to do that!'); // place flash before redirect
-  res.redirect('/');
+  return res.status(404).send('You need to be logged in to do that!')
 };
 
 middlewareObj.checkRecipeOwnership = (req, res, next) => {
   // is user logged in?
   if(req.isAuthenticated()) {
     Recipe.findById(req.params.recipe_id, function(err, recipe) {
-      if(err || !recipe) {
-        req.flash('error', 'Recipe not found.');
-        res.redirect('back');
+      if(err) {
+        return res.status(404).send(err)
+      } else if(!recipe) {
+        return res.status(404).send('Recipe does not exist!')
       } else {
         // does user own the campground?
         // use equals because one is mongoose object and one is string
@@ -25,14 +25,12 @@ middlewareObj.checkRecipeOwnership = (req, res, next) => {
           next();
         } else {
           // if not, redirect
-          req.flash('error', "You don't have permission to do that!");
-          res.redirect('back');
+          return res.status(404).send("You don't have permission to do that!")
         }
       }
     });
   } else {
-    req.flash('error', 'You need to be logged in to do that!'); // place flash before redirect
-    res.redirect('back');
+    return res.status(404).send('You need to be logged in to do that!')
   }
 };
 

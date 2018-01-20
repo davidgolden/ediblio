@@ -42,14 +42,14 @@ nav {
 .small-form {
 	input[type=text], input[type=password], input[type=email], h6 {
 		margin: 10px auto !important;
-		width: 90% !important;
+		width: 50% !important;
 	}
 	button, input[type=submit] {
 		margin: 0 auto;
 		display: block;
 	}
 	label {
-		margin-left: 5%;
+		margin-left: 25%;
 	}
 }
 
@@ -335,4 +335,27 @@ i:hover {
 
 .title {
   font-size: 3.5rem;
+}
+
+.show-recipe-state {
+  position: relative;
+  .back {
+    margin-bottom: 20px;
+  }
+  .edit {
+    margin-bottom: 20px;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    button:nth-of-type(1) {
+      margin-right: 10px;
+    }
+  }
+}
+
+.show-recipe-style {
+  background-color: rgba(255,255,255,.5);
+  padding: 20px;
+  border: 2px solid $dark;
 }

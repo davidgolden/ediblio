@@ -71,6 +71,17 @@ $small-width: 860px;
   width: 80%;
 }
 
+.author-text {
+  font-weight: 500;
+  padding: 0;
+  margin-bottom: 15px;
+  color: $primary-color;
+}
+.author-text:hover {
+  color: $otherdark;
+  text-decoration: none;
+}
+
 .recipes-container {
   display: flex;
   flex-wrap: wrap;
@@ -113,10 +124,6 @@ $small-width: 860px;
     }
     .author-text {
       margin-bottom: 15px;
-      color: $primary-color;
-    }
-    .author-text:hover {
-      color: $otherdark;
     }
     .recipe-card-buttons {
       position: absolute;

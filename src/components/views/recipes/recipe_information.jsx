@@ -73,16 +73,16 @@ class RecipeInformation extends React.Component {
     return (
       <div>
       <h3>Recipe Information</h3>
-      <label for='name'>Recipe Name</label>
+      <label htmlFor='name'>Recipe Name</label>
       <input type='text' required name='name' value={this.props.name} className='form-control' onChange={(e) => this.props.handleRecipeNameChange(e.target.value)}></input>
-      <label for='link'>Recipe URL</label>
-      <input type='text' name='link' value={this.props.link} className='form-control' onChange={(e) => this.handleRecipeLinkChange(e.target.value)}></input>
+      <label htmlFor='link'>Recipe URL</label>
+      <input type='text' name='link' value={this.props.url} className='form-control' onChange={(e) => this.handleRecipeLinkChange(e.target.value)}></input>
       <ImageLoader
         loadState={this.state.loadState}
         image={this.props.image}
         handleRecipeImageChange={this.props.handleRecipeImageChange}
       />
-      <label for='notes'>Notes</label>
+      <label htmlFor='notes'>Notes</label>
       <textarea name='notes' className='form-control' value={this.props.notes} onChange={(e) => this.props.handleRecipeNotesChange(e.target.value)}></textarea>
       </div>
     )

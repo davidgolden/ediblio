@@ -12,6 +12,16 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    const blankRecipe = {
+      name: '',
+      url: '',
+      image: '',
+      notes: '',
+      ingredients: [],
+      tags: [],
+      id: ''
+    }
+
     this.state= {
       view: 'recipecloud',
       loggedIn: false,
@@ -48,7 +58,7 @@ class App extends Component {
           return <GroceryList user={this.state.user} />
         }
         else if(this.state.view === 'addrecipe') {
-          return <RecipeForm user={this.state.user} setView={this.setView} tags={this.state.tags} />
+          return <RecipeForm user={this.state.user} setView={this.setView} tags={this.state.tags} recipe={blankRecipe} view={this.state.view} />
         }
         else if(this.state.view === 'browserecipes') {
           return <BrowseRecipes user={this.state.user} setView={this.setView} tags={this.state.tags} />

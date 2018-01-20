@@ -45,7 +45,7 @@ const LogoutLinks = (props) => {
   return (
     <div className='nav-div'>
       <li className="">
-          <button onClick={(e) => props.setView(e,'userprofile')} className='disabled'><i className="fas fa-user" style={iconStyle}></i> {props.user.username}</button>
+          <button onClick={(e) => props.setView(e,'userprofile')}><i className="fas fa-user" style={iconStyle}></i> {props.user.username}</button>
       </li>
       <li className="">
           <button className='' onClick={props.handleLogout}>Log Out</button>

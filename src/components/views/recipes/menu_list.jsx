@@ -9,32 +9,23 @@ const MenuItem = (props) => {
     )
 }
 
-class Menu extends React.Component {
-  constructor(props) {
-    super(props);
+const Menu = (props) => {
+  const MenuList = [];
+    for(let i=0; i<props.menu.length; i++) {
+      MenuList.push(<MenuItem
+        key={i}
+        index={i}
+        name={props.menu[i].name}
+        url={props.menu[i].url}
+        handleDeleteMenuItem={props.handleDeleteMenuItem}
+      />);
+    }
 
-  }
-
-  render() {
-    const MenuList = [];
-      for(let i=0; i<this.props.menu.length; i++) {
-        MenuList.push(<MenuItem
-          key={i}
-          index={i}
-          name={this.props.menu[i].name}
-          url={this.props.menu[i].url}
-          handleDeleteMenuItem={this.props.handleDeleteMenuItem}
-        />);
-      }
-
-       return (
-        <div>
-          {MenuList}
-        </div>
-      )
-  }
-
+  return (
+    <div>
+      {MenuList}
+    </div>
+  )
 }
-
 
 export default Menu;

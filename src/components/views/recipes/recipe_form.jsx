@@ -6,21 +6,27 @@ const allTags = ['Dinner', 'Breakfast', 'Dessert', 'Quick/Easy', 'Vegetarian', '
 
 const AddTags = (props) => {
   const TagList = props.tags.map((tag, i) => {
-    return (
-      <div className='tag'>
-      <label key={i} className="form-check-label">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="recipe[tags]"
-          value={tag}
-          onClick={(e) => props.toggleTag(tag)}
-        />
-        {tag}
-      </label>
-      </div>
-    )
-  })
+    let check=false;
+    if(props.selectedTags.includes(tag)) {
+      check=true;
+    }
+      return (
+        <div className='tag' key={i}>
+        <label className="form-check-label">
+          <input
+            checked={check}
+            className="form-check-input"
+            type="checkbox"
+            name="recipe[tags]"
+            value={tag}
+            onChange={(e) => props.toggleTag(tag)}
+          />
+          {tag}
+        </label>
+        </div>
+      )
+    })
+
 
   return (
     <div className="form-check">
@@ -35,12 +41,13 @@ class RecipeForm extends React.Component {
     super(props);
 
     this.state = {
-      name: '',
-      link: '',
-      image: '',
-      notes: '',
-      ingredients: [],
-      tags: []
+      name: props.recipe.name,
+      url: props.recipe.url,
+      image: props.recipe.image,
+      notes: props.recipe.notes,
+      ingredients: props.recipe.ingredients,
+      tags: props.recipe.tags,
+      id: props.recipe._id
     }
 
     this.toggleTag = (tag) => {
@@ -56,13 +63,12 @@ class RecipeForm extends React.Component {
         newTags.push(tag);
         this.setState({tags: newTags});
       }
-      console.log(this.state.tags)
     }
     this.handleRecipeNameChange = name => {
       this.setState({name: name});
     }
-    this.handleRecipeLinkChange = link => {
-      this.setState({link: link});
+    this.handleRecipeLinkChange = url => {
+      this.setState({url: url});
     }
     this.handleRecipeImageChange = image => {
       this.setState({image: image});
@@ -95,7 +101,7 @@ class RecipeForm extends React.Component {
 
       let recipe = {
         name: this.state.name,
-        url: this.state.link,
+        url: this.state.url,
         notes: this.state.notes,
         image: this.state.image,
         tags: this.state.tags,
@@ -106,11 +112,12 @@ class RecipeForm extends React.Component {
       xml.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
       xml.setRequestHeader('Access-Control-Allow-Headers', '*');
       xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-      xml.send(JSON.stringify({recipe: recipe}));
-      console.log(xml.statusText)
+      xml.send(JSON.stringify({recipe: recipe, id: this.state.id}));
       xml.onreadystatechange = () => {
         if(xml.readyState === 4 && xml.status === 200) {
-          alert('Recipe submitted!')
+          alert('Success!')
+          let response = JSON.parse(xml.response)
+          this.props.toggleEdit();
           return this.props.setView(event, 'recipecloud')
         }
         else if(xml.readyState === 4 && xml.status !== 200) {
@@ -123,10 +130,10 @@ class RecipeForm extends React.Component {
   render() {
     return (
       <form>
-        <h1 className='text-center title'>Submit a Recipe</h1>
+        {this.props.view === 'addrecipe' && <h1 className='text-center title'>Submit a Recipe</h1>}
         <RecipeInformation
           name={this.state.name}
-          link={this.state.link}
+          url={this.state.url}
           image={this.state.image}
           notes={this.state.notes}
           handleRecipeLinkChange={this.handleRecipeLinkChange}
@@ -140,9 +147,9 @@ class RecipeForm extends React.Component {
         handleUpdateIngredient={this.handleUpdateIngredient}
         handleDeleteIngredient={this.handleDeleteIngredient}
       />
-    <AddTags toggleTag={this.toggleTag} tags={this.props.tags} />
+    <AddTags toggleTag={this.toggleTag} tags={this.props.tags} selectedTags={this.state.tags} />
       <div className='form-group'>
-        <button className='btn btn-lg btn-success' onClick={(e) => this.handleSubmit(e)}>Submit Recipe!</button>
+        <button className='btn btn-lg btn-success' onClick={(e) => this.handleSubmit(e)}>Submit!</button>
       </div>
       </form>
     )

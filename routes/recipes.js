@@ -34,29 +34,54 @@ router.post('/scrape', function(req, res) {
 
   // CREATE RECIPE ROUTE
   router.post('/recipes', middleware.isLoggedIn, function(req, res) {
-    User.findById(req.user._id, function(err, user) {
-      if (err) {
+    let id = req.body.id;
+
+    Recipe.findById(id, function(err, recipe) {
+      if(err) {
         return res.status(404).send(err);
-      }
-      else {
-        Recipe.create(req.body.recipe, function(err, newRecipe) {
+      } else if(!recipe) {
+        User.findById(req.user._id, function(err, user) {
           if (err) {
             return res.status(404).send(err);
           }
-          // add author info to recipe
-          newRecipe.author.id = req.user._id;
-          newRecipe.author.username = req.user.username;
+          else {
+            Recipe.create(req.body.recipe, function(err, newRecipe) {
+              if (err) {
+                return res.status(404).send(err);
+              }
+              // add author info to recipe
+              newRecipe.author.id = req.user._id;
+              newRecipe.author.username = req.user.username;
 
-          // save recipe
-          newRecipe.save();
-          // add recipe to user
-          user.recipes.push(newRecipe);
-          user.save();
-          console.log('created!')
-          return res.sendStatus(200);
+              // save recipe
+              newRecipe.save();
+              // add recipe to user
+              user.recipes.push(newRecipe);
+              user.save();
+              console.log('created!')
+              return res.sendStatus(200);
+            });
+          }
         });
+      } else if(recipe) {
+        // update recipe here
+        let newRecipe = req.body.recipe;
+          // update ingredients
+          recipe.name = newRecipe.name;
+          recipe.url = newRecipe.url;
+          recipe.notes = newRecipe.notes;
+          recipe.image = newRecipe.image;
+          recipe.tags = newRecipe.tags;
+          recipe.ingredients.splice(0, recipe.ingredients.length);
+          newRecipe.ingredients.forEach((ingredient) => {
+            recipe.ingredients.push(ingredient);
+          })
+          recipe.save();
+          // send recipe in response
+          return res.status(200).send(JSON.stringify({recipe: recipe}))
       }
-    });
+    })
+
   });
 
   // ADD RECIPE TO OWN CLOUD
@@ -98,44 +123,6 @@ router.post('/scrape', function(req, res) {
       });
   });
 
-
-  //
-  // // Edit Recipe Route
-  // router.put('/recipes/:recipe_id', middleware.checkRecipeOwnership, function(req, res) {
-  //
-  //     // here need to find recipe by id, delete all ingredients, and push new ingredients
-  //     let updatedRecipe = req.body.recipe;
-  //     let ingredients = req.body.ingredient;
-  //     let count;
-  //     if (Array.isArray(ingredients.measurement)) { count = ingredients.measurement.length; }
-  //     else { count = 1 }
-  //
-  //     // find current user
-  //     Recipe.findOne({ "_id": req.params.recipe_id }, function(err, recipe) {
-  //         if (err) {
-  //             return res.redirect('back');
-  //         }
-  //         // delete all list items
-  //         recipe.name = updatedRecipe.name;
-  //         recipe.url = updatedRecipe.url;
-  //         recipe.notes = updatedRecipe.notes;
-  //         recipe.image = updatedRecipe.image;
-  //         recipe.tags = updatedRecipe.tags;
-  //         recipe.ingredients.splice(0, recipe.ingredients.length);
-  //         recipe.save();
-  //         // loop of number of ingredients
-  //         for (let i = 0; i < count; i++) {
-  //             // if checkbox is on, delete grocery list ingredient with id at index i
-  //             recipe.ingredients.push(ing.createIng(ingredients, i));
-  //             recipe.save();
-  //         }
-  //
-  //         res.redirect(`/recipes/${recipe._id}`);
-  //     });
-  //
-  //
-  // });
-  //
   // Delete Recipe Route
   router.delete('/recipes/:recipe_id', middleware.checkRecipeOwnership, function(req, res) {
       Recipe.findByIdAndRemove(req.params.recipe_id, function(err) {
@@ -153,7 +140,7 @@ router.post('/scrape', function(req, res) {
     let ingredients = req.body.ingredients;
     let recipe = req.params.recipe_id;
 
-    User.findById(req.user, function(err, user) {
+    User.findById(req.user._id, function(err, user) {
       if (err) {
         return res.status(404).send(err)
       }

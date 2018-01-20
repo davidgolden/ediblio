@@ -50,43 +50,29 @@ const Ingredient = (props) => {
   }
 }
 
-class AddIngredients extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      ingredients: props.ingredients
-    }
+const AddIngredients = (props) => {
+  const IngredientList = [];
+    for(let i=0; i<props.ingredients.length; i++) {
+      IngredientList.push(<Ingredient
+        key={i}
+        index={i}
+        value={props.ingredients[i]}
+        handleDeleteIngredient={props.handleDeleteIngredient}
+        handleUpdateIngredient={props.handleUpdateIngredient}
+        storeMode={props.storeMode}
+      />);
+  }
+  var style = {
+    display: 'inline'
   }
 
-  render() {
-    const IngredientList = [];
-      for(let i=0; i<this.props.ingredients.length; i++) {
-        IngredientList.push(<Ingredient
-          key={i}
-          index={i}
-          value={this.props.ingredients[i]}
-          handleDeleteIngredient={this.props.handleDeleteIngredient}
-          handleUpdateIngredient={this.props.handleUpdateIngredient}
-          storeMode={this.props.storeMode}
-        />);
-      }
-
-
-    var style = {
-      display: 'inline'
-    }
-
-       return (
-        <div>
-          <h3 style={style}>Ingredient List</h3>
-          <button className='add-ingredient-button' onClick={(event) => this.props.handleAddIngredient(event)}>+ ingredient</button>
-          {IngredientList}
-        </div>
-      )
-  }
-
+  return (
+   <div>
+     <h3 style={style}>Ingredient List</h3>
+     <button className='add-ingredient-button' onClick={(event) => props.handleAddIngredient(event)}>+ ingredient</button>
+     {IngredientList}
+   </div>
+ )
 }
-
 
 export default AddIngredients;

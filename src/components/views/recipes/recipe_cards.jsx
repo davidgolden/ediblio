@@ -63,7 +63,8 @@ class RecipeCards extends React.Component {
         return (
           <div key={recipe._id} className='recipe-card'>
           <input type='hidden' name='tags' value={recipe.tags} />
-          <button onClick={(e) => this.props.showRecipe(true, i)}>
+          <input type='hidden' name='author' value={recipe.author.id} />
+          <button onClick={(e) => this.props.showRecipe(true, recipe)}>
             <div>
               <img src={recipe.image} className='recipe-card-image'/>
             </div>
@@ -72,7 +73,7 @@ class RecipeCards extends React.Component {
               <p>{recipe.notes}</p>
             </div>
           </button>
-          <button className='author-text'><h6>Submitted by {recipe.author.username}</h6></button>
+          <button className='author-text' onClick={() => this.props.sortByUser(recipe.author.id)}><h6>Submitted by {recipe.author.username}</h6></button>
           <RecipeCardButtons
             recipe={recipe}
             user={this.props.user}
