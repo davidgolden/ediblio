@@ -365,15 +365,23 @@ i:hover {
   border: 2px solid $dark;
 }
 
-#login-form {
-  display: block;
+@media(max-width: 550px) {
+  #login-form {
+    display: block;
 
-  li {
-    margin-bottom: 10px;
-  }
+    li {
+      margin-bottom: 10px;
+      width: 100%;
+    }
 
-  .nav-div {
-    float: right;
-    margin-top: 10px;
+    .nav-div {
+      float: right;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    input {
+      width: 100%;
+    }
   }
 }
