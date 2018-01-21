@@ -17,7 +17,7 @@ router.get('/recipes', middleware.isLoggedIn, function(req, res) {
     else {
       return res.status(200).send({ recipes: recipes, user: req.user });
     }
-  });
+  }).sort({ 'Date': -1 });
 });
 
 //IMAGE SCRAPER
@@ -52,7 +52,7 @@ router.post('/scrape', function(req, res) {
               // add author info to recipe
               newRecipe.author.id = req.user._id;
               newRecipe.author.username = req.user.username;
-
+              newRecipe.created = Date.now();
               // save recipe
               newRecipe.save();
               // add recipe to user

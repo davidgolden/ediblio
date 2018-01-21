@@ -20,7 +20,7 @@ router.get('/users/:user_id', middleware.isLoggedIn, function(req, res) {
         else {
           return res.status(200).send({ recipes: recipes, user: req.user });
         }
-      });
+      }).sort({ 'Date': -1 });
     })
 });
 
