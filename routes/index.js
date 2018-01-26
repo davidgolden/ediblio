@@ -96,16 +96,10 @@ router.post('/forgot', function(req, res) {
                 user.save();
 
                 let transporter = nodemailer.createTransport({
-                    host: 'sub5.mail.dreamhost.com',
-                    port: 587,
-                    secure: false, // true for 465, false for other ports
-                    requireTLS: true, //Force TLS
-                    tls: {
-                        rejectUnauthorized: false
-                    },
+                    service: 'Mailgun',
                     auth: {
-                        user: 'david@tabletofarmcompost.com',
-                        pass: 'Dasabija92'
+                        user: 'postmaster@mg.recipe-cloud.com',
+                        pass: '3e7b615bcfc5306ce7c256a2c38d1d12'
                     }
                 });
 

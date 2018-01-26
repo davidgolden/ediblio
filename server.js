@@ -84,9 +84,8 @@ app.get('*', function(req, res) {
 });
 
 const port = process.env.PORT || 5000;
-const host = process.env.HOST || 'localhost';
 
-app.listen(port, host, function(err) {
+app.listen(port, function(err) {
   if (err) {
     console.log(err);
     return;
