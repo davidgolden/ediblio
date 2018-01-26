@@ -28,7 +28,7 @@ app.use(methodOverride('_method'));
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(process.env.MONGO, { useMongoClient: true })
+mongoose.connect('mongodb://admin:admin@ds257495.mlab.com:57495/grocery', { useMongoClient: true })
       .then(() => console.log(`Database connected`))
       .catch(err => console.log(`Database connection error: ${err.message}`));
 
