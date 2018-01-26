@@ -19,7 +19,6 @@ const userRoutes = require('./routes/users'),
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.set('view engine', 'ejs');
 app.use(require('webpack-dev-middleware')(compiler, {
   noInfo: true,
   publicPath: config.output.publicPath
@@ -84,7 +83,10 @@ app.get('*', function(req, res) {
     res.sendFile(path.resolve(__dirname, 'index.html'));
 });
 
-app.listen(process.env.PORT || 5000, function(err) {
+const port = process.env.PORT || 5000;
+const host = process.env.HOST || 'localhost';
+
+app.listen(port, host, function(err) {
   if (err) {
     console.log(err);
     return;
