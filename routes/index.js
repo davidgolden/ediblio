@@ -98,8 +98,8 @@ router.post('/forgot', function(req, res) {
                 let transporter = nodemailer.createTransport({
                     service: 'Mailgun',
                     auth: {
-                        user: 'postmaster@mg.recipe-cloud.com',
-                        pass: '3e7b615bcfc5306ce7c256a2c38d1d12'
+                        user: process.env.MAILUSER,
+                        pass: process.env.MAILPASS
                     }
                 });
 
