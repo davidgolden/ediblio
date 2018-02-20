@@ -145,10 +145,13 @@ router.post('/scrape', function(req, res) {
         return res.status(404).send(err)
       }
       Recipe.findById({ "_id": recipe }, function(err, recipe) {
+        console.log(recipe)
         if (err) {
           return res.status(404).send(err)
         }
-        user.menu.push(recipe);
+        console.log(user.menu)
+        // user.menu.splice(user.menu.length, 0, recipe);
+        user.menu.push(recipe._id);
         user.save();
       });
 
@@ -182,7 +185,7 @@ router.post('/scrape', function(req, res) {
             return user.save();
           } else {
             // if it can't be added, push it to grocery list
-            user.groceryList.push(ingredient);
+            user.groceryList.splice(ingredients.length, 0, ingredient);
             return user.save();
           }
         } else {
