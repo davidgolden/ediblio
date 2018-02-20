@@ -45,18 +45,22 @@ router.put('/grocery-list', middleware.isLoggedIn, function(req, res) {
       }
       user.groceryList.splice(0, user.groceryList.length);
       ingredients.forEach((item) => {
-        user.groceryList.push(item);
+        // user.groceryList.push(item);
+        user.groceryList.splice(user.groceryList.length, 0, item);
+        user.save();
       })
 
       user.menu.splice(0, user.menu.length);
       menu.forEach((item) => {
-        user.menu.push(item);
+        // user.menu.push(item);
+        user.menu.splice(user.menu.length, 0, item);
+        user.save();
       })
+
       user.populate('menu', function(err, user) {
         if (err) {
             return res.status(404).send(err)
         }
-        user.save();
         return res.status(200).send(JSON.stringify({ groceryList: user.groceryList, menu: user.menu }));
       })
     })
