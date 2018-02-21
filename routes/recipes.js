@@ -144,14 +144,10 @@ router.post('/scrape', function(req, res) {
       if (err) {
         return res.status(404).send(err)
       }
-      // Recipe.findById({ "_id": recipe }, function(err, recipe) {
-      //   if (err) {
-      //     return res.status(404).send(err)
-      //   }
-        user.menu.splice(user.menu.length, 0, recipe);
-        // user.menu.push(recipe);
-        user.save();
-      // });
+
+          user.menu.splice(user.menu.length, 0, recipe);
+          // user.menu.push(recipe);
+          user.save();
 
       var currentListItems = user.groceryList.map((item) => {
         return item.name;
@@ -171,8 +167,10 @@ router.post('/scrape', function(req, res) {
       // for each item on ingredient list
       ingredients.forEach((ingredient) => {
         if(ingredient.quantity === null || ingredient.name === '') {
+          console.log('returning')
           return;
         } else {
+          console.log('adding ingredient')
           if(onCurrentList(ingredient.name) >= 0) {
             let i = onCurrentList(ingredient.name);
             let m = user.groceryList[i].measurement;
@@ -183,17 +181,16 @@ router.post('/scrape', function(req, res) {
               let newQM = ing.add(q, m, Number(ingredient.quantity), ingredient.measurement);
               user.groceryList[i].quantity = newQM.quantity;
               user.groceryList[i].measurement = newQM.measurement;
-              console.log('can be added')
               return user.save();
             } else {
               // if it can't be added, push it to grocery list
-              user.groceryList.splice(ingredients.length, 0, ingredient);
+              user.groceryList.splice(user.groceryList.length, 0, ingredient);
               // user.groceryList.push(ingredient);
               return user.save();
             }
           } else {
             // here if ingredient is not on current list
-            user.groceryList.splice(ingredients.length, 0, ingredient);
+            user.groceryList.splice(user.groceryList.length, 0, ingredient);
             // user.groceryList.push(ingredient);
             return user.save();
           }
