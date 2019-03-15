@@ -29,27 +29,27 @@ class RecipeContainer extends React.Component {
             }
         }
 
-        this.deleteRecipe = () => {
-            if (confirm('Are you sure you want to do that?')) {
-                let xml = new XMLHttpRequest();
-                xml.open("POST", `/recipes/${this.state.recipe._id}?_method=DELETE`, true);
-                xml.setRequestHeader("Content-Type", "application/json");
-                xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-                xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-                xml.send();
-                xml.onreadystatechange = () => {
-                    if (xml.readyState === 4 && xml.status === 200) {
-                        return this.setState({show: false})
-                    }
-                    if (xml.readyState === 4 && xml.status !== 200) {
-                        alert('There was a problem with your request!')
-                    }
-                }
-            }
-        }
+        // this.deleteRecipe = () => {
+        //     if (confirm('Are you sure you want to do that?')) {
+        //         let xml = new XMLHttpRequest();
+        //         xml.open("POST", `/recipes/${this.state.recipe._id}?_method=DELETE`, true);
+        //         xml.setRequestHeader("Content-Type", "application/json");
+        //         xml.setRequestHeader('Access-Control-Allow-Headers', '*');
+        //         xml.setRequestHeader('Access-Control-Allow-Origin', '*');
+        //         xml.send();
+        //         xml.onreadystatechange = () => {
+        //             if (xml.readyState === 4 && xml.status === 200) {
+        //                 return this.setState({show: false})
+        //             }
+        //             if (xml.readyState === 4 && xml.status !== 200) {
+        //                 alert('There was a problem with your request!')
+        //             }
+        //         }
+        //     }
+        // }
 
         this.sortByTag = (tag) => {
-            event.preventDefault();
+            // event.preventDefault();
             let allRecipes = Array.from(document.getElementsByName('tags'));
             let unmatchedRecipes = allRecipes.filter(recipe => recipe.value.includes(tag) === false);
             let matchedRecipes = allRecipes.filter(recipe => recipe.value.includes(tag) === true);
@@ -83,7 +83,7 @@ class RecipeContainer extends React.Component {
         }
 
         this.sortByUser = (user) => {
-            event.preventDefault();
+            // event.preventDefault();
             this.setState({show: false}, function () {
                 let allRecipes = Array.from(document.getElementsByName('author'));
                 let unmatchedRecipes = allRecipes.filter(recipe => recipe.value.includes(user) === false);
@@ -107,25 +107,26 @@ class RecipeContainer extends React.Component {
         }
     }
 
-    componentDidMount() {
-        // need to get id from url
-        console.log('recipe: ', this.props.recipe_id)
-        let xml = new XMLHttpRequest();
-        xml.open("GET", `/recipes/${this.props.recipe_id}`, true);
-        xml.setRequestHeader("Content-Type", "application/json");
-        xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-        xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-        xml.send(JSON.stringify({id: this.props.recipe_id}));
-        xml.onreadystatechange = () => {
-            if (xml.readyState === 4 && xml.status === 200) {
-                console.log('recipe: ', this.props.recipe_id)
-                this.setState({recipe: true, user: res.user});
-            }
-            if (xml.readyState === 4 && xml.status !== 200) {
-                return alert(xml.response)
-            }
-        }
-    }
+    // componentDidMount() {
+    //     // need to get id from url
+    //     console.log('recipe: ', this.props.recipe_id)
+    //     let xml = new XMLHttpRequest();
+    //     xml.open("GET", `/recipes/${this.props.recipe_id}`, true);
+    //     xml.setRequestHeader("Content-Type", "application/json");
+    //     xml.setRequestHeader('Access-Control-Allow-Headers', '*');
+    //     xml.setRequestHeader('Access-Control-Allow-Origin', '*');
+    //     xml.send(JSON.stringify({id: this.props.recipe_id}));
+    //     xml.onreadystatechange = () => {
+    //         if (xml.readyState === 4 && xml.status === 200) {
+    //             console.log('recipe: ', this.props.recipe_id)
+    //
+    //             this.setState({recipe: true, user: res.user});
+    //         }
+    //         if (xml.readyState === 4 && xml.status !== 200) {
+    //             return alert(xml.response)
+    //         }
+    //     }
+    // }
 
     render() {
         return (

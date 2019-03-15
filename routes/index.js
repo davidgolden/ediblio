@@ -10,7 +10,7 @@ router.post('/authenticate', function(req, res) {
     if(req.isAuthenticated()) {
       return res.status( 200 ).send(JSON.stringify({ user: req.user }));
     } else {
-      return res.sendStatus( 404 );
+      return res.sendStatus( 200 );
     }
 });
 
@@ -144,6 +144,17 @@ router.post('/reset', function(req, res) {
               return res.status( 200 ).json({ user: req.user });
             });
     });
+});
+
+//IMAGE SCRAPER
+router.post('/scrape', function (req, res) {
+    urlMetadata(req.body.imageUrl, {timeout: 10000}).then(
+        function (metadata) { // success handler
+            return res.status(200).send(metadata["og:image"]);
+        },
+        function (error) { // failure handler
+            return res.status(404).send('')
+        });
 });
 
 module.exports = router;

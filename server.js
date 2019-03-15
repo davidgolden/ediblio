@@ -1,12 +1,9 @@
 require('dotenv').config({path: './.env'});
+const path = require('path');
 
-var path = require('path');
 var bodyParser = require('body-parser');
 var express = require('express');
-var webpack = require('webpack');
-var config = require('./webpack.config.dev.js');
 var app = express();
-var compiler = webpack(config);
 var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -21,10 +18,6 @@ const userRoutes = require('./routes/users'),
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(require('webpack-dev-middleware')(compiler, {
-  noInfo: true,
-  publicPath: config.output.publicPath
-}));
 app.use(methodOverride('_method'));
 
 mongoose.Promise = global.Promise;
@@ -33,7 +26,6 @@ mongoose.connect(process.env.MONGO)
       .then(() => console.log(`Database connected`))
       .catch(err => console.log(`Database connection error: ${err.message}`));
 
-app.use(require('webpack-hot-middleware')(compiler));
 // app.use('/public', express.static('public'));
 
 // PASSPORT CONFIGURATION
@@ -73,17 +65,17 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-app.locals.tags = ['Dinner', 'Breakfast', 'Dessert', 'Quick/Easy', 'Vegetarian', 'Vegan', 'Dairy-Free', 'Gluten-Free'];
+// app.locals.tags = ['Dinner', 'Breakfast', 'Dessert', 'Quick/Easy', 'Vegetarian', 'Vegan', 'Dairy-Free', 'Gluten-Free'];
+
+app.get('*', function(req, res) {
+    res.sendFile(path.resolve(__dirname, 'public/index.html'));
+});
 
 // NEED TO IMPORT ROUTES
 // NEED TO IMPORT MIDDLEWARE
 app.use('/', indexRoutes);
 app.use('/', userRoutes);
 app.use('/', recipeRoutes);
-
-app.get('*', function(req, res) {
-    res.sendFile(path.resolve(__dirname, 'index.html'));
-});
 
 const port = process.env.PORT || 5000;
 

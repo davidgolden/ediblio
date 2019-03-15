@@ -3,7 +3,7 @@ const express = require('express'),
     User = require('../models/user'),
     Recipe = require('../models/recipe'),
     middleware = require('../middleware'),
-    ing = require('../js/conversions');
+    ing = require('../public/js/conversions');
 
 // SHOW USER'S RECIPES
 router.get('/users/:user_id', middleware.isLoggedIn, function(req, res) {

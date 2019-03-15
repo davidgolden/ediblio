@@ -3,17 +3,19 @@ const express = require('express'),
     User = require('../models/user'),
     Recipe = require('../models/recipe'),
     middleware = require('../middleware'),
-    ing = require('../js/conversions'),
+    ing = require('../public/js/conversions'),
     urlMetadata = require('url-metadata');
 
 /*
 
 /reset
 /forgot
-/ -> get all recipes
-/u -> get all users
-/u/:u -> get specific user
-/u/:u/r -> get all user recipes
+/scrape
+
+/r -> get all recipes [GET recipes]
+/u -> get all users [GET users, POST user]
+/u/:u -> get specific user [GET user, PUT user]
+/u/:u/r -> get all user recipes [GET recipes, POST user recipe]
 /u/:u/r/:r -> get specific user recipe
 
  */
@@ -32,20 +34,8 @@ router.get('/recipes', middleware.isLoggedIn, function (req, res) {
     }).sort({'Date': -1});
 });
 
-//IMAGE SCRAPER
-router.post('/scrape', function (req, res) {
-    urlMetadata(req.body.imageUrl, {timeout: 10000}).then(
-        function (metadata) { // success handler
-            return res.status(200).send(metadata["og:image"]);
-        },
-        function (error) { // failure handler
-            return res.status(404).send('')
-        });
-});
-
-
 // CREATE RECIPE ROUTE
-router.post('/recipes', middleware.isLoggedIn, function (req, res) {
+router.post('/users/:user_id/recipes', middleware.isLoggedIn, function (req, res) {
     let id = req.body.id;
 
     Recipe.findById(id, function (err, recipe) {
@@ -96,8 +86,8 @@ router.post('/recipes', middleware.isLoggedIn, function (req, res) {
 
 });
 
-// ADD RECIPE TO OWN CLOUD
-router.post('/recipes/add', middleware.isLoggedIn, function (req, res) {
+// UPDATE user
+router.put('/users/:user_id', middleware.isLoggedIn, function (req, res) {
     let recipe = req.body.recipe;
     User.findById(req.user._id, function (err, user) {
         if (err) {
