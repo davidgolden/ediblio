@@ -108,12 +108,12 @@ const Index = () => {
             <React.Fragment>
                 <Header />
                 <Router>
-                    <Landing path={'/'}/>
-                    <UserRecipes path={'/recipes'} />
+                    {/*<Landing path={'/'}/>*/}
+                    <BrowseRecipes path={'/'} />
+                    <UserRecipes path={'/users/:user_id/recipes'} />
                     <RecipeContainer path={'/recipes/:recipe_id'} />
                     <GroceryList path={'/groceries'}/>
                     <RecipeForm path={'/add'} />
-                    <BrowseRecipes path={'/browse'} />
                     <UserProfile path={'/user/:user_id'}/>
                     <ForgotPassword path={'forgot'}/>
                 </Router>

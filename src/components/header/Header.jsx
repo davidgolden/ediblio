@@ -49,7 +49,7 @@ export default class Header extends React.Component {
                 <ul>
                     {this.props.apiStore.isLoggedIn && <React.Fragment>
                         <li>
-                            <Link to={'/browse'} className={headerLinkClassName}><i
+                            <Link to={'/'} className={headerLinkClassName}><i
                                 className="fas fa-search"/></Link>
                         </li>
                         <li>
@@ -60,7 +60,7 @@ export default class Header extends React.Component {
                             <Link to={'/add'} className={headerLinkClassName}><i className="fas fa-plus"/></Link>
                         </li>
                         <li>
-                            <Link to={'/recipes'} className={headerLinkClassName}><i className="fas fa-book"
+                            <Link to={`/users/${this.props.apiStore.user._id}/recipes`} className={headerLinkClassName}><i className="fas fa-book"
                                                                                      aria-hidden="true"/></Link>
                         </li>
                     </React.Fragment>}

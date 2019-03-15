@@ -5,24 +5,110 @@ const express = require('express'),
     middleware = require('../middleware'),
     ing = require('../public/js/conversions');
 
-// SHOW USER'S RECIPES
-router.get('/users/:user_id', middleware.isLoggedIn, function(req, res) {
-    User.findById(req.user._id, function(err, user) {
-      if(err) {
-        return res.status(404).send(err)
-      }
-      let recipes = user.recipes;
-      // find all recipes in user's recipe cloud
-      Recipe.find({ '_id': { $in: recipes } }, function(err, recipes) {
-        if (err) {
-          return res.status(404).send(err)
-        }
-        else {
-          return res.status(200).send({ recipes: recipes, user: req.user });
-        }
-      }).sort({ 'Date': -1 });
+// // SHOW USER'S RECIPES
+// router.get('/users/:user_id', middleware.isLoggedIn, function(req, res) {
+//     User.findById(req.user._id, function(err, user) {
+//       if(err) {
+//         return res.status(404).send(err)
+//       }
+//       let recipes = user.recipes;
+//       // find all recipes in user's recipe cloud
+//       Recipe.find({ '_id': { $in: recipes } }, function(err, recipes) {
+//         if (err) {
+//           return res.status(404).send(err)
+//         }
+//         else {
+//           return res.status(200).send({ recipes: recipes, user: req.user });
+//         }
+//       }).sort({ 'Date': -1 });
+//     })
+// });
+
+router.route('/users')
+    // get all users
+    .get((req, res) => {
+
     })
-});
+    // create new user (register)
+    .post((req, res) => {
+        User.findOne({ "$or":[{ username: req.body.username }, { email: req.body.email }] }, function(err, user) {
+            if (err) {
+                return res.status( 404 ).send(err);
+            }
+
+            if(user) {
+                return res.status( 404 ).send('A user with that username or email already exists!');
+            }
+
+            let newUser = new User({username: req.body.username, email: req.body.email.toLowerCase(), password: req.body.password});
+            newUser.save();
+
+            req.logIn(newUser, function(err) {
+                if (err) return res.status( 404 ).send(err);
+                return res.status( 200 ).json({ user: req.user });
+            });
+        });
+    });
+
+router.route('/users/:user_id')
+    // update user
+    .put(middleware.isLoggedIn, (req, res) => {
+        User.findOne(req.user._id, function(err, currentUser) {
+            if (err) {
+                return res.status(404).send(err)
+            }
+            // if username is changed, make sure it doesn't already exist
+            if(req.body.username !== currentUser.username) {
+                User.findOne({ username: req.body.username }, function(err, user) {
+                    if (err) {
+                        return res.status(404).send(err)
+                    } else if(user) {
+                        return res.status(404).send('Username already exists!')
+                    } else {
+                        currentUser.username = req.body.username;
+                        currentUser.save();
+
+                        Recipe.find({ "author.id": currentUser._id }, function(err, foundRecipes) {
+                            if (err) {
+                                return res.status(404).send(err)
+                            }
+                            foundRecipes.forEach(recipe => {
+                                recipe.author.username = req.body.username;
+                                recipe.save();
+                            });
+                        });
+                    }
+                });
+            }
+
+            // if email is changed, make sure it doesn't already exist
+            else if(req.body.email !== currentUser.email) {
+                User.findOne({ email: req.body.email }, function(err, user) {
+                    if (err) {
+                        return res.status(404).send(err)
+                    } else if(user) {
+                        return res.status(404).send('Email already exists!')
+                    } else {
+                        currentUser.email = req.body.email;
+                        currentUser.save();
+                    }
+                });
+            }
+
+            else if(req.body.password !== currentUser.password) {
+                currentUser.password = req.body.password;
+                currentUser.save();
+            }
+
+
+            return res.status(200).send('Updated profile!')
+
+        });
+    })
+    // delete user account
+    .delete((req, res) => {
+
+    });
 
 // DISPLAY GROCERY LIST
 router.get('/grocery-list', middleware.isLoggedIn, function(req, res) {
@@ -67,59 +153,59 @@ router.put('/grocery-list', middleware.isLoggedIn, function(req, res) {
 });
 
 // EDIT USER ROUTE
-router.post('/users/:user_id', middleware.isLoggedIn, function(req, res) {
-
-    User.findOne(req.user._id, function(err, currentUser) {
-        if (err) {
-            return res.status(404).send(err)
-        }
-        // if username is changed, make sure it doesn't already exist
-        if(req.body.username !== currentUser.username) {
-            User.findOne({ username: req.body.username }, function(err, user) {
-                if (err) {
-                    return res.status(404).send(err)
-                } else if(user) {
-                  return res.status(404).send('Username already exists!')
-                } else {
-                  currentUser.username = req.body.username;
-                  currentUser.save();
-
-                  Recipe.find({ "author.id": currentUser._id }, function(err, foundRecipes) {
-                      if (err) {
-                          return res.status(404).send(err)
-                      }
-                      foundRecipes.forEach(recipe => {
-                          recipe.author.username = req.body.username;
-                          recipe.save();
-                      });
-                  });
-                }
-            });
-        }
-
-        // if email is changed, make sure it doesn't already exist
-        else if(req.body.email !== currentUser.email) {
-            User.findOne({ email: req.body.email }, function(err, user) {
-                if (err) {
-                    return res.status(404).send(err)
-                } else if(user) {
-                  return res.status(404).send('Email already exists!')
-                } else {
-                  currentUser.email = req.body.email;
-                  currentUser.save();
-                }
-            });
-        }
-
-        else if(req.body.password !== currentUser.password) {
-          currentUser.password = req.body.password;
-          currentUser.save();
-        }
-
-
-        return res.status(200).send('Updated profile!')
-
-    });
-});
+// router.post('/users/:user_id', middleware.isLoggedIn, function(req, res) {
+//
+//     User.findOne(req.user._id, function(err, currentUser) {
+//         if (err) {
+//             return res.status(404).send(err)
+//         }
+//         // if username is changed, make sure it doesn't already exist
+//         if(req.body.username !== currentUser.username) {
+//             User.findOne({ username: req.body.username }, function(err, user) {
+//                 if (err) {
+//                     return res.status(404).send(err)
+//                 } else if(user) {
+//                   return res.status(404).send('Username already exists!')
+//                 } else {
+//                   currentUser.username = req.body.username;
+//                   currentUser.save();
+//
+//                   Recipe.find({ "author.id": currentUser._id }, function(err, foundRecipes) {
+//                       if (err) {
+//                           return res.status(404).send(err)
+//                       }
+//                       foundRecipes.forEach(recipe => {
+//                           recipe.author.username = req.body.username;
+//                           recipe.save();
+//                       });
+//                   });
+//                 }
+//             });
+//         }
+//
+//         // if email is changed, make sure it doesn't already exist
+//         else if(req.body.email !== currentUser.email) {
+//             User.findOne({ email: req.body.email }, function(err, user) {
+//                 if (err) {
+//                     return res.status(404).send(err)
+//                 } else if(user) {
+//                   return res.status(404).send('Email already exists!')
+//                 } else {
+//                   currentUser.email = req.body.email;
+//                   currentUser.save();
+//                 }
+//             });
+//         }
+//
+//         else if(req.body.password !== currentUser.password) {
+//           currentUser.password = req.body.password;
+//           currentUser.save();
+//         }
+//
+//
+//         return res.status(200).send('Updated profile!')
+//
+//     });
+// });
 
 module.exports = router;

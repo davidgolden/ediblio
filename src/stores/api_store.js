@@ -3,12 +3,18 @@ import {action, observable, computed} from 'mobx';
 import axios from 'axios';
 
 class ApiStore {
+    @observable user = {};
+
+    constructor() {
+        let user = localStorage.getItem('user');
+        if (user) {
+            this.user = JSON.parse(user);
+        }
+    }
+
     @observable recipes = [];
     @observable grocery_list = [];
     @observable menu = [];
-
-
-    @observable user = {};
 
     @computed
     get isLoggedIn() {
@@ -20,7 +26,7 @@ class ApiStore {
         axios.post('/api/authenticate')
             .then(response => {
                 this.user = response.data.user;
-                // localStorage.setItem(user, data.user)
+                localStorage.setItem('user', JSON.stringify(response.data.user))
             })
             .catch(err => {
                 console.log('error! ', err);
@@ -35,7 +41,7 @@ class ApiStore {
         })
             .then(response => {
                 this.user = response.data.user;
-                // localStorage.setItem('user', data.user)
+                localStorage.setItem('user', JSON.stringify(response.data.user))
             })
             .catch(err => {
                 console.log(err);
@@ -60,10 +66,19 @@ class ApiStore {
     getRecipes = () => {
         axios.get('/api/recipes')
             .then(response => {
-                response.data.recipes.forEach(recipe => {
-                    this.recipes.push(recipe);
-                })
+                // response.data.recipes.forEach(recipe => {
+                //     this.recipes.push(recipe);
+                // })
+                this.recipes = response.data.recipes;
             });
+    };
+
+    @action
+    getUserRecipes = () => {
+        axios.get(`/api/users/${this.user._id}/recipes`)
+            .then(response => {
+                this.recipes = response.data.recipes;
+            })
     };
 
     @action

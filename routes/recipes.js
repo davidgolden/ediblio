@@ -20,7 +20,7 @@ const express = require('express'),
 
  */
 
-// SHOW ALL RECIPES
+// get all recipes
 router.get('/recipes', function (req, res) {
     // find all recipes not in user's recipe cloud
     Recipe.find({}, function (err, recipes) {
@@ -33,57 +33,84 @@ router.get('/recipes', function (req, res) {
     }).sort({'Date': -1});
 });
 
-// CREATE RECIPE ROUTE
-router.post('/users/:user_id/recipes', middleware.isLoggedIn, function (req, res) {
-    let id = req.body.id;
-
-    Recipe.findById(id, function (err, recipe) {
-        if (err) {
-            return res.status(404).send(err);
-        } else if (!recipe) {
-            User.findById(req.user._id, function (err, user) {
-                if (err) {
-                    return res.status(404).send(err);
-                }
-                else {
-                    Recipe.create(req.body.recipe, function (err, newRecipe) {
-                        if (err) {
-                            return res.status(404).send(err);
-                        }
-                        // add author info to recipe
-                        newRecipe.author.id = req.user._id;
-                        newRecipe.author.username = req.user.username;
-                        newRecipe.created = Date.now();
-                        // save recipe
-                        newRecipe.save();
-                        // add recipe to user
-                        user.recipes.push(newRecipe);
-                        user.save();
-                        console.log('created!')
-                        return res.sendStatus(200);
-                    });
-                }
-            });
-        } else if (recipe) {
-            // update recipe here
-            let newRecipe = req.body.recipe;
-            // update ingredients
-            recipe.name = newRecipe.name;
-            recipe.url = newRecipe.url;
-            recipe.notes = newRecipe.notes;
-            recipe.image = newRecipe.image;
-            recipe.tags = newRecipe.tags;
-            recipe.ingredients.splice(0, recipe.ingredients.length);
-            newRecipe.ingredients.forEach((ingredient) => {
-                recipe.ingredients.push(ingredient);
-            })
-            recipe.save();
-            // send recipe in response
-            return res.status(200).send(JSON.stringify({recipe: recipe}))
-        }
+router.route('/recipes/:recipe_id')
+    .get((req, res) => {
+        Recipe.findById(req.params.recipe_id, (err, recipe) => {
+            if (err) {
+                return res.status(404).send(err);
+            }
+            return recipe;
+        })
     })
+    .delete(middleware.checkRecipeOwnership, (req, res) => {
+        Recipe.findByIdAndRemove(req.params.recipe_id, function (err) {
+            if (err) {
+                return res.status(404).send(err)
+            }
+            return res.status(200).send('Success!')
+        });
+    });
 
-});
+router.route('/users/:user_id/recipes')
+    // get all user recipes
+    .get((req, res) => {
+        Recipe.find({'author.id': req.params.user_id}, (err, recipes) => {
+            if (err) {
+                return res.status(404).send(err)
+            }
+            return res.status(200).send({ recipes: recipes });
+        }).sort({ 'Date': -1 });
+    })
+    // create user recipe
+    .post(middleware.isLoggedIn, (req, res) => {
+        let id = req.body.id;
+
+        Recipe.findById(id, function (err, recipe) {
+            if (err) {
+                return res.status(404).send(err);
+            } else if (!recipe) {
+                User.findById(req.user._id, function (err, user) {
+                    if (err) {
+                        return res.status(404).send(err);
+                    }
+                    else {
+                        Recipe.create(req.body.recipe, function (err, newRecipe) {
+                            if (err) {
+                                return res.status(404).send(err);
+                            }
+                            // add author info to recipe
+                            newRecipe.author.id = req.user._id;
+                            newRecipe.author.username = req.user.username;
+                            newRecipe.created = Date.now();
+                            // save recipe
+                            newRecipe.save();
+                            // add recipe to user
+                            user.recipes.push(newRecipe);
+                            user.save();
+                            console.log('created!')
+                            return res.sendStatus(200);
+                        });
+                    }
+                });
+            } else if (recipe) {
+                // update recipe here
+                let newRecipe = req.body.recipe;
+                // update ingredients
+                recipe.name = newRecipe.name;
+                recipe.url = newRecipe.url;
+                recipe.notes = newRecipe.notes;
+                recipe.image = newRecipe.image;
+                recipe.tags = newRecipe.tags;
+                recipe.ingredients.splice(0, recipe.ingredients.length);
+                newRecipe.ingredients.forEach((ingredient) => {
+                    recipe.ingredients.push(ingredient);
+                })
+                recipe.save();
+                // send recipe in response
+                return res.status(200).send(JSON.stringify({recipe: recipe}))
+            }
+        })
+    });
 
 // UPDATE user
 router.put('/users/:user_id', middleware.isLoggedIn, function (req, res) {
@@ -122,25 +149,6 @@ router.post('/recipes/remove', function (req, res) {
             }
         }
     });
-});
-
-// Delete Recipe Route
-router.delete('/recipes/:recipe_id', middleware.checkRecipeOwnership, function (req, res) {
-    Recipe.findByIdAndRemove(req.params.recipe_id, function (err) {
-        if (err) {
-            return res.status(404).send(err)
-        }
-        return res.status(200).send('Success!')
-    });
-});
-
-router.get('/recipes/:recipe_id', (req, res) => {
-    Recipe.findById(req.params.recipe_id, (err, recipe) => {
-        if (err) {
-            return res.status(404).send(err);
-        }
-        return recipe;
-    })
 });
 
 

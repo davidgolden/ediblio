@@ -8,32 +8,34 @@ const express = require('express'),
 // authenticate user
 router.post('/authenticate', function(req, res) {
     if(req.isAuthenticated()) {
-      return res.status( 200 ).send(JSON.stringify({ user: req.user }));
+        User.findById(req.user._id).populate('menu').populate('recipes').exec((err, user) => {
+            return res.status( 200 ).send(JSON.stringify({ user: user }));
+        })
     } else {
       return res.sendStatus( 200 );
     }
 });
 
 // CREATE USER
-router.post('/users', function(req, res, next) {
-    User.findOne({ "$or":[{ username: req.body.username }, { email: req.body.email }] }, function(err, user) {
-        if (err) {
-            return res.status( 404 ).send(err);
-        }
-
-        if(user) {
-            return res.status( 404 ).send('A user with that username or email already exists!');
-        }
-
-        let newUser = new User({username: req.body.username, email: req.body.email.toLowerCase(), password: req.body.password});
-        newUser.save();
-
-        req.logIn(newUser, function(err) {
-          if (err) return res.status( 404 ).send(err);
-          return res.status( 200 ).json({ user: req.user });
-        });
-    });
-});
+// router.post('/users', function(req, res, next) {
+//     User.findOne({ "$or":[{ username: req.body.username }, { email: req.body.email }] }, function(err, user) {
+//         if (err) {
+//             return res.status( 404 ).send(err);
+//         }
+//
+//         if(user) {
+//             return res.status( 404 ).send('A user with that username or email already exists!');
+//         }
+//
+//         let newUser = new User({username: req.body.username, email: req.body.email.toLowerCase(), password: req.body.password});
+//         newUser.save();
+//
+//         req.logIn(newUser, function(err) {
+//           if (err) return res.status( 404 ).send(err);
+//           return res.status( 200 ).json({ user: req.user });
+//         });
+//     });
+// });
 
 // handle login logic
 router.post('/login', emailToLowerCase, function(req, res, next) {
