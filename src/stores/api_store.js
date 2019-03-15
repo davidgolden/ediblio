@@ -86,7 +86,7 @@ class ApiStore {
 
     @action
     getRecipe = id => {
-        axios.get(`/recipes/${id}`)
+        axios.get(`/api/recipes/${id}`)
             .then(response => {
                 // do something
             });
@@ -98,6 +98,7 @@ class ApiStore {
             ...partialUserObj
         })
             .then(response => {
+                console.log(response);
                 this.user = response.data.user;
             })
     };
@@ -109,12 +110,22 @@ class ApiStore {
             recipe,
         ];
 
-        axios.patch(`/users/${this.user.id}`, {
+        axios.patch(`/api/users/${this.user.id}`, {
             menu: newGroceryList,
         })
             .then(response => {
                 // do something
             });
+    };
+
+    @action
+    createRecipe = recipe => {
+        axios.post('/api/recipes', {
+            recipe: recipe,
+        })
+            .then(response => {
+                // do something
+            })
     }
 }
 

@@ -45,7 +45,6 @@ router.route('/users/:user_id')
             if (err) {
                 return res.status(404).send(err)
             }
-            console.log('user: ', user);
             for (let key in req.body) {
                 if (req.body.hasOwnProperty(key)) {
                     user[key] = req.body[key];
@@ -53,7 +52,7 @@ router.route('/users/:user_id')
             }
             user.save();
 
-            return res.status(200).send('Updated profile!')
+            return res.status(200).json({ user: user })
 
         });
     })

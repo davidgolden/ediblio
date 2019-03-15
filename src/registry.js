@@ -2,7 +2,7 @@ import Header from './components/header/header';
 import UserRecipes from './pages/UserRecipes';
 import UserSettings from './pages/UserSettings';
 import GroceryList from './components/views/users/user_grocery_list';
-import RecipeForm from './components/views/recipes/recipe_form';
+import AddRecipe from './pages/AddRecipe';
 import BrowseRecipes from './pages/BrowseRecipes';
 import Landing from './pages/landing';
 import ForgotPassword from './components/views/forgot';
@@ -13,7 +13,7 @@ export {
     UserSettings,
     UserRecipes,
     GroceryList,
-    RecipeForm,
+    AddRecipe,
     BrowseRecipes,
     Landing,
     ForgotPassword,

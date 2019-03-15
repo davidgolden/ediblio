@@ -3,6 +3,7 @@ const express = require('express'),
     passport = require('passport'),
     User = require('../models/user'),
     nodemailer = require('nodemailer'),
+    urlMetadata = require('url-metadata'),
     URLSafeBase64 = require('urlsafe-base64');
 
 // authenticate user
@@ -150,9 +151,9 @@ router.post('/reset', function(req, res) {
 
 //IMAGE SCRAPER
 router.post('/scrape', function (req, res) {
-    urlMetadata(req.body.imageUrl, {timeout: 10000}).then(
+    urlMetadata(req.body.imageUrl, {timeout: 0}).then(
         function (metadata) { // success handler
-            return res.status(200).send(metadata["og:image"]);
+            return res.status(200).json({ imageUrl: metadata["og:image"]});
         },
         function (error) { // failure handler
             return res.status(404).send('')

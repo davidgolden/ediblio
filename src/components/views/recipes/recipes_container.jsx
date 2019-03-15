@@ -1,7 +1,6 @@
 import React from 'react';
 import ShowRecipe from './show_recipe';
-import RecipeCards from './recipe_cards';
-import RecipeForm from './recipe_form';
+import RecipeForm from '../../../pages/AddRecipe';
 
 class RecipeContainer extends React.Component {
     constructor(props) {

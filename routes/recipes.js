@@ -12,26 +12,45 @@ const express = require('express'),
 /forgot
 /scrape
 
-/r -> get all recipes [GET recipes]
+/r -> get all recipes [GET recipes, POST recipe]
 /u -> get all users [GET users, POST user]
 /u/:u -> get specific user [GET user, PUT user]
-/u/:u/r -> get all user recipes [GET recipes, POST user recipe]
+/u/:u/r -> get all user recipes [GET recipes]
 /u/:u/r/:r -> get specific user recipe
 
  */
 
 // get all recipes
-router.get('/recipes', function (req, res) {
-    // find all recipes not in user's recipe cloud
-    Recipe.find({}, function (err, recipes) {
-        if (err) {
-            return res.status(404).send(err)
-        }
-        else {
-            return res.status(200).send({recipes: recipes});
-        }
-    }).sort({'Date': -1});
-});
+router.route('/recipes')
+    .get((req, res) => {
+        // find all recipes not in user's recipe cloud
+        Recipe.find({}, function (err, recipes) {
+            if (err) {
+                return res.status(404).send(err)
+            }
+            else {
+                return res.status(200).send({recipes: recipes});
+            }
+        }).sort({'Date': -1});
+    })
+    .post(middleware.isLoggedIn, (req, res) => {
+        // create new recipe
+        Recipe.create(req.body.recipe, function (err, newRecipe) {
+            if (err) {
+                return res.status(404).send(err);
+            }
+            // add author info to recipe
+            newRecipe.author.id = req.user._id;
+            newRecipe.author.username = req.user.username;
+            newRecipe.created = Date.now();
+            // save recipe
+            newRecipe.save();
+            // add recipe to user
+            req.user.recipes.push(newRecipe);
+            req.user.save();
+            return res.sendStatus(200);
+        });
+    });
 
 router.route('/recipes/:recipe_id')
     .get((req, res) => {
@@ -68,56 +87,6 @@ router.route('/users/:user_id/recipes')
             }
         }).sort({ 'Date': -1 });
     })
-    // create user recipe
-    .post(middleware.isLoggedIn, (req, res) => {
-        let id = req.body.id;
-
-        Recipe.findById(id, function (err, recipe) {
-            if (err) {
-                return res.status(404).send(err);
-            } else if (!recipe) {
-                User.findById(req.user._id, function (err, user) {
-                    if (err) {
-                        return res.status(404).send(err);
-                    }
-                    else {
-                        Recipe.create(req.body.recipe, function (err, newRecipe) {
-                            if (err) {
-                                return res.status(404).send(err);
-                            }
-                            // add author info to recipe
-                            newRecipe.author.id = req.user._id;
-                            newRecipe.author.username = req.user.username;
-                            newRecipe.created = Date.now();
-                            // save recipe
-                            newRecipe.save();
-                            // add recipe to user
-                            user.recipes.push(newRecipe);
-                            user.save();
-                            console.log('created!')
-                            return res.sendStatus(200);
-                        });
-                    }
-                });
-            } else if (recipe) {
-                // update recipe here
-                let newRecipe = req.body.recipe;
-                // update ingredients
-                recipe.name = newRecipe.name;
-                recipe.url = newRecipe.url;
-                recipe.notes = newRecipe.notes;
-                recipe.image = newRecipe.image;
-                recipe.tags = newRecipe.tags;
-                recipe.ingredients.splice(0, recipe.ingredients.length);
-                newRecipe.ingredients.forEach((ingredient) => {
-                    recipe.ingredients.push(ingredient);
-                })
-                recipe.save();
-                // send recipe in response
-                return res.status(200).send(JSON.stringify({recipe: recipe}))
-            }
-        })
-    });
 
 // add recipe ingredients to grocery list
 router.post('/recipes/:recipe_id/add', function (req, res) {
