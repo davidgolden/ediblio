@@ -41,7 +41,6 @@ class BrowseRecipes extends React.Component {
           recipes={this.state.recipes}
           user={this.props.user}
           tags={this.props.tags}
-          setView={this.props.setView}
         />
       </div>
     )

@@ -1,19 +1,20 @@
 import React from 'react';
+import { Link } from "@reach/router"
 
-const NavLinks = (props) => {
+const NavLinks = () => {
   return (
     <div className='nav-div'>
       <li className="">
-          <button onClick={(e) => props.setView(e, 'browserecipes')}><i className="fas fa-search"></i></button>
+          <Link to={'/browse'}><i className="fas fa-search" /></Link>
       </li>
       <li>
-        <button onClick={(e) => props.setView(e, 'grocerylist')}><i className="fas fa-list-ul"></i></button>
+          <Link to={'/groceries'}><i className="fas fa-list-ul" /></Link>
       </li>
       <li>
-        <button onClick={(e) => props.setView(e, 'addrecipe')}><i className="fas fa-plus"></i></button>
+          <Link to={'/add'}><i className="fas fa-plus" /></Link>
       </li>
       <li className="">
-          <button onClick={(e) => props.setView(e, 'recipecloud')}><i className="fas fa-book" aria-hidden="true"></i></button>
+          <Link to={'/recipes'}><i className="fas fa-book" aria-hidden="true" /></Link>
       </li>
     </div>
   )
@@ -21,14 +22,14 @@ const NavLinks = (props) => {
 
 const LoginLinks = (props) => {
   return (
-    <form id='login-form' className="small-form" className='nav-div' onSubmit={props.handleLoginSubmit}>
+    <form id='login-form' className="small-form nav-div" onSubmit={props.handleLoginSubmit}>
     <div className='nav-div'>
       <li className="">
           <input type="email" required name="email" placeholder='Email' className='' value={props.email} onChange={(e) => props.handleEmailChange(e.target.value)}/>
       </li>
       <li className="">
           <input type="password" required name="password" placeholder='Password' className='' value={props.password} onChange={(e) => props.handlePasswordChange(e.target.value)}/>
-          <button type='button' className='forgot-password' onClick={(e) => props.setView(e, 'forgot')}>Forgot Password?</button>
+          <Link to={'/forgot'} className='forgot-password'>Forgot Password?</Link>
         </li>
       <li className=''>
           <input type='submit' value='Login' />
@@ -45,7 +46,7 @@ const LogoutLinks = (props) => {
   return (
     <div className='nav-div'>
       <li className="">
-          <button onClick={(e) => props.setView(e,'userprofile')}><i className="fas fa-user" style={iconStyle}></i> {props.user.username}</button>
+          <Link to={'/user'}><i className="fas fa-user" style={iconStyle} /> {props.user.username}</Link>
       </li>
       <li className="">
           <button className='' onClick={props.handleLogout}>Log Out</button>
@@ -105,9 +106,9 @@ class Header extends React.Component {
   render() {
     return (
       <nav className="navbar navbar-expand-lg navbar-light">
-        <a className="navbar-brand" href="/">Recipe Cloud <i className="fas fa-cloud"></i></a>
+        <a className="navbar-brand" href="/">Recipe Cloud <i className="fas fa-cloud" /></a>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon" />
         </button>
 
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
@@ -115,19 +116,18 @@ class Header extends React.Component {
 
             </ul>
             <ul className="navbar-nav navbar-right">
-              {this.props.loggedIn && <NavLinks setView={this.props.setView}/>}
+              {this.props.loggedIn && <NavLinks />}
                 {this.props.loggedIn ? (
                   <LogoutLinks
                     handleLogout={this.handleLogout}
                     user={this.props.user}
-                    setView={this.props.setView}/> ) : (
+                    /> ) : (
                       <LoginLinks
                         email={this.state.email}
                         password={this.state.password}
                         handleEmailChange={this.handleEmailChange}
                         handlePasswordChange={this.handlePasswordChange}
                         handleLoginSubmit={this.handleLoginSubmit}
-                        setView={this.props.setView}
                       />) }
             </ul>
       </div>

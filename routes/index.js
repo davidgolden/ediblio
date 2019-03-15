@@ -6,7 +6,7 @@ const express = require('express'),
     URLSafeBase64 = require('urlsafe-base64');
 
 // authenticate user
-router.get('/authenticate', function(req, res) {
+router.post('/authenticate', function(req, res) {
     if(req.isAuthenticated()) {
       return res.status( 200 ).send(JSON.stringify({ user: req.user }));
     } else {

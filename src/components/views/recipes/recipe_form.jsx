@@ -116,7 +116,6 @@ class RecipeForm extends React.Component {
       xml.onreadystatechange = () => {
         if(xml.readyState === 4 && xml.status === 200) {
           alert('Success!')
-          this.props.setView(event, 'recipecloud')
           return this.props.toggleEdit();
         }
         else if(xml.readyState === 4 && xml.status !== 200) {

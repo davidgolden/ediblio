@@ -11,16 +11,17 @@ $secondary-color: #4FA653;
     object-fit: contain;
 }
 
-input, button {
+input, a {
   border-radius: 5px;
   border: 0;
   padding: 5px 10px;
 }
 
-button, input[type=submit] {
+button, input[type=submit], a {
   background-color: transparent;
   cursor: pointer;
   color: white;
+  border: none;
 }
 
 label {
@@ -28,7 +29,7 @@ label {
 }
 
 nav {
-  input, button {
+  input, a {
     margin-left: 10px;
   }
   input[type=submit] {
@@ -36,6 +37,10 @@ nav {
   }
   svg {
     color: $otherdark;
+  }
+  a:hover {
+    color: white;
+    text-decoration: none;
   }
 }
 

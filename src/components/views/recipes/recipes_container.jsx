@@ -140,7 +140,6 @@ class RecipeContainer extends React.Component {
               <div className='show-recipe-style'>
                 <RecipeForm
                   user={this.props.user}
-                  setView={this.props.setView}
                   tags={this.props.tags}
                   recipe={this.state.recipe}
                   toggleEdit={this.toggleEdit}
