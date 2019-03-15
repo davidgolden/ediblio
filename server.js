@@ -29,7 +29,7 @@ app.use(methodOverride('_method'));
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(process.env.MONGO, { useMongoClient: true })
+mongoose.connect(process.env.MONGO)
       .then(() => console.log(`Database connected`))
       .catch(err => console.log(`Database connection error: ${err.message}`));
 
