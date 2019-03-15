@@ -1,10 +1,12 @@
-import React, {Component} from "react";
+import React from "react";
 import {Router} from "@reach/router"
 import apiStore from './stores/api_store';
 import {Provider as MobxProvider} from 'mobx-react';
 import {render} from "react-dom";
 import {Header, UserRecipes, UserProfile, GroceryList, RecipeForm, BrowseRecipes, Landing, ForgotPassword, RecipeContainer} from './registry';
-
+require('./stylesheets/base.scss');
+require('./stylesheets/bem.scss');
+require('./stylesheets/grid.scss');
 
 // class App2 extends Component {
 //     constructor(props) {

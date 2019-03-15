@@ -10,11 +10,6 @@ module.exports = {
         filename: "bundle.js",
         // publicPath: '/public/'
     },
-    // optimization: {
-    //     splitChunks: {
-    //         chunks: "all"
-    //     }
-    // },
     mode: 'development',
     module: {
         rules: [
@@ -55,7 +50,7 @@ module.exports = {
     },
     plugins: [
         // new ExtractTextPlugin({filename: 'app.css', allChunks: true}),
-        // new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin()
     ],
     devServer: {
         historyApiFallback: true,

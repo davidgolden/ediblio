@@ -1,0 +1,54 @@
+@import "../../../styles/variables";
+
+.navContainer {
+  background-color: $otherdark;
+  color: white;
+  height: 50px;
+  overflow: hidden;
+
+  a {
+    color: white;
+    text-decoration: none;
+    line-height: 50px;
+  }
+
+  a, button {
+    margin-right: 10px;
+  }
+
+
+  ul {
+    list-style: none;
+    display: inline-block;
+    float: right;
+    margin: 0;
+    line-height: 50px;
+
+    li {
+      float: left;
+
+      input, button {
+        margin-right: 10px;
+        background-color: $light;
+        padding: 5px;
+        color: $dark;
+        height: 30px;
+      }
+
+      button {
+        line-height: 30px;
+        padding: 0 10px;
+        vertical-align: middle;
+        border-radius: 10px;
+      }
+    }
+  }
+
+  .headerLink {
+    background-color: $dark;
+    color: white;
+    margin-right: 10px;
+    padding: 5px;
+    border-radius: 10px;
+  }
+}
