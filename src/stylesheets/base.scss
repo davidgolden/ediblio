@@ -24,6 +24,10 @@ button, input[type=submit], a {
   border: none;
 }
 
+input[type=submit] {
+  margin-top: 10px;
+}
+
 label {
   margin-bottom: 0;
 }
@@ -46,8 +50,8 @@ nav {
 
 .small-form {
 	input[type=text], input[type=password], input[type=email], h6 {
-		margin: 10px auto !important;
-		width: 50% !important;
+		margin: 10px 5px !important;
+		//width: 50% !important;
 	}
 	button, input[type=submit] {
 		margin: 0 auto;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from '@reach/router';
 
 const RecipeCardButtons = (props) => {
   return(
@@ -59,12 +60,12 @@ class RecipeCards extends React.Component {
   }
 
   render() {
-      const RecipeList = this.props.recipes.map((recipe, i) => {
+      const RecipeList = this.props.recipes && this.props.recipes.map((recipe, i) => {
         return (
           <div key={recipe._id} className='recipe-card'>
           <input type='hidden' name='tags' value={recipe.tags} />
           <input type='hidden' name='author' value={recipe.author.id} />
-          <button onClick={(e) => this.props.showRecipe(true, recipe)}>
+          <Link to={`/recipes/${recipe._id}`}>
             <div>
               <img src={recipe.image} className='recipe-card-image'/>
             </div>
@@ -72,7 +73,7 @@ class RecipeCards extends React.Component {
               <h3>{recipe.name}</h3>
               <p>{recipe.notes}</p>
             </div>
-          </button>
+          </Link>
           <button className='author-text' onClick={() => this.props.sortByUser(recipe.author.id)}><h6>Submitted by {recipe.author.username}</h6></button>
           <RecipeCardButtons
             recipe={recipe}

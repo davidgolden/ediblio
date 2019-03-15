@@ -1,6 +1,20 @@
 import React from 'react';
 import RecipeContainer from '../recipes/recipes_container';
 import { Link } from '@reach/router';
+import RecipeCards from "../recipes/recipe_cards";
+
+const TagFilter = (props) => {
+    const TagButtonList = props.tags.map((tag) => {
+        return <button onClick={() => props.sortByTag(tag)} className='tag btn btn-md btn-success'
+                       key={tag}>{tag}</button>
+    })
+    return (
+        <div className='text-center'>
+            <button onClick={() => props.sortByTag('all')} className='tag btn btn-md btn-success'>All</button>
+            {TagButtonList}
+        </div>
+    )
+}
 
 class UserRecipes extends React.Component {
   constructor(props) {
@@ -67,12 +81,14 @@ class UserRecipes extends React.Component {
           ) : (
           <div>
               <h1 className='text-center title'>My Recipe Cloud <i className="fas fa-cloud" /></h1>
-              <RecipeContainer
-                recipes={this.state.recipes}
-                user={this.state.user}
-                tags={this.props.tags}
-                changeUser={this.changeUser}
-              />
+              <div>
+                  <TagFilter tags={this.props.tags} sortByTag={this.sortByTag}/>
+                  <RecipeCards
+                      recipes={this.props.recipes}
+                      user={this.props.user}
+                      sortByUser={this.sortByUser}
+                  />
+              </div>
             </div>
           )
         }

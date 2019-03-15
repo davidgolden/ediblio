@@ -8,6 +8,8 @@ import BrowseRecipes from './views/recipes/browse_recipes';
 import Landing from './views/landing';
 import ForgotPassword from './views/forgot';
 import {Router} from "@reach/router"
+import ShowRecipe from "./views/recipes/show_recipe";
+import RecipeContainer from "./views/recipes/recipes_container";
 
 class App extends Component {
     constructor(props) {
@@ -82,11 +84,17 @@ class App extends Component {
                 <Router>
                     <Landing path={'/'}/>
                     <UserRecipes path={'/recipes'} user={this.state.user} tags={this.state.tags}/>
+                    <RecipeContainer path={'/recipes/:recipe_id'}
+                        // recipe={this.state.recipe}
+                        user={this.state.user}
+                        // showRecipe={this.showRecipe}
+                        // sortByUser={this.sortByUser}
+                    />
                     <GroceryList path={'/groceries'} user={this.state.user}/>
                     <RecipeForm path={'/add'} user={this.state.user} tags={this.state.tags} recipe={this.blankRecipe}
                                 view={this.state.view}/>
                     <BrowseRecipes path={'/browse'} user={this.state.user} tags={this.state.tags}/>
-                    <UserProfile path={'/user'} user={this.state.user}/>
+                    <UserProfile path={'/user/:user_id'} user={this.state.user}/>
                     <ForgotPassword path={'forgot'}/>
                 </Router>
             </React.Fragment>
