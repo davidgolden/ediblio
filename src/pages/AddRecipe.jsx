@@ -1,7 +1,8 @@
 import React from 'react';
-import RecipeInformation from '../components/views/recipes/recipe_information';
-import AddIngredients from '../components/views/recipes/add_ingredients';
+import RecipeInformation from '../components/recipes/RecipeInformation';
+import AddIngredients from '../components/recipes/AddIngredients';
 import {inject, observer} from 'mobx-react';
+import PropTypes from 'prop-types';
 
 const allTags = ['Dinner', 'Breakfast', 'Dessert', 'Quick/Easy', 'Vegetarian', 'Vegan', 'Dairy-Free', 'Gluten-Free'];
 
@@ -40,16 +41,20 @@ const AddTags = (props) => {
 inject('apiStore')
 @observer
 export default class RecipeForm extends React.Component {
+    static defaultProps = {
+        editMode: false,
+    };
+
     constructor(props) {
         super(props);
 
         this.state = {
-            name: '',
-            url: '',
-            image: '',
-            notes: '',
-            ingredients: [],
-            tags: [],
+            name: props.editMode ? props.recipe.name : '',
+            url: props.editMode ? props.recipe.url : '',
+            image: props.editMode ? props.recipe.image : '',
+            notes: props.editMode ? props.recipe.notes : '',
+            ingredients: props.editMode ? props.recipe.ingredients : [],
+            tags: props.editMode ? props.recipe.tags : [],
         };
     }
 

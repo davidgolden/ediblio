@@ -1,5 +1,5 @@
 import React from 'react';
-import AddIngredients from './add_ingredients';
+import AddIngredients from './AddIngredients';
 
 const RecipeTitle = (props) => {
     const RecipeTags = props.tags.map((tag, i) => {

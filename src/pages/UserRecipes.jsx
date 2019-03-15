@@ -30,7 +30,7 @@ export default class UserRecipes extends React.Component {
     }
 
     componentDidMount() {
-        this.props.apiStore.getUserRecipes();
+        this.props.apiStore.getUserRecipes(this.props.user_id);
     }
 
     render() {
@@ -56,7 +56,6 @@ export default class UserRecipes extends React.Component {
                     </div>
                 ) : (
                     <div>
-                        <h1 className='text-center title'>My Recipe Cloud <i className="fas fa-cloud"/></h1>
                         <div className={recipeCardsContainerClassName}>
                             {/*<TagFilter tags={this.props.tags} sortByTag={this.sortByTag}/>*/}
                             {this.props.apiStore.recipes.map(recipe => {

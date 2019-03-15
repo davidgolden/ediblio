@@ -62,7 +62,7 @@ function emailToLowerCase(req, res, next){
 //logout
 router.get('/logout', function(req, res) {
   req.logout();
-  return res.status( 200 ).json({ message: 'success' });
+  return res.status( 200 );
 });
 
 // reset password route

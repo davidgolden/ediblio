@@ -1,6 +1,6 @@
 import React from 'react';
-import AddIngredients from '../recipes/add_ingredients';
-import Menu from '../recipes/menu_list';
+import AddIngredients from '../components/recipes/AddIngredients';
+import Menu from '../components/recipes/MenuList';
 
 class GroceryList extends React.Component {
   constructor(props) {

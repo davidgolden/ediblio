@@ -58,7 +58,7 @@ router.route('/recipes/:recipe_id')
             if (err) {
                 return res.status(404).send(err);
             }
-            return recipe;
+            return res.status(200).json({recipe: recipe});
         })
     })
     .delete(middleware.checkRecipeOwnership, (req, res) => {

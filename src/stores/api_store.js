@@ -59,7 +59,7 @@ class ApiStore {
 
     @action
     userLogout = () => {
-        axios.post('/api/logout')
+        axios.get('/api/logout')
             .then(() => {
                 this.user = null;
             });
@@ -77,8 +77,8 @@ class ApiStore {
     };
 
     @action
-    getUserRecipes = () => {
-        axios.get(`/api/users/${this.user._id}/recipes`)
+    getUserRecipes = id => {
+        axios.get(`/api/users/${id}/recipes`)
             .then(response => {
                 this.recipes = response.data.recipes;
             })
@@ -86,10 +86,16 @@ class ApiStore {
 
     @action
     getRecipe = id => {
-        axios.get(`/api/recipes/${id}`)
-            .then(response => {
-                // do something
-            });
+        return new Promise((res, rej) => {
+            axios.get(`/api/recipes/${id}`)
+                .then(response => {
+                    // do something
+                    res(response.data.recipe);
+                })
+                .catch(err => {
+                    rej(err);
+                })
+        })
     };
 
     @action
@@ -123,6 +129,14 @@ class ApiStore {
         axios.post('/api/recipes', {
             recipe: recipe,
         })
+            .then(response => {
+                // do something
+            })
+    }
+
+    @action
+    deleteRecipe = id => {
+        axios.delete(`/api/recipes/${id}`)
             .then(response => {
                 // do something
             })

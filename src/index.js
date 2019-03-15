@@ -22,7 +22,6 @@ const Index = () => {
             <LocationProvider history={history}>
                 <Header />
                 <Router>
-                    {/*<Landing path={'/'}/>*/}
                     <BrowseRecipes path={'/'} />
                     <UserRecipes path={'/users/:user_id/recipes'} />
                     <RecipeContainer path={'/recipes/:recipe_id'} />
