@@ -1,0 +1,59 @@
+@import "../../styles/variables";
+
+.recipeCard {
+  color: $dark;
+  flex: 25%;
+  flex-grow: 1;
+  padding: 10px;
+  border: .5px solid $otherdark;
+  border-radius: 5px;
+  background-color: white;
+  position: relative;
+  text-align: center;
+  transition: opacity .5s ease;
+  -webkit-transition: opacity .5s ease;
+
+  &:hover {
+    color: $primary-color;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  @media(max-width: 1200px) {
+    flex-grow: 1;
+  }
+
+  &Opacity {
+    opacity: 0;
+  }
+
+  .recipeCardImage {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+  }
+
+  &Text {
+    text-align: center;
+    color: $otherdark;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+  .authorText {
+    margin-bottom: 15px;
+  }
+
+  &Buttons {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    button {
+      border-radius: 0;
+    }
+  }
+}

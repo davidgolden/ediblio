@@ -67,15 +67,15 @@ passport.deserializeUser(function(id, done) {
 
 // app.locals.tags = ['Dinner', 'Breakfast', 'Dessert', 'Quick/Easy', 'Vegetarian', 'Vegan', 'Dairy-Free', 'Gluten-Free'];
 
-app.get('*', function(req, res) {
-    res.sendFile(path.resolve(__dirname, 'public/index.html'));
-});
-
 // NEED TO IMPORT ROUTES
 // NEED TO IMPORT MIDDLEWARE
 app.use('/', indexRoutes);
 app.use('/', userRoutes);
 app.use('/', recipeRoutes);
+
+app.get('*', function(req, res) {
+    res.sendFile(path.resolve(__dirname, 'index.html'));
+});
 
 const port = process.env.PORT || 5000;
 

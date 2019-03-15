@@ -21,15 +21,14 @@ const express = require('express'),
  */
 
 // SHOW ALL RECIPES
-router.get('/recipes', middleware.isLoggedIn, function (req, res) {
-    let myRecipes = req.user.recipes;
+router.get('/recipes', function (req, res) {
     // find all recipes not in user's recipe cloud
-    Recipe.find({'_id': {$nin: myRecipes}}, function (err, recipes) {
+    Recipe.find({}, function (err, recipes) {
         if (err) {
             return res.status(404).send(err)
         }
         else {
-            return res.status(200).send({recipes: recipes, user: req.user});
+            return res.status(200).send({recipes: recipes});
         }
     }).sort({'Date': -1});
 });

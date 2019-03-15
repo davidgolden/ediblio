@@ -12,15 +12,15 @@ class ApiStore {
 
     @computed
     get isLoggedIn() {
-        return !!this.user._id;
+        return !!(this.user && this.user._id);
     }
 
     @action
     authenticate = () => {
         axios.post('/api/authenticate')
-            .then(res => {
-                let data = JSON.parse(res);
-                this.user = data.user;
+            .then(response => {
+                this.user = response.data.user;
+                // localStorage.setItem(user, data.user)
             })
             .catch(err => {
                 console.log('error! ', err);
@@ -29,32 +29,28 @@ class ApiStore {
 
     @action
     userLogin = (email, password) => {
-        let xml = new XMLHttpRequest();
-        xml.open("POST", "/api/login");
-        xml.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
-        xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-        xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-        xml.send(JSON.stringify({email: email, password: password}));
-        xml.onreadystatechange = () => {
-            if(xml.readyState === 4 && xml.status === 200) {
-                let res = JSON.parse(xml.response);
-                this.user = res.user;
-            }
-            else if(xml.readyState === 4 && xml.status !== 200) {
-                return alert(xml.response)
-            }
-        }
+        axios.post('/api/login', {
+            email: email,
+            password: password,
+        })
+            .then(response => {
+                this.user = response.data.user;
+                // localStorage.setItem('user', data.user)
+            })
+            .catch(err => {
+                console.log(err);
+            })
     };
 
     @action
     userLogout = () => {
         let xml = new XMLHttpRequest();
-        xml.open("GET", "/logout", true);
+        xml.open("GET", "/api/logout", true);
         xml.setRequestHeader('Access-Control-Allow-Headers', '*');
         xml.setRequestHeader('Access-Control-Allow-Origin', '*');
         xml.send();
         xml.onreadystatechange = () => {
-            if(xml.readyState === 4 && xml.status === 200) {
+            if (xml.readyState === 4 && xml.status === 200) {
                 this.user = {};
             }
         }
@@ -62,19 +58,12 @@ class ApiStore {
 
     @action
     getRecipes = () => {
-        let xml = new XMLHttpRequest();
-        xml.open("GET", `/recipes`, true);
-        xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-        xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-        xml.send();
-        xml.onreadystatechange = () => {
-            if (xml.readyState === 4 && xml.status === 200) {
-                let response = JSON.parse(xml.response);
-                response.forEach(recipe => {
+        axios.get('/api/recipes')
+            .then(response => {
+                response.data.recipes.forEach(recipe => {
                     this.recipes.push(recipe);
                 })
-            }
-        }
+            });
     };
 
     @action
