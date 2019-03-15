@@ -1,4 +1,3 @@
-var webpack = require('webpack');
 const path = require('path');
 
 outputFolder = 'dist/';
@@ -48,16 +47,9 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
     },
-    plugins: [
-        // new ExtractTextPlugin({filename: 'app.css', allChunks: true}),
-        new webpack.HotModuleReplacementPlugin()
-    ],
     devServer: {
         historyApiFallback: true,
-        // contentBase: './'
-        // contentBase: path.join(__dirname, 'dist'),
         compress: true,
-        // port: 9000,
         proxy: {
             '/api': {
                 target: 'http://localhost:5000',

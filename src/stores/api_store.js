@@ -1,16 +1,26 @@
 import React from 'react';
-import {action, observable, computed} from 'mobx';
+import {action, observable, computed, autorun, toJS} from 'mobx';
 import axios from 'axios';
 
 class ApiStore {
-    @observable user = {};
+    @observable user = null;
 
     constructor() {
-        let user = localStorage.getItem('user');
-        if (user) {
-            this.user = JSON.parse(user);
-        }
+        this.getUserFromStorage();
+        autorun(() => {
+            // This code will run every time any observable property on the store is updated.
+            const user = JSON.stringify(toJS(this.user));
+            localStorage.setItem('user', user);
+        });
     }
+
+    @action
+    getUserFromStorage = () => {
+        const foundUser = localStorage.getItem('user');
+        if (foundUser) {
+            this.user = foundUser;
+        }
+    };
 
     @observable recipes = [];
     @observable grocery_list = [];
@@ -41,7 +51,6 @@ class ApiStore {
         })
             .then(response => {
                 this.user = response.data.user;
-                localStorage.setItem('user', JSON.stringify(response.data.user))
             })
             .catch(err => {
                 console.log(err);
@@ -50,16 +59,10 @@ class ApiStore {
 
     @action
     userLogout = () => {
-        let xml = new XMLHttpRequest();
-        xml.open("GET", "/api/logout", true);
-        xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-        xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-        xml.send();
-        xml.onreadystatechange = () => {
-            if (xml.readyState === 4 && xml.status === 200) {
-                this.user = {};
-            }
-        }
+        axios.post('/api/logout')
+            .then(() => {
+                this.user = null;
+            });
     };
 
     @action
@@ -83,19 +86,10 @@ class ApiStore {
 
     @action
     getRecipe = id => {
-        let xml = new XMLHttpRequest();
-        xml.open("GET", `/recipes/${id}`, true);
-        xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-        xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-        xml.send();
-        xml.onreadystatechange = () => {
-            if (xml.readyState === 4 && xml.status === 200) {
-                let response = JSON.parse(xml.response);
-                response.forEach(recipe => {
-                    this.recipes.push(recipe);
-                })
-            }
-        }
+        axios.get(`/recipes/${id}`)
+            .then(response => {
+                // do something
+            });
     };
 
     @action
@@ -115,19 +109,12 @@ class ApiStore {
             recipe,
         ];
 
-        let xml = new XMLHttpRequest();
-        xml.open("PUT", `/users/${this.user.id}`, true);
-        xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-        xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-        xml.send(JSON.stringify({user_id: this.user.id, grocery_list: newGroceryList}));
-        xml.onreadystatechange = () => {
-            if (xml.readyState === 4 && xml.status === 200) {
-                let response = JSON.parse(xml.response);
-                response.forEach(recipe => {
-                    this.recipes.push(recipe);
-                })
-            }
-        }
+        axios.patch(`/users/${this.user.id}`, {
+            menu: newGroceryList,
+        })
+            .then(response => {
+                // do something
+            });
     }
 }
 
