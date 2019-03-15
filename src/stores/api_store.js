@@ -99,6 +99,16 @@ class ApiStore {
     };
 
     @action
+    patchUser = partialUserObj => {
+        axios.patch(`/api/users/${this.user._id}`, {
+            ...partialUserObj
+        })
+            .then(response => {
+                this.user = response.data.user;
+            })
+    };
+
+    @action
     addRecipeToGroceryList = recipe => {
         let newGroceryList = [
             ...this.grocery_list,

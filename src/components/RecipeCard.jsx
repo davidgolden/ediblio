@@ -13,11 +13,19 @@ export default class RecipeCard extends React.Component {
     };
 
     removeFromCloud = () => {
-
+        let currentCloud = this.props.apiStore.user.recipes;
+        currentCloud = currentCloud.filter(recipe => recipe.id !== this.props.recipe.id);
+        this.props.apiStore.patchUser({
+            recipes: currentCloud,
+        })
     };
 
     addToCloud = () => {
-
+        let currentCloud = this.props.apiStore.user.recipes;
+        currentCloud.push(this.props.recipe);
+        this.props.apiStore.patchUser({
+            recipes: currentCloud,
+        })
     };
 
     render() {

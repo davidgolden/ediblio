@@ -3,7 +3,7 @@ import {Router} from "@reach/router"
 import apiStore from './stores/api_store';
 import {Provider as MobxProvider} from 'mobx-react';
 import {render} from "react-dom";
-import {Header, UserRecipes, UserProfile, GroceryList, RecipeForm, BrowseRecipes, Landing, ForgotPassword, RecipeContainer} from './registry';
+import {Header, UserRecipes, UserSettings, GroceryList, RecipeForm, BrowseRecipes, Landing, ForgotPassword, RecipeContainer} from './registry';
 require('./stylesheets/base.scss');
 require('./stylesheets/bem.scss');
 require('./stylesheets/grid.scss');
@@ -114,7 +114,7 @@ const Index = () => {
                     <RecipeContainer path={'/recipes/:recipe_id'} />
                     <GroceryList path={'/groceries'}/>
                     <RecipeForm path={'/add'} />
-                    <UserProfile path={'/user/:user_id'}/>
+                    <UserSettings path={'/settings'}/>
                     <ForgotPassword path={'forgot'}/>
                 </Router>
             </React.Fragment>

@@ -3,7 +3,7 @@ const express = require('express'),
     User = require('../models/user'),
     Recipe = require('../models/recipe'),
     middleware = require('../middleware'),
-    ing = require('../public/js/conversions'),
+    ing = require('../src/utils/conversions'),
     urlMetadata = require('url-metadata');
 
 /*
@@ -54,11 +54,18 @@ router.route('/recipes/:recipe_id')
 router.route('/users/:user_id/recipes')
     // get all user recipes
     .get((req, res) => {
-        Recipe.find({'author.id': req.params.user_id}, (err, recipes) => {
+        Recipe.find({
+            $or: [
+                {'_id': { $in: req.user.recipes }},
+                {'author.id': req.params.user_id },
+            ]
+        }, function(err, recipes) {
             if (err) {
                 return res.status(404).send(err)
             }
-            return res.status(200).send({ recipes: recipes });
+            else {
+                return res.status(200).send({ recipes: recipes });
+            }
         }).sort({ 'Date': -1 });
     })
     // create user recipe
@@ -111,46 +118,6 @@ router.route('/users/:user_id/recipes')
             }
         })
     });
-
-// UPDATE user
-router.put('/users/:user_id', middleware.isLoggedIn, function (req, res) {
-    let recipe = req.body.recipe;
-    User.findById(req.user._id, function (err, user) {
-        if (err) {
-            return res.status(404).send(err)
-        }
-        let has = false;
-        for (let i = 0; i < user.recipes.length; i++) {
-            if (recipe._id.toString() === user.recipes[i].toString()) {
-                has = true;
-            }
-        }
-        if (has === false) {
-            user.recipes.push(recipe);
-            user.save();
-            return res.status(200).send('Recipe added!')
-        }
-    });
-});
-
-// AJAX Remove (not delete) Recipe Route
-router.post('/recipes/remove', function (req, res) {
-    var recipe = req.body.recipe;
-    User.findById(req.user._id, function (err, user) {
-        if (err) {
-            return res.status(404).send(err)
-        }
-
-        for (var i = 0; i < user.recipes.length; i++) {
-            if (user.recipes[i].toString() === recipe._id.toString()) {
-                user.recipes.splice(i, 1);
-                user.save();
-                return res.status(200).send('Recipe added!')
-            }
-        }
-    });
-});
-
 
 // add recipe ingredients to grocery list
 router.post('/recipes/:recipe_id/add', function (req, res) {

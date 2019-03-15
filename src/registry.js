@@ -1,6 +1,6 @@
 import Header from './components/header/header';
 import UserRecipes from './pages/UserRecipes';
-import UserProfile from './components/views/users/user_profile';
+import UserSettings from './pages/UserSettings';
 import GroceryList from './components/views/users/user_grocery_list';
 import RecipeForm from './components/views/recipes/recipe_form';
 import BrowseRecipes from './pages/BrowseRecipes';
@@ -10,7 +10,7 @@ import RecipeContainer from "./components/views/recipes/recipes_container";
 
 export {
     Header,
-    UserProfile,
+    UserSettings,
     UserRecipes,
     GroceryList,
     RecipeForm,

@@ -66,7 +66,7 @@ export default class Header extends React.Component {
                     </React.Fragment>}
                     {this.props.apiStore.isLoggedIn ? (<React.Fragment>
                         <li>
-                            <Link to={'/user'} className={headerLinkClassName}><i
+                            <Link to={'/settings'} className={headerLinkClassName}><i
                                 className="fas fa-user"/> {this.props.apiStore.user.username}
                             </Link>
                         </li>
