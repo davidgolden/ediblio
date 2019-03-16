@@ -1,15 +1,21 @@
 import React from 'react';
 import {recipeTags} from "../../stores/Setings";
+import styles from './styles/TagFilterBar.scss';
+import classNames from 'classnames';
+import Button from "../utilities/buttons/Button";
 
 const TagFilterBar = props => {
-    const TagButtonList = recipeTags.map((tag) => {
-        return <button onClick={() => props.sortByTag(tag)} className='tag btn btn-md btn-success'
-                       key={tag}>{tag}</button>
+    const tagsContainerClassName = classNames({
+        [styles.tagsContainer]: true,
     });
+
     return (
-        <div className='text-center'>
-            <button onClick={() => props.sortByTag('all')} className='tag btn btn-md btn-success'>All</button>
-            {TagButtonList}
+        <div className={tagsContainerClassName}>
+            <Button onClick={() => props.sortByTag('all')}>All</Button>
+            {recipeTags.map(tag => {
+                return <Button onClick={() => props.sortByTag(tag)}
+                               key={tag}>{tag}</Button>
+            })}
         </div>
     )
 };
