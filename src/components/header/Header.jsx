@@ -15,11 +15,11 @@ export default class Header extends React.Component {
         }
     }
 
-    handleEmailChange = (email) => {
-        this.setState({email: email});
+    handleEmailChange = e => {
+        this.setState({email: e.target.value});
     };
-    handlePasswordChange = (password) => {
-        this.setState({password: password});
+    handlePasswordChange = e => {
+        this.setState({password: e.target.value});
     };
 
     handleLoginSubmit = () => {
@@ -77,13 +77,13 @@ export default class Header extends React.Component {
                         <li>
                             <input type="email" name="email" placeholder='Email' className=''
                                    value={this.state.email}
-                                   onChange={(e) => this.handleEmailChange(e.target.value)}/>
+                                   onChange={this.handleEmailChange}/>
                         </li>
                         <li>
                             <input type="password" name="password" placeholder='Password'
                                    className=''
                                    value={this.state.password}
-                                   onChange={(e) => this.handlePasswordChange(e.target.value)}/>
+                                   onChange={this.handlePasswordChange}/>
                         </li>
                         <li>
                             <button onClick={this.handleLoginSubmit} value='Login'>Login</button>

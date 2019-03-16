@@ -86,75 +86,7 @@ router.route('/users/:user_id/recipes')
                 return res.status(200).send({ recipes: recipes });
             }
         }).sort({ 'Date': -1 });
-    })
-
-// add recipe ingredients to grocery list
-router.post('/recipes/:recipe_id/add', function (req, res) {
-    let ingredients = req.body.ingredients;
-    let recipe = req.params.recipe_id;
-
-    User.findById(req.user._id, function (err, user) {
-        if (err) {
-            return res.status(404).send(err)
-        }
-
-        user.menu.splice(user.menu.length, 0, recipe);
-        // user.menu.push(recipe);
-        user.save();
-
-        var currentListItems = user.groceryList.map((item) => {
-            return item.name;
-        })
-
-        function onCurrentList(ingredient) {
-            function equalsPossibleForm(item) {
-                if (item === ingredient || item === ingredient + 's' || item === ingredient + 'es' || item === ingredient.slice(0, -1) || item === ingredient.slice(0, -2)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            let i = currentListItems.findIndex(equalsPossibleForm)
-            return i;
-        }
-
-        // for each item on ingredient list
-        ingredients.forEach((ingredient) => {
-            if (ingredient.quantity === null || ingredient.name === '') {
-                console.log('returning')
-                return;
-            } else {
-                console.log('adding ingredient')
-                if (onCurrentList(ingredient.name) >= 0) {
-                    let i = onCurrentList(ingredient.name);
-                    let m = user.groceryList[i].measurement;
-                    let q = user.groceryList[i].quantity;
-                    // check if item can be added
-                    if (ing.canBeAdded(m, ingredient.measurement) === true) {
-                        // if it can be added, add it
-                        let newQM = ing.add(q, m, Number(ingredient.quantity), ingredient.measurement);
-                        user.groceryList[i].quantity = newQM.quantity;
-                        user.groceryList[i].measurement = newQM.measurement;
-                        return user.save();
-                    } else {
-                        // if it can't be added, push it to grocery list
-                        user.groceryList.splice(user.groceryList.length, 0, ingredient);
-                        // user.groceryList.push(ingredient);
-                        return user.save();
-                    }
-                } else {
-                    // here if ingredient is not on current list
-                    user.groceryList.splice(user.groceryList.length, 0, ingredient);
-                    // user.groceryList.push(ingredient);
-                    return user.save();
-                }
-            }
-        })
-        return res.status(200).send({message: 'Added recipe!'})
-    })
-
-});
+    });
 
 
 module.exports = router;

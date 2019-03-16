@@ -1,0 +1,17 @@
+@import "../../../styles/variables";
+
+.ingredientsContainer {
+  h3 {
+    display: inline-block;
+  }
+
+  button {
+    color: $dark !important;
+    cursor: pointer;
+    padding: 10px;
+
+    &:hover {
+      color: $other !important;
+    }
+  }
+}

@@ -5,7 +5,7 @@ import {inject, observer} from 'mobx-react';
 @observer
 export default class UserSettings extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             username: props.apiStore.user ? props.apiStore.user.username : '',

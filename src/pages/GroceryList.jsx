@@ -66,20 +66,20 @@ class GroceryList extends React.Component {
     }
   }
 
-  componentWillMount() {
-    let xml = new XMLHttpRequest();
-    xml.open("GET", '/grocery-list', true);
-    xml.setRequestHeader("Content-Type", "application/json");
-    xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-    xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-    xml.send(JSON.stringify({user: this.props.user}));
-    xml.onreadystatechange = () => {
-      if(xml.readyState === 4 && xml.status === 200) {
-        let response = JSON.parse(xml.response);
-        this.setState({ingredients: response.groceryList, menu: response.menu})
-      }
-  }
-}
+//   componentWillMount() {
+//     let xml = new XMLHttpRequest();
+//     xml.open("GET", '/grocery-list', true);
+//     xml.setRequestHeader("Content-Type", "application/json");
+//     xml.setRequestHeader('Access-Control-Allow-Headers', '*');
+//     xml.setRequestHeader('Access-Control-Allow-Origin', '*');
+//     xml.send(JSON.stringify({user: this.props.user}));
+//     xml.onreadystatechange = () => {
+//       if(xml.readyState === 4 && xml.status === 200) {
+//         let response = JSON.parse(xml.response);
+//         this.setState({ingredients: response.groceryList, menu: response.menu})
+//       }
+//   }
+// }
 
   render() {
     return (

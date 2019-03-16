@@ -1,0 +1,18 @@
+@import "../../../../styles/variables";
+
+.button {
+  outline: 0;
+  border: none;
+  transition: all .25s ease;
+  cursor: pointer;
+}
+
+.removeButton {
+  background-color: $primary-color;
+  color: white;
+}
+
+.addButton {
+  background-color: $otherdark;
+  color: white;
+}
