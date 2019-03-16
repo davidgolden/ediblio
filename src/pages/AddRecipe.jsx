@@ -5,15 +5,21 @@ import {inject, observer} from 'mobx-react';
 import PropTypes from 'prop-types';
 import Button from "../components/utilities/buttons/Button";
 import {recipeTags} from "../stores/Setings";
+import styles from './styles/AddRecipe.scss';
+import classNames from 'classnames';
 
 const AddTags = (props) => {
+    const tagClassName = classNames({
+        [styles.tag]: true,
+    });
+
     const TagList = recipeTags.map((tag, i) => {
         let check = false;
         if (props.selectedTags.includes(tag)) {
             check = true;
         }
         return (
-            <div className='tag' key={i}>
+            <div className={tagClassName} key={i}>
                 <label className="form-check-label">
                     <input
                         checked={check}
@@ -113,9 +119,13 @@ export default class RecipeForm extends React.Component {
     };
 
     render() {
+        const recipeFormClassName = classNames({
+            [styles.recipeForm]: true,
+        }) ;
+
         return (
-            <form>
-                {this.props.view === 'addrecipe' && <h1 className='text-center title'>Submit a Recipe</h1>}
+            <div className={recipeFormClassName}>
+                <h2>Submit a Recipe</h2>
                 <RecipeInformation
                     name={this.state.name}
                     url={this.state.url}
@@ -137,7 +147,7 @@ export default class RecipeForm extends React.Component {
                     {this.props.apiStore.isLoggedIn ? <Button onClick={this.handleSubmit}>Submit!</Button> :
                         <p>You must be logged in to add a recipe!</p>}
                 </div>
-            </form>
+            </div>
         )
     }
 }

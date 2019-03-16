@@ -1,0 +1,23 @@
+@import "../../styles/variables";
+
+.recipeContainer {
+
+}
+
+.recipeEditButtons {
+  text-align: center;
+  margin-top: 20px;
+
+  button {
+    background-color: $dark;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-left: 10px;
+    font-size: 1.2rem;
+
+    &:hover {
+      background-color: $other;
+    }
+  }
+}

@@ -3,6 +3,11 @@ import RecipeForm from './AddRecipe';
 import ShowRecipe from '../components/recipes/ShowRecipe';
 import {inject, observer} from 'mobx-react';
 import {addIngredient, canBeAdded} from "../utils/conversions";
+import styles from './styles/RecipeContainer.scss';
+import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import Button from "../components/utilities/buttons/Button";
 
 @inject('apiStore')
 @observer
@@ -14,65 +19,7 @@ export default class RecipeContainer extends React.Component {
             edit: false,
             recipe: null,
         };
-
-        // this.sortByTag = (tag) => {
-        //     // event.preventDefault();
-        //     let allRecipes = Array.from(document.getElementsByName('tags'));
-        //     let unmatchedRecipes = allRecipes.filter(recipe => recipe.value.includes(tag) === false);
-        //     let matchedRecipes = allRecipes.filter(recipe => recipe.value.includes(tag) === true);
-        //
-        //     if (tag === 'all') {
-        //         allRecipes.forEach(recipe => {
-        //             recipe.parentElement.style.display = 'inline-block';
-        //
-        //             setTimeout(function () {
-        //                 recipe.parentElement.style.opacity = '1';
-        //             }, 500);
-        //         });
-        //
-        //     } else {
-        //         unmatchedRecipes.forEach(recipe => {
-        //             recipe.parentElement.style.opacity = '0';
-        //             setTimeout(function () {
-        //                 recipe.parentElement.style.display = 'none';
-        //             }, 500);
-        //         });
-        //
-        //         matchedRecipes.forEach(recipe => {
-        //             recipe.parentElement.style.display = 'inline-block';
-        //
-        //             setTimeout(function () {
-        //                 recipe.parentElement.style.opacity = '1';
-        //             }, 500);
-        //         });
-        //     }
-        //     ;
-        // }
     }
-
-    // sortByUser = (user) => {
-    //     // event.preventDefault();
-    //     this.setState({show: false}, function () {
-    //         let allRecipes = Array.from(document.getElementsByName('author'));
-    //         let unmatchedRecipes = allRecipes.filter(recipe => recipe.value.includes(user) === false);
-    //         let matchedRecipes = allRecipes.filter(recipe => recipe.value.includes(user) === true);
-    //
-    //         unmatchedRecipes.forEach(recipe => {
-    //             recipe.parentElement.style.opacity = '0';
-    //             setTimeout(function () {
-    //                 recipe.parentElement.style.display = 'none';
-    //             }, 500);
-    //         });
-    //
-    //         matchedRecipes.forEach(recipe => {
-    //             recipe.parentElement.style.display = 'inline-block';
-    //
-    //             setTimeout(function () {
-    //                 recipe.parentElement.style.opacity = '1';
-    //             }, 500);
-    //         });
-    //     })
-    // }
 
     addToGroceryList = () => {
         // add current recipe to menu
@@ -180,46 +127,48 @@ export default class RecipeContainer extends React.Component {
     };
 
     render() {
+        const recipeContainerClassName = classNames({
+            [styles.recipeContainer]: true,
+        });
+        const recipeEditButtonsClassName = classNames({
+            [styles.recipeEditButtons]: true,
+        });
+
         return (
-            <div>
-                <div className='show-recipe-state'>
-                    {this.state.recipe && this.props.apiStore.isLoggedIn && this.state.recipe.author.id === this.props.apiStore.userId && (
-                        <div className='form-group edit'>
-                            <button className='btn btn-primary btn-md' onClick={this.toggleEdit}>
-                                {this.state.edit === false ? (
-                                    <React.Fragment>
-                                        <i className="fas fa-edit"/> Edit</React.Fragment>) : (
-                                    <React.Fragment>
-                                        <i className="fas fa-search"/> View
-                                    </React.Fragment>)
-                                }
-                            </button>
-                            <button className='btn btn-primary btn-md' onClick={this.deleteRecipe}><i
-                                className="fas fa-trash-alt"/> Delete Recipe
-                            </button>
-                        </div>
-                    )}
-                    {this.state.edit === true ? (
-                        <div className='show-recipe-style'>
-                            <RecipeForm
-                                user={this.props.user}
-                                tags={this.props.tags}
-                                recipe={this.state.recipe}
-                                toggleEdit={this.toggleEdit}
-                            />
-                        </div>
-                    ) : (
-                        <ShowRecipe
-                            recipe={this.state.recipe}
-                            addToGroceryList={this.addToGroceryList}
-                            handleDeleteIngredient={this.handleDeleteIngredient}
-                            handleAddIngredient={this.handleAddIngredient}
-                            handleUpdateIngredient={this.handleUpdateIngredient}
-                            showRecipe={this.showRecipe}
-                            sortByUser={this.sortByUser}
-                        />
-                    )}
-                </div>
+            <div className={recipeContainerClassName}>
+                {this.state.recipe && this.props.apiStore.isLoggedIn && this.state.recipe.author.id === this.props.apiStore.user._id && (
+                    <div className={recipeEditButtonsClassName}>
+                        <Button onClick={this.toggleEdit}>
+                            {this.state.edit === false ? (
+                                <React.Fragment>
+                                    <FontAwesomeIcon icon={faEdit}/> Edit</React.Fragment>) : (
+                                <React.Fragment>
+                                    <FontAwesomeIcon icon={faSearch}/> View
+                                </React.Fragment>)
+                            }
+                        </Button>
+                        <Button onClick={this.deleteRecipe}>
+                            <FontAwesomeIcon icon={faTrashAlt}/> Delete Recipe
+                        </Button>
+                    </div>
+                )}
+                {this.state.edit === true ? (
+                    <RecipeForm
+                        user={this.props.user}
+                        tags={this.props.tags}
+                        recipe={this.state.recipe}
+                        toggleEdit={this.toggleEdit}
+                        editMode={this.state.edit}
+                    />
+                ) : (
+                    <ShowRecipe
+                        recipe={this.state.recipe}
+                        addToGroceryList={this.addToGroceryList}
+                        handleDeleteIngredient={this.handleDeleteIngredient}
+                        handleAddIngredient={this.handleAddIngredient}
+                        handleUpdateIngredient={this.handleUpdateIngredient}
+                    />
+                )}
             </div>
         )
     }

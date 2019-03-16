@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import styles from './styles/RecipeInformation.scss';
+import classNames from 'classnames';
 
 const ImageLoader = (props) => {
     if (props.loadState === 'empty') {
@@ -64,13 +66,16 @@ export default class RecipeInformation extends React.Component {
             return this.setState({loadState: 'empty'})
         } else {
             window.setTimeout(this.scrapeImage(e.target.value), 2000);
-            // this.scrapeImage(link)
         }
     };
 
     render() {
+        const recipeInformationClassName = classNames({
+            [styles.recipeInformation]: true,
+        });
+
         return (
-            <div>
+            <div className={recipeInformationClassName}>
                 <h3>Recipe Information</h3>
                 <label htmlFor='name'>Recipe Name</label>
                 <input type='text' required name='name' value={this.props.name} className='form-control'

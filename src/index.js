@@ -4,7 +4,6 @@ import {Provider as MobxProvider} from 'mobx-react';
 import {render} from "react-dom";
 import {Header, UserRecipes, UserSettings, GroceryList, AddRecipe, BrowseRecipes, Landing, ForgotPassword, RecipeContainer} from './registry';
 require('./stylesheets/base.scss');
-require('./stylesheets/grid.scss');
 import {
     createHistory,
     LocationProvider,

@@ -1,0 +1,33 @@
+@import "../../styles/variables";
+
+.recipeForm {
+  margin: 1rem auto;
+  width: 600px;
+  max-width: 90%;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid $dark;
+
+  > div:last-of-type {
+    button {
+      background-color: $other;
+      color: white;
+      padding: 10px;
+      font-size: 1.2rem;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+  }
+}
+
+.tag {
+  background-color: $otherdark;
+  color: white;
+  padding: 10px;
+  display: inline-block;
+  margin: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}

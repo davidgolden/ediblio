@@ -1,0 +1,30 @@
+@import "../../../styles/variables";
+
+.recipeInformation {
+  margin: 1rem 0;
+  color: $dark;
+
+  h3 {
+    margin-bottom: 1rem;
+  }
+
+  label {
+    font-size: 1.5rem;
+    display: block;
+  }
+
+  input, textarea {
+    border: 1px solid $dark;
+    color: $dark;
+    padding: 5px 10px;
+    width: 400px;
+    margin-bottom: 10px;
+    max-width: 90%;
+    border-radius: 5px;
+    font-size: 1.2rem;
+  }
+
+  textarea {
+    height: 130px;
+  }
+}

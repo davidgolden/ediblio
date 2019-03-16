@@ -27,7 +27,7 @@ const AddIngredients = (props) => {
     return (
         <div className={ingredientsContainerClassName}>
             <h3>Ingredient List</h3>
-            <button className={addIngredientButtonClassName} onClick={(event) => props.handleAddIngredient(event)}>+
+            <button className={addIngredientButtonClassName} onClick={props.handleAddIngredient}>+
                 ingredient
             </button>
             {IngredientList}
