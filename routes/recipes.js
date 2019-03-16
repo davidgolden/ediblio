@@ -74,23 +74,23 @@ router.route('/recipes/:recipe_id')
         });
     });
 
-router.route('/users/:user_id/recipes')
-// get all user recipes
-    .get((req, res) => {
-        Recipe.find({
-            $or: [
-                {'_id': {$in: req.user.recipes}},
-                {'author.id': req.params.user_id},
-            ]
-        }, function (err, recipes) {
-            if (err) {
-                return res.status(404).send(err)
-            }
-            else {
-                return res.status(200).send({recipes: recipes});
-            }
-        }).sort({'Date': -1});
-    });
+// router.route('/users/:user_id/recipes')
+// // get all user recipes
+//     .get((req, res) => {
+//         Recipe.find({
+//             $or: [
+//                 {'_id': {$in: req.user.recipes}},
+//                 {'author.id': req.params.user_id},
+//             ]
+//         }, function (err, recipes) {
+//             if (err) {
+//                 return res.status(404).send(err)
+//             }
+//             else {
+//                 return res.status(200).send({recipes: recipes});
+//             }
+//         }).sort({'Date': -1});
+//     });
 
 
 module.exports = router;

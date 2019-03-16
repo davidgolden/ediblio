@@ -5,48 +5,51 @@ $dark: #1A2D42;
 $primary-color: #A6373D;
 $secondary-color: #4FA653;
 
-#recipeImage {
-    width: 100%;
-    height: 160px;
-    object-fit: contain;
+html, body {
+  font-family: 'Markazi Text', serif;
 }
 
-input, a {
-  border-radius: 5px;
-  border: 0;
-  padding: 5px 10px;
+body {
+  margin: 0;
 }
 
-button, input[type=submit], a {
-  background-color: transparent;
-  cursor: pointer;
-  color: white;
-  border: none;
-}
 
-input[type=submit] {
-  margin-top: 10px;
-}
-
-label {
-  margin-bottom: 0;
-}
-
-nav {
-  input, a {
-    margin-left: 10px;
-  }
-  input[type=submit] {
-    background-color: $otherdark;
-  }
-  svg {
-    color: $otherdark;
-  }
-  a:hover {
-    color: white;
-    text-decoration: none;
-  }
-}
+//input, a {
+//  border-radius: 5px;
+//  border: 0;
+//  padding: 5px 10px;
+//}
+//
+//button, input[type=submit], a {
+//  background-color: transparent;
+//  cursor: pointer;
+//  color: white;
+//  border: none;
+//}
+//
+//input[type=submit] {
+//  margin-top: 10px;
+//}
+//
+//label {
+//  margin-bottom: 0;
+//}
+//
+//nav {
+//  input, a {
+//    margin-left: 10px;
+//  }
+//  input[type=submit] {
+//    background-color: $otherdark;
+//  }
+//  svg {
+//    color: $otherdark;
+//  }
+//  a:hover {
+//    color: white;
+//    text-decoration: none;
+//  }
+//}
 
 .small-form {
 	input[type=text], input[type=password], input[type=email], h6 {

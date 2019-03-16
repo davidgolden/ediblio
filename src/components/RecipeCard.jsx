@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from "@reach/router";
+import {Link, navigate} from "@reach/router";
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import classNames from 'classnames';
@@ -7,6 +7,7 @@ import styles from './styles/RecipeCard.scss';
 import RemoveButton from "./utilities/buttons/RemoveButton";
 import InCloudButton from "./utilities/buttons/InCloudButton";
 import AddButton from "./utilities/buttons/AddButton";
+import Button from "./utilities/buttons/Button";
 
 @inject('apiStore')
 @observer
@@ -43,9 +44,6 @@ export default class RecipeCard extends React.Component {
         const recipeCardTextClassName = classNames({
             [styles.recipeCardText]: true,
         });
-        const authorTextClassName = classNames({
-            [styles.authorText]: true,
-        });
         const recipeCardButtonClassName = classNames({
             [styles.recipeCardButtons]: true,
         });
@@ -65,23 +63,17 @@ export default class RecipeCard extends React.Component {
         }
 
         return (
-            <div key={recipe._id} className={recipeCardClassName}>
-                {/*<input type='hidden' name='tags' value={recipe.tags} />*/}
-                {/*<input type='hidden' name='author' value={recipe.author.id} />*/}
-                <Link to={`/recipes/${recipe._id}`}>
+            <Link to={`/recipes/${recipe._id}`} className={recipeCardClassName}>
                     <div>
                         <img src={recipe.image} className={recipeCardImageClassName}/>
                     </div>
                     <div className={recipeCardTextClassName}>
                         <h3>{recipe.name}</h3>
-                        <p>{recipe.notes}</p>
                     </div>
-                </Link>
-                <button className={authorTextClassName} onClick={() => this.props.sortByUser(recipe.author.id)}><h6>Submitted by {recipe.author.username}</h6></button>
                 <div className={recipeCardButtonClassName}>
                     {buttons.map(item => item)}
                 </div>
-            </div>
+            </Link>
         )
     }
 }
