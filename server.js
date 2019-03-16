@@ -70,8 +70,9 @@ app.use('/', indexRoutes);
 app.use('/', userRoutes);
 app.use('/', recipeRoutes);
 
+app.use(express.static(path.join(__dirname, "client")))
 app.get('*', function(req, res) {
-    res.sendFile(path.resolve(__dirname, 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'client', 'index.html'));
 });
 
 const port = process.env.PORT || 5000;

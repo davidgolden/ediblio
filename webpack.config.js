@@ -1,9 +1,10 @@
 const path = require('path');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-outputFolder = 'dist/';
+outputFolder = 'client/dist/';
 
 module.exports = {
-    entry: "./src/index.js",
+    entry: "./client/src/index.js",
     output: {
         path: path.resolve(__dirname, outputFolder),
         filename: "bundle.js",
@@ -47,6 +48,12 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
     },
+    plugins: [
+        // new HtmlWebpackPlugin({
+        //     template: './index.html',
+        //     // favicon: './public/favicon.ico'
+        // }),
+    ]
     // devServer: {
     //     historyApiFallback: true,
     //     compress: true,
