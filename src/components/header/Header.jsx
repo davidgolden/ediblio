@@ -3,6 +3,9 @@ import {Link} from "@reach/router"
 import {inject, observer} from 'mobx-react';
 import classNames from 'classnames';
 import styles from './styles/Header.scss';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faCloud, faSearch, faListUl, faPlus, faBook, faUser } from '@fortawesome/free-solid-svg-icons';
+import Button from "../utilities/buttons/Button";
 
 @inject('apiStore')
 @observer
@@ -41,37 +44,50 @@ export default class Header extends React.Component {
         const headerLinkClassName = classNames({
             [styles.headerLink]: true,
         });
+        const userLinkClassName = classNames({
+            [styles.userLink]: true,
+        });
+        const logoutClassName = classNames({
+            [styles.logout]: true,
+        });
 
         return (
             <nav className={navContainerClassName}>
-                <a href="/">Recipe Cloud <i className="fas fa-cloud"/></a>
+                <h1>
+                    <a href="/">Recipe Cloud <FontAwesomeIcon icon={faCloud}/></a>
+                </h1>
 
                 <ul>
                     {this.props.apiStore.isLoggedIn && <React.Fragment>
                         <li>
-                            <Link to={'/'} className={headerLinkClassName}><i
-                                className="fas fa-search"/></Link>
-                        </li>
-                        <li>
-                            <Link to={'/groceries'} className={headerLinkClassName}><i
-                                className="fas fa-list-ul"/></Link>
-                        </li>
-                        <li>
-                            <Link to={'/add'} className={headerLinkClassName}><i className="fas fa-plus"/></Link>
-                        </li>
-                        <li>
-                            <Link to={`/users/${this.props.apiStore.user._id}/recipes`} className={headerLinkClassName}><i className="fas fa-book"
-                                                                                     aria-hidden="true"/></Link>
-                        </li>
-                    </React.Fragment>}
-                    {this.props.apiStore.isLoggedIn ? (<React.Fragment>
-                        <li>
-                            <Link to={'/settings'} className={headerLinkClassName}><i
-                                className="fas fa-user"/> {this.props.apiStore.user.username}
+                            <Link to={'/'} className={headerLinkClassName}>
+                                <FontAwesomeIcon icon={faSearch}/>
                             </Link>
                         </li>
                         <li>
-                            <button onClick={this.handleLogout}>Log Out</button>
+                            <Link to={'/groceries'} className={headerLinkClassName}>
+                                <FontAwesomeIcon icon={faListUl}/>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to={'/add'} className={headerLinkClassName}>
+                                <FontAwesomeIcon icon={faPlus}/>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to={`/users/${this.props.apiStore.user._id}/recipes`} className={headerLinkClassName}>
+                                <FontAwesomeIcon icon={faBook}/>
+                            </Link>
+                        </li>
+                    </React.Fragment>}
+                    {this.props.apiStore.isLoggedIn ? (<React.Fragment>
+                        <li className={userLinkClassName}>
+                            <Link to={'/settings'}>
+                                <FontAwesomeIcon icon={faUser}/> <span>{this.props.apiStore.user.username}</span>
+                            </Link>
+                        </li>
+                        <li className={logoutClassName}>
+                            <Button onClick={this.handleLogout}>Log Out</Button>
                         </li>
                     </React.Fragment>) : (<React.Fragment>
                         <li>
@@ -81,14 +97,13 @@ export default class Header extends React.Component {
                         </li>
                         <li>
                             <input type="password" name="password" placeholder='Password'
-                                   className=''
                                    value={this.state.password}
                                    onChange={this.handlePasswordChange}/>
                         </li>
-                        <li>
-                            <button onClick={this.handleLoginSubmit} value='Login'>Login</button>
+                        <li className={logoutClassName}>
+                            <Button onClick={this.handleLoginSubmit} value='Login'>Login</Button>
                         </li>
-                        <li>
+                        <li className={userLinkClassName}>
                             <Link to={'/forgot'}>Forgot Password?</Link>
                             <Link to={'/register'}>Register</Link>
                         </li>

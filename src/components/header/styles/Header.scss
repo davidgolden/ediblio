@@ -1,7 +1,7 @@
 @import "../../../styles/variables";
 
 .navContainer {
-  background-color: $otherdark;
+  background-color: $other;
   color: white;
   height: 50px;
   overflow: hidden;
@@ -9,16 +9,25 @@
   top: 0;
   z-index: 1;
 
-  a {
-    color: white;
-    text-decoration: none;
-    line-height: 50px;
+  h1 {
+    display: inline;
+    margin-left: 1.5rem;
+
+    a {
+      color: white;
+      text-decoration: none;
+      line-height: 50px;
+    }
+
+    span {
+      font-size: 2rem;
+    }
   }
 
   a, button {
     margin-right: 10px;
+    background-color: inherit;
   }
-
 
   ul {
     list-style: none;
@@ -32,9 +41,7 @@
 
       input, button {
         margin-right: 10px;
-        background-color: $light;
         padding: 5px;
-        color: $dark;
         height: 30px;
       }
 
@@ -48,10 +55,16 @@
   }
 
   .headerLink {
-    background-color: $dark;
-    color: white;
+    color: $otherdark;
     margin-right: 10px;
     padding: 5px;
     border-radius: 10px;
+  }
+}
+
+.userLink, .logout {
+  a, button, span {
+    color: white;
+    font-size: 1.2rem;
   }
 }
