@@ -47,14 +47,14 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
     },
-    devServer: {
-        historyApiFallback: true,
-        compress: true,
-        proxy: {
-            '/api': {
-                target: 'http://localhost:5000',
-                pathRewrite: {'^/api': ''},
-            }
-        }
-    }
+    // devServer: {
+    //     historyApiFallback: true,
+    //     compress: true,
+    //     proxy: {
+    //         '/api': {
+    //             target: 'http://localhost:5000',
+    //             pathRewrite: {'^/api': ''},
+    //         }
+    //     }
+    // }
 };

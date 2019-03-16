@@ -6,16 +6,17 @@
   "engines": {
     "node": ">=7.5.0"
   },
+  "proxy": "http://localhost:5000",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server --hot --inline",
     "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start:client": "webpack && webpack-dev-server",
     "start:server": "node server.js",
     "client-install": "npm install --prefix client",
-    "start": "node server.js",
-    "server": "nodemon server.js",
-    "client": "npm start --prefix client"
+    "start": "node index.js",
+    "server": "node server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "David Golden",
   "license": "ISC",
@@ -28,6 +29,7 @@
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",
     "classnames": "^2.2.6",
+    "concurrently": "^4.1.0",
     "css-loader": "^0.28.7",
     "css-modules": "^0.3.0",
     "dotenv": "^5.0.0",

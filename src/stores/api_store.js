@@ -33,7 +33,7 @@ class ApiStore {
 
     @action
     authenticate = () => {
-        axios.post('/api/authenticate')
+        axios.post('/authenticate')
             .then(response => {
                 this.user = response.data.user;
                 localStorage.setItem('user', JSON.stringify(response.data.user))
@@ -45,7 +45,7 @@ class ApiStore {
 
     @action
     userLogin = (email, password) => {
-        axios.post('/api/login', {
+        axios.post('/login', {
             email: email,
             password: password,
         })
@@ -59,7 +59,7 @@ class ApiStore {
 
     @action
     userLogout = () => {
-        axios.get('/api/logout')
+        axios.get('/logout')
             .then(() => {
                 this.user = null;
             });
@@ -67,7 +67,7 @@ class ApiStore {
 
     @action
     getRecipes = params => {
-        axios.get('/api/recipes', {
+        axios.get('/recipes', {
             params: params,
         })
             .then(response => {
@@ -78,7 +78,7 @@ class ApiStore {
     @action
     getRecipe = id => {
         return new Promise((res, rej) => {
-            axios.get(`/api/recipes/${id}`)
+            axios.get(`/recipes/${id}`)
                 .then(response => {
                     // do something
                     res(response.data.recipe);
@@ -91,7 +91,7 @@ class ApiStore {
 
     @action
     patchUser = partialUserObj => {
-        axios.patch(`/api/users/${this.user._id}`, {
+        axios.patch(`/users/${this.user._id}`, {
             ...partialUserObj
         })
             .then(response => {
@@ -103,7 +103,7 @@ class ApiStore {
     @action
     getUserLists = id => {
         return new Promise((res, rej) => {
-            axios.get(`/api/users/${id}/list`)
+            axios.get(`/users/${id}/list`)
                 .then(response => {
                     res(response.data);
                 })
@@ -116,7 +116,7 @@ class ApiStore {
     @action
     getUser = id => {
         return new Promise((res, rej) => {
-            axios.get(`/api/users/${id}`)
+            axios.get(`/users/${id}`)
                 .then(response => {
                     this.user = response.data.user;
                     res(response.data.user);
@@ -134,7 +134,7 @@ class ApiStore {
             recipe,
         ];
 
-        axios.patch(`/api/users/${this.user.id}`, {
+        axios.patch(`/users/${this.user.id}`, {
             menu: newGroceryList,
         })
             .then(response => {
@@ -144,7 +144,7 @@ class ApiStore {
 
     @action
     createRecipe = recipe => {
-        axios.post('/api/recipes', {
+        axios.post('/recipes', {
             recipe: recipe,
         })
             .then(response => {
@@ -154,7 +154,7 @@ class ApiStore {
 
     @action
     deleteRecipe = id => {
-        axios.delete(`/api/recipes/${id}`)
+        axios.delete(`/recipes/${id}`)
             .then(() => {
                 // do something
                 this.recipes = this.recipes.filter(item => item._id !== id);

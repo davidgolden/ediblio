@@ -9,8 +9,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var methodOverride = require('method-override');
 
-const Recipe = require('./models/recipe'),
-    User = require('./models/user');
+const User = require('./models/user');
 
 const userRoutes = require('./routes/users'),
       recipeRoutes = require('./routes/recipes'),
@@ -64,8 +63,6 @@ passport.deserializeUser(function(id, done) {
     done(err, user);
   });
 });
-
-// app.locals.tags = ['Dinner', 'Breakfast', 'Dessert', 'Quick/Easy', 'Vegetarian', 'Vegan', 'Dairy-Free', 'Gluten-Free'];
 
 // NEED TO IMPORT ROUTES
 // NEED TO IMPORT MIDDLEWARE
