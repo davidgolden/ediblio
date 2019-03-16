@@ -1,5 +1,4 @@
 const path = require('path');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 outputFolder = 'client/dist/';
 
@@ -8,7 +7,6 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, outputFolder),
         filename: "bundle.js",
-        // publicPath: '/public/'
     },
     mode: 'development',
     module: {
@@ -48,20 +46,4 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
     },
-    plugins: [
-        // new HtmlWebpackPlugin({
-        //     template: './index.html',
-        //     // favicon: './public/favicon.ico'
-        // }),
-    ]
-    // devServer: {
-    //     historyApiFallback: true,
-    //     compress: true,
-    //     proxy: {
-    //         '/api': {
-    //             target: 'http://localhost:5000',
-    //             pathRewrite: {'^/api': ''},
-    //         }
-    //     }
-    // }
 };

@@ -72,16 +72,17 @@ export default class RecipeCard extends React.Component {
         if (apiStore.isLoggedIn) {
             const inCloud = apiStore.user.recipes.includes(recipe._id) || recipe.author.id === apiStore.user._id;
             if (apiStore.user._id === recipe.author.id) {
-                buttons.push(<InCloudButton disabled={true}/>)
+                buttons.push(<InCloudButton key={'incloudbutton'} disabled={true}/>)
             }
             if (inCloud && apiStore.user._id !== recipe.author.id) {
-                buttons.push(<RemoveButton onClick={this.removeFromCloud}/>)
+                buttons.push(<RemoveButton key={'removebutton'} onClick={this.removeFromCloud}/>)
             }
-            buttons.push(<AddToCloudButton disabled={inCloud} onClick={this.addToCloud}/>);
-            buttons.push(<AddToGroceryListButton disabled={apiStore.user.menu.find(item => item._id === recipe._id)}
+            buttons.push(<AddToCloudButton key={'addtocloud'} disabled={inCloud} onClick={this.addToCloud}/>);
+            buttons.push(<AddToGroceryListButton key={'addtolist'}
+                                                 disabled={apiStore.user.menu.find(item => item._id === recipe._id)}
                                                  onClick={this.addToGroceryList}/>)
             if (apiStore.user.isAdmin) {
-                buttons.push(<DeleteButton onClick={this.deleteRecipe}/>)
+                buttons.push(<DeleteButton key={'deletebutton'} onClick={this.deleteRecipe}/>)
             }
         }
 

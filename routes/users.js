@@ -18,23 +18,17 @@ router.route('/users')
     })
     // create new user (register)
     .post((req, res) => {
-        User.findOne({"$or": [{username: req.body.username}, {email: req.body.email}]}, function (err, user) {
+        let newUser = new User({
+            username: req.body.username,
+            email: req.body.email.toLowerCase(),
+            password: req.body.password
+        });
+        newUser.save((err, user) => {
             if (err) {
                 return res.status(404).send(err);
             }
 
-            if (user) {
-                return res.status(404).send('A user with that username or email already exists!');
-            }
-
-            let newUser = new User({
-                username: req.body.username,
-                email: req.body.email.toLowerCase(),
-                password: req.body.password
-            });
-            newUser.save();
-
-            req.logIn(newUser, function (err) {
+            req.logIn(user, (err) => {
                 if (err) return res.status(404).send(err);
                 return res.status(200).json({user: req.user});
             });

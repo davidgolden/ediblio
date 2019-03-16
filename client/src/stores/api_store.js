@@ -1,6 +1,7 @@
 import React from 'react';
 import {action, observable, computed, autorun, toJS} from 'mobx';
 import axios from 'axios';
+import {navigate} from '@reach/router';
 
 class ApiStore {
     @observable user = null;
@@ -158,6 +159,18 @@ class ApiStore {
             .then(() => {
                 // do something
                 this.recipes = this.recipes.filter(item => item._id !== id);
+            })
+    };
+
+    @action
+    registerUser = user => {
+        axios.post('/users', {...user})
+            .then(response => {
+                this.user = response.data.user;
+                navigate('/');
+            })
+            .catch(err => {
+                console.log(err);
             })
     }
 }

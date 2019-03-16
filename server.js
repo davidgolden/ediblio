@@ -25,8 +25,6 @@ mongoose.connect(process.env.MONGO)
       .then(() => console.log(`Database connected`))
       .catch(err => console.log(`Database connection error: ${err.message}`));
 
-// app.use('/public', express.static('public'));
-
 // PASSPORT CONFIGURATION
 app.use(require('express-session')({
   secret: 'Mac Dre is the king of the bay',
@@ -70,7 +68,9 @@ app.use('/', indexRoutes);
 app.use('/', userRoutes);
 app.use('/', recipeRoutes);
 
-app.use(express.static(path.join(__dirname, "client")))
+// this is needed in order to send static files like index.html... DO NOT GET RID OF IT!!!
+app.use(express.static(path.join(__dirname, "client")));
+
 app.get('*', function(req, res) {
     res.sendFile(path.resolve(__dirname, 'client', 'index.html'));
 });
