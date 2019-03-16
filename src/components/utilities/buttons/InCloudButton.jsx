@@ -8,6 +8,7 @@ import { faBook } from '@fortawesome/free-solid-svg-icons'
 const InCloudButton = props => {
     const inCloudButtonClassName = classNames({
         [styles.inCloudButton]: true,
+        [styles.inCloudButtonDisabled]: props.disabled,
         [props.className]: props.className,
     });
 

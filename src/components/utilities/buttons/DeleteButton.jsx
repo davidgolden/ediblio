@@ -8,6 +8,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 const DeleteButton = props => {
     const removeButtonClassName = classNames({
         [styles.removeButton]: true,
+        [styles.removeButtonDisabled]: props.disabled,
         [props.className]: props.className,
     });
 

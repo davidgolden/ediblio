@@ -8,6 +8,7 @@ import { faMinus } from '@fortawesome/free-solid-svg-icons'
 const RemoveButton = props => {
     const removeButtonClassName = classNames({
         [styles.removeButton]: true,
+        [styles.removeButtonDisabled]: props.disabled,
         [props.className]: props.className,
     });
 

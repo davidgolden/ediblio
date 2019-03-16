@@ -10,8 +10,11 @@
   transition: opacity .5s ease;
   -webkit-transition: opacity .5s ease;
   align-self: flex-start;
-  cursor: pointer;
-  text-decoration: none;
+
+  a {
+    text-decoration: none;
+    cursor: pointer;
+  }
 
   &:hover {
     .recipeCardText {
@@ -22,11 +25,19 @@
     .recipeCardButtons {
       display: inline;
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 8px;
+      left: 7px;
+      z-index: 1;
+
+      &:hover {
+        .recipeCard {
+          pointer-events: none;
+        }
+      }
 
       button {
         border-radius: 0;
+        margin-left: 3px;
       }
     }
   }

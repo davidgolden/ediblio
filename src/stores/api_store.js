@@ -123,13 +123,14 @@ class ApiStore {
             .then(response => {
                 // do something
             })
-    }
+    };
 
     @action
     deleteRecipe = id => {
         axios.delete(`/api/recipes/${id}`)
-            .then(response => {
+            .then(() => {
                 // do something
+                this.recipes = this.recipes.filter(item => item._id !== id);
             })
     }
 }

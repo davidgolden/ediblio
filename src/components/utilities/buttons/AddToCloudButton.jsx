@@ -5,9 +5,10 @@ import styles from './styles/Button.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
-const AddButton = props => {
+const AddToCloudButton = props => {
     const removeButtonClassName = classNames({
         [styles.addButton]: true,
+        [styles.addButtonDisabled]: props.disabled,
         [props.className]: props.className,
     });
 
@@ -18,4 +19,4 @@ const AddButton = props => {
     )
 }
 
-export default AddButton;
+export default AddToCloudButton;

@@ -7,17 +7,55 @@
   cursor: pointer;
 }
 
+.stockButtonsBar {
+  width: 30px;
+  height: 30px;
+  font-size: 1rem;
+}
+
 .removeButton {
+  composes: stockButtonsBar;
   background-color: $primary-color;
   color: white;
+
+  &Disabled {
+    pointer-events: none;
+    background-color: lighten($primary-color, 10%);
+    cursor: default;
+  }
 }
 
 .addButton {
+  composes: stockButtonsBar;
   background-color: $otherdark;
   color: white;
+
+  &Disabled {
+    pointer-events: none;
+    background-color: lighten($otherdark, 10%);
+    cursor: default;
+  }
 }
 
 .inCloudButton {
+  composes: stockButtonsBar;
   background-color: $other;
   color: black;
+
+  &Disabled {
+    pointer-events: none;
+    background-color: lighten($other, 10%);
+    cursor: default;
+  }
+}
+
+.addToGroceryListButton {
+  composes: stockButtonsBar;
+  background-color: $secondary-color;
+
+  &Disabled {
+    pointer-events: none;
+    background-color: lighten($secondary-color, 10%);
+    cursor: default;
+  }
 }
