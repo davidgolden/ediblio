@@ -4,7 +4,7 @@ import {inject, observer} from 'mobx-react';
 import classNames from 'classnames';
 import styles from './styles/Header.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faCloud, faSearch, faListUl, faPlus, faBook, faUser } from '@fortawesome/free-solid-svg-icons';
+import {faCloud, faSearch, faListUl, faPlus, faBook, faUser} from '@fortawesome/free-solid-svg-icons';
 import Button from "../utilities/buttons/Button";
 
 @inject('apiStore')
@@ -57,15 +57,16 @@ export default class Header extends React.Component {
                     <a href="/">Recipe Cloud <FontAwesomeIcon icon={faCloud}/></a>
                 </h1>
 
-                <ul>
-                    {this.props.apiStore.isLoggedIn && <React.Fragment>
+                <div>
+                    {this.props.apiStore.isLoggedIn && <ul>
                         <li>
                             <Link to={'/'} className={headerLinkClassName}>
                                 <FontAwesomeIcon icon={faSearch}/>
                             </Link>
                         </li>
                         <li>
-                            <Link to={`/users/${this.props.apiStore.user._id}/groceries`} className={headerLinkClassName}>
+                            <Link to={`/users/${this.props.apiStore.user._id}/groceries`}
+                                  className={headerLinkClassName}>
                                 <FontAwesomeIcon icon={faListUl}/>
                             </Link>
                         </li>
@@ -79,36 +80,26 @@ export default class Header extends React.Component {
                                 <FontAwesomeIcon icon={faBook}/>
                             </Link>
                         </li>
-                    </React.Fragment>}
+                    </ul>}
                     {this.props.apiStore.isLoggedIn ? (<React.Fragment>
-                        <li className={userLinkClassName}>
-                            <Link to={`/users/${this.props.apiStore.user._id}/settings`}>
-                                <FontAwesomeIcon icon={faUser}/> <span>{this.props.apiStore.user.username}</span>
-                            </Link>
-                        </li>
-                        <li className={logoutClassName}>
-                            <Button onClick={this.handleLogout}>Log Out</Button>
-                        </li>
+                        <Link className={userLinkClassName} to={`/users/${this.props.apiStore.user._id}/settings`}>
+                            <FontAwesomeIcon icon={faUser}/> <span>{this.props.apiStore.user.username}</span>
+                        </Link>
+                        <Button className={logoutClassName} onClick={this.handleLogout}>Log Out</Button>
                     </React.Fragment>) : (<React.Fragment>
-                        <li>
-                            <input type="email" name="email" placeholder='Email' className=''
-                                   value={this.state.email}
-                                   onChange={this.handleEmailChange}/>
-                        </li>
-                        <li>
-                            <input type="password" name="password" placeholder='Password'
-                                   value={this.state.password}
-                                   onChange={this.handlePasswordChange}/>
-                        </li>
-                        <li className={logoutClassName}>
-                            <Button onClick={this.handleLoginSubmit} value='Login'>Login</Button>
-                        </li>
-                        <li className={userLinkClassName}>
-                            <Link to={'/forgot'}>Forgot Password?</Link>
-                            <Link to={'/register'}>Register</Link>
-                        </li>
+                        <input type="email" name="email" placeholder='Email' className=''
+                               value={this.state.email}
+                               onChange={this.handleEmailChange}/>
+                        <input type="password" name="password" placeholder='Password'
+                               value={this.state.password}
+                               onChange={this.handlePasswordChange}/>
+                        <Button className={logoutClassName} onClick={this.handleLoginSubmit}
+                                value='Login'>Login</Button>
+
+                        <Link className={userLinkClassName} to={'/forgot'}>Forgot Password?</Link>
+                        <Link className={userLinkClassName} to={'/register'}>Register</Link>
                     </React.Fragment>)}
-                </ul>
+                </div>
             </nav>
         )
     };

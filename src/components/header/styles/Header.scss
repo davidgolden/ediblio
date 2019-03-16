@@ -9,18 +9,46 @@
   top: 0;
   z-index: 1;
 
+  > div { // container of everything that's not the navigation links
+    float: right;
+    line-height: 50px;
+
+    input {
+      padding: 5px 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      margin-right: 5px;
+      color: $dark;
+      background-color: $light;
+    }
+
+    button { // login/logout only
+      background-color: $otherdark;
+      color: white;
+      padding: 5px 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+    }
+
+    a { // user settings, forgot password, register
+      color: white;
+      font-size: 1rem;
+    }
+  }
+
   h1 {
     display: inline;
     margin-left: 1.5rem;
 
     a {
-      color: white;
       text-decoration: none;
       line-height: 50px;
+      color: $otherdark;
     }
 
-    span {
+    svg {
       font-size: 2rem;
+      color: white;
     }
   }
 
@@ -32,9 +60,9 @@
   ul {
     list-style: none;
     display: inline-block;
-    float: right;
     margin: 0;
-    line-height: 50px;
+    vertical-align: middle;
+    padding-right: 10px;
 
     li {
       float: left;
