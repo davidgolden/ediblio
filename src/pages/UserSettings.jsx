@@ -1,5 +1,8 @@
 import React from 'react';
 import {inject, observer} from 'mobx-react';
+import styles from './styles/UserSettings.scss';
+import classNames from 'classnames';
+import Button from "../components/utilities/buttons/Button";
 
 @inject('apiStore')
 @observer
@@ -43,32 +46,53 @@ export default class UserSettings extends React.Component {
         }
     };
 
+    componentDidMount() {
+        this.props.apiStore.getUser(this.props.user_id)
+            .then(user => {
+                this.setState({
+                    username: user.username,
+                    email: user.email,
+                    password: user.password,
+                    confirm: user.password,
+                })
+            })
+    }
+
     render() {
+
+        if (!this.props.apiStore.isLoggedIn || this.props.apiStore.user._id !== this.props.user_id) {
+            return <p>You do not have permission to view this page!</p>
+        }
+
+        const settingsContainerClassName = classNames({
+            [styles.settingsContainer]: true,
+        });
+
         return (
-            <div className='small-form'>
-                <h1 className='text-center'>Edit Profile</h1>
-                <div className='form-group'>
+            <div className={settingsContainerClassName}>
+                <h1>Edit Profile</h1>
+                <div>
                     <label htmlFor='username'>Username</label>
-                    <input type='text' className='form-control' name='username' value={this.state.username}
+                    <input type='text' name='username' value={this.state.username}
                            onChange={this.handleUsernameChange}/>
                 </div>
-                <div className='form-group'>
+                <div>
                     <label htmlFor='email'>Email</label>
-                    <input type='email' className='form-control' name='email' value={this.state.email}
+                    <input type='email' name='email' value={this.state.email}
                            onChange={this.handleEmailChange}/>
                 </div>
-                <div className='form-group'>
+                <div>
                     <label htmlFor='password'>Password</label>
-                    <input type='password' className='form-control' name='password' value={this.state.password}
+                    <input type='password' name='password' value={this.state.password}
                            onChange={this.handlePasswordChange}/>
                 </div>
-                <div className='form-group'>
+                <div>
                     <label htmlFor='confirm'>Confirm Password</label>
-                    <input type='password' className='form-control' name='confirm' value={this.state.confirm}
+                    <input type='password' name='confirm' value={this.state.confirm}
                            onChange={this.handleConfirmChange}/>
                 </div>
-                <div className='form-group'>
-                    <button onClick={this.handleSubmit} className='btn btn-md btn-success'>Submit</button>
+                <div>
+                    <Button onClick={this.handleSubmit}>Submit</Button>
                 </div>
             </div>
         )

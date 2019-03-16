@@ -114,6 +114,20 @@ class ApiStore {
     };
 
     @action
+    getUser = id => {
+        return new Promise((res, rej) => {
+            axios.get(`/api/users/${id}`)
+                .then(response => {
+                    this.user = response.data.user;
+                    res(response.data.user);
+                })
+                .catch(err => {
+                    rej(err);
+                })
+        })
+    };
+
+    @action
     addRecipeToGroceryList = recipe => {
         let newGroceryList = [
             ...this.grocery_list,

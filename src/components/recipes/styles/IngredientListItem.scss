@@ -1,6 +1,6 @@
 .ingredientRow {
   margin: 2px 0;
-  height: 35px;
+  min-height: 35px;
 
   > input, > select, > button {
     display: inline-block;
@@ -14,15 +14,18 @@
 
   > input:first-of-type, select {
     width: 20%;
+    min-width: 50px;
   }
 
   > input:nth-of-type(2) {
     width: auto;
     max-width: 50%;
+    min-width: 100px;
   }
 
   > button {
     border-radius: 10px;
+    height: 35px;
   }
 
   &:nth-of-type(even) {
