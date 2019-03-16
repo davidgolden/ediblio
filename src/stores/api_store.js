@@ -101,6 +101,19 @@ class ApiStore {
     };
 
     @action
+    getUserLists = id => {
+        return new Promise((res, rej) => {
+            axios.get(`/api/users/${id}/list`)
+                .then(response => {
+                    res(response.data);
+                })
+                .catch(err => {
+                    rej(err);
+                })
+        })
+    };
+
+    @action
     addRecipeToGroceryList = recipe => {
         let newGroceryList = [
             ...this.grocery_list,

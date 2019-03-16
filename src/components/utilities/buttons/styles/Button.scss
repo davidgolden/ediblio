@@ -15,12 +15,12 @@
 
 .removeButton {
   composes: stockButtonsBar;
-  background-color: $primary-color;
+  background-color: $other;
   color: white;
 
   &Disabled {
     pointer-events: none;
-    background-color: lighten($primary-color, 10%);
+    background-color: darken($other, 10%);
     cursor: default;
   }
 }

@@ -1,7 +1,12 @@
 import React from 'react';
 import AddIngredients from '../components/recipes/AddIngredients';
-import Menu from '../components/recipes/MenuList';
 import {inject, observer} from 'mobx-react';
+import styles from './styles/GroceryList.scss';
+import classNames from 'classnames';
+import Button from "../components/utilities/buttons/Button";
+import RemoveButton from "../components/utilities/buttons/RemoveButton"
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
 
 @inject('apiStore')
 @observer
@@ -29,13 +34,13 @@ export default class GroceryList extends React.Component {
         this.setState({groceryList: groceryList})
     };
 
-    handleDeleteIngredient = (event, i) => {
+    handleDeleteIngredient = i => {
         let groceryList = this.state.groceryList;
         groceryList.splice(i, 1);
         this.setState({groceryList: groceryList});
     };
 
-    handleDeleteMenuItem = (event, i) => {
+    handleDeleteMenuItem = i => {
         let menuList = this.state.menu;
         menuList.splice(i, 1);
         this.setState({menu: menuList});
@@ -44,16 +49,19 @@ export default class GroceryList extends React.Component {
     storeMode = () => {
         this.setState(prevState => {
             return {
-                storeMode: !prevState,
+                storeMode: !prevState.storeMode,
             }
         });
     };
 
     componentDidMount() {
-        this.setState({
-            groceryList: this.props.apiStore.user && this.props.apiStore.user.groceryList,
-            menu: this.props.apiStore.user && this.props.apiStore.user.menu,
-        })
+        this.props.apiStore.getUserLists(this.props.user_id)
+            .then(data => {
+                this.setState({
+                    groceryList: data.groceryList,
+                    menu: data.menu,
+                })
+            });
     }
 
     updateList = () => {
@@ -63,41 +71,42 @@ export default class GroceryList extends React.Component {
         });
     };
 
-//   componentWillMount() {
-//     let xml = new XMLHttpRequest();
-//     xml.open("GET", '/grocery-list', true);
-//     xml.setRequestHeader("Content-Type", "application/json");
-//     xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-//     xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-//     xml.send(JSON.stringify({user: this.props.user}));
-//     xml.onreadystatechange = () => {
-//       if(xml.readyState === 4 && xml.status === 200) {
-//         let response = JSON.parse(xml.response);
-//         this.setState({ingredients: response.groceryList, menu: response.menu})
-//       }
-//   }
-// }
-
     render() {
+        const groceryListContainerClassName = classNames({
+            [styles.groceryListContainer]: true,
+        });
+        const ingredientsContainerClassName = classNames({
+            [styles.ingredientsContainer]: true,
+        });
+        const menuContainerClassName = classNames({
+            [styles.menuContainer]: true,
+        });
+
         return (
-            <div>
-                <h1>My Menu</h1>
-                {this.state.menu && <Menu
-                    menu={this.state.menu}
-                    handleDeleteMenuItem={this.handleDeleteMenuItem}
-                />}
-                <h1>My Grocery List</h1>
+            <div className={groceryListContainerClassName}>
+                <h2>My Menu</h2>
+                <ul className={menuContainerClassName}>
+                    {this.state.menu && this.state.menu.map((item, i) => {
+                        return <li key={i}>
+                            <RemoveButton onClick={() => this.handleDeleteMenuItem(i)}/>
+                            <a target='_blank' href={item.url}>
+                                {item.name}
+                                <FontAwesomeIcon icon={faExternalLinkAlt}/>
+                            </a>
+                        </li>
+                    })}
+                </ul>
+                <h2>My Grocery List</h2>
                 {this.state.groceryList && <AddIngredients
+                    containerClassName={ingredientsContainerClassName}
                     ingredients={this.state.groceryList}
                     handleAddIngredient={this.handleAddIngredient}
                     handleUpdateIngredient={this.handleUpdateIngredient}
                     handleDeleteIngredient={this.handleDeleteIngredient}
                     storeMode={this.state.storeMode}
                 />}
-                <button onClick={this.updateList}>Save Grocery List/Menu
-                </button>
-                &nbsp;
-                <button onClick={this.storeMode}>Toggle Store Mode</button>
+                <Button onClick={this.updateList}>Save Grocery List/Menu</Button>
+                <Button onClick={this.storeMode}>Toggle Store Mode</Button>
             </div>
         )
     }

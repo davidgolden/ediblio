@@ -5,13 +5,13 @@
     display: inline-block;
   }
 
-  button {
-    color: $dark !important;
+  .addIngredientButton {
+    color: $dark;
     cursor: pointer;
     padding: 10px;
 
     &:hover {
-      color: $other !important;
+      color: $other;
     }
   }
 }

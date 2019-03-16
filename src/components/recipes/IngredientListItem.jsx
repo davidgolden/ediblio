@@ -2,7 +2,6 @@ import React from 'react';
 import classNames from 'classnames';
 import styles from './styles/IngredientListItem.scss';
 import RemoveButton from "../utilities/buttons/RemoveButton";
-import DeleteButton from "../utilities/buttons/DeleteButton";
 
 const Ingredient = (props) => {
     const ingredientRowClassName = classNames({
@@ -47,9 +46,9 @@ const Ingredient = (props) => {
         )
     } else {
         return (
-            <div>
-                <DeleteButton onClick={(e) => props.handleDeleteIngredient(e, props.index)}/>
-                &nbsp; {props.value.quantity} {props.value.measurement} {props.value.name}
+            <div className={ingredientRowClassName}>
+                <RemoveButton onClick={(e) => props.handleDeleteIngredient(e, props.index)}/>
+                <p>{props.value.quantity} {props.value.measurement} {props.value.name}</p>
             </div>
         )
     }

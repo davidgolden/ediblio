@@ -65,7 +65,7 @@ export default class Header extends React.Component {
                             </Link>
                         </li>
                         <li>
-                            <Link to={'/groceries'} className={headerLinkClassName}>
+                            <Link to={`/users/${this.props.apiStore.user._id}/groceries`} className={headerLinkClassName}>
                                 <FontAwesomeIcon icon={faListUl}/>
                             </Link>
                         </li>

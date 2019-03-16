@@ -24,7 +24,7 @@ const Index = () => {
                     <BrowseRecipes path={'/recipes'} />
                     <UserRecipes path={'/users/:user_id/recipes'} />
                     <RecipeContainer path={'/recipes/:recipe_id'} />
-                    <GroceryList path={'/groceries'}/>
+                    <GroceryList path={'/users/:user_id/groceries'}/>
                     <AddRecipe path={'/add'} />
                     <UserSettings path={'/settings'}/>
                     <ForgotPassword path={'/forgot'}/>

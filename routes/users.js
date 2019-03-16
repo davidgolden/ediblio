@@ -61,45 +61,13 @@ router.route('/users/:user_id')
     });
 
 // DISPLAY GROCERY LIST
-// router.get('/grocery-list', middleware.isLoggedIn, function(req, res) {
-//     User.findById(req.user._id).populate('menu').exec(function(err, user) {
-//         if (err) {
-//             return res.status(404).send(err)
-//         }
-//         return res.status(200).send({ groceryList: user.groceryList, menu: user.menu });
-//     });
-// });
-
-// UPDATE GROCERY LIST
-router.put('/grocery-list', middleware.isLoggedIn, function(req, res) {
-    let ingredients = req.body.ingredients;
-    let menu = req.body.menu;
-
-    User.findById(req.user._id, function(err, user) {
-      if(err) {
-        return res.status(404).send(err)
-      }
-      user.groceryList.splice(0, user.groceryList.length);
-      ingredients.forEach((item) => {
-        // user.groceryList.push(item);
-        user.groceryList.splice(user.groceryList.length, 0, item);
-        user.save();
-      })
-
-      user.menu.splice(0, user.menu.length);
-      menu.forEach((item) => {
-        // user.menu.push(item);
-        user.menu.splice(user.menu.length, 0, item);
-        user.save();
-      })
-
-      user.populate('menu', function(err, user) {
+router.get('/users/:user_id/list', (req, res) => {
+    User.findById(req.user._id).populate('menu').exec(function(err, user) {
         if (err) {
             return res.status(404).send(err)
         }
-        return res.status(200).send(JSON.stringify({ groceryList: user.groceryList, menu: user.menu }));
-      })
-    })
+        return res.status(200).send({ groceryList: user.groceryList, menu: user.menu });
+    });
 });
 
 module.exports = router;

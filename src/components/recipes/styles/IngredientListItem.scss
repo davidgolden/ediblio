@@ -28,4 +28,8 @@
   &:nth-of-type(even) {
     background-color: rgba(0,0,0,.02);
   }
+
+  p {
+    display: inline-block;
+  }
 }
