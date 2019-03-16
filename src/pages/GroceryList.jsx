@@ -14,41 +14,40 @@ export default class GroceryList extends React.Component {
             groceryList: this.props.apiStore.user ? this.props.apiStore.user.groceryList : [],
             menu: this.props.apiStore.user ? this.props.apiStore.user.menu : [],
         };
-
-        this.handleUpdateIngredient = (ingredient, i) => {
-            let ingredientList = this.state.ingredients;
-            ingredientList.splice(i, 1, ingredient);
-            this.setState({ingredients: ingredientList});
-        }
-        this.handleAddIngredient = event => {
-            event.preventDefault();
-            let ingredientList = this.state.ingredients;
-            let ingredient = {quantity: '', measurement: '#', name: ''};
-            ingredientList.push(ingredient);
-            this.setState({ingredients: ingredientList})
-        }
-        this.handleDeleteIngredient = (event, i) => {
-            event.preventDefault();
-            let ingredientList = this.state.ingredients;
-            ingredientList.splice(i, 1);
-            this.setState({ingredients: ingredientList});
-            console.log(this.state.ingredients)
-        }
-        this.handleDeleteMenuItem = (event, i) => {
-            event.preventDefault();
-            let menuList = this.state.menu;
-            menuList.splice(i, 1);
-            this.setState({menu: menuList});
-        }
-
-        this.storeMode = () => {
-            if (this.state.storeMode === true) {
-                this.setState({storeMode: false})
-            } else {
-                this.setState({storeMode: true})
-            }
-        }
     }
+
+    handleUpdateIngredient = (ingredient, i) => {
+        let groceryList = this.state.groceryList;
+        groceryList.splice(i, 1, ingredient);
+        this.setState({groceryList: groceryList});
+    };
+
+    handleAddIngredient = () => {
+        let groceryList = this.state.groceryList;
+        let ingredient = {quantity: '', measurement: '#', name: ''};
+        groceryList.push(ingredient);
+        this.setState({groceryList: groceryList})
+    };
+
+    handleDeleteIngredient = (event, i) => {
+        let groceryList = this.state.groceryList;
+        groceryList.splice(i, 1);
+        this.setState({groceryList: groceryList});
+    };
+
+    handleDeleteMenuItem = (event, i) => {
+        let menuList = this.state.menu;
+        menuList.splice(i, 1);
+        this.setState({menu: menuList});
+    };
+
+    storeMode = () => {
+        this.setState(prevState => {
+            return {
+                storeMode: !prevState,
+            }
+        });
+    };
 
     componentDidMount() {
         this.setState({
@@ -58,25 +57,11 @@ export default class GroceryList extends React.Component {
     }
 
     updateList = () => {
-
-
-        let xml = new XMLHttpRequest();
-        xml.open("POST", '/grocery-list?_method=PUT', true);
-        xml.setRequestHeader("Content-Type", "application/json");
-        xml.setRequestHeader('Access-Control-Allow-Headers', '*');
-        xml.setRequestHeader('Access-Control-Allow-Origin', '*');
-        xml.send(JSON.stringify({ingredients: this.state.ingredients, menu: this.state.menu}));
-        xml.onreadystatechange = () => {
-            if (xml.readyState === 4 && xml.status === 200) {
-                let response = JSON.parse(xml.response);
-                alert('Updated grocery list!')
-                this.setState({ingredients: response.groceryList, menu: response.menu})
-            }
-            if (xml.readyState === 4 && xml.status !== 200) {
-                return alert(xml.response)
-            }
-        }
-    }
+        this.props.apiStore.patchUser({
+            groceryList: this.state.groceryList,
+            menu: this.state.menu,
+        });
+    };
 
 //   componentWillMount() {
 //     let xml = new XMLHttpRequest();

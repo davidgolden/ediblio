@@ -77,28 +77,30 @@ export default class RecipeContainer extends React.Component {
     addToGroceryList = () => {
         // add current recipe to menu
         // add all ingredients to grocery list
-        const currentMenu = this.props.apiStore.menu;
+        const currentMenu = this.props.apiStore.user.menu;
         currentMenu.push(this.props.recipe_id);
 
-        const currentGroceryList = this.props.apiStore.groceryList;
+        const currentGroceryList = this.props.apiStore.user.groceryList;
 
-        function onCurrentList(ingredient) {
-            function equalsPossibleForm(item) {
-                return (item === ingredient || item === ingredient + 's' || item === ingredient + 'es' || item === ingredient.slice(0, -1) || item === ingredient.slice(0, -2))
-            }
-
-            return currentGroceryList.findIndex(equalsPossibleForm)
-        }
+        const onCurrentList = ingredient => {
+            return currentGroceryList.findIndex(item => {
+                return item.name === ingredient ||
+                    item.name === ingredient + 's' ||
+                    item.name === ingredient + 'es' ||
+                    item.name === ingredient.slice(0, -1) ||
+                    item.name === ingredient.slice(0, -2);
+            })
+        };
 
         this.state.recipe.ingredients
-            .filter(item => item)
+            .filter(item => item) // filter out ingredients that are undefined??
             .forEach(ingredient => {
-                if (onCurrentList(ingredient.name) >= 0) {
-                    let i = onCurrentList(ingredient.name);
+                const i = onCurrentList(ingredient.name);
+                if (i > -1) {
                     let m = currentGroceryList[i].measurement;
                     let q = currentGroceryList[i].quantity;
                     // check if item can be added
-                    if (canBeAdded(m, ingredient.measurement) === true) {
+                    if (canBeAdded(m, ingredient.measurement)) {
                         // if it can be added, add it
                         let newQM = addIngredient(q, m, Number(ingredient.quantity), ingredient.measurement);
                         currentGroceryList[i].quantity = newQM.quantity;
@@ -133,6 +135,40 @@ export default class RecipeContainer extends React.Component {
         this.setState(prevState => {
             return {
                 edit: !prevState.edit
+            }
+        });
+    };
+
+    handleUpdateIngredient = (ingredient, i) => {
+        let ingredientList = this.state.recipe.ingredients;
+        ingredientList.splice(i, 1, ingredient);
+        this.setState({
+            recipe: {
+                ...this.state.recipe,
+                ingredients: ingredientList,
+            }
+        });
+    };
+
+    handleAddIngredient = () => {
+        let ingredientList = this.state.recipe.ingredients;
+        let ingredient = {quantity: '', measurement: '#', name: ''};
+        ingredientList.push(ingredient);
+        this.setState({
+            recipe: {
+                ...this.state.recipe,
+                ingredients: ingredientList,
+            }
+        });
+    };
+
+    handleDeleteIngredient = (event, i) => {
+        let ingredientList = this.state.recipe.ingredients;
+        ingredientList.splice(i, 1);
+        this.setState({
+            recipe: {
+                ...this.state.recipe,
+                ingredients: ingredientList,
             }
         });
     };
@@ -179,6 +215,9 @@ export default class RecipeContainer extends React.Component {
                         <ShowRecipe
                             recipe={this.state.recipe}
                             addToGroceryList={this.addToGroceryList}
+                            handleDeleteIngredient={this.handleDeleteIngredient}
+                            handleAddIngredient={this.handleAddIngredient}
+                            handleUpdateIngredient={this.handleUpdateIngredient}
                             showRecipe={this.showRecipe}
                             sortByUser={this.sortByUser}
                         />

@@ -26,25 +26,6 @@ export default class ShowRecipe extends React.Component {
         super(props);
     }
 
-    handleUpdateIngredient = (ingredient, i) => {
-        let ingredientList = this.props.recipe.ingredients;
-        ingredientList.splice(i, 1, ingredient);
-        this.setState({ingredients: ingredientList});
-    };
-
-    handleAddIngredient = () => {
-        let ingredientList = this.props.recipe.ingredients;
-        let ingredient = {quantity: '', measurement: '#', name: ''};
-        ingredientList.push(ingredient);
-        this.setState({ingredients: ingredientList})
-    };
-
-    handleDeleteIngredient = (event, i) => {
-        let ingredientList = this.props.recipe.ingredients;
-        ingredientList.splice(i, 1);
-        this.setState({ingredients: ingredientList});
-    };
-
     render() {
         const showRecipeContainerClassName = classNames({
             [styles.showRecipeContainer]: true,
@@ -82,9 +63,9 @@ export default class ShowRecipe extends React.Component {
                     <p>{this.props.recipe.notes}</p>
                     <AddIngredients
                         ingredients={this.props.recipe.ingredients}
-                        handleAddIngredient={this.handleAddIngredient}
-                        handleUpdateIngredient={this.handleUpdateIngredient}
-                        handleDeleteIngredient={this.handleDeleteIngredient}
+                        handleAddIngredient={this.props.handleAddIngredient}
+                        handleUpdateIngredient={this.props.handleUpdateIngredient}
+                        handleDeleteIngredient={this.props.handleDeleteIngredient}
                     />
                     <div className={showRecipeButtonsClassName}>
                         {this.props.apiStore.isLoggedIn ? <button onClick={this.props.addToGroceryList}><i

@@ -52,7 +52,7 @@ export default class RecipeCard extends React.Component {
 
         let buttons = [];
         if (apiStore.isLoggedIn) {
-            const inCloud = apiStore.user.recipes.includes(recipe._id)
+            const inCloud = apiStore.user.recipes.includes(recipe._id) || recipe.author.id === apiStore.user._id;
             if (apiStore.user._id === recipe.author.id) {
                 buttons.push(<InCloudButton/>)
             }
