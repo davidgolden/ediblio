@@ -1,6 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import styles from './styles/Landing.scss';
+import {FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faCloudUploadAlt, faSearchPlus, faListOl, faShoppingCart} from '@fortawesome/free-solid-svg-icons'
+import Button from "../components/utilities/buttons/Button";
 
 export default class Landing extends React.Component {
     constructor(props) {
@@ -74,23 +77,23 @@ export default class Landing extends React.Component {
                 <div className={infoContainerClassName}>
 
                     <div className={infoBoxClassName}>
-                        <i className="fas fa-cloud-upload-alt"/>
+                        <FontAwesomeIcon icon={faCloudUploadAlt}/>
                         <h6><span className={infoBlockClassName}>Add recipes</span> to your recipe cloud, then easily
                             populate your grocery list with their ingredients.</h6>
                     </div>
                     <div className={infoBoxClassName}>
-                        <i className="fas fa-search-plus"/>
+                        <FontAwesomeIcon icon={faSearchPlus}/>
                         <h6><span className={infoBlockClassName}>Browse yours</span> or others&#39; recipes by tag, then
                             easily add those recipes to your recipe cloud.</h6>
                     </div>
 
                     <div className={infoBoxClassName}>
-                        <i className="fas fa-list-ol"/>
+                        <FontAwesomeIcon icon={faListOl}/>
                         <h6><span className={infoBlockClassName}>Add ingredients</span> to your list and recipes to your
                             menu with a single click. Duplicate ingredients are automatically totaled.</h6>
                     </div>
                     <div className={infoBoxClassName}>
-                        <i className="fas fa-shopping-cart"/>
+                        <FontAwesomeIcon icon={faShoppingCart}/>
                         <h6><span className={infoBlockClassName}>Switch to store mode</span> to view and delete
                             ingredients on your phone as you shop.</h6>
                     </div>
@@ -100,22 +103,22 @@ export default class Landing extends React.Component {
                     <h6>It's free and your information will stay private.</h6>
                     <div>
                         <input type='text' required name='username' onChange={this.handleUsernameChange}
-                               placeholder='Choose a Username' className='form-control'/>
+                               placeholder='Choose a Username'/>
                     </div>
                     <div>
                         <input type='email' required name='email' onChange={this.handleEmailChange}
-                               placeholder='Email (used for login)' className='form-control'/>
+                               placeholder='Email (used for login)'/>
                     </div>
                     <div>
                         <input type='password' id='password' placeholder='Password' onChange={this.handlePasswordChange}
-                               className='form-control' name='password' required/>
+                               name='password' required/>
                     </div>
                     <div>
                         <input type='password' id='confirm' onChange={this.handleConfirmChange}
-                               placeholder='Confirm Password' className='form-control' required/>
+                               placeholder='Confirm Password' required/>
                     </div>
                     <div>
-                        <button onClick={this.handleSubmit}>Create Account</button>
+                        <Button onClick={this.handleSubmit}>Create Account</Button>
                     </div>
                 </div>
             </div>

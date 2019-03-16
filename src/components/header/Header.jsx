@@ -96,7 +96,7 @@ export default class Header extends React.Component {
                         <Button className={logoutClassName} onClick={this.handleLoginSubmit}
                                 value='Login'>Login</Button>
 
-                        <Link className={userLinkClassName} to={'/forgot'}>Forgot Password?</Link>
+                        {/*<Link className={userLinkClassName} to={'/forgot'}>Forgot Password?</Link>*/}
                         <Link className={userLinkClassName} to={'/register'}>Register</Link>
                     </React.Fragment>)}
                 </div>
