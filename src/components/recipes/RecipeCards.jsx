@@ -5,7 +5,7 @@ const RecipeCardButtons = (props) => {
   return(
     <div className='recipe-card-buttons'>
       { props.user.recipes.includes(props.recipe._id) ? (
-        props.user._id === props.recipe.author.id ? <button className='btn btn-sm btn-success disabled'><i className="fas fa-book"></i></button> : (
+        props.userId === props.recipe.author.id ? <button className='btn btn-sm btn-success disabled'><i className="fas fa-book"></i></button> : (
           <div>
             <button className='btn btn-sm btn-success disabled'><i className="fas fa-book"></i></button>
             <button className='btn btn-sm btn-danger' onClick={(e) => props.removeFromCloud(e.currentTarget, props.recipe)}><i className="fas fa-minus"></i></button>

@@ -90,6 +90,7 @@ export default class Header extends React.Component {
                         </li>
                         <li>
                             <Link to={'/forgot'}>Forgot Password?</Link>
+                            <Link to={'/register'}>Register</Link>
                         </li>
                     </React.Fragment>)}
                 </ul>

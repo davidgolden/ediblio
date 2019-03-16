@@ -77,10 +77,10 @@ export default class RecipeContainer extends React.Component {
     addToGroceryList = () => {
         // add current recipe to menu
         // add all ingredients to grocery list
-        const currentMenu = this.props.apiStore.user.menu;
+        const currentMenu = this.props.apiStore.menu;
         currentMenu.push(this.props.recipe_id);
 
-        const currentGroceryList = this.props.apiStore.user.groceryList;
+        const currentGroceryList = this.props.apiStore.groceryList;
 
         function onCurrentList(ingredient) {
             function equalsPossibleForm(item) {
@@ -95,8 +95,8 @@ export default class RecipeContainer extends React.Component {
             .forEach(ingredient => {
                 if (onCurrentList(ingredient.name) >= 0) {
                     let i = onCurrentList(ingredient.name);
-                    let m = user.groceryList[i].measurement;
-                    let q = user.groceryList[i].quantity;
+                    let m = currentGroceryList[i].measurement;
+                    let q = currentGroceryList[i].quantity;
                     // check if item can be added
                     if (canBeAdded(m, ingredient.measurement) === true) {
                         // if it can be added, add it
@@ -150,7 +150,7 @@ export default class RecipeContainer extends React.Component {
                     {/*<button className='btn-success btn btn-md back' onClick={() => this.showRecipe(false)}><i*/}
                     {/*className="fas fa-arrow-left"></i> Back to Recipes*/}
                     {/*</button>*/}
-                    {this.state.recipe && this.props.apiStore.isLoggedIn && this.state.recipe.author.id === this.props.apiStore.user._id && (
+                    {this.state.recipe && this.props.apiStore.isLoggedIn && this.state.recipe.author.id === this.props.apiStore.userId && (
                         <div className='form-group edit'>
                             <button className='btn btn-primary btn-md' onClick={this.toggleEdit}>
                                 {this.state.edit === false ? (

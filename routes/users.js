@@ -2,8 +2,7 @@ const express = require('express'),
     router = express.Router(),
     User = require('../models/user'),
     Recipe = require('../models/recipe'),
-    middleware = require('../middleware'),
-    ing = require('../src/utils/conversions');
+    middleware = require('../middleware');
 
 router.route('/users')
     // get all users

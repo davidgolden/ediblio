@@ -3,9 +3,7 @@ const express = require('express'),
     User = require('../models/user'),
     Recipe = require('../models/recipe'),
     middleware = require('../middleware'),
-    ing = require('../src/utils/conversions'),
     urlMetadata = require('url-metadata');
-
 /*
 
 /reset

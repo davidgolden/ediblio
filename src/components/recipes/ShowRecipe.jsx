@@ -2,6 +2,7 @@ import React from 'react';
 import AddIngredients from './AddIngredients';
 import classNames from 'classnames';
 import styles from './styles/ShowRecipe.scss';
+import { inject, observer } from 'mobx-react';
 
 const RecipeTitle = (props) => {
     const RecipeTags = props.tags.map((tag, i) => {
@@ -18,7 +19,8 @@ const RecipeTitle = (props) => {
     )
 }
 
-
+@inject('apiStore')
+@observer
 export default class ShowRecipe extends React.Component {
     constructor(props) {
         super(props);
@@ -85,9 +87,9 @@ export default class ShowRecipe extends React.Component {
                         handleDeleteIngredient={this.handleDeleteIngredient}
                     />
                     <div className={showRecipeButtonsClassName}>
-                        <button onClick={this.props.addToGroceryList}><i
+                        {this.props.apiStore.isLoggedIn ? <button onClick={this.props.addToGroceryList}><i
                             className="fas fa-shopping-bag" /> Add To Grocery List
-                        </button>
+                        </button> : <p>Login or Register to Add to Grocery List</p>}
                     </div>
                 </div>}
             </div>

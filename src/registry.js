@@ -7,6 +7,7 @@ import BrowseRecipes from './pages/BrowseRecipes';
 import Landing from './pages/landing';
 import ForgotPassword from './pages/Forgot';
 import RecipeContainer from "./pages/RecipeContainer";
+import BrowseUsers from './pages/BrowseUsers';
 
 export {
     Header,
@@ -18,4 +19,5 @@ export {
     Landing,
     ForgotPassword,
     RecipeContainer,
+    BrowseUsers,
 }

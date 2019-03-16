@@ -3,6 +3,7 @@ import RecipeInformation from '../components/recipes/RecipeInformation';
 import AddIngredients from '../components/recipes/AddIngredients';
 import {inject, observer} from 'mobx-react';
 import PropTypes from 'prop-types';
+import Button from "../components/utilities/buttons/Button";
 
 const allTags = ['Dinner', 'Breakfast', 'Dessert', 'Quick/Easy', 'Vegetarian', 'Vegan', 'Dairy-Free', 'Gluten-Free'];
 
@@ -38,7 +39,7 @@ const AddTags = (props) => {
     )
 }
 
-inject('apiStore')
+@inject('apiStore')
 @observer
 export default class RecipeForm extends React.Component {
     static defaultProps = {
@@ -133,8 +134,9 @@ export default class RecipeForm extends React.Component {
                     handleDeleteIngredient={this.handleDeleteIngredient}
                 />
                 {/*<AddTags toggleTag={this.toggleTag} tags={this.props.tags} selectedTags={this.state.tags} />*/}
-                <div className='form-group'>
-                    <button className='btn btn-lg btn-success' onClick={this.handleSubmit}>Submit!</button>
+                <div>
+                    {this.props.apiStore.isLoggedIn ? <Button onClick={this.handleSubmit}>Submit!</Button> :
+                        <p>You must be logged in to add a recipe!</p>}
                 </div>
             </form>
         )

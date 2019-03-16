@@ -22,13 +22,15 @@ const Index = () => {
             <LocationProvider history={history}>
                 <Header />
                 <Router>
-                    <BrowseRecipes path={'/'} />
+                    <BrowseRecipes path={'/recipes'} />
                     <UserRecipes path={'/users/:user_id/recipes'} />
                     <RecipeContainer path={'/recipes/:recipe_id'} />
                     <GroceryList path={'/groceries'}/>
                     <AddRecipe path={'/add'} />
                     <UserSettings path={'/settings'}/>
-                    <ForgotPassword path={'forgot'}/>
+                    <ForgotPassword path={'/forgot'}/>
+                    <Landing path={'/register'}/>
+                    <BrowseRecipes default />
                 </Router>
             </LocationProvider>
         </MobxProvider>
