@@ -15,7 +15,7 @@
     "client-install": "npm install --prefix client",
     "start": "node server.js",
     "server": "nodemon server.js",
-    "client": "npm start --prefix client",
+    "client": "npm start --prefix client"
   },
   "author": "David Golden",
   "license": "ISC",
