@@ -4,11 +4,10 @@ import AddIngredients from '../components/recipes/AddIngredients';
 import {inject, observer} from 'mobx-react';
 import PropTypes from 'prop-types';
 import Button from "../components/utilities/buttons/Button";
-
-const allTags = ['Dinner', 'Breakfast', 'Dessert', 'Quick/Easy', 'Vegetarian', 'Vegan', 'Dairy-Free', 'Gluten-Free'];
+import {recipeTags} from "../stores/Setings";
 
 const AddTags = (props) => {
-    const TagList = props.tags.map((tag, i) => {
+    const TagList = recipeTags.map((tag, i) => {
         let check = false;
         if (props.selectedTags.includes(tag)) {
             check = true;
@@ -133,7 +132,7 @@ export default class RecipeForm extends React.Component {
                     handleUpdateIngredient={this.handleUpdateIngredient}
                     handleDeleteIngredient={this.handleDeleteIngredient}
                 />
-                {/*<AddTags toggleTag={this.toggleTag} tags={this.props.tags} selectedTags={this.state.tags} />*/}
+                <AddTags toggleTag={this.toggleTag} selectedTags={this.state.tags} />
                 <div>
                     {this.props.apiStore.isLoggedIn ? <Button onClick={this.handleSubmit}>Submit!</Button> :
                         <p>You must be logged in to add a recipe!</p>}

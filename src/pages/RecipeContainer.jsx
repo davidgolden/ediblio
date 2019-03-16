@@ -183,9 +183,6 @@ export default class RecipeContainer extends React.Component {
         return (
             <div>
                 <div className='show-recipe-state'>
-                    {/*<button className='btn-success btn btn-md back' onClick={() => this.showRecipe(false)}><i*/}
-                    {/*className="fas fa-arrow-left"></i> Back to Recipes*/}
-                    {/*</button>*/}
                     {this.state.recipe && this.props.apiStore.isLoggedIn && this.state.recipe.author.id === this.props.apiStore.userId && (
                         <div className='form-group edit'>
                             <button className='btn btn-primary btn-md' onClick={this.toggleEdit}>

@@ -66,8 +66,8 @@ export default class RecipeCard extends React.Component {
 
         return (
             <div key={recipe._id} className={recipeCardClassName}>
-                <input type='hidden' name='tags' value={recipe.tags} />
-                <input type='hidden' name='author' value={recipe.author.id} />
+                {/*<input type='hidden' name='tags' value={recipe.tags} />*/}
+                {/*<input type='hidden' name='author' value={recipe.author.id} />*/}
                 <Link to={`/recipes/${recipe._id}`}>
                     <div>
                         <img src={recipe.image} className={recipeCardImageClassName}/>

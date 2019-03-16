@@ -21,15 +21,21 @@ const express = require('express'),
 // get all recipes
 router.route('/recipes')
     .get((req, res) => {
-        // find all recipes not in user's recipe cloud
-        Recipe.find({}, function (err, recipes) {
+        let q = Recipe.find({});
+        if (req.query.tag) {
+            q = q.where('tags')
+                .in(req.query.tag)
+        }
+        if (req.query.author) {
+            q = q.where('author.id')
+                .equals(req.query.author);
+        }
+        q.exec((err, recipes) => {
             if (err) {
-                return res.status(404).send(err)
+                res.status(404).send(err)
             }
-            else {
-                return res.status(200).send({recipes: recipes});
-            }
-        }).sort({'Date': -1});
+            return res.status(200).send({recipes: recipes});
+        });
     })
     .post(middleware.isLoggedIn, (req, res) => {
         // create new recipe
@@ -69,21 +75,21 @@ router.route('/recipes/:recipe_id')
     });
 
 router.route('/users/:user_id/recipes')
-    // get all user recipes
+// get all user recipes
     .get((req, res) => {
         Recipe.find({
             $or: [
-                {'_id': { $in: req.user.recipes }},
-                {'author.id': req.params.user_id },
+                {'_id': {$in: req.user.recipes}},
+                {'author.id': req.params.user_id},
             ]
-        }, function(err, recipes) {
+        }, function (err, recipes) {
             if (err) {
                 return res.status(404).send(err)
             }
             else {
-                return res.status(200).send({ recipes: recipes });
+                return res.status(200).send({recipes: recipes});
             }
-        }).sort({ 'Date': -1 });
+        }).sort({'Date': -1});
     });
 
 

@@ -66,22 +66,13 @@ class ApiStore {
     };
 
     @action
-    getRecipes = () => {
-        axios.get('/api/recipes')
+    getRecipes = params => {
+        axios.get('/api/recipes', {
+            params: params,
+        })
             .then(response => {
-                // response.data.recipes.forEach(recipe => {
-                //     this.recipes.push(recipe);
-                // })
                 this.recipes = response.data.recipes;
             });
-    };
-
-    @action
-    getUserRecipes = id => {
-        axios.get(`/api/users/${id}/recipes`)
-            .then(response => {
-                this.recipes = response.data.recipes;
-            })
     };
 
     @action
