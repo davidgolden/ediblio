@@ -6,7 +6,7 @@ class ApiStore {
     @observable user = null;
 
     constructor() {
-        this.getUserFromStorage();
+        // this.getUserFromStorage();
         autorun(() => {
             // This code will run every time any observable property on the store is updated.
             const user = JSON.stringify(toJS(this.user));
