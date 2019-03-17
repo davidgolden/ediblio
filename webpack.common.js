@@ -20,10 +20,6 @@ module.exports = {
             }),
             new OptimizeCSSAssetsPlugin({})
         ],
-        splitChunks: {
-            // include all types of chunks
-            chunks: 'all'
-        }
     },
     plugins: [
         new MiniCssExtractPlugin({
