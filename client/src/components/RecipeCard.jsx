@@ -9,28 +9,13 @@ import InCloudButton from "./utilities/buttons/InCloudButton";
 import AddToCloudButton from "./utilities/buttons/AddToCloudButton";
 import AddToGroceryListButton from "./utilities/buttons/AddToGroceryListButton";
 import DeleteButton from "./utilities/buttons/DeleteButton";
+import RecipeButtons from "./recipes/RecipeButtons";
 
 @inject('apiStore')
 @observer
 export default class RecipeCard extends React.Component {
     static propTypes = {
         recipe: PropTypes.object,
-    };
-
-    removeFromCloud = () => {
-        let currentCloud = this.props.apiStore.user.recipes;
-        currentCloud = currentCloud.filter(recipe => recipe.id !== this.props.recipe.id);
-        this.props.apiStore.patchUser({
-            recipes: currentCloud,
-        })
-    };
-
-    addToCloud = () => {
-        let currentCloud = this.props.apiStore.user.recipes;
-        currentCloud.push(this.props.recipe);
-        this.props.apiStore.patchUser({
-            recipes: currentCloud,
-        })
     };
 
     deleteRecipe = () => {
@@ -68,24 +53,6 @@ export default class RecipeCard extends React.Component {
             [styles.recipeCardButtons]: true,
         });
 
-        let buttons = [];
-        if (apiStore.isLoggedIn) {
-            const inCloud = apiStore.user.recipes.includes(recipe._id) || recipe.author.id === apiStore.user._id;
-            if (apiStore.user._id === recipe.author.id) {
-                buttons.push(<InCloudButton key={'incloudbutton'} disabled={true}/>)
-            }
-            if (inCloud && apiStore.user._id !== recipe.author.id) {
-                buttons.push(<RemoveButton key={'removebutton'} onClick={this.removeFromCloud}/>)
-            }
-            buttons.push(<AddToCloudButton key={'addtocloud'} disabled={inCloud} onClick={this.addToCloud}/>);
-            buttons.push(<AddToGroceryListButton key={'addtolist'}
-                                                 disabled={apiStore.user.menu.find(item => item._id === recipe._id)}
-                                                 onClick={this.addToGroceryList}/>)
-            if (apiStore.user.isAdmin) {
-                buttons.push(<DeleteButton key={'deletebutton'} onClick={this.deleteRecipe}/>)
-            }
-        }
-
         return (
             <div className={recipeCardClassName}>
                 <Link to={`/recipes/${recipe._id}`}>
@@ -97,7 +64,12 @@ export default class RecipeCard extends React.Component {
                     </div>
                 </Link>
                 <div className={recipeCardButtonClassName}>
-                    {buttons.map(item => item)}
+                    <RecipeButtons
+                        recipe_id={recipe._id}
+                        author_id={recipe.author.id}
+                        addToGroceryList={this.addToGroceryList}
+                        deleteRecipe={this.deleteRecipe}
+                    />
                 </div>
             </div>
         )

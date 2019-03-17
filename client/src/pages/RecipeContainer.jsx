@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import Button from "../components/utilities/buttons/Button";
+import RecipeButtons from "../components/recipes/RecipeButtons";
 
 @inject('apiStore')
 @observer
@@ -147,9 +148,12 @@ export default class RecipeContainer extends React.Component {
                                 </React.Fragment>)
                             }
                         </Button>
-                        <Button onClick={this.deleteRecipe}>
-                            <FontAwesomeIcon icon={faTrashAlt}/> Delete Recipe
-                        </Button>
+                        <RecipeButtons
+                            recipe_id={this.state.recipe._id}
+                            author_id={this.state.recipe.author.id}
+                            addToGroceryList={this.addToGroceryList}
+                            deleteRecipe={this.deleteRecipe}
+                        />
                     </div>
                 )}
                 {this.state.edit === true ? (
