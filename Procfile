@@ -1,1 +1,1 @@
-web: npm run build:prod && node server.js
+web: webpack --config webpack.prod.js && node server.js
