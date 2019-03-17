@@ -116,6 +116,9 @@ export default class RecipeForm extends React.Component {
 
     handleSubmit = () => {
         this.props.apiStore.createRecipe({...this.state})
+            .then(() => {
+                this.props.navigate("/");
+            })
     };
 
     render() {

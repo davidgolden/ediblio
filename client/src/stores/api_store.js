@@ -145,21 +145,27 @@ class ApiStore {
 
     @action
     createRecipe = recipe => {
-        axios.post('/api/recipes', {
-            recipe: recipe,
-        })
-            .then(response => {
-                // do something
+        return new Promise((res, rej) => {
+            axios.post('/api/recipes', {
+                recipe: recipe,
             })
+                .then(response => {
+                    // do something
+                    res();
+                })
+        })
     };
 
     @action
     deleteRecipe = id => {
-        axios.delete(`/api/recipes/${id}`)
-            .then(() => {
-                // do something
-                this.recipes = this.recipes.filter(item => item._id !== id);
-            })
+        return new Promise((res, rej) => {
+            axios.delete(`/api/recipes/${id}`)
+                .then(() => {
+                    // do something
+                    this.recipes = this.recipes.filter(item => item._id !== id);
+                    res();
+                })
+        });
     };
 
     @action

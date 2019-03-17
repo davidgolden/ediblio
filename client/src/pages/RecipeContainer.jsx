@@ -123,7 +123,10 @@ export default class RecipeContainer extends React.Component {
 
     deleteRecipe = () => {
         if (confirm('Are you sure you want to do that?')) {
-            this.props.apiStore.deleteRecipe(this.props.recipe_id);
+            this.props.apiStore.deleteRecipe(this.props.recipe_id)
+                .then(() => {
+                    this.props.navigate("/");
+                });
         }
     };
 
