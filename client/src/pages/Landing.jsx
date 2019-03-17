@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCloudUploadAlt, faSearchPlus, faListOl, faShoppingCart} from '@fortawesome/free-solid-svg-icons'
 import Button from "../components/utilities/buttons/Button";
 import {inject, observer} from 'mobx-react';
+import { navigate, redirectTo } from '@reach/router';
 
 @inject('apiStore')
 @observer
@@ -42,6 +43,9 @@ export default class Landing extends React.Component {
             email: this.state.email,
             password: this.state.password
         })
+            .then(() => {
+               this.props.navigate("/")
+            })
     };
 
     render() {

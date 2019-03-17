@@ -164,14 +164,17 @@ class ApiStore {
 
     @action
     registerUser = user => {
-        axios.post('/api/users', {...user})
-            .then(response => {
-                this.user = response.data.user;
-                navigate('/');
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        return new Promise((res, rej) => {
+            axios.post('/api/users', {...user})
+                .then(response => {
+                    this.user = response.data.user;
+                    res();
+                })
+                .catch(err => {
+                    console.log(err);
+                    rej();
+                })
+        })
     }
 }
 
