@@ -15,7 +15,7 @@
     "start": "node server.js",
     "build:dev": "webpack --config webpack.dev.js",
     "build:prod": "webpack --config webpack.prod.js",
-    "build": "webpack --config webpack.prod.js"
+    "build": "npm run build:prod"
   },
   "author": "David Golden",
   "license": "ISC",
