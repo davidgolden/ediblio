@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Recipe Cloud refactor using ReactJS",
   "main": "server.js",
+  "mode": "production",
   "engines": {
     "node": ">=7.5.0"
   },

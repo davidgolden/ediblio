@@ -10,8 +10,15 @@
   z-index: 1;
 
   > div { // container of everything that's not the navigation links
-    float: right;
+    position: absolute;
     line-height: 50px;
+    top: 0;
+    right: 2rem;
+    margin-left: 1.5rem;
+
+    @media(max-width: 800px) {
+      position: static;
+    }
 
     input {
       padding: 5px 10px;
@@ -94,5 +101,30 @@
   a, button, span {
     color: white;
     font-size: 1.2rem;
+  }
+}
+
+.linksContainer {
+  display: none;
+
+  &Visible {
+    display: inline-block;
+  }
+
+  @media(min-width: 770px) {
+    display: inline-block;
+  }
+}
+
+.mobileHam {
+  position: absolute;
+  display: none;
+  right: 0;
+  top: 0;
+  font-size: 2rem;
+  line-height: 50px;
+
+  @media(max-width: 770px) {
+    display: inline;
   }
 }

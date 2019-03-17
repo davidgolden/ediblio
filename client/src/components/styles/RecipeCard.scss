@@ -11,6 +11,14 @@
   -webkit-transition: opacity .5s ease;
   align-self: flex-start;
 
+  @media(max-width: 650px) {
+    flex: 45%;
+  }
+
+  @media(max-width: 500px) {
+    flex: 100%;
+  }
+
   a {
     text-decoration: none;
     cursor: pointer;
