@@ -42,10 +42,6 @@ export default class Header extends React.Component {
         })
     };
 
-    componentDidMount() {
-        this.props.apiStore.authenticate();
-    }
-
     render() {
         const navContainerClassName = classNames({
             [styles.navContainer]: true,

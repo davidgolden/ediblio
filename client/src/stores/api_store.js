@@ -1,7 +1,6 @@
 import React from 'react';
 import {action, observable, computed, autorun, toJS} from 'mobx';
 import axios from 'axios';
-import {navigate} from '@reach/router';
 
 class ApiStore {
     @observable user = null;
@@ -19,7 +18,7 @@ class ApiStore {
     getUserFromStorage = () => {
         const foundUser = localStorage.getItem('user');
         if (foundUser) {
-            this.user = foundUser;
+            this.user = JSON.parse(foundUser);
         }
     };
 

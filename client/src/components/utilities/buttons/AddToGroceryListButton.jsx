@@ -12,8 +12,6 @@ const AddToGroceryListButton = props => {
         [props.className]: props.className,
     });
 
-    console.log(props.disabled);
-
     return (
         <Button {...props} className={addToGroceryListButtonClassName}>
             <FontAwesomeIcon icon={faShoppingCart}/>
