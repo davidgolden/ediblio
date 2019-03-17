@@ -64,9 +64,9 @@ passport.deserializeUser(function(id, done) {
 
 // NEED TO IMPORT ROUTES
 // NEED TO IMPORT MIDDLEWARE
-app.use('/', indexRoutes);
-app.use('/', userRoutes);
-app.use('/', recipeRoutes);
+app.use('/api/', indexRoutes);
+app.use('/api/', userRoutes);
+app.use('/api/', recipeRoutes);
 
 // this is needed in order to send static files like index.html... DO NOT GET RID OF IT!!!
 app.use(express.static(path.join(__dirname, "client")));
