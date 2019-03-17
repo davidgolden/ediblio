@@ -5,14 +5,12 @@
   "main": "server.js",
   "mode": "production",
   "engines": {
-    "node": ">=7.5.0"
+    "node": "9.4.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:client": "webpack && webpack-dev-server",
-    "start:server": "node server.js",
-    "client-install": "npm install --prefix client",
     "start": "node server.js",
+    "heroku-postbuild": "webpack --config webpack.prod.js",
     "build:dev": "webpack --config webpack.dev.js",
     "build:prod": "webpack --config webpack.prod.js"
   },
