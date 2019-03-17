@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
+const Recipe = require('./recipe');
 
 var passportLocalMongoose = require('passport-local-mongoose');
 
@@ -12,8 +13,8 @@ var groceryListSchema = mongoose.Schema({
 var userSchema = new mongoose.Schema({
   username: {type: String, required: true, unique: true },
   email: {type: String, required: true, unique: true, lowercase: true},
-  isAdmin: Boolean,
-  password: String,
+  isAdmin: { type: Boolean, default: false },
+  password: { type: String, required: true },
   resetToken: String,
   tokenExpires: Date,
   recipes: [
@@ -48,6 +49,10 @@ userSchema.pre('save', function(next) {
       next();
     });
   });
+});
+
+userSchema.post('remove', function(user) {
+  Recipes.deleteMany({ 'author.id': user._id })
 });
 
 userSchema.methods.comparePassword = function(candidatePassword, cb) {

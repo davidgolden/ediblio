@@ -1,12 +1,11 @@
 var mongoose = require('mongoose');
 
 var recipeSchema = new mongoose.Schema({
-    name: { type: String, trim: true },
+    name: { type: String, trim: true, required: true },
     url: { type: String, trim: true },
     notes: String,
-    image: { type: String, trim: true },
+    image: { type: String, trim: true, required: true },
     tags: [String],
-    created: Date,
     ingredients: [
             {
                 quantity: Number,
@@ -21,6 +20,11 @@ var recipeSchema = new mongoose.Schema({
         },
         username: String
       }
+}, {
+    timestamps: {
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+    }
 });
 
 module.exports = mongoose.model('recipes', recipeSchema);

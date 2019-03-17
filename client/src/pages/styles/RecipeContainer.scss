@@ -11,16 +11,16 @@
   button {
     border-radius: 5px;
     margin-left: 10px;
+  }
+
+  .toggleEdit {
+    background-color: $dark;
+    color: white;
+    padding: 5px 10px;
     font-size: 1.2rem;
 
-    &:first-of-type {
-      background-color: $dark;
-      color: white;
-      padding: 5px 10px;
-
-      &:hover {
-        background-color: $other;
-      }
+    &:hover {
+      background-color: $other;
     }
   }
 }

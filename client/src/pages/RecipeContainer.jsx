@@ -5,8 +5,8 @@ import {inject, observer} from 'mobx-react';
 import {addIngredient, canBeAdded} from "../utils/conversions";
 import styles from './styles/RecipeContainer.scss';
 import classNames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSearch, faEdit, faTrashAlt} from '@fortawesome/free-solid-svg-icons'
 import Button from "../components/utilities/buttons/Button";
 import RecipeButtons from "../components/recipes/RecipeButtons";
 
@@ -137,12 +137,16 @@ export default class RecipeContainer extends React.Component {
         const recipeEditButtonsClassName = classNames({
             [styles.recipeEditButtons]: true,
         });
+        const toggleEditClassName = classNames({
+            [styles.toggleEdit]: true,
+        });
 
         return (
             <div className={recipeContainerClassName}>
-                {this.state.recipe && this.props.apiStore.isLoggedIn && this.state.recipe.author.id === this.props.apiStore.user._id && (
-                    <div className={recipeEditButtonsClassName}>
-                        <Button onClick={this.toggleEdit}>
+
+                <div className={recipeEditButtonsClassName}>
+                    {this.state.recipe && this.props.apiStore.isLoggedIn && this.state.recipe.author.id === this.props.apiStore.user._id && (
+                        <Button className={toggleEditClassName} onClick={this.toggleEdit}>
                             {this.state.edit === false ? (
                                 <React.Fragment>
                                     <FontAwesomeIcon icon={faEdit}/> Edit</React.Fragment>) : (
@@ -150,15 +154,14 @@ export default class RecipeContainer extends React.Component {
                                     <FontAwesomeIcon icon={faSearch}/> View
                                 </React.Fragment>)
                             }
-                        </Button>
-                        <RecipeButtons
-                            recipe_id={this.state.recipe._id}
-                            author_id={this.state.recipe.author.id}
-                            addToGroceryList={this.addToGroceryList}
-                            deleteRecipe={this.deleteRecipe}
-                        />
-                    </div>
-                )}
+                        </Button>)}
+                    {this.state.recipe && this.props.apiStore.isLoggedIn && <RecipeButtons
+                        recipe_id={this.state.recipe._id}
+                        author_id={this.state.recipe.author.id}
+                        addToGroceryList={this.addToGroceryList}
+                        deleteRecipe={this.deleteRecipe}
+                    />}
+                </div>
                 {this.state.edit === true ? (
                     <RecipeForm
                         user={this.props.user}

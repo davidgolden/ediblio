@@ -10,7 +10,7 @@ const express = require('express'),
 router.post('/authenticate', function (req, res) {
     if (req.isAuthenticated()) {
         User.findById(req.user._id).populate('menu').populate('recipes').exec((err, user) => {
-            return res.status(200).send(JSON.stringify({user: user}));
+            return res.status(200).send({user: user});
         })
     } else {
         return res.sendStatus(200);
