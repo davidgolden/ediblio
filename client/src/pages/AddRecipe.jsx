@@ -122,6 +122,10 @@ export default class RecipeForm extends React.Component {
         const recipeFormClassName = classNames({
             [styles.recipeForm]: true,
         }) ;
+        const submitButtonClassName = classNames({
+            [styles.submitButton]: true,
+            [styles.submitButtonDisabled]: !(this.state.name && this.state.image)
+        });
 
         return (
             <div className={recipeFormClassName}>
@@ -144,7 +148,7 @@ export default class RecipeForm extends React.Component {
                 />
                 <AddTags toggleTag={this.toggleTag} selectedTags={this.state.tags} />
                 <div>
-                    {this.props.apiStore.isLoggedIn ? <Button onClick={this.handleSubmit}>Submit!</Button> :
+                    {this.props.apiStore.isLoggedIn ? <Button className={submitButtonClassName} onClick={this.handleSubmit}>Submit!</Button> :
                         <p>You must be logged in to add a recipe!</p>}
                 </div>
             </div>

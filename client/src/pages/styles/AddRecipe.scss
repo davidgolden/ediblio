@@ -31,3 +31,13 @@
   cursor: pointer;
   font-size: 1.2rem;
 }
+
+.submitButton {
+  display: block;
+
+  &Disabled {
+    opacity: .5;
+    pointer-events: none;
+    cursor: default;
+  }
+}

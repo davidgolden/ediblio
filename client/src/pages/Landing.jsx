@@ -64,6 +64,10 @@ export default class Landing extends React.Component {
         const infoBlockClassName = classNames({
             [styles.infoBlock]: true,
         });
+        const submitButtonClassName = classNames({
+            [styles.submitButton]: true,
+            [styles.submitButtonDisabled]: !(this.state.username && this.state.email && this.state.password && this.state.confirm)
+        })
 
         return (
             <div className={landingContainerClassName}>
@@ -111,7 +115,7 @@ export default class Landing extends React.Component {
                                placeholder='Confirm Password' value={this.state.confirm}/>
                     </div>
                     <div>
-                        <Button onClick={this.handleSubmit}>Create Account</Button>
+                        <Button className={submitButtonClassName} onClick={this.handleSubmit}>Create Account</Button>
                     </div>
                 </div>
             </div>
