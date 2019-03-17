@@ -21,7 +21,7 @@ app.use(methodOverride('_method'));
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(process.env.MONGO)
+mongoose.connect(process.env.MONGO, { useNewUrlParser: true, autoIndex: false, useCreateIndex: true })
       .then(() => console.log(`Database connected`))
       .catch(err => console.log(`Database connection error: ${err.message}`));
 
@@ -63,7 +63,6 @@ passport.deserializeUser(function(id, done) {
 });
 
 // NEED TO IMPORT ROUTES
-// NEED TO IMPORT MIDDLEWARE
 app.use('/api/', indexRoutes);
 app.use('/api/', userRoutes);
 app.use('/api/', recipeRoutes);
