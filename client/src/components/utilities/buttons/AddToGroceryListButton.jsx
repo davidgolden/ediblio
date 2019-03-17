@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import Button from './Button';
 import styles from './styles/Button.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faShoppingBag } from '@fortawesome/free-solid-svg-icons'
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 
 const AddToGroceryListButton = props => {
     const addToGroceryListButtonClassName = classNames({
@@ -12,11 +12,13 @@ const AddToGroceryListButton = props => {
         [props.className]: props.className,
     });
 
+    console.log(props.disabled);
+
     return (
         <Button {...props} className={addToGroceryListButtonClassName}>
-            <FontAwesomeIcon icon={faShoppingBag}/>
+            <FontAwesomeIcon icon={faShoppingCart}/>
         </Button>
     )
-}
+};
 
 export default AddToGroceryListButton;

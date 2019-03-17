@@ -24,8 +24,6 @@ class ApiStore {
     };
 
     @observable recipes = [];
-    @observable grocery_list = [];
-    @observable menu = [];
 
     @computed
     get isLoggedIn() {
@@ -95,10 +93,9 @@ class ApiStore {
         axios.patch(`/api/users/${this.user._id}`, {
             ...partialUserObj
         })
-            .then(response => {
-                console.log(response);
+            .then(action(response => {
                 this.user = response.data.user;
-            })
+            }))
     };
 
     @action

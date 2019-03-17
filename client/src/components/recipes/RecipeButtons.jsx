@@ -29,7 +29,7 @@ export default class RecipeButtons extends React.Component {
 
     removeFromCloud = () => {
         let currentCloud = this.props.apiStore.user.recipes;
-        currentCloud = currentCloud.filter(recipe => recipe.id !== this.props.recipe_id);
+        currentCloud = currentCloud.filter(recipe_id => recipe_id !== this.props.recipe_id);
         this.props.apiStore.patchUser({
             recipes: currentCloud,
         })
@@ -42,20 +42,32 @@ export default class RecipeButtons extends React.Component {
             return false;
         }
 
-        const inCloud = apiStore.user.recipes.includes(this.props.recipe_id) || this.props.author_id === apiStore.user._id;
+        const inCloud = !!(apiStore.user.recipes.find(id => id === this.props.recipe_id));
+        const inMenu = !!(apiStore.user.menu.find(item => item._id === this.props.recipe_id));
+        const isAuthor = this.props.author_id === apiStore.user._id;
+
+        // if in cloud, show inCloud
+        // if in cloud and not author, show remove from cloud
+        // if not in cloud, show add to cloud
+        // if not on menu show add to grocery list
 
         return (
             <React.Fragment>
-                {apiStore.user._id === this.props.author_id &&
-                <InCloudButton disabled={true}/>}
-                {inCloud && apiStore.user._id !== this.props.author_id &&
+
+                {(inCloud || isAuthor) && <InCloudButton disabled={true}/>}
+
+                {inCloud && !isAuthor &&
                 <RemoveButton onClick={this.removeFromCloud}/>}
-                <AddToCloudButton disabled={inCloud} onClick={this.addToCloud}/>
+
+                {!inCloud && !isAuthor && <AddToCloudButton disabled={inCloud} onClick={this.addToCloud}/>}
+
                 <AddToGroceryListButton
-                    disabled={apiStore.user.menu.find(item => item._id === this.props.recipe_id)}
+                    disabled={inMenu}
                     onClick={this.props.addToGroceryList}/>
-                {(apiStore.user.isAdmin || apiStore.user._id === this.props.author_id) &&
+
+                {(apiStore.user.isAdmin || isAuthor) &&
                 <DeleteButton onClick={this.props.deleteRecipe}/>}
+
             </React.Fragment>
         );
     }
