@@ -3,18 +3,18 @@ import classNames from 'classnames';
 import Button from './Button';
 import styles from './styles/Button.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 const DeleteButton = props => {
-    const removeButtonClassName = classNames({
-        [styles.removeButton]: true,
-        [styles.removeButtonDisabled]: props.disabled,
+    const deleteButtonClassName = classNames({
+        [styles.deleteButton]: true,
+        [styles.deleteButtonDisabled]: props.disabled,
         [props.className]: props.className,
     });
 
     return (
-        <Button {...props} className={removeButtonClassName}>
-            <FontAwesomeIcon icon={faTrash}/>
+        <Button {...props} className={deleteButtonClassName}>
+            <FontAwesomeIcon icon={faTrashAlt}/>
         </Button>
     )
 }

@@ -1,4 +1,7 @@
 const path = require('path');
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 outputFolder = 'client/dist/';
 
@@ -8,7 +11,26 @@ module.exports = {
         path: path.resolve(__dirname, outputFolder),
         filename: "bundle.js",
     },
-    mode: 'development',
+    optimization: {
+        minimizer: [
+            new UglifyJsPlugin({
+                cache: true,
+                parallel: true,
+                sourceMap: true // set to true if you want JS source maps
+            }),
+            new OptimizeCSSAssetsPlugin({})
+        ],
+        splitChunks: {
+            // include all types of chunks
+            chunks: 'all'
+        }
+    },
+    plugins: [
+        new MiniCssExtractPlugin({
+            filename: "[name].css",
+            chunkFilename: "[id].css"
+        })
+    ],
     module: {
         rules: [
             {
@@ -28,6 +50,13 @@ module.exports = {
                     "style-loader", // creates style nodes from JS strings
                     {loader: 'css-loader', options: {modules: true, importLoaders: 1}},
                     "sass-loader" // compiles Sass to CSS, using Node Sass by default
+                ]
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    "css-loader"
                 ]
             },
             {

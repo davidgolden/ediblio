@@ -17,10 +17,16 @@
   composes: stockButtonsBar;
   background-color: $other;
   color: white;
+}
+
+.deleteButton {
+  composes: stockButtonsBar;
+  background-color: $primary-color;
+  color: white;
 
   &Disabled {
     pointer-events: none;
-    background-color: darken($other, 10%);
+    opacity: .5;
     cursor: default;
   }
 }
@@ -32,7 +38,7 @@
 
   &Disabled {
     pointer-events: none;
-    background-color: lighten($otherdark, 10%);
+    opacity: .5;
     cursor: default;
   }
 }
@@ -40,11 +46,11 @@
 .inCloudButton {
   composes: stockButtonsBar;
   background-color: $other;
-  color: black;
+  color: white;
 
   &Disabled {
     pointer-events: none;
-    background-color: lighten($other, 10%);
+    opacity: .5;
     cursor: default;
   }
 }
@@ -52,10 +58,11 @@
 .addToGroceryListButton {
   composes: stockButtonsBar;
   background-color: $secondary-color;
+  color: white;
 
   &Disabled {
     pointer-events: none;
-    background-color: lighten($secondary-color, 10%);
+    opacity: .5;
     cursor: default;
   }
 }

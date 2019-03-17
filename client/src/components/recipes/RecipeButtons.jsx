@@ -54,7 +54,7 @@ export default class RecipeButtons extends React.Component {
                 <AddToGroceryListButton
                     disabled={apiStore.user.menu.find(item => item._id === this.props.recipe_id)}
                     onClick={this.props.addToGroceryList}/>
-                {apiStore.user.isAdmin || apiStore.user._id === this.props.author_id &&
+                {(apiStore.user.isAdmin || apiStore.user._id === this.props.author_id) &&
                 <DeleteButton onClick={this.props.deleteRecipe}/>}
             </React.Fragment>
         );
