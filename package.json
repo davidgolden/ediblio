@@ -14,8 +14,7 @@
     "client-install": "npm install --prefix client",
     "start": "node server.js",
     "build:dev": "webpack --config webpack.dev.js",
-    "build:prod": "webpack --config webpack.prod.js",
-    "build": "webpack --config webpack.prod.js && node server.js"
+    "build:prod": "webpack --config webpack.prod.js"
   },
   "author": "David Golden",
   "license": "ISC",
