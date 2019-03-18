@@ -18,32 +18,45 @@ export default class GroceryList extends React.Component {
             storeMode: false,
             groceryList: this.props.apiStore.user ? this.props.apiStore.user.groceryList : [],
             menu: this.props.apiStore.user ? this.props.apiStore.user.menu : [],
+            isCurrent: true,
         };
     }
 
     handleUpdateIngredient = (ingredient, i) => {
         let groceryList = this.state.groceryList;
         groceryList.splice(i, 1, ingredient);
-        this.setState({groceryList: groceryList});
+        this.setState({
+            groceryList: groceryList,
+            isCurrent: false,
+        });
     };
 
     handleAddIngredient = () => {
         let groceryList = this.state.groceryList;
         let ingredient = {quantity: '', measurement: '#', name: ''};
         groceryList.push(ingredient);
-        this.setState({groceryList: groceryList})
+        this.setState({
+            groceryList: groceryList,
+            isCurrent: false,
+        })
     };
 
     handleDeleteIngredient = i => {
         let groceryList = this.state.groceryList;
         groceryList.splice(i, 1);
-        this.setState({groceryList: groceryList});
+        this.setState({
+            groceryList: groceryList,
+            isCurrent: false,
+        });
     };
 
     handleDeleteMenuItem = i => {
         let menuList = this.state.menu;
         menuList.splice(i, 1);
-        this.setState({menu: menuList});
+        this.setState({
+            menu: menuList,
+            isCurrent: false,
+        });
     };
 
     storeMode = () => {
@@ -68,7 +81,12 @@ export default class GroceryList extends React.Component {
         this.props.apiStore.patchUser({
             groceryList: this.state.groceryList,
             menu: this.state.menu,
-        });
+        })
+            .then(() => {
+                this.setState({
+                    isCurrent: true,
+                })
+            })
     };
 
     render() {
@@ -80,6 +98,10 @@ export default class GroceryList extends React.Component {
         });
         const menuContainerClassName = classNames({
             [styles.menuContainer]: true,
+        });
+        const saveListClassName = classNames({
+            [styles.saveListButton]: true,
+            [styles.saveListButtonDisabled]: this.state.isCurrent,
         });
 
         return (
@@ -105,7 +127,7 @@ export default class GroceryList extends React.Component {
                     handleDeleteIngredient={this.handleDeleteIngredient}
                     storeMode={this.state.storeMode}
                 />}
-                <Button onClick={this.updateList}>Save Grocery List/Menu</Button>
+                <Button className={saveListClassName} onClick={this.updateList}>Save Grocery List/Menu</Button>
                 <Button onClick={this.storeMode}>Toggle Store Mode</Button>
             </div>
         )

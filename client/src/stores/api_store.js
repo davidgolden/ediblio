@@ -114,12 +114,18 @@ class ApiStore {
 
     @action
     patchUser = partialUserObj => {
-        axios.patch(`/api/users/${this.user._id}`, {
-            ...partialUserObj
-        })
-            .then(action(response => {
-                this.user = response.data.user;
-            }))
+        return new Promise((res, rej) => {
+            axios.patch(`/api/users/${this.user._id}`, {
+                ...partialUserObj
+            })
+                .then(action(response => {
+                    this.user = response.data.user;
+                    res();
+                }))
+                .catch(err => {
+                    rej(err);
+                })
+        });
     };
 
     @action
