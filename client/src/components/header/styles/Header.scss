@@ -120,9 +120,9 @@
   position: absolute;
   display: none;
   right: 0;
-  top: 0;
+  top: 2px;
   font-size: 2rem;
-  line-height: 50px;
+  padding: 0;
 
   @media(max-width: 770px) {
     display: inline;
