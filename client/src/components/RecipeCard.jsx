@@ -25,16 +25,7 @@ export default class RecipeCard extends React.Component {
     };
 
     addToGroceryList = () => {
-        const menu = this.props.apiStore.user.menu;
-        let groceryList = this.props.apiStore.user.groceryList;
-
-        menu.push(this.props.recipe._id);
-        groceryList = groceryList.concat(this.props.recipe.ingredients);
-
-        this.props.apiStore.patchUser({
-            menu: menu,
-            groceryList: groceryList,
-        })
+        this.props.apiStore.addToGroceryList(this.props.recipe._id, this.props.recipe.ingredients);
     };
 
     render() {
