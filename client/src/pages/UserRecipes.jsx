@@ -5,6 +5,7 @@ import RecipeCard from "../components/RecipeCard";
 import classNames from 'classnames';
 import styles from './styles/UserRecipes.scss';
 import TagFilterBar from "../components/recipes/TagFilterBar";
+import {autorun} from "mobx";
 
 @inject('apiStore')
 @observer
@@ -13,14 +14,33 @@ export default class UserRecipes extends React.Component {
         super(props);
 
         this.state = {
-            loading: true
+            loading: true,
+            lastRecipePageLoaded: 0,
         }
     }
 
     componentDidMount() {
         this.props.apiStore.getRecipes({
             author: this.props.user_id,
+        });
+
+        this.disabler = autorun(() => {
+            if (this.props.apiStore.distanceToBottom === 0) {
+                this.setState(prevState => {
+                    this.props.apiStore.getRecipes({
+                        page: prevState.lastRecipePageLoaded + 1,
+                        author: this.props.user_id,
+                    });
+                    return {
+                        lastRecipePageLoaded: prevState.lastRecipePageLoaded + 1,
+                    }
+                })
+            }
         })
+    }
+
+    componentWillUnmount() {
+        this.disabler();
     }
 
     sortByTag = tag => {

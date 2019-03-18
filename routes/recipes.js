@@ -21,6 +21,10 @@ const express = require('express'),
 // get all recipes
 router.route('/recipes')
     .get((req, res) => {
+        let page_size = req.query.page_size || 12;
+        let page = req.query.page || 0;
+        const skip = page * page_size;
+
         let q = Recipe.find({});
         if (req.query.tag) {
             q = q.where('tags')
@@ -30,12 +34,14 @@ router.route('/recipes')
             q = q.where('author.id')
                 .equals(req.query.author);
         }
-        q.exec((err, recipes) => {
-            if (err) {
-                res.status(404).send(err)
-            }
-            return res.status(200).send({recipes: recipes});
-        });
+        q.limit(page_size)
+            .skip(skip)
+            .exec((err, recipes) => {
+                if (err) {
+                    res.status(404).send(err)
+                }
+                return res.status(200).send({recipes: recipes});
+            });
     })
     .post(middleware.isLoggedIn, (req, res) => {
         // create new recipe

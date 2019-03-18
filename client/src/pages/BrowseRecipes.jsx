@@ -1,5 +1,6 @@
 import React from 'react';
 import {inject, observer} from 'mobx-react';
+import { autorun } from 'mobx';
 import RecipeCard from "../components/RecipeCard";
 import classNames from 'classnames';
 import styles from './styles/BrowseRecipes.scss';
@@ -10,10 +11,32 @@ import TagFilterBar from "../components/recipes/TagFilterBar";
 export default class BrowseRecipes extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            lastRecipePageLoaded: 0,
+        }
     }
 
     componentDidMount() {
         this.props.apiStore.getRecipes();
+
+        this.disabler = autorun(() => {
+            if (this.props.apiStore.distanceToBottom === 0) {
+                this.setState(prevState => {
+                    this.props.apiStore.getRecipes({
+                        page: prevState.lastRecipePageLoaded + 1,
+                    });
+                    console.log(prevState.lastRecipePageLoaded);
+                    return {
+                        lastRecipePageLoaded: prevState.lastRecipePageLoaded + 1,
+                    }
+                })
+            }
+        })
+    }
+
+    componentWillUnmount() {
+        this.disabler();
     }
 
     sortByTag = tag => {

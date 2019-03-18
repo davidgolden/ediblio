@@ -5,6 +5,7 @@ import {addIngredient, canBeAdded} from "../utils/conversions";
 
 class ApiStore {
     @observable user = null;
+    @observable distanceToBottom = 1;
 
     constructor() {
         // this.getUserFromStorage();
@@ -13,7 +14,17 @@ class ApiStore {
             const user = JSON.stringify(toJS(this.user));
             localStorage.setItem('user', user);
         });
+
+        window.addEventListener('scroll', this.handleWindowScroll)
     }
+
+    @action
+    handleWindowScroll = () => {
+        const scrollPosition = window.pageYOffset;
+        const windowSize = window.innerHeight;
+        const bodyHeight = document.body.offsetHeight;
+        this.distanceToBottom = Math.max(bodyHeight - (scrollPosition + windowSize), 0)
+    };
 
     @action
     getUserFromStorage = () => {
@@ -66,12 +77,25 @@ class ApiStore {
 
     @action
     getRecipes = params => {
-        axios.get('/api/recipes', {
-            params: params,
+        // accepted params: author, tags, page, page_size
+        return new Promise((res, rej) => {
+            axios.get('/api/recipes', {
+                params: params,
+            })
+                .then(response => {
+                    // if not loading first page, add new recipes. otherwise, replace them.
+                    if (params && params.page) {
+                        console.log(params.page);
+                        this.recipes = this.recipes.concat(response.data.recipes);
+                    } else {
+                        this.recipes = response.data.recipes;
+                    }
+                    res();
+                })
+                .catch(err => {
+                    rej(err);
+                })
         })
-            .then(response => {
-                this.recipes = response.data.recipes;
-            });
     };
 
     @action
@@ -178,7 +202,7 @@ class ApiStore {
                     rej();
                 })
         })
-    }
+    };
 
     @action
     addToGroceryList = (recipe_id, ingredients) => {
