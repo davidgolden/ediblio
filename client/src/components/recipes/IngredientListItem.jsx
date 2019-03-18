@@ -10,7 +10,7 @@ const Ingredient = (props) => {
 
     if(!props.storeMode) {
         return (
-            <div className={ingredientRowClassName}>
+            <li className={ingredientRowClassName}>
                 <input
                     type='number'
                     step="0.01"
@@ -42,7 +42,7 @@ const Ingredient = (props) => {
                     value={props.value.name}
                 />
                 <RemoveButton onClick={(e) => props.handleDeleteIngredient(e, props.index)}/>
-            </div>
+            </li>
         )
     } else {
         return (

@@ -30,7 +30,9 @@ const AddIngredients = (props) => {
             <button className={addIngredientButtonClassName} onClick={props.handleAddIngredient}>+
                 ingredient
             </button>
+            <ul>
             {IngredientList}
+            </ul>
         </div>
     )
 };

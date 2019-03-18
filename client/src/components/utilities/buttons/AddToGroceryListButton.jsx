@@ -8,9 +8,10 @@ import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 const AddToGroceryListButton = props => {
     const addToGroceryListButtonClassName = classNames({
         [styles.addToGroceryListButton]: true,
-        [styles.addToGroceryListDisabled]: props.disabled,
+        [styles.addToGroceryListButtonDisabled]: props.disabled,
         [props.className]: props.className,
     });
+
 
     return (
         <Button {...props} className={addToGroceryListButtonClassName}>

@@ -1,6 +1,7 @@
 .ingredientRow {
   margin: 2px 0;
   min-height: 35px;
+  list-style: none;
 
   > input, > select, > button {
     display: inline-block;

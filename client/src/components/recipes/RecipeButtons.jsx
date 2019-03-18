@@ -43,7 +43,7 @@ export default class RecipeButtons extends React.Component {
         }
 
         const inCloud = !!(apiStore.user.recipes.find(id => id === this.props.recipe_id));
-        const inMenu = !!(apiStore.user.menu.find(item => item._id === this.props.recipe_id));
+        const inMenu = !!(apiStore.user.menu.find(item => item._id === this.props.recipe_id) || apiStore.user.menu.includes(this.props.recipe_id));
         const isAuthor = this.props.author_id === apiStore.user._id;
 
         // if in cloud, show inCloud
