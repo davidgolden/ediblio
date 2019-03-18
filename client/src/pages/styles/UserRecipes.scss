@@ -3,4 +3,10 @@
   flex-wrap: wrap;
   align-items: stretch;
   align-content: flex-start;
+
+  p {
+    text-align: center;
+    margin: 2rem auto;
+    font-size: 2rem;
+  }
 }

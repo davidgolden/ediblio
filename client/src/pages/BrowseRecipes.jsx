@@ -57,6 +57,7 @@ export default class BrowseRecipes extends React.Component {
                     {this.props.apiStore.recipes.map(recipe => {
                         return <RecipeCard key={recipe._id} recipe={recipe}/>
                     })}
+                    {this.props.apiStore.recipes.length === 0 && <p>There doesn't seem to be anything here...</p>}
                 </div>
             </div>
         )
