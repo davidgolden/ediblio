@@ -40,9 +40,13 @@ export default class BrowseRecipes extends React.Component {
     }
 
     sortByTag = tag => {
-        this.props.apiStore.getRecipes({
-            tag: tag,
-        })
+        if (tag === 'all') {
+            this.props.apiStore.getRecipes({
+                tag: tag,
+            })
+        } else {
+            this.props.apiStore.getRecipes()
+        }
     };
 
     render() {
