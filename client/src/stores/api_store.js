@@ -85,7 +85,6 @@ class ApiStore {
                 .then(response => {
                     // if not loading first page, add new recipes. otherwise, replace them.
                     if (params && params.page) {
-                        console.log(params.page);
                         this.recipes = this.recipes.concat(response.data.recipes);
                     } else {
                         this.recipes = response.data.recipes;

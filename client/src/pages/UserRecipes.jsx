@@ -46,15 +46,14 @@ export default class UserRecipes extends React.Component {
     sortByTag = tag => {
         if (tag === 'all') {
             this.props.apiStore.getRecipes({
-                tag: tag,
                 author: this.props.user_id,
             })
         } else {
             this.props.apiStore.getRecipes({
+                tag: tag,
                 author: this.props.user_id,
             })
         }
-
     };
 
     render() {
