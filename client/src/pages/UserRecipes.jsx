@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import styles from './styles/UserRecipes.scss';
 import TagFilterBar from "../components/recipes/TagFilterBar";
 import {autorun} from "mobx";
+import LoadingNextPage from "../components/utilities/LoadingNextPage";
 
 @inject('apiStore')
 @observer
@@ -14,8 +15,8 @@ export default class UserRecipes extends React.Component {
         super(props);
 
         this.state = {
-            loading: true,
             lastRecipePageLoaded: 0,
+            loadedAll: false,
         }
     }
 
@@ -25,16 +26,24 @@ export default class UserRecipes extends React.Component {
         });
 
         this.disabler = autorun(() => {
-            if (this.props.apiStore.distanceToBottom === 0) {
-                this.setState(prevState => {
-                    this.props.apiStore.getRecipes({
-                        page: prevState.lastRecipePageLoaded + 1,
-                        author: this.props.user_id,
-                    });
-                    return {
-                        lastRecipePageLoaded: prevState.lastRecipePageLoaded + 1,
-                    }
+            if (this.props.apiStore.distanceToBottom === 0 && !this.state.loadedAll) {
+                this.props.apiStore.getRecipes({
+                    page: this.state.lastRecipePageLoaded + 1,
+                    author: this.props.user_id,
                 })
+                    .then(recipes => {
+                        this.setState(prevState => {
+                            if (recipes.length === 0) {
+                                return {
+                                    loadedAll: true,
+                                }
+                            } else {
+                                return {
+                                    lastRecipePageLoaded: prevState.lastRecipePageLoaded + 1,
+                                }
+                            }
+                        })
+                    });
             }
         })
     }
@@ -63,27 +72,14 @@ export default class UserRecipes extends React.Component {
 
         return (
             <div>
-                {(this.state.loading === false) ? (
-                    <div className='text-center'>
-                        <h2>There doesn't seem to be anything here...</h2><br/>
-                        <h2>Get started by </h2>
-                        <Link to={'/browse'} className='btn btn-md btn-success'>browsing existing
-                            recipes</Link>
-                        <h2> or </h2>
-                        <Link className='btn btn-success btn-md' to={'/add'}>adding a recipe.</Link>
-                    </div>
-                ) : (
-                    <div>
-                        <TagFilterBar sortByTag={this.sortByTag}/>
-                        <div className={recipeCardsContainerClassName}>
-                            {this.props.apiStore.recipes.map(recipe => {
-                                return <RecipeCard key={recipe._id} recipe={recipe}/>
-                            })}
-                            {this.props.apiStore.recipes.length === 0 && <p>There doesn't seem to be anything here...</p>}
-                        </div>
-                    </div>
-                )
-                }
+                <TagFilterBar sortByTag={this.sortByTag}/>
+                <div className={recipeCardsContainerClassName}>
+                    {this.props.apiStore.recipes.map(recipe => {
+                        return <RecipeCard key={recipe._id} recipe={recipe}/>
+                    })}
+                    {this.props.apiStore.recipes.length === 0 && <p>There doesn't seem to be anything here...</p>}
+                </div>
+                {this.state.loadedAll || <LoadingNextPage/>}
             </div>
         )
     };

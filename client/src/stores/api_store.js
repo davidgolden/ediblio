@@ -89,7 +89,7 @@ class ApiStore {
                     } else {
                         this.recipes = response.data.recipes;
                     }
-                    res();
+                    res(response.data.recipes);
                 })
                 .catch(err => {
                     rej(err);
