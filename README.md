@@ -17,14 +17,8 @@ Some key features:
   <li>Password reset option generates token and token expiration, emails user with link to reset.</li>
 </ul>
 
-Improvements from 'Standard' Version:
-<ul>
-  <li>Improved user experience with 'lighter' application interface.</li>
-  <li>Refactored in ReactJS.</li>
-</ul>
-
 Plans for future development:
 <ul>
-  <li>There are still some features missing from the original version, including Store Mode, editing profile fields, and editing recipes. These will soon be implemented.</li>
   <li>Add a 'follower' feature to allow users to follow others, and preferentially list recipes in Browse Recipe page based on follows.</li>
+  <li>Add ratings and reviews to recipes</li>
 </ul>
