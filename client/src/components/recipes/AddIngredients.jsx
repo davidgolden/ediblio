@@ -19,10 +19,11 @@ const AddIngredients = (props) => {
                 ingredient
             </button>
             <ul>
-            {props.ingredients.map(item => {
+            {props.ingredients.map((item, i) => {
                 return <Ingredient
                     key={item._id}
                     value={item}
+                    id={item._id || i}
                     handleDeleteIngredient={props.handleDeleteIngredient}
                     handleUpdateIngredient={props.handleUpdateIngredient}
                     storeMode={props.storeMode}

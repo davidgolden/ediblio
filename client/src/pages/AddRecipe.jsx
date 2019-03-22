@@ -74,12 +74,18 @@ export default class RecipeForm extends React.Component {
     };
 
     handleUpdateIngredient = (id, ingredient) => {
-        let ingredientList = this.state.ingredients.map(item => {
-            if (item._id === id) {
-                return ingredient;
-            }
-            return item;
-        });
+        // id can be index or _id
+        let ingredientList = this.state.ingredients;
+        if (this.props.editMode) {
+            ingredientList = ingredientList.map(item => {
+                if (item._id === id) {
+                    return ingredient;
+                }
+                return item;
+            });
+        } else {
+            ingredientList.splice(id, 1, ingredient);
+        }
         this.setState({ingredients: ingredientList});
     };
 
@@ -91,7 +97,13 @@ export default class RecipeForm extends React.Component {
     };
 
     handleDeleteIngredient = id => {
-        let ingredientList = this.state.ingredients.filter(item => item._id !== id);
+        let ingredientList = this.state.ingredients;
+        if (this.props.editMode) {
+            ingredientList = ingredientList.filter(item => item._id !== id);
+        } else {
+            ingredientList.splice(id, 1);
+        }
+
         this.setState({ingredients: ingredientList});
     };
 

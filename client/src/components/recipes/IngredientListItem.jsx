@@ -15,7 +15,7 @@ const Ingredient = (props) => {
                     type='number'
                     step="0.01"
                     required
-                    onChange={(e) => props.handleUpdateIngredient(props.value._id, {quantity: e.target.value, measurement: props.value.measurement, name: props.value.name})}
+                    onChange={(e) => props.handleUpdateIngredient(props.id, {quantity: e.target.value, measurement: props.value.measurement, name: props.value.name})}
                     name='quantity'
                     placeholder='1'
                     value={props.value.quantity}
@@ -23,7 +23,7 @@ const Ingredient = (props) => {
                 <select
                     name='measurement'
                     value={props.value.measurement}
-                    onChange={(e) => props.handleUpdateIngredient(props.value._id, {quantity: props.value.quantity, measurement: e.target.value, name: props.value.name})}
+                    onChange={(e) => props.handleUpdateIngredient(props.id, {quantity: props.value.quantity, measurement: e.target.value, name: props.value.name})}
                 >
                     <option value='#'>#</option>
                     <option value='tsp'>tsp</option>
@@ -38,7 +38,7 @@ const Ingredient = (props) => {
                     required
                     name='name'
                     placeholder='Carrots'
-                    onChange={(e) => props.handleUpdateIngredient(props.value._id, {quantity: props.value.quantity, measurement: props.value.measurement, name: e.target.value})}
+                    onChange={(e) => props.handleUpdateIngredient(props.id, {quantity: props.value.quantity, measurement: props.value.measurement, name: e.target.value})}
                     value={props.value.name}
                 />
                 <RemoveButton onClick={() => props.handleDeleteIngredient(props.value._id)}/>
