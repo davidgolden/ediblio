@@ -112,7 +112,6 @@ export default class RecipeForm extends React.Component {
     };
 
     handleSubmit = () => {
-        // TODO: this needs to handle both adding a recipe and submitting a recipe
         if (this.props.editMode) {
             this.props.apiStore.patchRecipe(this.props.recipe._id, {...this.state})
                 .then(recipe => {
