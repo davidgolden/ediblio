@@ -72,7 +72,7 @@ export default class BrowseRecipes extends React.Component {
                     })}
                     {this.props.apiStore.recipes.length === 0 && <p>There doesn't seem to be anything here...</p>}
                 </div>
-                {this.state.loadedAll || <LoadingNextPage/>}
+                {this.state.loadedAll || this.props.apiStore.recipes.length !== 0 || <LoadingNextPage/>}
             </div>
         )
     }

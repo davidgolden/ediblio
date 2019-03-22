@@ -24,6 +24,13 @@ export default class RecipeContainer extends React.Component {
 
     addToGroceryList = () => {
         this.props.apiStore.addToGroceryList(this.props.recipe_id, this.state.recipe.ingredients);
+    }
+
+    updateRecipe = fullRecipe => {
+        console.log(fullRecipe)
+        this.setState({
+            recipe: fullRecipe,
+        })
     };
 
     componentDidMount() {
@@ -43,9 +50,13 @@ export default class RecipeContainer extends React.Component {
         });
     };
 
-    handleUpdateIngredient = (ingredient, i) => {
-        let ingredientList = this.state.recipe.ingredients;
-        ingredientList.splice(i, 1, ingredient);
+    handleUpdateIngredient = (id, ingredient) => {
+        let ingredientList = this.state.ingredients.map(item => {
+            if (item._id === id) {
+                return ingredient;
+            }
+            return item;
+        });
         this.setState({
             recipe: {
                 ...this.state.recipe,
@@ -66,9 +77,8 @@ export default class RecipeContainer extends React.Component {
         });
     };
 
-    handleDeleteIngredient = (event, i) => {
-        let ingredientList = this.state.recipe.ingredients;
-        ingredientList.splice(i, 1);
+    handleDeleteIngredient = id => {
+        let ingredientList = this.state.ingredients.filter(item => item._id !== id);
         this.setState({
             recipe: {
                 ...this.state.recipe,
@@ -125,6 +135,7 @@ export default class RecipeContainer extends React.Component {
                         recipe={this.state.recipe}
                         toggleEdit={this.toggleEdit}
                         editMode={this.state.edit}
+                        updateRecipe={this.updateRecipe}
                     />
                 ) : (
                     <ShowRecipe

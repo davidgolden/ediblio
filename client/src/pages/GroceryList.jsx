@@ -41,18 +41,16 @@ export default class GroceryList extends React.Component {
         })
     };
 
-    handleDeleteIngredient = i => {
-        let groceryList = this.state.groceryList;
-        groceryList.splice(i, 1);
+    handleDeleteIngredient = id => {
+        let groceryList = this.state.groceryList.filter(item => item._id !== id);
         this.setState({
             groceryList: groceryList,
             isCurrent: false,
         });
     };
 
-    handleDeleteMenuItem = i => {
-        let menuList = this.state.menu;
-        menuList.splice(i, 1);
+    handleDeleteMenuItem = id => {
+        let menuList = this.state.menu.filter(item => item._id !== id);
         this.setState({
             menu: menuList,
             isCurrent: false,
@@ -110,7 +108,7 @@ export default class GroceryList extends React.Component {
                 <ul className={menuContainerClassName}>
                     {this.state.menu && this.state.menu.map((item, i) => {
                         return <li key={i}>
-                            <RemoveButton onClick={() => this.handleDeleteMenuItem(i)}/>
+                            <RemoveButton onClick={() => this.handleDeleteMenuItem(item._id)}/>
                             <a target='_blank' href={item.url}>
                                 {item.name}
                                 <FontAwesomeIcon icon={faExternalLinkAlt}/>

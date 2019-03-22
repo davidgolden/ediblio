@@ -14,16 +14,11 @@ const AddTags = (props) => {
     });
 
     const TagList = recipeTags.map((tag, i) => {
-        let check = false;
-        if (props.selectedTags.includes(tag)) {
-            check = true;
-        }
         return (
             <div className={tagClassName} key={i}>
-                <label className="form-check-label">
+                <label>
                     <input
-                        checked={check}
-                        className="form-check-input"
+                        checked={props.selectedTags.includes(tag)}
                         type="checkbox"
                         name="recipe[tags]"
                         value={tag}
@@ -33,16 +28,15 @@ const AddTags = (props) => {
                 </label>
             </div>
         )
-    })
-
+    });
 
     return (
-        <div className="form-check">
+        <div>
             <h3>Add Tags</h3>
             {TagList}
         </div>
     )
-}
+};
 
 @inject('apiStore')
 @observer
@@ -79,9 +73,13 @@ export default class RecipeForm extends React.Component {
         }
     };
 
-    handleUpdateIngredient = (ingredient, i) => {
-        let ingredientList = this.state.ingredients;
-        ingredientList.splice(i, 1, ingredient);
+    handleUpdateIngredient = (id, ingredient) => {
+        let ingredientList = this.state.ingredients.map(item => {
+            if (item._id === id) {
+                return ingredient;
+            }
+            return item;
+        });
         this.setState({ingredients: ingredientList});
     };
 
@@ -92,9 +90,8 @@ export default class RecipeForm extends React.Component {
         this.setState({ingredients: ingredientList})
     };
 
-    handleDeleteIngredient = (event, i) => {
-        let ingredientList = this.state.ingredients;
-        ingredientList.splice(i, 1);
+    handleDeleteIngredient = id => {
+        let ingredientList = this.state.ingredients.filter(item => item._id !== id);
         this.setState({ingredients: ingredientList});
     };
 
@@ -115,10 +112,19 @@ export default class RecipeForm extends React.Component {
     };
 
     handleSubmit = () => {
-        this.props.apiStore.createRecipe({...this.state})
-            .then(() => {
-                this.props.navigate("/");
-            })
+        // TODO: this needs to handle both adding a recipe and submitting a recipe
+        if (this.props.editMode) {
+            this.props.apiStore.patchRecipe(this.props.recipe._id, {...this.state})
+                .then(recipe => {
+                    this.props.updateRecipe(recipe);
+                    this.props.toggleEdit();
+                })
+        } else {
+            this.props.apiStore.createRecipe({...this.state})
+                .then(() => {
+                    this.props.navigate("/");
+                })
+        }
     };
 
     render() {

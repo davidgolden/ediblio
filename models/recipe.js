@@ -1,17 +1,14 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const IngredientSchema = require('./ingredient');
 
-var recipeSchema = new mongoose.Schema({
+const recipeSchema = new mongoose.Schema({
     name: { type: String, trim: true, required: true },
     url: { type: String, trim: true },
     notes: String,
     image: { type: String, trim: true, required: true },
     tags: [String],
     ingredients: [
-            {
-                quantity: Number,
-                measurement: String,
-                name: { type: String, lowercase: true, trim: true }
-            },
+            IngredientSchema,
         ],
     author: {
         id: {

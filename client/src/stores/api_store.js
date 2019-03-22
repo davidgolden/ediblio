@@ -210,6 +210,21 @@ class ApiStore {
     };
 
     @action
+    patchRecipe = (id, partialRecipeObj) => {
+        return new Promise((res, rej) => {
+            axios.patch(`/api/recipes/${id}`, {
+                ...partialRecipeObj
+            })
+                .then(response => {
+                    res(response.data.recipe);
+                })
+                .catch(err => {
+                    rej(err);
+                })
+        });
+    };
+
+    @action
     addToGroceryList = (recipe_id, ingredients) => {
         // add current recipe to menu
         // add all ingredients to grocery list

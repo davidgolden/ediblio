@@ -1,16 +1,10 @@
-var mongoose = require('mongoose');
-var bcrypt = require('bcrypt-nodejs');
-const Recipe = require('./recipe');
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt-nodejs');
+const IngredientSchema = require('./ingredient');
 
-var passportLocalMongoose = require('passport-local-mongoose');
+const passportLocalMongoose = require('passport-local-mongoose');
 
-var groceryListSchema = mongoose.Schema({
-    quantity: { type: Number, required: true },
-    measurement: { type: String, required: true },
-    name: { type: String, required: true }
-});
-
-var userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   username: {type: String, required: true, unique: true },
   email: {type: String, required: true, unique: true, lowercase: true},
   isAdmin: { type: Boolean, default: false },
@@ -30,7 +24,7 @@ var userSchema = new mongoose.Schema({
       }
     ],
   groceryList: {
-    type: [ groceryListSchema ]
+    type: [ IngredientSchema ]
   }
 });
 

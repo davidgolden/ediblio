@@ -71,6 +71,15 @@ router.route('/recipes/:recipe_id')
             return res.status(200).json({recipe: recipe});
         })
     })
+    .patch(middleware.checkRecipeOwnership, (req, res) => {
+        Recipe.findOneAndUpdate({ _id: req.params.recipe_id }, {...req.body}, {new: true}, (err, recipe) => {
+            if (err) {
+                return res.status(404).send(err)
+            }
+
+            return res.status(200).json({recipe: recipe});
+        });
+    })
     .delete(middleware.checkRecipeOwnership, (req, res) => {
         Recipe.findByIdAndRemove(req.params.recipe_id, function (err) {
             if (err) {
