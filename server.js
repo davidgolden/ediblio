@@ -15,6 +15,8 @@ const userRoutes = require('./routes/users'),
     recipeRoutes = require('./routes/recipes'),
     indexRoutes = require('./routes/index');
 
+const env = process.env.NODE_ENV || "development";
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
