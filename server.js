@@ -29,7 +29,7 @@ mongoose.connect(process.env.MONGO, {useNewUrlParser: true, autoIndex: false, us
 
 // PASSPORT CONFIGURATION
 app.use(require('express-session')({
-    secret: 'Mac Dre is the king of the bay',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     maxAge: 1000 * 60 * 60 * 24,
