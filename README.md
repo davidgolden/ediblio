@@ -14,7 +14,6 @@ Some key features:
   <li>Scrapes URL metadata for recipe image when submitting new recipe with URL.</li>
   <li>Autopopulate grocery list with auto-conversions and auto-totaling.</li>
   <li>Global tag array allows for adding tags to recipes, then filtering all recipes by tag.</li>
-  <li>Password reset option generates token and token expiration, emails user with link to reset.</li>
 </ul>
 
 Plans for future development:
