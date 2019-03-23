@@ -10,6 +10,7 @@ import {
     Router
 } from "@reach/router";
 import createHashSource from 'hash-source'
+import Notification from "./components/header/Notification";
 
 let source = createHashSource();
 let history = createHistory(source);
@@ -19,6 +20,7 @@ const Index = () => {
         <MobxProvider apiStore={apiStore}>
             <LocationProvider history={history}>
                 <Header />
+                <Notification />
                 <Router>
                     <BrowseRecipes path={'/recipes'} />
                     <UserRecipes path={'/users/:user_id/recipes'} />

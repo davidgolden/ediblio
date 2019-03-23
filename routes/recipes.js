@@ -39,7 +39,7 @@ router.route('/recipes')
             .sort({ 'created_at': 'desc', 'image': 'desc' })
             .exec((err, recipes) => {
                 if (err) {
-                    res.status(404).send(err)
+                    res.status(404).send({ detail: err.message })
                 }
                 return res.status(200).send({recipes: recipes});
             });
@@ -48,7 +48,7 @@ router.route('/recipes')
         // create new recipe
         Recipe.create(req.body.recipe, function (err, newRecipe) {
             if (err) {
-                return res.status(404).send(err);
+                return res.status(404).send({ detail: err.message });
             }
             // add author info to recipe
             newRecipe.author.id = req.user._id;
@@ -67,7 +67,7 @@ router.route('/recipes/:recipe_id')
     .get((req, res) => {
         Recipe.findById(req.params.recipe_id, (err, recipe) => {
             if (err) {
-                return res.status(404).send(err);
+                return res.status(404).send({ detail: err.message });
             }
             return res.status(200).json({recipe: recipe});
         })
@@ -75,7 +75,7 @@ router.route('/recipes/:recipe_id')
     .patch(middleware.checkRecipeOwnership, (req, res) => {
         Recipe.findOneAndUpdate({ _id: req.params.recipe_id }, {...req.body}, {new: true}, (err, recipe) => {
             if (err) {
-                return res.status(404).send(err)
+                return res.status(404).send({ detail: err.message })
             }
 
             return res.status(200).json({recipe: recipe});
@@ -84,7 +84,7 @@ router.route('/recipes/:recipe_id')
     .delete(middleware.checkRecipeOwnership, (req, res) => {
         Recipe.findByIdAndRemove(req.params.recipe_id, function (err) {
             if (err) {
-                return res.status(404).send(err)
+                return res.status(404).send({ detail: err.message })
             }
             return res.status(200).send('Success!')
         });

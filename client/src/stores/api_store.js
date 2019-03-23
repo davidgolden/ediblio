@@ -6,6 +6,8 @@ import {addIngredient, canBeAdded} from "../utils/conversions";
 class ApiStore {
     @observable user = null;
     @observable distanceToBottom = 1;
+    @observable notificationMessage = '';
+    @observable notificationType = '';
 
     constructor() {
         // this.getUserFromStorage();
@@ -17,6 +19,17 @@ class ApiStore {
 
         window.addEventListener('scroll', this.handleWindowScroll)
     }
+
+    @action
+    handleError = error => {
+        this.notificationMessage = 'Oops! ' + error;
+        this.notificationType = 'error';
+
+        setTimeout(() => {
+            this.notificationMessage = '';
+            this.notificationType = '';
+        }, 4000);
+    };
 
     @action
     handleWindowScroll = () => {
@@ -49,7 +62,7 @@ class ApiStore {
                 localStorage.setItem('user', JSON.stringify(response.data.user))
             })
             .catch(err => {
-                console.log('error! ', err);
+                this.handleError(err.response.data.detail);
             });
     };
 
@@ -63,7 +76,7 @@ class ApiStore {
                 this.user = response.data.user;
             })
             .catch(err => {
-                console.log(err);
+                this.handleError(err.response.data.detail);
             })
     };
 
@@ -92,6 +105,7 @@ class ApiStore {
                     res(response.data.recipes);
                 })
                 .catch(err => {
+                    this.handleError(err.response.data.detail);
                     rej(err);
                 })
         })
@@ -106,6 +120,7 @@ class ApiStore {
                     res(response.data.recipe);
                 })
                 .catch(err => {
+                    this.handleError(err.response.data.detail);
                     rej(err);
                 })
         })
@@ -122,6 +137,7 @@ class ApiStore {
                     res();
                 }))
                 .catch(err => {
+                    this.handleError(err.response.data.detail);
                     rej(err);
                 })
         });
@@ -135,6 +151,7 @@ class ApiStore {
                     res(response.data);
                 })
                 .catch(err => {
+                    this.handleError(err.response.data.detail);
                     rej(err);
                 })
         })
@@ -149,6 +166,7 @@ class ApiStore {
                     res(response.data.user);
                 })
                 .catch(err => {
+                    this.handleError(err.response.data.detail);
                     rej(err);
                 })
         })
@@ -166,7 +184,10 @@ class ApiStore {
         })
             .then(response => {
                 // do something
-            });
+            })
+            .catch(err => {
+                this.handleError(err.response.data.detail);
+            })
     };
 
     @action
@@ -178,6 +199,9 @@ class ApiStore {
                 .then(response => {
                     // do something
                     res();
+                })
+                .catch(err => {
+                    this.handleError(err.response.data.detail);
                 })
         })
     };
@@ -191,6 +215,9 @@ class ApiStore {
                     this.recipes = this.recipes.filter(item => item._id !== id);
                     res();
                 })
+                .catch(err => {
+                    this.handleError(err.response.data.detail);
+                })
         });
     };
 
@@ -203,7 +230,7 @@ class ApiStore {
                     res();
                 })
                 .catch(err => {
-                    console.log(err);
+                    this.handleError(err.response.data.detail);
                     rej();
                 })
         })
@@ -219,6 +246,7 @@ class ApiStore {
                     res(response.data.recipe);
                 })
                 .catch(err => {
+                    this.handleError(err.response.data.detail);
                     rej(err);
                 })
         });

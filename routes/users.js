@@ -9,7 +9,7 @@ router.route('/users')
     .get((req, res) => {
         User.find({}, function (err, users) {
             if (err) {
-                return res.status(404).send(err)
+                return res.status(404).send({ detail: err.message })
             }
             else {
                 return res.status(200).send({users: users});
@@ -25,11 +25,11 @@ router.route('/users')
         });
         newUser.save((err, user) => {
             if (err) {
-                return res.status(404).send(err);
+                return res.status(404).send({ detail: err.message });
             }
 
             req.logIn(user, (err) => {
-                if (err) return res.status(404).send(err);
+                if (err) return res.status(404).send({ detail: err.message });
                 return res.status(200).json({user: req.user});
             });
         });
@@ -40,7 +40,7 @@ router.route('/users/:user_id')
     .patch(middleware.isLoggedIn, (req, res) => {
         User.findOne(req.user._id, function (err, user) {
             if (err) {
-                return res.status(404).send(err)
+                return res.status(404).send({ detail: err.message })
             }
             for (let key in req.body) {
                 if (req.body.hasOwnProperty(key)) {
@@ -57,7 +57,7 @@ router.route('/users/:user_id')
     .get(middleware.isLoggedIn, (req, res) => {
         User.findOne(req.user._id, (err, user) => {
             if (err) {
-                return res.status(404).send(err);
+                return res.status(404).send({ detail: err.message });
             }
             return res.status(200).json({user: user})
         });
@@ -71,7 +71,7 @@ router.route('/users/:user_id')
 router.get('/users/:user_id/list', (req, res) => {
     User.findById(req.user._id).populate('menu').exec(function (err, user) {
         if (err) {
-            return res.status(404).send(err)
+            return res.status(404).send({ detail: err.message })
         }
         return res.status(200).send({groceryList: user.groceryList, menu: user.menu});
     });

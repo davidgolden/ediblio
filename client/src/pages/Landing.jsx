@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCloudUploadAlt, faSearchPlus, faListOl, faShoppingCart} from '@fortawesome/free-solid-svg-icons'
 import Button from "../components/utilities/buttons/Button";
 import {inject, observer} from 'mobx-react';
-import { navigate, redirectTo } from '@reach/router';
+import {navigate, redirectTo} from '@reach/router';
 
 @inject('apiStore')
 @observer
@@ -44,7 +44,7 @@ export default class Landing extends React.Component {
             password: this.state.password
         })
             .then(() => {
-               this.props.navigate("/")
+                this.props.navigate("/")
             })
     };
 
@@ -99,7 +99,8 @@ export default class Landing extends React.Component {
                     <h1>Create an Account</h1>
                     <h6>It's free and your information will stay private.</h6>
                     <div>
-                        <input type='text' value={this.state.username} name='username' onChange={this.handleUsernameChange}
+                        <input type='text' value={this.state.username} name='username'
+                               onChange={this.handleUsernameChange}
                                placeholder='Choose a Username'/>
                     </div>
                     <div>

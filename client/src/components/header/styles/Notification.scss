@@ -1,0 +1,27 @@
+@import "../../../styles/variables";
+
+.notification {
+  position: absolute;
+  //visibility: hidden;
+  top: -50px;
+  left: 10%;
+  right: 10%;
+  transition: margin-top .25s ease;
+  z-index: 2;
+  height: 50px;
+  border-radius: 10px;
+  text-align: center;
+  line-height: 50px;
+  font-size: 1.5rem;
+  color: white;
+
+  &Success {
+    background-color: $secondary-color;
+    margin-top: 110px;
+  }
+
+  &Error {
+    background-color: $primary-color;
+    margin-top: 110px;
+  }
+}

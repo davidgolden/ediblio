@@ -21,13 +21,13 @@ router.post('/authenticate', function (req, res) {
 router.post('/login', emailToLowerCase, function (req, res, next) {
     passport.authenticate('local', function (err, user, info) {
         if (err) {
-            return res.status(404).send(err);
+            return res.status(404).send({ detail: err });
         }
         if (!user) {
-            return res.status(404).send('No user found with those user credentials!');
+            return res.status(404).send({ detail: 'No user found with those user credentials!' });
         }
         req.logIn(user, function (err) {
-            if (err) return res.status(404).json({message: 'There was a problem logging in!'});
+            if (err) return res.status(404).send({ detail: 'There was a problem logging in!'} );
 
             User.findById(req.user._id).populate('menu').exec((err, user) => {
                 return res.status(200).send(JSON.stringify({user: user}));
@@ -51,7 +51,7 @@ router.get('/logout', function (req, res) {
 router.post('/forgot', function (req, res) {
     let email = req.body.email;
     if (req.isAuthenticated()) {
-        return res.status(404).send('User is already logged in!')
+        return res.status(404).send({ detail: 'User is already logged in!'})
     }
 
     (function generateToken() {
@@ -63,18 +63,17 @@ router.post('/forgot', function (req, res) {
 
         (function assignToken(err) {
             if (err) {
-                return res.status(404).send('There was a problem assigning a token!')
+                return res.status(404).send({ detail: 'There was a problem assigning a token!' })
             }
 
             User.findOne({email: email}, function (err, user) {
                 if (err) {
-                    return res.status(404).send(err)
+                    return res.status(404).send({ detail: err })
                 }
                 if (!user) {
-                    return res.status(404).send('No user found!')
+                    return res.status(404).send({ detail: 'No user found!' })
                 }
-                console.log(req.body.email)
-                console.log(user)
+
                 user.resetToken = token;
                 user.tokenExpires = Date.now() + 3600000; // 1 hour
 
@@ -100,7 +99,7 @@ router.post('/forgot', function (req, res) {
 
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
-                        return res.status(404).send(error)
+                        return res.status(404).send({ detail: error })
                     } else {
                         return res.status(200).send('Success!')
                     }
@@ -114,7 +113,7 @@ router.post('/forgot', function (req, res) {
 router.post('/reset', function (req, res) {
     User.findOne({resetToken: req.body.token, tokenExpires: {$gt: Date.now()}}, function (err, user) {
         if (err) {
-            return res.status(404).send(err)
+            return res.status(404).send({ detail: err.message })
         }
         if (!user) {
             return res.status(404).send('Token is invalid or has expired.')
@@ -125,7 +124,7 @@ router.post('/reset', function (req, res) {
         user.save();
 
         req.logIn(user, function (err) {
-            if (err) return res.status(404).send(err);
+            if (err) return res.status(404).send({ detail: err });
             return res.status(200).json({user: req.user});
         });
     });
