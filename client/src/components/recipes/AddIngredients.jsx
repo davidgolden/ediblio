@@ -21,7 +21,7 @@ const AddIngredients = (props) => {
             <ul>
             {props.ingredients.map((item, i) => {
                 return <Ingredient
-                    key={item._id}
+                    key={item._id || i}
                     value={item}
                     id={item._id || i}
                     handleDeleteIngredient={props.handleDeleteIngredient}

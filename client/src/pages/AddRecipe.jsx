@@ -79,7 +79,10 @@ export default class RecipeForm extends React.Component {
         if (this.props.editMode) {
             ingredientList = ingredientList.map(item => {
                 if (item._id === id) {
-                    return ingredient;
+                    return {
+                        ...item,
+                        ...ingredient,
+                    };
                 }
                 return item;
             });
