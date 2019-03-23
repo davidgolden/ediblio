@@ -1,7 +1,6 @@
 const express = require('express'),
     router = express.Router(),
     User = require('../models/user'),
-    Recipe = require('../models/recipe'),
     middleware = require('../middleware');
 
 router.route('/users')
