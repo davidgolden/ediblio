@@ -2,11 +2,10 @@ import React from 'react';
 import RecipeForm from './AddRecipe';
 import ShowRecipe from '../components/recipes/ShowRecipe';
 import {inject, observer} from 'mobx-react';
-import {addIngredient, canBeAdded} from "../utils/conversions";
 import styles from './styles/RecipeContainer.scss';
 import classNames from 'classnames';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSearch, faEdit, faTrashAlt} from '@fortawesome/free-solid-svg-icons'
+import {faSearch, faEdit} from '@fortawesome/free-solid-svg-icons'
 import Button from "../components/utilities/buttons/Button";
 import RecipeButtons from "../components/recipes/RecipeButtons";
 

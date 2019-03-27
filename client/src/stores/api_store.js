@@ -271,16 +271,15 @@ class ApiStore {
             })
         };
 
-        ingredients.filter(item => item) // filter out ingredients that are undefined??
-            .forEach(ingredient => {
+        ingredients.forEach(ingredient => {
                 const i = onCurrentList(ingredient.name);
                 if (i > -1) {
                     let m = currentGroceryList[i].measurement;
-                    let q = currentGroceryList[i].quantity;
+                    let q = parseInt(currentGroceryList[i].quantity);
                     // check if item can be added
                     if (canBeAdded(m, ingredient.measurement)) {
                         // if it can be added, add it
-                        let newQM = addIngredient(q, m, Number(ingredient.quantity), ingredient.measurement);
+                        let newQM = addIngredient(q, m, parseInt(ingredient.quantity), ingredient.measurement);
                         currentGroceryList[i].quantity = newQM.quantity;
                         currentGroceryList[i].measurement = newQM.measurement;
                     } else {
@@ -290,7 +289,6 @@ class ApiStore {
                 } else {
                     // here if ingredient is not on current list
                     currentGroceryList.splice(currentGroceryList.length, 0, ingredient);
-                    // user.groceryList.push(ingredient);
                 }
             });
 
