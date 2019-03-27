@@ -1,13 +1,14 @@
 require('dotenv').config({path: './.env'});
 const path = require('path');
 
-var bodyParser = require('body-parser');
-var express = require('express');
-var app = express();
-var mongoose = require('mongoose');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var methodOverride = require('method-override');
+const bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const methodOverride = require('method-override');
+const compression = require('compression');
 
 const User = require('./models/user');
 
@@ -17,6 +18,7 @@ const userRoutes = require('./routes/users'),
 
 const env = process.env.NODE_ENV || "development";
 
+app.use(compression());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
