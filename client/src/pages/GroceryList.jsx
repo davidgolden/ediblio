@@ -50,7 +50,10 @@ export default class GroceryList extends React.Component {
     };
 
     handleDeleteMenuItem = id => {
-        let menuList = this.state.menu.filter(item => item._id !== id);
+        // use findIndex rather than filter so we only remove 1 if there are duplicates
+        const i = this.state.menu.findIndex(item => item._id === id);
+        let menuList = this.state.menu;
+        menuList.splice(i, 1);
         this.setState({
             menu: menuList,
             isCurrent: false,
