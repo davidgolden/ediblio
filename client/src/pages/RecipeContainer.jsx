@@ -22,8 +22,8 @@ export default class RecipeContainer extends React.Component {
     }
 
     addToGroceryList = () => {
-        this.props.apiStore.addToGroceryList(this.props.recipe_id, this.state.recipe.ingredients);
-    }
+        this.props.apiStore.addToGroceryList(this.state.recipe._id, this.state.recipe.ingredients);
+    };
 
     updateRecipe = fullRecipe => {
         console.log(fullRecipe)

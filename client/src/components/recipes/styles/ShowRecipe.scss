@@ -70,6 +70,14 @@
       background-color: $other;
     }
   }
+
+  &Disabled {
+    button {
+      opacity: .5;
+      pointer-events: none;
+      cursor: default;
+    }
+  }
 }
 
 .showRecipeIngredients {

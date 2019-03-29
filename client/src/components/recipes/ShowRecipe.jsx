@@ -13,7 +13,21 @@ import Button from "../utilities/buttons/Button";
 export default class ShowRecipe extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            added: false,
+        }
     }
+
+    handleAddToList = () => {
+        this.setState(() => {
+            this.props.addToGroceryList();
+
+            return {
+                added: true,
+            }
+        })
+    };
 
     render() {
         const showRecipeContainerClassName = classNames({
@@ -27,10 +41,16 @@ export default class ShowRecipe extends React.Component {
         });
         const showRecipeButtonsClassName = classNames({
             [styles.showRecipeButtons]: true,
+            [styles.showRecipeButtonsDisabled]: this.state.added,
         });
         const showRecipeIngredientsClassName = classNames({
             [styles.showRecipeIngredients]: true,
         });
+
+        // let addButtons;
+        // if (this.props.apiStore.isLoggedIn && this.state.added) {
+        //     addButtons
+        // }
 
         return (
             <div className={showRecipeContainerClassName}>
@@ -61,8 +81,9 @@ export default class ShowRecipe extends React.Component {
                         handleDeleteIngredient={this.props.handleDeleteIngredient}
                     />
                     <div className={showRecipeButtonsClassName}>
-                        {this.props.apiStore.isLoggedIn ? <Button onClick={this.props.addToGroceryList}>
-                            <FontAwesomeIcon icon={faShoppingBag}/> Add To Grocery List
+                        {}
+                        {this.props.apiStore.isLoggedIn ? <Button onClick={this.handleAddToList}>
+                            <FontAwesomeIcon icon={faShoppingBag}/> {this.state.added ? 'Added To' : 'Add To'} Grocery List
                         </Button> : <p>Login or Register to Add to Grocery List</p>}
                     </div>
                 </div>}

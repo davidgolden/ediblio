@@ -279,7 +279,7 @@ class ApiStore {
                     // check if item can be added
                     if (canBeAdded(m, ingredient.measurement)) {
                         // if it can be added, add it
-                        let newQM = addIngredient(q, m, parseInt(ingredient.quantity), ingredient.measurement);
+                        let newQM = addIngredient(q, m, Number(ingredient.quantity), ingredient.measurement);
                         currentGroceryList[i].quantity = newQM.quantity;
                         currentGroceryList[i].measurement = newQM.measurement;
                     } else {
