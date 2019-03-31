@@ -87,7 +87,10 @@ export default class RecipeForm extends React.Component {
                 return item;
             });
         } else {
-            ingredientList.splice(id, 1, ingredient);
+            ingredientList.splice(id, 1, {
+                ...ingredientList[id],
+                ...ingredient,
+            });
         }
         this.setState({ingredients: ingredientList});
     };
