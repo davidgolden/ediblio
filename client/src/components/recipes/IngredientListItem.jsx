@@ -41,13 +41,13 @@ const Ingredient = (props) => {
                     onChange={(e) => props.handleUpdateIngredient(props.id, {name: e.target.value})}
                     value={props.value.name}
                 />
-                <RemoveButton onClick={() => props.handleDeleteIngredient(props.value._id)}/>
+                <RemoveButton onClick={() => props.handleDeleteIngredient(props.id)}/>
             </li>
         )
     } else {
         return (
             <div className={ingredientRowClassName}>
-                <RemoveButton onClick={() => props.handleDeleteIngredient(props.value._id)}/>
+                <RemoveButton onClick={() => props.handleDeleteIngredient(props.id)}/>
                 <p>{props.value.quantity} {props.value.measurement} {props.value.name}</p>
             </div>
         )
