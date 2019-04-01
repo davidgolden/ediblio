@@ -26,7 +26,6 @@ export default class RecipeContainer extends React.Component {
     };
 
     updateRecipe = fullRecipe => {
-        console.log(fullRecipe)
         this.setState({
             recipe: fullRecipe,
         })
@@ -49,16 +48,12 @@ export default class RecipeContainer extends React.Component {
         });
     };
 
-    handleUpdateIngredient = (id, ingredient) => {
-        let ingredientList = this.state.recipe.ingredients.map(item => {
-            if (item._id === id) {
-                return {
-                    ...item,
-                    ...ingredient,
-                };
-            }
-            return item;
-        });
+    handleUpdateIngredient = (index, ingredient) => {
+        let ingredientList = this.state.recipe.ingredients;
+        ingredientList[index] = {
+            ...ingredientList[index],
+            ...ingredient,
+        };
         this.setState({
             recipe: {
                 ...this.state.recipe,
@@ -79,8 +74,9 @@ export default class RecipeContainer extends React.Component {
         });
     };
 
-    handleDeleteIngredient = id => {
-        let ingredientList = this.state.recipe.ingredients.filter(item => item._id !== id);
+    handleDeleteIngredient = index => {
+        let ingredientList = this.state.recipe.ingredients;
+        ingredientList.splice(index, 1);
         this.setState({
             recipe: {
                 ...this.state.recipe,

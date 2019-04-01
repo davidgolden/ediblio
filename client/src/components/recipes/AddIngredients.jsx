@@ -23,7 +23,7 @@ const AddIngredients = (props) => {
                 return <Ingredient
                     key={item._id ? `${item._id}${i}` : i}
                     value={item}
-                    id={item._id || i}
+                    id={i}
                     handleDeleteIngredient={props.handleDeleteIngredient}
                     handleUpdateIngredient={props.handleUpdateIngredient}
                     storeMode={props.storeMode}

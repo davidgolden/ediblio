@@ -73,43 +73,25 @@ export default class RecipeForm extends React.Component {
         }
     };
 
-    handleUpdateIngredient = (id, ingredient) => {
-        // id can be index or _id
+    handleUpdateIngredient = (index, ingredient) => {
+        console.log(index);
         let ingredientList = this.state.ingredients;
-        if (this.props.editMode) {
-            ingredientList = ingredientList.map(item => {
-                if (item._id === id) {
-                    return {
-                        ...item,
-                        ...ingredient,
-                    };
-                }
-                return item;
-            });
-        } else {
-            ingredientList.splice(id, 1, {
-                ...ingredientList[id],
-                ...ingredient,
-            });
-        }
+        ingredientList[index] = {
+            ...ingredientList[index],
+            ...ingredient,
+        };
         this.setState({ingredients: ingredientList});
     };
 
     handleAddIngredient = () => {
         let ingredientList = this.state.ingredients;
-        let ingredient = {quantity: '', measurement: '#', name: ''};
-        ingredientList.push(ingredient);
+        ingredientList.push({quantity: '', measurement: '#', name: ''});
         this.setState({ingredients: ingredientList})
     };
 
-    handleDeleteIngredient = id => {
+    handleDeleteIngredient = index => {
         let ingredientList = this.state.ingredients;
-        if (this.props.editMode) {
-            ingredientList = ingredientList.filter(item => item._id !== id);
-        } else {
-            ingredientList.splice(id, 1);
-        }
-
+        ingredientList.splice(index, 1);
         this.setState({ingredients: ingredientList});
     };
 
@@ -147,7 +129,7 @@ export default class RecipeForm extends React.Component {
     render() {
         const recipeFormClassName = classNames({
             [styles.recipeForm]: true,
-        }) ;
+        });
         const submitButtonClassName = classNames({
             [styles.submitButton]: true,
             [styles.submitButtonDisabled]: !(this.state.name && this.state.image)
@@ -172,9 +154,10 @@ export default class RecipeForm extends React.Component {
                     handleUpdateIngredient={this.handleUpdateIngredient}
                     handleDeleteIngredient={this.handleDeleteIngredient}
                 />
-                <AddTags toggleTag={this.toggleTag} selectedTags={this.state.tags} />
+                <AddTags toggleTag={this.toggleTag} selectedTags={this.state.tags}/>
                 <div>
-                    {this.props.apiStore.isLoggedIn ? <Button className={submitButtonClassName} onClick={this.handleSubmit}>Submit!</Button> :
+                    {this.props.apiStore.isLoggedIn ?
+                        <Button className={submitButtonClassName} onClick={this.handleSubmit}>Submit!</Button> :
                         <p>You must be logged in to add a recipe!</p>}
                 </div>
             </div>
