@@ -74,7 +74,6 @@ export default class RecipeForm extends React.Component {
     };
 
     handleUpdateIngredient = (index, ingredient) => {
-        console.log(index);
         let ingredientList = this.state.ingredients;
         ingredientList[index] = {
             ...ingredientList[index],

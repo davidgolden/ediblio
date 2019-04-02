@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b360ea2b-4ea7-4711-b7b1-0edc28f9c2b5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/dist/bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/dist/bundle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -19,7 +17,7 @@
     <session id="-861170780">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="22" />
+          <entry key="project.closed" value="23" />
           <entry key="project.open.time.1" value="12" />
           <entry key="project.open.time.2" value="8" />
           <entry key="project.open.time.5" value="1" />
@@ -59,19 +57,19 @@
           <entry key="html" value="30" />
           <entry key="js" value="14078" />
           <entry key="json" value="596" />
-          <entry key="jsx" value="24487" />
+          <entry key="jsx" value="24605" />
           <entry key="md" value="47" />
           <entry key="scss" value="7669" />
-          <entry key="txt" value="1842" />
+          <entry key="txt" value="2070" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="HTML" value="30" />
           <entry key="JSON" value="596" />
-          <entry key="JSX Harmony" value="24487" />
+          <entry key="JSX Harmony" value="24605" />
           <entry key="JavaScript" value="14078" />
-          <entry key="PLAIN_TEXT" value="2075" />
+          <entry key="PLAIN_TEXT" value="2303" />
           <entry key="SCSS" value="7669" />
         </counts>
       </usages-collector>
@@ -95,11 +93,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="24" column="32" selection-start-line="24" selection-start-column="32" selection-end-line="24" selection-end-column="32" />
+            <state relative-caret-position="171">
+              <caret line="12" column="7" lean-forward="true" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="7" />
             </state>
           </provider>
         </entry>
@@ -125,8 +123,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="81" column="36" selection-start-line="81" selection-start-column="36" selection-end-line="81" selection-end-column="36" />
+            <state relative-caret-position="146">
+              <caret line="51" column="59" selection-start-line="51" selection-start-column="59" selection-end-line="51" selection-end-column="59" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -134,11 +132,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/src/pages/AddRecipe.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
-              <caret line="93" column="9" lean-forward="true" selection-start-line="93" selection-start-column="9" selection-end-line="93" selection-end-column="9" />
+            <state relative-caret-position="363">
+              <caret line="86" column="52" selection-start-line="86" selection-start-column="52" selection-end-line="86" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -146,8 +144,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="48" column="52" selection-start-line="48" selection-start-column="52" selection-end-line="48" selection-end-column="52" />
+            <state relative-caret-position="149">
+              <caret line="21" column="18" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -246,13 +244,13 @@
         <option value="$PROJECT_DIR$/client/src/pages/GroceryList.jsx" />
         <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/client/src/components/recipes/styles/ShowRecipe.scss" />
-        <option value="$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/recipes/ShowRecipe.jsx" />
-        <option value="$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx" />
         <option value="$PROJECT_DIR$/client/src/utils/conversions.js" />
         <option value="$PROJECT_DIR$/client/src/stores/api_store.js" />
+        <option value="$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx" />
         <option value="$PROJECT_DIR$/client/src/pages/AddRecipe.jsx" />
+        <option value="$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx" />
       </list>
     </option>
   </component>
@@ -491,20 +489,6 @@
       <workItem from="1553687713563" duration="4193000" />
       <workItem from="1553712835489" duration="576000" />
       <workItem from="1553863509685" duration="1543000" />
-    </task>
-    <task id="LOCAL-00040" summary="remove split chunks">
-      <created>1552836760993</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1552836760993</updated>
-    </task>
-    <task id="LOCAL-00041" summary="switch to using /api/ routes">
-      <created>1552837098482</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1552837098482</updated>
     </task>
     <task id="LOCAL-00042" summary="fix server warnings">
       <created>1552837329604</created>
@@ -835,11 +819,25 @@
       <option name="project" value="LOCAL" />
       <updated>1553865651780</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="fix various bugs">
+      <created>1554121875822</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1554121875822</updated>
+    </task>
+    <task id="LOCAL-00090" summary="revert back to using index instead of ID for editing ingredients; too many cases where we don't have an id can don't know if we should or shouldn't have an id inside HOCs to reliably use id field">
+      <created>1554124089851</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1554124089851</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="119362000" />
+    <option name="totallyTimeSpent" value="120840000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -852,16 +850,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.78939396" visible="true" weight="0.2875226" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.7897649" visible="true" weight="0.2875226" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="npm" order="2" sideWeight="0.21060605" side_tool="true" visible="true" weight="0.2875226" />
+      <window_info id="npm" order="2" sideWeight="0.21023513" side_tool="true" visible="true" weight="0.2875226" />
       <window_info id="DB Browser" order="3" />
       <window_info id="Favorites" order="4" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3265306" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3265306" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -869,7 +866,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="DB Execution Console" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.2622449" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.2622449" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -884,7 +881,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="add infinite scroll; still needs UI and stopper" />
     <MESSAGE value="add empty page placeholder" />
     <MESSAGE value="update save grocery list button on save" />
     <MESSAGE value="fix tag sorting" />
@@ -909,7 +905,8 @@
     <MESSAGE value="fix inability to delete single menu item when duplicates" />
     <MESSAGE value="compress server side code" />
     <MESSAGE value="fix various bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix various bugs" />
+    <MESSAGE value="revert back to using index instead of ID for editing ingredients; too many cases where we don't have an id can don't know if we should or shouldn't have an id inside HOCs to reliably use id field" />
+    <option name="LAST_COMMIT_MESSAGE" value="revert back to using index instead of ID for editing ingredients; too many cases where we don't have an id can don't know if we should or shouldn't have an id inside HOCs to reliably use id field" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/client/src/components/recipes/styles/RecipeInformation.scss">
@@ -1185,24 +1182,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/ShowRecipe.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="25" column="20" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/user.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
           <caret line="19" column="9" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="48" column="52" selection-start-line="48" selection-start-column="52" selection-end-line="48" selection-end-column="52" />
         </state>
       </provider>
     </entry>
@@ -1234,27 +1217,41 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/ShowRecipe.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="25" column="20" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="81" column="36" selection-start-line="81" selection-start-column="36" selection-end-line="81" selection-end-column="36" />
+        <state relative-caret-position="146">
+          <caret line="51" column="59" selection-start-line="51" selection-start-column="59" selection-end-line="51" selection-end-column="59" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
+    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="24" column="32" selection-start-line="24" selection-start-column="32" selection-end-line="24" selection-end-column="32" />
+        <state relative-caret-position="149">
+          <caret line="21" column="18" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/src/pages/AddRecipe.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="93" column="9" lean-forward="true" selection-start-line="93" selection-start-column="9" selection-end-line="93" selection-end-column="9" />
+        <state relative-caret-position="363">
+          <caret line="86" column="52" selection-start-line="86" selection-start-column="52" selection-end-line="86" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="12" column="7" lean-forward="true" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="7" />
         </state>
       </provider>
     </entry>

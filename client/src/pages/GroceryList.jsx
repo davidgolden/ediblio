@@ -22,9 +22,12 @@ export default class GroceryList extends React.Component {
         };
     }
 
-    handleUpdateIngredient = (ingredient, i) => {
+    handleUpdateIngredient = (index, ingredient) => {
         let groceryList = this.state.groceryList;
-        groceryList.splice(i, 1, ingredient);
+        groceryList[index] = {
+            ...groceryList[index],
+            ...ingredient,
+        };
         this.setState({
             groceryList: groceryList,
             isCurrent: false,
@@ -41,8 +44,9 @@ export default class GroceryList extends React.Component {
         })
     };
 
-    handleDeleteIngredient = id => {
-        let groceryList = this.state.groceryList.filter(item => item._id !== id);
+    handleDeleteIngredient = index => {
+        let groceryList = this.state.groceryList;
+        groceryList.splice(index, 1);
         this.setState({
             groceryList: groceryList,
             isCurrent: false,
