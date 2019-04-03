@@ -28,7 +28,7 @@ const RecipeContainer = props => {
             .then(recipe => {
                 setRecipe(recipe);
             });
-    });
+    }, [context.recipes.get(props.recipe_id)]);
 
     const toggleEdit = () => {
         setEdit(!edit);

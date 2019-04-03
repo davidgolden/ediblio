@@ -5,6 +5,7 @@ import styles from './styles/UserRecipes.scss';
 import TagFilterBar from "../components/recipes/TagFilterBar";
 import LoadingNextPage from "../components/utilities/LoadingNextPage";
 import {ApiStoreContext} from "../stores/api_store";
+import useScrolledBottom from "../components/utilities/useScrolledBottom";
 
 const UserRecipes = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
@@ -12,33 +13,23 @@ const UserRecipes = props => {
 
     const context = useContext(ApiStoreContext);
 
-    useEffect(() => {
-        context.getRecipes({
-            author: props.user_id,
-        });
+    const isBottom = useScrolledBottom();
 
-        // this.disabler = autorun(() => {
-        //     if (this.props.apiStore.distanceToBottom === 0 && !this.state.loadedAll) {
-        //         this.props.apiStore.getRecipes({
-        //             page: this.state.lastRecipePageLoaded + 1,
-        //             author: this.props.user_id,
-        //         })
-        //             .then(recipes => {
-        //                 this.setState(prevState => {
-        //                     if (recipes.length === 0) {
-        //                         return {
-        //                             loadedAll: true,
-        //                         }
-        //                     } else {
-        //                         return {
-        //                             lastRecipePageLoaded: prevState.lastRecipePageLoaded + 1,
-        //                         }
-        //                     }
-        //                 })
-        //             });
-        //     }
-        // })
-    });
+    useEffect(() => {
+        if (isBottom && !loadedAll) {
+            context.getRecipes({
+                page: lastRecipePageLoaded + 1,
+                author: props.user_id,
+            })
+                .then(recipes => {
+                    if (recipes.length === 0) {
+                        setLoadedAll(true);
+                    } else {
+                        setLastRecipePageLoaded(lastRecipePageLoaded + 1);
+                    }
+                });
+        }
+    }, [isBottom]);
 
     const sortByTag = tag => {
         if (tag === 'all') {
@@ -61,10 +52,10 @@ const UserRecipes = props => {
         <div>
             <TagFilterBar sortByTag={sortByTag}/>
             <div className={recipeCardsContainerClassName}>
-                {context.recipes.map(recipe => {
+                {Array.from(context.recipes.values()).map(recipe => {
                     return <RecipeCard key={recipe._id} recipe={recipe}/>
                 })}
-                {context.recipes.length === 0 && <p>There doesn't seem to be anything here...</p>}
+                {context.recipes.size === 0 && <p>There doesn't seem to be anything here...</p>}
             </div>
             {loadedAll || <LoadingNextPage/>}
         </div>

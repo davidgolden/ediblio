@@ -1,28 +1,21 @@
 import React from "react";
-import {ApiStoreContext, apiStore} from './stores/api_store';
+import {ApiStoreContext} from './stores/api_store';
 import {render} from "react-dom";
-import {
-    Header,
-    UserRecipes,
-    UserSettings,
-    GroceryList,
-    AddRecipe,
-    BrowseRecipes,
-    Landing,
-    ForgotPassword,
-    RecipeContainer
-} from './registry';
-
-require('./stylesheets/base.scss');
-import {
-    createHistory,
-    LocationProvider,
-    Router
-} from "@reach/router";
+import Header from './components/header/Header';
+import UserRecipes from './pages/UserRecipes';
+import UserSettings from './pages/UserSettings';
+import GroceryList from './pages/GroceryList';
+import AddRecipe from './pages/AddRecipe';
+import BrowseRecipes from './pages/BrowseRecipes';
+import Landing from './pages/Landing';
+import ForgotPassword from './pages/Forgot';
+import RecipeContainer from "./pages/RecipeContainer";
+import { createHistory, LocationProvider, Router } from "@reach/router";
 import createHashSource from 'hash-source'
 import Notification from "./components/header/Notification";
 import axios from "axios";
 import {addIngredient, canBeAdded} from "./utils/conversions";
+import './stylesheets/base.scss';
 
 let source = createHashSource();
 let history = createHistory(source);
@@ -33,14 +26,12 @@ export default class App extends React.Component {
         // this.getUserFromStorage();
         // autorun(() => {
         // This code will run every time any observable property on the store is updated.
-        const user = JSON.stringify(this.user);
-        localStorage.setItem('user', user);
+        // const user = JSON.stringify(this.state.user);
+        // localStorage.setItem('user', user);
         // });
 
-        window.addEventListener('scroll', this.handleWindowScroll)
-
         this.state = {
-            recipes: [],
+            recipes: new Map(),
             user: null,
             distanceToBottom: 1,
             notificationMessage: '',
@@ -49,20 +40,16 @@ export default class App extends React.Component {
     }
 
     handleError = error => {
-        this.notificationMessage = 'Oops! ' + error;
-        this.notificationType = 'error';
-
+        this.setState({
+            notificationMessage: 'Oops! ' + error,
+            notificationType: 'error',
+        });
         setTimeout(() => {
-            this.notificationMessage = '';
-            this.notificationType = '';
+            this.setState({
+                notificationMessage: '',
+                notificationType: '',
+            });
         }, 4000);
-    };
-
-    handleWindowScroll = () => {
-        const scrollPosition = window.pageYOffset;
-        const windowSize = window.innerHeight;
-        const bodyHeight = document.body.offsetHeight;
-        this.distanceToBottom = Math.max(bodyHeight - (scrollPosition + windowSize), 0)
     };
 
     getUserFromStorage = () => {
@@ -119,17 +106,18 @@ export default class App extends React.Component {
             })
                 .then(response => {
                     // if not loading first page, add new recipes. otherwise, replace them.
-                    if (params && params.page) {
-                        this.setState(prevState => {
-                            return {
-                                recipes: prevState.recipes.concat(response.data.recipes),
-                            }
-                        })
-                    } else {
-                        this.setState({
-                            recipes: response.data.recipes,
-                        });
+                    let recipes = this.state.recipes;
+                    if (params && !params.page) {
+                        recipes.clear();
                     }
+                    response.data.recipes.forEach(item => {
+                        recipes.set(item._id, item);
+                    });
+                    this.setState(() => {
+                        return {
+                            recipes: recipes,
+                        }
+                    });
                     res(response.data.recipes);
                 })
                 .catch(err => {
@@ -155,7 +143,7 @@ export default class App extends React.Component {
 
     patchUser = partialUserObj => {
         return new Promise((res, rej) => {
-            axios.patch(`/api/users/${this.user._id}`, {
+            axios.patch(`/api/users/${this.state.user._id}`, {
                 ...partialUserObj
             })
                 .then(response => {
@@ -220,8 +208,10 @@ export default class App extends React.Component {
             axios.delete(`/api/recipes/${id}`)
                 .then(() => {
                     // do something
+                    let recipes = this.state.recipes;
+                    recipes.delete(id);
                     this.setState({
-                        recipes: this.state.recipes.filter(item => item._id !== id)
+                        recipes: recipes,
                     });
                     res();
                 })
@@ -265,10 +255,10 @@ export default class App extends React.Component {
     addToGroceryList = (recipe_id, ingredients) => {
         // add current recipe to menu
         // add all ingredients to grocery list
-        const currentMenu = this.user.menu;
+        const currentMenu = this.state.user.menu;
         currentMenu.push(recipe_id);
 
-        const currentGroceryList = this.user.groceryList;
+        const currentGroceryList = this.state.user.groceryList;
 
         const onCurrentList = ingredient => {
             return currentGroceryList.findIndex(item => {

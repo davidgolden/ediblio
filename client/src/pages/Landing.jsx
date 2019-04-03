@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import classNames from 'classnames';
 import styles from './styles/Landing.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCloudUploadAlt, faSearchPlus, faListOl, faShoppingCart} from '@fortawesome/free-solid-svg-icons'
 import Button from "../components/utilities/buttons/Button";
+import {ApiStoreContext} from "../stores/api_store";
 
 const Landing = props => {
     const [username, setUsername] = useState('');
@@ -11,11 +12,13 @@ const Landing = props => {
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
 
+    const context = useContext(ApiStoreContext);
+
     const handleSubmit = () => {
         if (password !== confirm) {
             return alert('Passwords do not match!')
         }
-        this.props.apiStore.registerUser({
+        context.registerUser({
             username: username,
             email: email,
             password: password

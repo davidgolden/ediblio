@@ -2,26 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b360ea2b-4ea7-4711-b7b1-0edc28f9c2b5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/client/src/components/utilities/ImageLoader.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/components/utilities/useScrolledBottom.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/dist/bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/dist/bundle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/RecipeCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/RecipeCard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/header/Header.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/header/Header.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/header/Notification.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/header/Notification.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/recipes/RecipeButtons.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/recipes/RecipeButtons.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/recipes/RecipeInformation.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/recipes/RecipeInformation.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/recipes/ShowRecipe.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/recipes/ShowRecipe.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/AddRecipe.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/AddRecipe.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/pages/GroceryList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/GroceryList.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/pages/Landing.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/Landing.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/pages/UserRecipes.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/UserRecipes.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/UserSettings.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/UserSettings.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/stores/api_store.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/stores/api_store.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/registry.js" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -50,9 +40,9 @@
           <entry key="env" value="5" />
           <entry key="gitignore" value="4" />
           <entry key="html" value="8" />
-          <entry key="js" value="182" />
+          <entry key="js" value="184" />
           <entry key="json" value="16" />
-          <entry key="jsx" value="255" />
+          <entry key="jsx" value="260" />
           <entry key="md" value="1" />
           <entry key="png" value="1" />
           <entry key="scss" value="83" />
@@ -63,8 +53,8 @@
           <entry key="HTML" value="8" />
           <entry key="Image" value="1" />
           <entry key="JSON" value="16" />
-          <entry key="JSX Harmony" value="255" />
-          <entry key="JavaScript" value="182" />
+          <entry key="JSX Harmony" value="260" />
+          <entry key="JavaScript" value="184" />
           <entry key="PLAIN_TEXT" value="11" />
           <entry key="SCSS" value="83" />
         </counts>
@@ -75,21 +65,21 @@
           <entry key="env" value="73" />
           <entry key="gitignore" value="17" />
           <entry key="html" value="30" />
-          <entry key="js" value="15752" />
+          <entry key="js" value="16135" />
           <entry key="json" value="596" />
-          <entry key="jsx" value="29956" />
+          <entry key="jsx" value="30802" />
           <entry key="md" value="47" />
           <entry key="scss" value="7669" />
-          <entry key="txt" value="2095" />
+          <entry key="txt" value="2153" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="HTML" value="30" />
           <entry key="JSON" value="596" />
-          <entry key="JSX Harmony" value="29956" />
-          <entry key="JavaScript" value="15752" />
-          <entry key="PLAIN_TEXT" value="2328" />
+          <entry key="JSX Harmony" value="30802" />
+          <entry key="JavaScript" value="16135" />
+          <entry key="PLAIN_TEXT" value="2386" />
           <entry key="SCSS" value="7669" />
         </counts>
       </usages-collector>
@@ -108,7 +98,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/src/components/recipes/ShowRecipe.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-584">
+            <state relative-caret-position="342">
               <caret line="18" selection-start-line="18" selection-end-line="18" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
@@ -118,10 +108,34 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="570">
+              <caret line="30" column="19" selection-start-line="30" selection-start-column="19" selection-end-line="30" selection-end-column="19" />
+              <folding>
+                <element signature="e#0#61#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="219">
+              <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#63#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/src/pages/AddRecipe.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="47" column="48" selection-start-line="47" selection-start-column="48" selection-end-line="47" selection-end-column="48" />
+            <state relative-caret-position="577">
+              <caret line="65" column="41" selection-start-line="65" selection-start-column="41" selection-end-line="65" selection-end-column="41" />
               <folding>
                 <element signature="e#0#52#0" expanded="true" />
               </folding>
@@ -132,8 +146,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/src/pages/UserRecipes.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="926">
-              <caret line="60" column="13" selection-start-line="60" selection-start-column="13" selection-end-line="60" selection-end-column="13" />
+            <state relative-caret-position="171">
+              <caret line="9" column="30" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
               <folding>
                 <element signature="e#0#63#0" expanded="true" />
               </folding>
@@ -141,41 +155,32 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/src/pages/Landing.jsx">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/src/pages/GroceryList.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="45" column="7" selection-start-line="45" selection-start-column="7" selection-end-line="45" selection-end-column="7" />
+            <state relative-caret-position="382">
+              <caret line="64" column="30" selection-start-line="64" selection-start-column="30" selection-end-line="64" selection-end-column="30" />
               <folding>
-                <element signature="e#0#40#0" expanded="true" />
+                <element signature="e#0#63#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/src/components/header/Header.jsx">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="290">
-              <caret line="63" column="54" selection-start-line="63" selection-start-column="54" selection-end-line="63" selection-end-column="54" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/src/components/recipes/RecipeButtons.jsx">
+        <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="38">
-              <caret line="2" selection-start-line="2" selection-end-line="2" />
+              <caret line="5" column="6" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/src/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="327" column="28" selection-start-line="327" selection-start-column="28" selection-end-line="327" selection-end-column="28" />
+            <state relative-caret-position="280">
+              <caret line="31" column="8" lean-forward="true" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="8" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -184,13 +189,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/src/stores/api_store.js">
+        <entry file="file://$PROJECT_DIR$/client/src/components/utilities/useScrolledBottom.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="44">
-              <caret line="163" column="6" selection-start-line="163" selection-start-column="6" selection-end-line="163" selection-end-column="6" />
-              <folding>
-                <element signature="e#96#122#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="361">
+              <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -199,7 +201,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>landing-</find>
       <find>id</find>
       <find>get</find>
       <find>recipes</find>
@@ -229,6 +230,7 @@
       <find>action</find>
       <find>addRecipeToGroc</find>
       <find>isLoggedIn</find>
+      <find>this.user</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/client/src</dir>
@@ -245,8 +247,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/webpack.prod.js" />
-        <option value="$PROJECT_DIR$/webpack.common.js" />
         <option value="$PROJECT_DIR$/client/src/pages/styles/Landing.scss" />
         <option value="$PROJECT_DIR$/client/src/pages/styles/AddRecipe.scss" />
         <option value="$PROJECT_DIR$/client/src/components/recipes/styles/RecipeInformation.scss" />
@@ -282,20 +282,22 @@
         <option value="$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/utilities/ImageLoader.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/recipes/RecipeInformation.jsx" />
-        <option value="$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/RecipeCard.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/header/Header.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/header/Notification.jsx" />
-        <option value="$PROJECT_DIR$/client/src/pages/GroceryList.jsx" />
         <option value="$PROJECT_DIR$/client/src/pages/UserSettings.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/recipes/RecipeButtons.jsx" />
-        <option value="$PROJECT_DIR$/client/src/stores/api_store.js" />
-        <option value="$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx" />
-        <option value="$PROJECT_DIR$/client/src/index.js" />
         <option value="$PROJECT_DIR$/client/src/components/recipes/ShowRecipe.jsx" />
         <option value="$PROJECT_DIR$/client/src/pages/AddRecipe.jsx" />
+        <option value="$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx" />
+        <option value="$PROJECT_DIR$/client/src/stores/api_store.js" />
+        <option value="$PROJECT_DIR$/client/src/components/utilities/useScrollHook.jsx" />
+        <option value="$PROJECT_DIR$/client/src/components/utilities/useScrolledBottom.jsx" />
         <option value="$PROJECT_DIR$/client/src/pages/UserRecipes.jsx" />
+        <option value="$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx" />
         <option value="$PROJECT_DIR$/client/src/pages/Landing.jsx" />
+        <option value="$PROJECT_DIR$/client/src/pages/GroceryList.jsx" />
+        <option value="$PROJECT_DIR$/client/src/index.js" />
       </list>
     </option>
   </component>
@@ -316,7 +318,7 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1680" />
+    <option name="width" value="834" />
     <option name="height" value="1050" />
   </component>
   <component name="ProjectLevelVcsManager">
@@ -352,14 +354,6 @@
               <item name="client" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="components" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="recipe-cloud-v2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="recipe-cloud-v2" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="components" type="462c0819:PsiDirectoryNode" />
-              <item name="header" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="recipe-cloud-v2" type="b2602c69:ProjectViewProjectNode" />
@@ -537,14 +531,7 @@
       <workItem from="1553712835489" duration="576000" />
       <workItem from="1553863509685" duration="1543000" />
       <workItem from="1554166028695" duration="7720000" />
-      <workItem from="1554256665360" duration="5757000" />
-    </task>
-    <task id="LOCAL-00043" summary="add to gitignore">
-      <created>1552837379780</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1552837379780</updated>
+      <workItem from="1554256665360" duration="10951000" />
     </task>
     <task id="LOCAL-00044" summary="add to gitignore">
       <created>1552837423296</created>
@@ -882,11 +869,18 @@
       <option name="project" value="LOCAL" />
       <updated>1554166212449</updated>
     </task>
-    <option name="localTasksCounter" value="92" />
+    <task id="LOCAL-00092" summary="first working draft (all pages working, lots of bugs)">
+      <created>1554292534384</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1554292534385</updated>
+    </task>
+    <option name="localTasksCounter" value="93" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="134317000" />
+    <option name="totallyTimeSpent" value="139511000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -931,7 +925,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="update save grocery list button on save" />
     <MESSAGE value="fix tag sorting" />
     <MESSAGE value="improve mobile UX" />
     <MESSAGE value="add responsive grocery button; minor UI" />
@@ -956,23 +949,10 @@
     <MESSAGE value="fix various bugs" />
     <MESSAGE value="revert back to using index instead of ID for editing ingredients; too many cases where we don't have an id can don't know if we should or shouldn't have an id inside HOCs to reliably use id field" />
     <MESSAGE value="fix grocery list updating" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix grocery list updating" />
+    <MESSAGE value="first working draft (all pages working, lots of bugs)" />
+    <option name="LAST_COMMIT_MESSAGE" value="first working draft (all pages working, lots of bugs)" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/styles/IngredientListItem.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" column="22" selection-start-line="13" selection-start-column="22" selection-end-line="13" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/utilities/styles/LoadingNextPage.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="4" selection-start-line="4" selection-end-line="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="437">
@@ -1067,13 +1047,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webpack.common.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" column="19" lean-forward="true" selection-start-line="13" selection-start-column="19" selection-end-line="13" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webpack.dev.js">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1136,13 +1109,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="12" column="7" lean-forward="true" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
@@ -1154,6 +1120,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
           <caret line="9" column="62" lean-forward="true" selection-start-line="9" selection-start-column="62" selection-end-line="9" selection-end-column="62" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1175,16 +1144,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="38">
           <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="46" column="12" lean-forward="true" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#61#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1228,16 +1187,6 @@
     <entry file="file://$PROJECT_DIR$/client/src/pages/Forgot.jsx">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/pages/GroceryList.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
-          <folding>
-            <element signature="e#0#63#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/src/pages/UserSettings.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1444">
@@ -1262,20 +1211,111 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/ShowRecipe.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/src/stores/api_store.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="163" column="6" selection-start-line="163" selection-start-column="6" selection-end-line="163" selection-end-column="6" />
+        <state relative-caret-position="480">
+          <caret line="272" column="51" selection-start-line="272" selection-start-column="51" selection-end-line="272" selection-end-column="51" />
           <folding>
             <element signature="e#96#122#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/registry.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+          <folding>
+            <element signature="e#0#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webpack.common.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" column="35" lean-forward="true" selection-start-line="8" selection-start-column="35" selection-end-line="8" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="30" column="19" selection-start-line="30" selection-start-column="19" selection-end-line="30" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/components/utilities/useScrolledBottom.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/pages/Landing.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="19" column="9" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="100" column="45" selection-start-line="100" selection-start-column="35" selection-end-line="100" selection-end-column="45" />
+        <state relative-caret-position="219">
+          <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/pages/AddRecipe.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="577">
+          <caret line="65" column="41" selection-start-line="65" selection-start-column="41" selection-end-line="65" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="5" column="6" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/pages/UserRecipes.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="9" column="30" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/pages/GroceryList.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="382">
+          <caret line="64" column="30" selection-start-line="64" selection-start-column="30" selection-end-line="64" selection-end-column="30" />
           <folding>
             <element signature="e#0#63#0" expanded="true" />
           </folding>
@@ -1284,50 +1324,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/src/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="327" column="28" selection-start-line="327" selection-start-column="28" selection-end-line="327" selection-end-column="28" />
+        <state relative-caret-position="280">
+          <caret line="31" column="8" lean-forward="true" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="8" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/ShowRecipe.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-584">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/pages/AddRecipe.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="47" column="48" selection-start-line="47" selection-start-column="48" selection-end-line="47" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/pages/UserRecipes.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="926">
-          <caret line="60" column="13" selection-start-line="60" selection-start-column="13" selection-end-line="60" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#63#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/pages/Landing.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="45" column="7" selection-start-line="45" selection-start-column="7" selection-end-line="45" selection-end-column="7" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
           </folding>
         </state>
       </provider>

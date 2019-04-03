@@ -17,27 +17,27 @@ const GroceryList = props => {
     const [isCurrent, setIsCurrent] = useState(true);
 
     const handleUpdateIngredient = (index, ingredient) => {
-        let groceryList = groceryList;
-        groceryList[index] = {
-            ...groceryList[index],
+        let newGroceryList = groceryList;
+        newGroceryList[index] = {
+            ...newGroceryList[index],
             ...ingredient,
         };
-        setGroceryList(groceryList);
+        setGroceryList([...newGroceryList]);
         setIsCurrent(false);
     };
 
     const handleAddIngredient = () => {
-        let groceryList = groceryList;
-        let ingredient = {quantity: '', measurement: '#', name: ''};
-        groceryList.push(ingredient);
-        setGroceryList(groceryList);
+        setGroceryList([
+            ...groceryList,
+            {quantity: '', measurement: '#', name: ''}
+        ]);
         setIsCurrent(false);
     };
 
     const handleDeleteIngredient = index => {
-        let groceryList = groceryList;
-        groceryList.splice(index, 1);
-        setGroceryList(groceryList);
+        let newGroceryList = groceryList;
+        newGroceryList.splice(index, 1);
+        setGroceryList([...newGroceryList]);
         setIsCurrent(false);
     };
 
@@ -46,7 +46,7 @@ const GroceryList = props => {
         const i = menu.findIndex(item => item._id === id);
         let menuList = menu;
         menuList.splice(i, 1);
-        setMenu(menuList);
+        setMenu([...menuList]);
         setIsCurrent(false);
     };
 
@@ -60,10 +60,10 @@ const GroceryList = props => {
                 setGroceryList(data.groceryList);
                 setMenu(data.menu);
             });
-    });
+    }, [context.user]);
 
     const updateList = () => {
-        context.apiStore.patchUser({
+        context.patchUser({
             groceryList: groceryList,
             menu: menu,
         })
@@ -101,14 +101,14 @@ const GroceryList = props => {
                 })}
             </ul>
             <h2>My Grocery List</h2>
-            {groceryList && <AddIngredients
+            <AddIngredients
                 containerClassName={ingredientsContainerClassName}
                 ingredients={groceryList}
                 handleAddIngredient={handleAddIngredient}
                 handleUpdateIngredient={handleUpdateIngredient}
                 handleDeleteIngredient={handleDeleteIngredient}
                 storeMode={storeMode}
-            />}
+            />
             <Button className={saveListClassName} onClick={updateList}>Save Grocery List/Menu</Button>
             <Button onClick={toggleStoreMode}>Toggle Store Mode</Button>
         </div>
