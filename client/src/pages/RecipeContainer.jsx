@@ -1,150 +1,130 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import RecipeForm from './AddRecipe';
 import ShowRecipe from '../components/recipes/ShowRecipe';
-import {inject, observer} from 'mobx-react';
 import styles from './styles/RecipeContainer.scss';
 import classNames from 'classnames';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSearch, faEdit} from '@fortawesome/free-solid-svg-icons'
 import Button from "../components/utilities/buttons/Button";
 import RecipeButtons from "../components/recipes/RecipeButtons";
+import {ApiStoreContext} from "../stores/api_store";
 
-@inject('apiStore')
-@observer
-export default class RecipeContainer extends React.Component {
-    constructor(props) {
-        super(props);
+const RecipeContainer = props => {
+    const [edit, setEdit] = useState(false);
+    const [recipe, setRecipe] = useState(null);
 
-        this.state = {
-            edit: false,
-            recipe: null,
-        };
-    }
+    const context = useContext(ApiStoreContext);
 
-    addToGroceryList = () => {
-        this.props.apiStore.addToGroceryList(this.state.recipe._id, this.state.recipe.ingredients);
+    const addToGroceryList = () => {
+        context.addToGroceryList(recipe._id, recipe.ingredients);
     };
 
-    updateRecipe = fullRecipe => {
-        this.setState({
-            recipe: fullRecipe,
-        })
+    const updateRecipe = fullRecipe => {
+        setRecipe(fullRecipe);
     };
 
-    componentDidMount() {
-        this.props.apiStore.getRecipe(this.props.recipe_id)
+    useEffect(() => {
+        context.getRecipe(props.recipe_id)
             .then(recipe => {
-                this.setState({
-                    recipe: recipe,
-                })
+                setRecipe(recipe);
             });
-    }
+    });
 
-    toggleEdit = () => {
-        this.setState(prevState => {
-            return {
-                edit: !prevState.edit
-            }
-        });
+    const toggleEdit = () => {
+        setEdit(!edit);
     };
 
-    handleUpdateIngredient = (index, ingredient) => {
-        let ingredientList = this.state.recipe.ingredients;
+    const handleUpdateIngredient = (index, ingredient) => {
+        let ingredientList = recipe.ingredients;
         ingredientList[index] = {
             ...ingredientList[index],
             ...ingredient,
         };
-        this.setState({
-            recipe: {
-                ...this.state.recipe,
-                ingredients: ingredientList,
-            }
+        setRecipe({
+            ...recipe,
+            ingredients: ingredientList,
         });
     };
 
-    handleAddIngredient = () => {
-        let ingredientList = this.state.recipe.ingredients;
+    const handleAddIngredient = () => {
+        let ingredientList = recipe.ingredients;
         let ingredient = {quantity: '', measurement: '#', name: ''};
         ingredientList.push(ingredient);
-        this.setState({
-            recipe: {
-                ...this.state.recipe,
-                ingredients: ingredientList,
-            }
+        setRecipe({
+            ...recipe,
+            ingredients: ingredientList,
         });
     };
 
-    handleDeleteIngredient = index => {
-        let ingredientList = this.state.recipe.ingredients;
+    const handleDeleteIngredient = index => {
+        let ingredientList = recipe.ingredients;
         ingredientList.splice(index, 1);
-        this.setState({
-            recipe: {
-                ...this.state.recipe,
-                ingredients: ingredientList,
-            }
+        setRecipe({
+            ...recipe,
+            ingredients: ingredientList,
         });
     };
 
-    deleteRecipe = () => {
+    const deleteRecipe = () => {
         if (confirm('Are you sure you want to do that?')) {
-            this.props.apiStore.deleteRecipe(this.props.recipe_id)
+            context.deleteRecipe(props.recipe_id)
                 .then(() => {
-                    this.props.navigate("/");
+                    props.navigate("/");
                 });
         }
     };
 
-    render() {
-        const recipeContainerClassName = classNames({
-            [styles.recipeContainer]: true,
-        });
-        const recipeEditButtonsClassName = classNames({
-            [styles.recipeEditButtons]: true,
-        });
-        const toggleEditClassName = classNames({
-            [styles.toggleEdit]: true,
-        });
+    const recipeContainerClassName = classNames({
+        [styles.recipeContainer]: true,
+    });
+    const recipeEditButtonsClassName = classNames({
+        [styles.recipeEditButtons]: true,
+    });
+    const toggleEditClassName = classNames({
+        [styles.toggleEdit]: true,
+    });
 
-        return (
-            <div className={recipeContainerClassName}>
+    return (
+        <div className={recipeContainerClassName}>
 
-                <div className={recipeEditButtonsClassName}>
-                    {this.state.recipe && this.props.apiStore.isLoggedIn && this.state.recipe.author.id === this.props.apiStore.user._id && (
-                        <Button className={toggleEditClassName} onClick={this.toggleEdit}>
-                            {this.state.edit === false ? (
-                                <React.Fragment>
-                                    <FontAwesomeIcon icon={faEdit}/> Edit</React.Fragment>) : (
-                                <React.Fragment>
-                                    <FontAwesomeIcon icon={faSearch}/> View
-                                </React.Fragment>)
-                            }
-                        </Button>)}
-                    {this.state.recipe && this.props.apiStore.isLoggedIn && <RecipeButtons
-                        recipe_id={this.state.recipe._id}
-                        author_id={this.state.recipe.author.id}
-                        addToGroceryList={this.addToGroceryList}
-                        deleteRecipe={this.deleteRecipe}
-                    />}
-                </div>
-                {this.state.edit === true ? (
-                    <RecipeForm
-                        user={this.props.user}
-                        tags={this.props.tags}
-                        recipe={this.state.recipe}
-                        toggleEdit={this.toggleEdit}
-                        editMode={this.state.edit}
-                        updateRecipe={this.updateRecipe}
-                    />
-                ) : (
-                    <ShowRecipe
-                        recipe={this.state.recipe}
-                        addToGroceryList={this.addToGroceryList}
-                        handleDeleteIngredient={this.handleDeleteIngredient}
-                        handleAddIngredient={this.handleAddIngredient}
-                        handleUpdateIngredient={this.handleUpdateIngredient}
-                    />
-                )}
+            <div className={recipeEditButtonsClassName}>
+                {recipe && context.isLoggedIn && recipe.author.id === context.user._id && (
+                    <Button className={toggleEditClassName} onClick={toggleEdit}>
+                        {edit === false ? (
+                            <React.Fragment>
+                                <FontAwesomeIcon icon={faEdit}/> Edit</React.Fragment>) : (
+                            <React.Fragment>
+                                <FontAwesomeIcon icon={faSearch}/> View
+                            </React.Fragment>)
+                        }
+                    </Button>)}
+                {recipe && context.isLoggedIn && <RecipeButtons
+                    recipe_id={recipe._id}
+                    author_id={recipe.author.id}
+                    addToGroceryList={addToGroceryList}
+                    deleteRecipe={deleteRecipe}
+                />}
             </div>
-        )
-    }
-}
+            {edit === true ? (
+                <RecipeForm
+                    user={props.user}
+                    tags={props.tags}
+                    recipe={recipe}
+                    toggleEdit={toggleEdit}
+                    editMode={edit}
+                    updateRecipe={updateRecipe}
+                />
+            ) : (
+                <ShowRecipe
+                    recipe={recipe}
+                    addToGroceryList={addToGroceryList}
+                    handleDeleteIngredient={handleDeleteIngredient}
+                    handleAddIngredient={handleAddIngredient}
+                    handleUpdateIngredient={handleUpdateIngredient}
+                />
+            )}
+        </div>
+    )
+};
+
+export default RecipeContainer;

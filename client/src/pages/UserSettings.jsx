@@ -1,100 +1,77 @@
-import React from 'react';
-import {inject, observer} from 'mobx-react';
+import React, { useState, useContext } from 'react';
 import styles from './styles/UserSettings.scss';
 import classNames from 'classnames';
 import Button from "../components/utilities/buttons/Button";
+import {ApiStoreContext} from "../stores/api_store";
 
-@inject('apiStore')
-@observer
-export default class UserSettings extends React.Component {
-    constructor(props) {
-        super(props);
+const UserSettings = props => {
+    const context = useContext(ApiStoreContext);
 
-        this.state = {
-            username: props.apiStore.user ? props.apiStore.user.username : '',
-            email: props.apiStore.user ? props.apiStore.user.email : '',
-            password: props.apiStore.user ? props.apiStore.user.password : '',
-            confirm: props.apiStore.user ? props.apiStore.user.password : '',
-        }
-    }
+    const [username, setUsername] = useState(context.user ? context.user.username : '');
+    const [email, setEmail] = useState(context.user ? context.user.email : '');
+    const [password, setPassword] = useState(context.user ? context.user.password : '');
+    const [confirm, setConfirm] = useState(context.user ? context.user.password : '');
 
-    handleUsernameChange = e => {
-        this.setState({username: e.target.value})
-    };
-
-    handleEmailChange = e => {
-        this.setState({email: e.target.value})
-    };
-
-    handlePasswordChange = e => {
-        this.setState({password: e.target.value})
-    };
-
-    handleConfirmChange = e => {
-        this.setState({confirm: e.target.value})
-    };
-
-    handleSubmit = () => {
-        if (this.state.password !== this.state.confirm) {
+    const handleSubmit = () => {
+        if (password !== confirm) {
             return alert('Passwords do not match!')
         } else {
-            this.props.apiStore.patchUser({
-                username: this.state.username,
-                email: this.state.email,
-                password: this.state.password
+            context.patchUser({
+                username: username,
+                email: email,
+                password: password
             });
         }
     };
 
-    componentDidMount() {
-        this.props.apiStore.getUser(this.props.user_id)
-            .then(user => {
-                this.setState({
-                    username: user.username,
-                    email: user.email,
-                    password: user.password,
-                    confirm: user.password,
-                })
-            })
+    // componentDidMount() {
+    //     this.props.apiStore.getUser(this.props.user_id)
+    //         .then(user => {
+    //             this.setState({
+    //                 username: user.username,
+    //                 email: user.email,
+    //                 password: user.password,
+    //                 confirm: user.password,
+    //             })
+    //         })
+    // }
+
+    if (!context.isLoggedIn || context.user._id !== props.user_id) {
+        return <p>You do not have permission to view this page!</p>
     }
 
-    render() {
+    const settingsContainerClassName = classNames({
+        [styles.settingsContainer]: true,
+    });
 
-        if (!this.props.apiStore.isLoggedIn || this.props.apiStore.user._id !== this.props.user_id) {
-            return <p>You do not have permission to view this page!</p>
-        }
-
-        const settingsContainerClassName = classNames({
-            [styles.settingsContainer]: true,
-        });
-
-        return (
-            <div className={settingsContainerClassName}>
-                <h1>Edit Profile</h1>
-                <div>
-                    <label htmlFor='username'>Username</label>
-                    <input type='text' name='username' value={this.state.username}
-                           onChange={this.handleUsernameChange}/>
-                </div>
-                <div>
-                    <label htmlFor='email'>Email</label>
-                    <input type='email' name='email' value={this.state.email}
-                           onChange={this.handleEmailChange}/>
-                </div>
-                <div>
-                    <label htmlFor='password'>Password</label>
-                    <input type='password' name='password' value={this.state.password}
-                           onChange={this.handlePasswordChange}/>
-                </div>
-                <div>
-                    <label htmlFor='confirm'>Confirm Password</label>
-                    <input type='password' name='confirm' value={this.state.confirm}
-                           onChange={this.handleConfirmChange}/>
-                </div>
-                <div>
-                    <Button onClick={this.handleSubmit}>Submit</Button>
-                </div>
+    return (
+        <div className={settingsContainerClassName}>
+            <h1>Edit Profile</h1>
+            <div>
+                <label htmlFor='username'>Username</label>
+                <input type='text' name='username' value={username}
+                       onChange={e => setUsername(e.target.value)}/>
             </div>
-        )
-    }
+            <div>
+                <label htmlFor='email'>Email</label>
+                <input type='email' name='email' value={email}
+                       onChange={e => setEmail(e.target.value)}/>
+            </div>
+            <div>
+                <label htmlFor='password'>Password</label>
+                <input type='password' name='password' value={password}
+                       onChange={e => setPassword(e.target.value)}/>
+            </div>
+            <div>
+                <label htmlFor='confirm'>Confirm Password</label>
+                <input type='password' name='confirm' value={confirm}
+                       onChange={e => setConfirm(e.target.value)}/>
+            </div>
+            <div>
+                <Button onClick={handleSubmit}>Submit</Button>
+            </div>
+        </div>
+    )
 }
+
+export default UserSettings;

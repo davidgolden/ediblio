@@ -1,68 +1,62 @@
-import React from 'react';
-import {Link, navigate} from "@reach/router";
+import React, { useContext } from 'react';
+import {Link} from "@reach/router";
 import PropTypes from 'prop-types';
-import {inject, observer} from 'mobx-react';
 import classNames from 'classnames';
 import styles from './styles/RecipeCard.scss';
-import RemoveButton from "./utilities/buttons/RemoveButton";
-import InCloudButton from "./utilities/buttons/InCloudButton";
-import AddToCloudButton from "./utilities/buttons/AddToCloudButton";
-import AddToGroceryListButton from "./utilities/buttons/AddToGroceryListButton";
-import DeleteButton from "./utilities/buttons/DeleteButton";
 import RecipeButtons from "./recipes/RecipeButtons";
+import {ApiStoreContext} from "../stores/api_store";
 
-@inject('apiStore')
-@observer
-export default class RecipeCard extends React.Component {
-    static propTypes = {
-        recipe: PropTypes.object,
-    };
+const RecipeCard = props => {
 
-    deleteRecipe = () => {
+    const context = useContext(ApiStoreContext);
+
+    const deleteRecipe = () => {
         if (confirm('Are you sure you want to do that?')) {
-            this.props.apiStore.deleteRecipe(this.props.recipe._id);
+            context.deleteRecipe(props.recipe._id);
         }
     };
 
-    addToGroceryList = () => {
-        this.props.apiStore.addToGroceryList(this.props.recipe._id, this.props.recipe.ingredients);
+    const addToGroceryList = () => {
+        context.addToGroceryList(props.recipe._id, props.recipe.ingredients);
     };
 
-    render() {
-        const {recipe, apiStore} = this.props;
+    const recipeCardClassName = classNames({
+        [styles.recipeCard]: true,
+    });
+    const recipeCardImageClassName = classNames({
+        [styles.recipeCardImage]: true,
+    });
+    const recipeCardTextClassName = classNames({
+        [styles.recipeCardText]: true,
+    });
+    const recipeCardButtonClassName = classNames({
+        [styles.recipeCardButtons]: true,
+    });
 
-        const recipeCardClassName = classNames({
-            [styles.recipeCard]: true,
-        });
-        const recipeCardImageClassName = classNames({
-            [styles.recipeCardImage]: true,
-        });
-        const recipeCardTextClassName = classNames({
-            [styles.recipeCardText]: true,
-        });
-        const recipeCardButtonClassName = classNames({
-            [styles.recipeCardButtons]: true,
-        });
-
-        return (
-            <div className={recipeCardClassName}>
-                <Link to={`/recipes/${recipe._id}`}>
-                    <div>
-                        <img src={recipe.image} className={recipeCardImageClassName}/>
-                    </div>
-                    <div className={recipeCardTextClassName}>
-                        <h3>{recipe.name}</h3>
-                    </div>
-                </Link>
-                <div className={recipeCardButtonClassName}>
-                    <RecipeButtons
-                        recipe_id={recipe._id}
-                        author_id={recipe.author.id}
-                        addToGroceryList={this.addToGroceryList}
-                        deleteRecipe={this.deleteRecipe}
-                    />
+    return (
+        <div className={recipeCardClassName}>
+            <Link to={`/recipes/${props.recipe._id}`}>
+                <div>
+                    <img src={props.recipe.image} className={recipeCardImageClassName}/>
                 </div>
+                <div className={recipeCardTextClassName}>
+                    <h3>{props.recipe.name}</h3>
+                </div>
+            </Link>
+            <div className={recipeCardButtonClassName}>
+                <RecipeButtons
+                    recipe_id={props.recipe._id}
+                    author_id={props.recipe.author.id}
+                    addToGroceryList={addToGroceryList}
+                    deleteRecipe={deleteRecipe}
+                />
             </div>
-        )
-    }
-}
+        </div>
+    )
+};
+
+RecipeCard.propTypes = {
+    recipe: PropTypes.object,
+};
+
+export default RecipeCard;

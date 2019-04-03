@@ -1,74 +1,73 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import {inject, observer} from 'mobx-react';
 import InCloudButton from "../utilities/buttons/InCloudButton";
 import RemoveButton from "../utilities/buttons/RemoveButton";
 import AddToCloudButton from "../utilities/buttons/AddToCloudButton";
 import AddToGroceryListButton from "../utilities/buttons/AddToGroceryListButton";
 import DeleteButton from "../utilities/buttons/DeleteButton";
+import {ApiStoreContext} from "../../stores/api_store";
 
-@inject('apiStore')
-@observer
-export default class RecipeButtons extends React.Component {
-    static propTypes = {
-        recipe_id: PropTypes.string.isRequired,
-        author_id: PropTypes.string.isRequired,
-        // removeFromCloud: PropTypes.func.isRequired,
-        // addToCloud: PropTypes.func.isRequired,
-        addToGroceryList: PropTypes.func.isRequired,
-        deleteRecipe: PropTypes.func.isRequired,
-    };
+const RecipeButtons = props => {
 
-    addToCloud = () => {
-        let currentCloud = this.props.apiStore.user.recipes;
-        currentCloud.push(this.props.recipe_id);
-        this.props.apiStore.patchUser({
+    const context = useContext(ApiStoreContext);
+
+    const addToCloud = () => {
+        let currentCloud = props.apiStore.user.recipes;
+        currentCloud.push(props.recipe_id);
+        context.patchUser({
             recipes: currentCloud,
         })
     };
 
-    removeFromCloud = () => {
-        let currentCloud = this.props.apiStore.user.recipes;
-        currentCloud = currentCloud.filter(recipe_id => recipe_id !== this.props.recipe_id);
-        this.props.apiStore.patchUser({
+    const removeFromCloud = () => {
+        let currentCloud = context.user.recipes;
+        currentCloud = currentCloud.filter(recipe_id => recipe_id !== props.recipe_id);
+        context.patchUser({
             recipes: currentCloud,
         })
     };
 
-    render() {
-        const {apiStore} = this.props;
-
-        if (!apiStore.isLoggedIn) {
-            return false;
-        }
-
-        const inCloud = !!(apiStore.user.recipes.find(id => id === this.props.recipe_id));
-        const inMenu = !!(apiStore.user.menu.find(item => item._id === this.props.recipe_id) || apiStore.user.menu.includes(this.props.recipe_id));
-        const isAuthor = this.props.author_id === apiStore.user._id;
-
-        // if in cloud, show inCloud
-        // if in cloud and not author, show remove from cloud
-        // if not in cloud, show add to cloud
-        // if not on menu show add to grocery list
-
-        return (
-            <React.Fragment>
-
-                {(inCloud || isAuthor) && <InCloudButton disabled={true}/>}
-
-                {inCloud && !isAuthor &&
-                <RemoveButton onClick={this.removeFromCloud}/>}
-
-                {!inCloud && !isAuthor && <AddToCloudButton disabled={inCloud} onClick={this.addToCloud}/>}
-
-                <AddToGroceryListButton
-                    disabled={inMenu}
-                    onClick={this.props.addToGroceryList}/>
-
-                {(apiStore.user.isAdmin || isAuthor) &&
-                <DeleteButton onClick={this.props.deleteRecipe}/>}
-
-            </React.Fragment>
-        );
+    if (!context.isLoggedIn) {
+        return false;
     }
-}
+
+    const inCloud = !!(context.user.recipes.find(id => id === props.recipe_id));
+    const inMenu = !!(context.user.menu.find(item => item._id === props.recipe_id) || context.user.menu.includes(props.recipe_id));
+    const isAuthor = props.author_id === context.user._id;
+
+    // if in cloud, show inCloud
+    // if in cloud and not author, show remove from cloud
+    // if not in cloud, show add to cloud
+    // if not on menu show add to grocery list
+
+    return (
+        <React.Fragment>
+
+            {(inCloud || isAuthor) && <InCloudButton disabled={true}/>}
+
+            {inCloud && !isAuthor &&
+            <RemoveButton onClick={removeFromCloud}/>}
+
+            {!inCloud && !isAuthor && <AddToCloudButton disabled={inCloud} onClick={addToCloud}/>}
+
+            <AddToGroceryListButton
+                disabled={inMenu}
+                onClick={props.addToGroceryList}/>
+
+            {(context.user.isAdmin || isAuthor) &&
+            <DeleteButton onClick={props.deleteRecipe}/>}
+
+        </React.Fragment>
+    )
+};
+
+RecipeButtons.propTypes = {
+    recipe_id: PropTypes.string.isRequired,
+    author_id: PropTypes.string.isRequired,
+    // removeFromCloud: PropTypes.func.isRequired,
+    // addToCloud: PropTypes.func.isRequired,
+    addToGroceryList: PropTypes.func.isRequired,
+    deleteRecipe: PropTypes.func.isRequired,
+};
+
+export default RecipeButtons;

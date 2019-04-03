@@ -1,29 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import classNames from 'classnames';
 import styles from './styles/Notification.scss';
 import PropTypes from 'prop-types';
-import { inject, observer } from 'mobx-react';
+import {ApiStoreContext} from "../../stores/api_store";
 
-@inject('apiStore')
-@observer
-export default class Notification extends React.Component {
-    static propTypes = {
-        error: PropTypes.string,
-    };
+const Notification = () => {
+    const context = useContext(ApiStoreContext);
 
-    render() {
-        const { apiStore } = this.props;
+    const notificationClassName = classNames({
+        [styles.notification]: true,
+        [styles.notificationError]: context.notificationMessage && context.notificationType === 'error',
+        [styles.notificationSuccess]: context.notificationMessage && context.notificationType === 'success',
+    });
 
-        const notificationClassName = classNames({
-            [styles.notification]: true,
-            [styles.notificationError]: apiStore.notificationMessage && apiStore.notificationType === 'error',
-            [styles.notificationSuccess]: apiStore.notificationMessage && apiStore.notificationType === 'success',
-        });
+    return (
+        <div className={notificationClassName}>
+            {context.notificationMessage}
+        </div>
+    );
+};
 
-        return (
-            <div className={notificationClassName}>
-                {apiStore.notificationMessage}
-            </div>
-        );
-    }
-}
+Notification.propTypes = {
+    error: PropTypes.string,
+};
+
+export default Notification;

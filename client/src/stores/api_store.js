@@ -1,26 +1,28 @@
 import React from 'react';
-import {action, observable, computed, autorun, toJS} from 'mobx';
+// import {action, observable, computed, autorun, toJS} from 'mobx';
 import axios from 'axios';
 import {addIngredient, canBeAdded} from "../utils/conversions";
 
-class ApiStore {
-    @observable user = null;
-    @observable distanceToBottom = 1;
-    @observable notificationMessage = '';
-    @observable notificationType = '';
+let recipes = [];
 
-    constructor() {
+export default class ApiStore extends React.Component {
+    user = null;
+    distanceToBottom = 1;
+    notificationMessage = '';
+    notificationType = '';
+
+    constructor(props) {
+        super(props);
         // this.getUserFromStorage();
-        autorun(() => {
+        // autorun(() => {
             // This code will run every time any observable property on the store is updated.
-            const user = JSON.stringify(toJS(this.user));
+            const user = JSON.stringify(this.user);
             localStorage.setItem('user', user);
-        });
+        // });
 
         window.addEventListener('scroll', this.handleWindowScroll)
     }
 
-    @action
     handleError = error => {
         this.notificationMessage = 'Oops! ' + error;
         this.notificationType = 'error';
@@ -31,7 +33,6 @@ class ApiStore {
         }, 4000);
     };
 
-    @action
     handleWindowScroll = () => {
         const scrollPosition = window.pageYOffset;
         const windowSize = window.innerHeight;
@@ -39,7 +40,6 @@ class ApiStore {
         this.distanceToBottom = Math.max(bodyHeight - (scrollPosition + windowSize), 0)
     };
 
-    @action
     getUserFromStorage = () => {
         const foundUser = localStorage.getItem('user');
         if (foundUser) {
@@ -47,14 +47,12 @@ class ApiStore {
         }
     };
 
-    @observable recipes = [];
+    recipes = [];
 
-    @computed
     get isLoggedIn() {
         return !!(this.user && this.user._id);
     }
 
-    @action
     authenticate = () => {
         axios.post('/api/authenticate')
             .then(response => {
@@ -66,7 +64,6 @@ class ApiStore {
             });
     };
 
-    @action
     userLogin = (email, password) => {
         axios.post('/api/login', {
             email: email,
@@ -80,7 +77,6 @@ class ApiStore {
             })
     };
 
-    @action
     userLogout = () => {
         axios.get('/api/logout')
             .then(() => {
@@ -88,7 +84,6 @@ class ApiStore {
             });
     };
 
-    @action
     getRecipes = params => {
         // accepted params: author, tags, page, page_size
         return new Promise((res, rej) => {
@@ -98,9 +93,9 @@ class ApiStore {
                 .then(response => {
                     // if not loading first page, add new recipes. otherwise, replace them.
                     if (params && params.page) {
-                        this.recipes = this.recipes.concat(response.data.recipes);
+                        recipes = recipes.concat(response.data.recipes);
                     } else {
-                        this.recipes = response.data.recipes;
+                        recipes = response.data.recipes;
                     }
                     res(response.data.recipes);
                 })
@@ -111,7 +106,6 @@ class ApiStore {
         })
     };
 
-    @action
     getRecipe = id => {
         return new Promise((res, rej) => {
             axios.get(`/api/recipes/${id}`)
@@ -126,16 +120,15 @@ class ApiStore {
         })
     };
 
-    @action
     patchUser = partialUserObj => {
         return new Promise((res, rej) => {
             axios.patch(`/api/users/${this.user._id}`, {
                 ...partialUserObj
             })
-                .then(action(response => {
+                .then(response => {
                     this.user = response.data.user;
                     res();
-                }))
+                })
                 .catch(err => {
                     this.handleError(err.response.data.detail);
                     rej(err);
@@ -143,7 +136,6 @@ class ApiStore {
         });
     };
 
-    @action
     getUserLists = id => {
         return new Promise((res, rej) => {
             axios.get(`/api/users/${id}/list`)
@@ -157,7 +149,6 @@ class ApiStore {
         })
     };
 
-    @action
     getUser = id => {
         return new Promise((res, rej) => {
             axios.get(`/api/users/${id}`)
@@ -172,25 +163,6 @@ class ApiStore {
         })
     };
 
-    @action
-    addRecipeToGroceryList = recipe => {
-        let newGroceryList = [
-            ...this.grocery_list,
-            recipe,
-        ];
-
-        axios.patch(`/api/users/${this.user.id}`, {
-            menu: newGroceryList,
-        })
-            .then(response => {
-                // do something
-            })
-            .catch(err => {
-                this.handleError(err.response.data.detail);
-            })
-    };
-
-    @action
     createRecipe = recipe => {
         return new Promise((res, rej) => {
             axios.post('/api/recipes', {
@@ -206,7 +178,6 @@ class ApiStore {
         })
     };
 
-    @action
     deleteRecipe = id => {
         return new Promise((res, rej) => {
             axios.delete(`/api/recipes/${id}`)
@@ -221,7 +192,6 @@ class ApiStore {
         });
     };
 
-    @action
     registerUser = user => {
         return new Promise((res, rej) => {
             axios.post('/api/users', {...user})
@@ -236,7 +206,6 @@ class ApiStore {
         })
     };
 
-    @action
     patchRecipe = (id, partialRecipeObj) => {
         return new Promise((res, rej) => {
             axios.patch(`/api/recipes/${id}`, {
@@ -252,7 +221,6 @@ class ApiStore {
         });
     };
 
-    @action
     addToGroceryList = (recipe_id, ingredients) => {
         // add current recipe to menu
         // add all ingredients to grocery list
@@ -299,6 +267,7 @@ class ApiStore {
     }
 }
 
-const apiStore = new ApiStore();
+export const apiStore = new ApiStore();
+export { recipes };
 
-export default apiStore;
+export const ApiStoreContext = React.createContext();

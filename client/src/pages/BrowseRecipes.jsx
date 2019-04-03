@@ -1,79 +1,61 @@
-import React from 'react';
-import {inject, observer} from 'mobx-react';
-import {autorun} from 'mobx';
+import React, {useState, useEffect, useContext} from 'react';
 import RecipeCard from "../components/RecipeCard";
 import classNames from 'classnames';
 import styles from './styles/BrowseRecipes.scss';
 import TagFilterBar from "../components/recipes/TagFilterBar";
 import LoadingNextPage from '../components/utilities/LoadingNextPage';
+import {ApiStoreContext} from "../stores/api_store";
 
-@inject('apiStore')
-@observer
-export default class BrowseRecipes extends React.Component {
-    constructor(props) {
-        super(props);
+const BrowseRecipes = () => {
+    const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
+    const [loadedAll, setLoadedAll] = useState(false);
 
-        this.state = {
-            lastRecipePageLoaded: 0,
-            loadedAll: false,
-        }
-    }
+    const context = useContext(ApiStoreContext);
+    const recipes = context.state.recipes;
 
-    componentDidMount() {
-        this.props.apiStore.getRecipes();
+    // apiStore.getRecipes();
 
-        this.disabler = autorun(() => {
-            if (this.props.apiStore.distanceToBottom === 0 && !this.state.loadedAll) {
-                this.props.apiStore.getRecipes({
-                    page: this.state.lastRecipePageLoaded + 1,
-                })
-                    .then(recipes => {
-                        this.setState(prevState => {
-                            if (recipes.length === 0) {
-                                return {
-                                    loadedAll: true,
-                                }
-                            } else {
-                                return {
-                                    lastRecipePageLoaded: prevState.lastRecipePageLoaded + 1,
-                                }
-                            }
-                        })
-                    });
-            }
-        })
-    }
+    // useEffect(() => {
+    //     if (apiStore.distanceToBottom === 0 && !loadedAll) {
+    //         apiStore.getRecipes({
+    //             page: lastRecipePageLoaded + 1,
+    //         })
+    //             .then(recipes => {
+    //                 if (recipes.length === 0) {
+    //                     setLoadedAll(true)
+    //                 } else {
+    //                     setLastRecipePageLoaded(lastRecipePageLoaded + 1);
+    //                 }
+    //             });
+    //     }
+    // });
 
-    componentWillUnmount() {
-        this.disabler();
-    }
-
-    sortByTag = tag => {
+    const sortByTag = tag => {
         if (tag === 'all') {
-            this.props.apiStore.getRecipes()
+            apiStore.getRecipes()
         } else {
-            this.props.apiStore.getRecipes({
+            apiStore.getRecipes({
                 tag: tag,
             })
         }
     };
 
-    render() {
-        const browseRecipesContainerClassName = classNames({
-            [styles.browseRecipesContainer]: true,
-        });
+    const browseRecipesContainerClassName = classNames({
+        [styles.browseRecipesContainer]: true,
+    });
 
-        return (
+    return (
             <div>
-                <TagFilterBar sortByTag={this.sortByTag}/>
+                <TagFilterBar sortByTag={sortByTag}/>
                 <div className={browseRecipesContainerClassName}>
-                    {this.props.apiStore.recipes.map(recipe => {
+                    {recipes.map(recipe => {
                         return <RecipeCard key={recipe._id} recipe={recipe}/>
                     })}
-                    {this.props.apiStore.recipes.length === 0 && <p>There doesn't seem to be anything here...</p>}
+                    {recipes.length === 0 && <p>There doesn't seem to be anything here...</p>}
                 </div>
-                {this.state.loadedAll || this.props.apiStore.recipes.length !== 0 || <LoadingNextPage/>}
+                {loadedAll || recipes.length !== 0 || <LoadingNextPage/>}
             </div>
-        )
-    }
+    )
 };
+
+export default BrowseRecipes;

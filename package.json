@@ -35,8 +35,6 @@
     "hash-source": "^1.0.1",
     "method-override": "^2.3.10",
     "mini-css-extract-plugin": "^0.5.0",
-    "mobx": "^5.9.0",
-    "mobx-react": "^5.4.3",
     "mongodb": "^3.0.1",
     "mongoose": "^5.0.0-rc0",
     "node-sass": "^4.7.2",

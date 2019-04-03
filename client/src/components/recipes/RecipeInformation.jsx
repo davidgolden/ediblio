@@ -1,65 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import styles from './styles/RecipeInformation.scss';
 import classNames from 'classnames';
+import ImageLoader from "../utilities/ImageLoader";
 
-const ImageLoader = (props) => {
-    if (!props.loading && !props.foundImage && !props.uploadedImage) {
-        return null;
-    } else if (props.loading) {
-        return (
-            <div>
-                <small>Loading Image...</small>
-                <br/>
-                <span className="sr-only">Loading...</span>
-            </div>
-        )
-    } else if (props.foundImage || props.uploadedImage) {
-        return (
-            <img src={props.image} id='recipeImage'/>
-        )
-    }
-};
+const RecipeInformation = props => {
+    const [foundImage, setFoundImage] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [uploadedImage, setUploadedImage] = useState(false);
 
-export default class RecipeInformation extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            foundImage: false,
-            loading: false,
-            uploadedImage: false,
-        };
-    }
-
-    scrapeImage = link => {
-        this.setState({loading: true});
+    const scrapeImage = link => {
+        setLoading(true);
 
         axios.post('/api/scrape', {
             imageUrl: link,
         })
             .then(response => {
-                this.setState({
-                    loading: false,
-                    foundImage: true,
-                });
-                this.props.handleRecipeImageChange(response.data.imageUrl);
+                setLoading(false);
+                setFoundImage(true);
+
+                props.handleRecipeImageChange(response.data.imageUrl);
             })
             .catch(() => {
-                this.setState({
-                    loading: false,
-                })
+                setLoading(false);
             });
     };
 
-    handleRecipeLinkChange = e => {
-        this.props.handleRecipeLinkChange(e);
-        if (e.target.value && !this.state.uploadedImage) {
-            window.setTimeout(this.scrapeImage(e.target.value), 2000);
+    const handleRecipeLinkChange = e => {
+        props.handleRecipeLinkChange(e);
+        if (e.target.value && !uploadedImage) {
+            window.setTimeout(scrapeImage(e.target.value), 2000);
         }
     };
 
-    handleFileUpload = file => {
+    const handleFileUpload = file => {
         function processFile(dataURI, max_height, max_width, type = "image/jpeg") {
             return new Promise(res => {
                 const bytes = dataURI.split(',')[0].indexOf('base64') >= 0 ?
@@ -122,44 +96,43 @@ export default class RecipeInformation extends React.Component {
             }
             processFile(dataURI, 300, 300, file.type)
                 .then(uri => {
-                    this.setState({
-                        foundImage: true,
-                        uploadedImage: true,
-                    });
-                    this.props.handleRecipeImageChange(uri);
+                    setFoundImage(true);
+                    setUploadedImage(true);
+
+                    props.handleRecipeImageChange(uri);
                 });
         };
     };
 
-    render() {
-        const recipeInformationClassName = classNames({
-            [styles.recipeInformation]: true,
-        });
+    const recipeInformationClassName = classNames({
+        [styles.recipeInformation]: true,
+    });
 
-        return (
-            <div className={recipeInformationClassName}>
-                <h3>Recipe Information</h3>
-                <label htmlFor='name'>Recipe Name</label>
-                <input type='text' name='name' value={this.props.name}
-                       onChange={this.props.handleRecipeNameChange}/>
-                <label htmlFor='link'>Recipe URL</label>
-                <input type='text' name='link' value={this.props.url}
-                       onChange={this.handleRecipeLinkChange}/>
-                <ImageLoader
-                    loading={this.state.loading}
-                    foundImage={this.state.foundImage}
-                    uploadedImage={this.state.uploadedImage}
-                    image={this.props.image}
-                />
-                <label htmlFor={'file'}>Recipe Image</label>
-                <input type={'file'} name={'file'}
-                       onChange={e => this.handleFileUpload(e.target.files[0])}
-                       accept={'image/*'}
-                />
-                <label htmlFor='notes'>Notes</label>
-                <textarea name='notes' value={this.props.notes}
-                          onChange={this.props.handleRecipeNotesChange}/>
-            </div>
-        )
-    }
-}
+    return (
+        <div className={recipeInformationClassName}>
+            <h3>Recipe Information</h3>
+            <label htmlFor='name'>Recipe Name</label>
+            <input type='text' name='name' value={props.name}
+                   onChange={props.handleRecipeNameChange}/>
+            <label htmlFor='link'>Recipe URL</label>
+            <input type='text' name='link' value={props.url}
+                   onChange={handleRecipeLinkChange}/>
+            <ImageLoader
+                loading={loading}
+                foundImage={foundImage}
+                uploadedImage={uploadedImage}
+                image={props.image}
+            />
+            <label htmlFor={'file'}>Recipe Image</label>
+            <input type={'file'} name={'file'}
+                   onChange={e => handleFileUpload(e.target.files[0])}
+                   accept={'image/*'}
+            />
+            <label htmlFor='notes'>Notes</label>
+            <textarea name='notes' value={props.notes}
+                      onChange={props.handleRecipeNotesChange}/>
+        </div>
+    )
+};
+
+export default RecipeInformation;
