@@ -3,6 +3,7 @@ const express = require('express'),
     passport = require('passport'),
     User = require('../models/user'),
     nodemailer = require('nodemailer'),
+    mg = require('nodemailer-mailgun-transport'),
     urlMetadata = require('url-metadata'),
     URLSafeBase64 = require('urlsafe-base64');
 
@@ -79,13 +80,14 @@ router.post('/forgot', function (req, res) {
 
                 user.save();
 
-                let transporter = nodemailer.createTransport({
-                    service: 'Mailgun',
+                const auth = {
                     auth: {
-                        user: process.env.MAILUSER,
-                        pass: process.env.MAILPASS
+                        api_key: process.env.MAILGUN_API,
+                        domain: 'mg.recipe-cloud.com'
                     }
-                });
+                }
+
+                const transporter = nodemailer.createTransport(mg(auth));
 
                 let mailOptions = {
                     from: 'Recipe Cloud <donotreply@recipe-cloud.com>', // sender address
@@ -99,7 +101,7 @@ router.post('/forgot', function (req, res) {
 
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
-                        return res.status(404).send({ detail: error })
+                        return res.status(404).send({ detail: 'There was a problem sending reset email.' })
                     } else {
                         return res.status(200).send('Success!')
                     }
@@ -118,7 +120,7 @@ router.post('/reset', function (req, res) {
         if (!user) {
             return res.status(404).send('Token is invalid or has expired.')
         }
-        user.password = req.body.password;
+        user.password = req.body.newPassword;
         user.resetToken = undefined;
         user.tokenExpires = undefined;
         user.save();
