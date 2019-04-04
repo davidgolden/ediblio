@@ -85,13 +85,13 @@ const RecipeForm = props => {
 
     const handleSubmit = () => {
         if (props.editMode) {
-            context.patchRecipe(props.recipe._id, {...state})
+            context.patchRecipe(props.recipe._id, {name: name, url: url, image: image, notes: notes, ingredients: ingredients, tags: tags})
                 .then(recipe => {
                     props.updateRecipe(recipe);
                     props.toggleEdit();
                 })
         } else {
-            context.createRecipe({...state})
+            context.createRecipe({name: name, url: url, image: image, notes: notes, ingredients: ingredients, tags: tags})
                 .then(() => {
                     props.navigate("/");
                 })

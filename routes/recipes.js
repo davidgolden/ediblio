@@ -3,7 +3,9 @@ const express = require('express'),
     User = require('../models/user'),
     Recipe = require('../models/recipe'),
     middleware = require('../middleware'),
-    urlMetadata = require('url-metadata');
+    urlMetadata = require('url-metadata'),
+    cloudinary = require('cloudinary');
+
 /*
 
 /reset
@@ -17,6 +19,12 @@ const express = require('express'),
 /u/:u/r/:r -> get specific user recipe
 
  */
+
+cloudinary.config({
+    cloud_name: 'recipecloud',
+    api_key: '771378164651634',
+    api_secret: '7vCnBsgJs5ZtAYR0lsU0IGUc8aw'
+});
 
 // get all recipes
 router.route('/recipes')
@@ -36,10 +44,10 @@ router.route('/recipes')
         }
         q.limit(page_size)
             .skip(skip)
-            .sort({ 'created_at': 'desc', 'image': 'desc' })
+            .sort({'created_at': 'desc', 'image': 'desc'})
             .exec((err, recipes) => {
                 if (err) {
-                    res.status(404).send({ detail: err.message })
+                    res.status(404).send({detail: err.message})
                 }
                 return res.status(200).send({recipes: recipes});
             });
@@ -48,18 +56,30 @@ router.route('/recipes')
         // create new recipe
         Recipe.create(req.body.recipe, function (err, newRecipe) {
             if (err) {
-                return res.status(404).send({ detail: err.message });
+                return res.status(404).send({detail: err.message});
             }
-            // add author info to recipe
-            newRecipe.author.id = req.user._id;
-            newRecipe.author.username = req.user.username;
-            newRecipe.created = Date.now();
-            // save recipe
-            newRecipe.save();
-            // add recipe to user
-            req.user.recipes.push(newRecipe);
-            req.user.save();
-            return res.sendStatus(200);
+
+            cloudinary.v2.uploader.upload(req.body.recipe.image,
+                {
+                    resource_type: "image",
+                    public_id: `users/${req.user._id}/recipes/${newRecipe._id}`,
+                    overwrite: true,
+                },
+                (error, result) => {
+                    newRecipe.image = result.secure_url;
+
+                    // add author info to recipe
+                    newRecipe.author.id = req.user._id;
+                    newRecipe.author.username = req.user.username;
+                    newRecipe.created = Date.now();
+                    // save recipe
+                    newRecipe.save();
+                    // add recipe to user
+                    req.user.recipes.push(newRecipe);
+                    req.user.save();
+
+                    return res.sendStatus(200);
+                });
         });
     });
 
@@ -67,25 +87,42 @@ router.route('/recipes/:recipe_id')
     .get((req, res) => {
         Recipe.findById(req.params.recipe_id, (err, recipe) => {
             if (err) {
-                return res.status(404).send({ detail: err.message });
+                return res.status(404).send({detail: err.message});
             }
             return res.status(200).json({recipe: recipe});
         })
     })
     .patch(middleware.checkRecipeOwnership, (req, res) => {
-        Recipe.findOneAndUpdate({ _id: req.params.recipe_id }, {...req.body}, {new: true}, (err, recipe) => {
+        Recipe.findOneAndUpdate({_id: req.params.recipe_id}, {...req.body}, {new: true}, (err, recipe) => {
             if (err) {
-                return res.status(404).send({ detail: err.message })
+                return res.status(404).send({detail: err.message})
             }
 
-            return res.status(200).json({recipe: recipe});
+            if (req.body.image) {
+                cloudinary.v2.uploader.upload(req.body.image,
+                    {
+                        resource_type: "image",
+                        public_id: `users/${req.user._id}/recipes/${recipe._id}`,
+                        overwrite: true,
+                    },
+                    (error, result) => {
+                        recipe.image = result.secure_url;
+                        recipe.save();
+                        return res.status(200).json({recipe: recipe});
+                    });
+            } else {
+                return res.status(200).json({recipe: recipe});
+            }
         });
     })
     .delete(middleware.checkRecipeOwnership, (req, res) => {
-        Recipe.findByIdAndRemove(req.params.recipe_id, function (err) {
+        Recipe.findById(req.params.recipe_id, (err, recipe) => {
             if (err) {
-                return res.status(404).send({ detail: err.message })
+                return res.status(404).send({detail: err.message})
             }
+
+            recipe.remove();
+
             return res.status(200).send('Success!')
         });
     });
