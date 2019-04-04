@@ -26,7 +26,8 @@ export default class Header extends React.Component {
         this.setState({password: e.target.value});
     };
 
-    handleLoginSubmit = () => {
+    handleLoginSubmit = e => {
+        e.preventDefault();
         this.props.apiStore.userLogin(this.state.email, this.state.password);
     };
 
@@ -109,16 +110,18 @@ export default class Header extends React.Component {
                             <Button className={logoutClassName} onClick={this.handleLogout}>Log Out</Button>
                         </React.Fragment> :
                         <React.Fragment>
-                            <input type="email" name="email" placeholder='Email'
-                                   value={this.state.email}
-                                   onChange={this.handleEmailChange}/>
-                            <input type="password" name="password" placeholder='Password'
-                                   value={this.state.password}
-                                   onChange={this.handlePasswordChange}/>
-                            <Button className={logoutClassName} onClick={this.handleLoginSubmit}
-                                    value='Login'>Login</Button>
+                            <form onSubmit={this.handleLoginSubmit}>
+                                <input type="email" name="email" placeholder='Email' autoComplete={'email'}
+                                       value={this.state.email}
+                                       onChange={this.handleEmailChange}/>
+                                <input type="password" name="password" placeholder='Password' autoComplete={'password'}
+                                       value={this.state.password}
+                                       onChange={this.handlePasswordChange}/>
+                                <Button className={logoutClassName} type={'submit'}
+                                        value='Login'>Login</Button>
+                            </form>
 
-                            {/*<Link className={userLinkClassName} to={'/forgot'}>Forgot Password?</Link>*/}
+                            <Link className={userLinkClassName} to={'/forgot'}>Forgot Password?</Link>
                             <Link className={userLinkClassName} to={'/register'}>Register</Link>
                         </React.Fragment>}
                 </div>
