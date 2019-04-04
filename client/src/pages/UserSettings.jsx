@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styles from './styles/UserSettings.scss';
 import classNames from 'classnames';
 import Button from "../components/utilities/buttons/Button";
@@ -24,17 +24,15 @@ const UserSettings = props => {
         }
     };
 
-    // componentDidMount() {
-    //     this.props.apiStore.getUser(this.props.user_id)
-    //         .then(user => {
-    //             this.setState({
-    //                 username: user.username,
-    //                 email: user.email,
-    //                 password: user.password,
-    //                 confirm: user.password,
-    //             })
-    //         })
-    // }
+    useEffect(() => {
+        context.getUser(props.user_id)
+            .then(user => {
+                setUsername(user.username);
+                setEmail(user.email);
+                setPassword(user.password);
+                setConfirm(user.password);
+            })
+    }, [context.user]);
 
     if (!context.isLoggedIn || context.user._id !== props.user_id) {
         return <p>You do not have permission to view this page!</p>

@@ -32,9 +32,9 @@ const BrowseRecipes = () => {
 
     const sortByTag = tag => {
         if (tag === 'all') {
-            apiStore.getRecipes()
+            context.getRecipes()
         } else {
-            apiStore.getRecipes({
+            context.getRecipes({
                 tag: tag,
             })
         }

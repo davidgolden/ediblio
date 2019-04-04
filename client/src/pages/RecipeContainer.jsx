@@ -88,7 +88,7 @@ const RecipeContainer = props => {
         <div className={recipeContainerClassName}>
 
             <div className={recipeEditButtonsClassName}>
-                {recipe && context.isLoggedIn && recipe.author.id === context.user._id || context.user.isAdmin && (
+                {recipe && context.isLoggedIn && (recipe.author.id === context.user._id || context.user.isAdmin) && (
                     <Button className={toggleEditClassName} onClick={toggleEdit}>
                         {edit === false ? (
                             <React.Fragment>

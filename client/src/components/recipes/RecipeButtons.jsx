@@ -12,7 +12,7 @@ const RecipeButtons = props => {
     const context = useContext(ApiStoreContext);
 
     const addToCloud = () => {
-        let currentCloud = props.apiStore.user.recipes;
+        let currentCloud = context.user.recipes;
         currentCloud.push(props.recipe_id);
         context.patchUser({
             recipes: currentCloud,
