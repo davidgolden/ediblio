@@ -10,7 +10,7 @@ import BrowseRecipes from './pages/BrowseRecipes';
 import Landing from './pages/Landing';
 import ForgotPassword from './pages/Forgot';
 import RecipeContainer from "./pages/RecipeContainer";
-import { createHistory, LocationProvider, Router } from "@reach/router";
+import {createHistory, LocationProvider, Router} from "@reach/router";
 import createHashSource from 'hash-source'
 import Notification from "./components/header/Notification";
 import axios from "axios";
@@ -48,18 +48,12 @@ export default class App extends React.Component {
     };
 
     getUserFromStorage = () => {
-        return new Promise((res, rej) => {
-            const foundUser = localStorage.getItem('user');
-            if (foundUser) {
-                this.setState({
-                    user: JSON.parse(foundUser),
-                }, () => {
-                    res(this.state.user)
-                });
-            } else {
-                res(null);
-            }
-        })
+        const foundUser = localStorage.getItem('user');
+        if (foundUser) {
+            this.setState({
+                user: JSON.parse(foundUser),
+            });
+        }
     };
 
     authenticate = () => {
@@ -341,12 +335,8 @@ export default class App extends React.Component {
     };
 
     componentDidMount() {
-        this.getUserFromStorage()
-            .then(user => {
-                if (!user) {
-                    this.authenticate();
-                }
-            })
+        this.getUserFromStorage();
+        this.authenticate();
     }
 
     render() {
@@ -361,7 +351,7 @@ export default class App extends React.Component {
             }}>
                 <LocationProvider history={history}>
                     <Header/>
-                    <Notification />
+                    <Notification/>
                     <Router>
                         <BrowseRecipes path={'/recipes'}/>
                         <UserRecipes path={'/users/:user_id/recipes'}/>
