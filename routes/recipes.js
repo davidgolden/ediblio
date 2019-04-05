@@ -44,7 +44,7 @@ router.route('/recipes')
         }
         q.limit(page_size)
             .skip(skip)
-            .sort({'created_at': 'desc', 'image': 'desc'})
+            .sort({'created_at': 'asc'})
             .exec((err, recipes) => {
                 if (err) {
                     res.status(404).send({detail: err.message})
