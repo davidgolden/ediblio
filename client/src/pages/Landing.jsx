@@ -26,6 +26,9 @@ const Landing = props => {
             .then(() => {
                 props.navigate("/")
             })
+            .catch(err => {
+                console.log(err);
+            })
     };
 
     const landingContainerClassName = classNames({
@@ -91,7 +94,7 @@ const Landing = props => {
                            name='password' value={password}/>
                 </div>
                 <div>
-                    <input type='password' id='confirm' onChange={e => setConfirm(e.target.vaule)}
+                    <input type='password' id='confirm' onChange={e => setConfirm(e.target.value)}
                            placeholder='Confirm Password' value={confirm}/>
                 </div>
                 <div>
