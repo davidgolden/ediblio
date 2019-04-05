@@ -11,6 +11,7 @@ const UserSettings = props => {
     const [email, setEmail] = useState(context.user ? context.user.email : '');
     const [password, setPassword] = useState(context.user ? context.user.password : '');
     const [confirm, setConfirm] = useState(context.user ? context.user.password : '');
+    const [current, setCurrent] = useState(true);
 
     const handleSubmit = () => {
         if (password !== confirm) {
@@ -21,6 +22,7 @@ const UserSettings = props => {
                 email: email,
                 password: password
             });
+            setCurrent(true);
         }
     };
 
@@ -29,12 +31,17 @@ const UserSettings = props => {
     const id = context.user && context.user._id;
 
     useEffect(() => {
+        setCurrent(false);
+    }, [username, email, password, confirm]);
+
+    useEffect(() => {
         context.getUser(props.user_id)
             .then(user => {
                 setUsername(user.username);
                 setEmail(user.email);
                 setPassword(user.password);
                 setConfirm(user.password);
+                setCurrent(true);
             })
     }, [id]);
 
@@ -44,6 +51,10 @@ const UserSettings = props => {
 
     const settingsContainerClassName = classNames({
         [styles.settingsContainer]: true,
+    });
+    const submitButtonClassName = classNames({
+        [styles.submitButton]: true,
+        [styles.submitButtonDisabled]: current,
     });
 
     return (
@@ -70,7 +81,7 @@ const UserSettings = props => {
                        onChange={e => setConfirm(e.target.value)}/>
             </div>
             <div>
-                <Button onClick={handleSubmit}>Submit</Button>
+                <Button className={submitButtonClassName} onClick={handleSubmit}>{current ? 'Up to Date' : 'Submit'}</Button>
             </div>
         </div>
     )

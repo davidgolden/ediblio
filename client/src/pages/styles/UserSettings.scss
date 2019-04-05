@@ -21,7 +21,7 @@
     }
   }
 
-  button {
+  .submitButton {
     background-color: $dark;
     color: white;
     padding: 10px;
@@ -30,6 +30,12 @@
 
     &:hover {
       background-color: $other;
+    }
+
+    &Disabled {
+      opacity: .5;
+      pointer-events: none;
+      cursor: default;
     }
   }
 }

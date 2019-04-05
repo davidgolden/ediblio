@@ -6,7 +6,7 @@ middlewareObj.isLoggedIn = (req, res, next) => {
   if(req.isAuthenticated()) {
     return next();
   }
-  return res.status(404).send('You need to be logged in to do that!')
+  return res.status(404).send({ detail: 'You need to be logged in to do that!' })
 };
 
 middlewareObj.checkRecipeOwnership = (req, res, next) => {
@@ -16,7 +16,7 @@ middlewareObj.checkRecipeOwnership = (req, res, next) => {
       if(err) {
         return res.status(404).send(err)
       } else if(!recipe) {
-        return res.status(404).send('Recipe does not exist!')
+        return res.status(404).send({ detail: 'Recipe does not exist!' })
       } else {
         // does user own the campground?
         // use equals because one is mongoose object and one is string
@@ -25,12 +25,12 @@ middlewareObj.checkRecipeOwnership = (req, res, next) => {
           next();
         } else {
           // if not, redirect
-          return res.status(404).send("You don't have permission to do that!")
+          return res.status(404).send({ detail: "You don't have permission to do that!" })
         }
       }
     });
   } else {
-    return res.status(404).send('You need to be logged in to do that!')
+    return res.status(404).send({ detail: 'You need to be logged in to do that!' })
   }
 };
 
