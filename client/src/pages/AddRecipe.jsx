@@ -44,6 +44,7 @@ const RecipeForm = props => {
     const [notes, setNotes] = useState(props.editMode ? props.recipe.notes : '');
     const [ingredients, setIngredients] = useState(props.editMode ? props.recipe.ingredients : []);
     const [tags, setTags] = useState(props.editMode ? props.recipe.tags : []);
+    const [submitted, setSubmitted] = useState(false);
 
     const context = useContext(ApiStoreContext);
 
@@ -58,7 +59,7 @@ const RecipeForm = props => {
             // add it
             let newTags = tags;
             newTags.push(tag);
-            setTags(newTags);
+            setTags([...newTags]);
         }
     };
 
@@ -68,22 +69,23 @@ const RecipeForm = props => {
             ...ingredientList[index],
             ...ingredient,
         };
-        setIngredients(ingredientList);
+        setIngredients([...ingredientList]);
     };
 
     const handleAddIngredient = () => {
         let ingredientList = ingredients;
         ingredientList.push({quantity: '', measurement: '#', name: ''});
-        setIngredients(ingredientList);
+        setIngredients([...ingredientList]);
     };
 
     const handleDeleteIngredient = index => {
         let ingredientList = ingredients;
         ingredientList.splice(index, 1);
-        setIngredients(ingredientList);
+        setIngredients([...ingredientList]);
     };
 
     const handleSubmit = () => {
+        setSubmitted(true);
         if (props.editMode) {
             context.patchRecipe(props.recipe._id, {name: name, url: url, image: image, notes: notes, ingredients: ingredients, tags: tags})
                 .then(recipe => {
@@ -103,7 +105,7 @@ const RecipeForm = props => {
     });
     const submitButtonClassName = classNames({
         [styles.submitButton]: true,
-        [styles.submitButtonDisabled]: !(name && image)
+        [styles.submitButtonDisabled]: !(name && image) || submitted,
     });
 
     return (
