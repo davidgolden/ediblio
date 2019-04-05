@@ -23,12 +23,6 @@ let history = createHistory(source);
 export default class App extends React.Component {
     constructor(props) {
         super(props);
-        // this.getUserFromStorage();
-        // autorun(() => {
-        // This code will run every time any observable property on the store is updated.
-        // const user = JSON.stringify(this.state.user);
-        // localStorage.setItem('user', user);
-        // });
 
         this.state = {
             recipes: new Map(),
@@ -54,12 +48,18 @@ export default class App extends React.Component {
     };
 
     getUserFromStorage = () => {
-        const foundUser = localStorage.getItem('user');
-        if (foundUser) {
-            this.setState({
-                user: JSON.parse(foundUser),
-            });
-        }
+        return new Promise((res, rej) => {
+            const foundUser = localStorage.getItem('user');
+            if (foundUser) {
+                this.setState({
+                    user: JSON.parse(foundUser),
+                }, () => {
+                    res(this.state.user)
+                });
+            } else {
+                res(null);
+            }
+        })
     };
 
     authenticate = () => {
@@ -67,8 +67,9 @@ export default class App extends React.Component {
             .then(response => {
                 this.setState({
                     user: response.data.user,
+                }, () => {
+                    localStorage.setItem('user', JSON.stringify(this.state.user));
                 });
-                localStorage.setItem('user', JSON.stringify(response.data.user))
             })
             .catch(err => {
                 this.handleError(err.response.data.detail);
@@ -83,6 +84,8 @@ export default class App extends React.Component {
             .then(response => {
                 this.setState({
                     user: response.data.user,
+                }, () => {
+                    localStorage.setItem('user', JSON.stringify(this.state.user));
                 });
             })
             .catch(err => {
@@ -153,6 +156,8 @@ export default class App extends React.Component {
                 .then(response => {
                     this.setState({
                         user: response.data.user,
+                    }, () => {
+                        localStorage.setItem('user', JSON.stringify(this.state.user));
                     });
                     res();
                 })
@@ -182,6 +187,8 @@ export default class App extends React.Component {
                 .then(response => {
                     this.setState({
                         user: response.data.user,
+                    }, () => {
+                        localStorage.setItem('user', JSON.stringify(this.state.user));
                     });
                     res(response.data.user);
                 })
@@ -231,6 +238,8 @@ export default class App extends React.Component {
                 .then(response => {
                     this.setState({
                         user: response.data.user,
+                    }, () => {
+                        localStorage.setItem('user', JSON.stringify(this.state.user));
                     });
                     res();
                 })
@@ -332,7 +341,12 @@ export default class App extends React.Component {
     };
 
     componentDidMount() {
-        this.authenticate();
+        this.getUserFromStorage()
+            .then(user => {
+                if (!user) {
+                    this.authenticate();
+                }
+            })
     }
 
     render() {
