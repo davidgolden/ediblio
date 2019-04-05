@@ -36,6 +36,7 @@ export default class App extends React.Component {
             distanceToBottom: 1,
             notificationMessage: '',
             notificationType: '',
+            lastRequestParams: {},
         }
     }
 
@@ -100,25 +101,28 @@ export default class App extends React.Component {
 
     getRecipes = params => {
         // accepted params: author, tags, page, page_size
+        const requestParams = params;
         return new Promise((res, rej) => {
             axios.get('/api/recipes', {
-                params: params,
+                params: requestParams,
             })
                 .then(response => {
                     // if not loading first page, add new recipes. otherwise, replace them.
                     let recipes = this.state.recipes;
-                    if (params && !params.page) {
+
+                    if (requestParams.page !== 'undefined' && requestParams.page === 0) {
                         recipes.clear();
                     }
+
                     response.data.recipes.forEach(item => {
                         recipes.set(item._id, item);
                     });
-                    this.setState(() => {
-                        return {
-                            recipes: recipes,
-                        }
+
+                    this.setState({
+                        recipes: recipes,
                     });
-                    res(response.data.recipes);
+
+                    return res(response.data.recipes);
                 })
                 .catch(err => {
                     this.handleError(err.response.data.detail);
@@ -252,6 +256,36 @@ export default class App extends React.Component {
         });
     };
 
+    resetPassword = (token, newPassword) => {
+        return new Promise((res, rej) => {
+            axios.post('/api/reset', {
+                token: token,
+                newPassword: newPassword,
+            })
+                .then(response => {
+                    return res(response.data);
+                })
+                .catch(err => {
+                    this.handleError(err.response.data.detail);
+                })
+        })
+    };
+
+    forgotPassword = email => {
+        return new Promise((res, rej) => {
+            axios.post('/api/forgot', {
+                email: email,
+            })
+                .then(response => {
+                    res();
+                })
+                .catch(err => {
+                    this.handleError(err.response.data.detail);
+                    rej(err);
+                })
+        })
+    };
+
     addToGroceryList = (recipe_id, ingredients) => {
         // add current recipe to menu
         // add all ingredients to grocery list
@@ -298,7 +332,6 @@ export default class App extends React.Component {
     };
 
     componentDidMount() {
-        this.getRecipes();
         this.authenticate();
     }
 

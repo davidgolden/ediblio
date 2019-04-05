@@ -7,7 +7,7 @@ const useScrolledBottom = () => {
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    });
 
     const handleScroll = () => {
         const scrollPosition = window.pageYOffset;

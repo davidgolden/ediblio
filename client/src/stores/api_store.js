@@ -221,6 +221,36 @@ export default class ApiStore extends React.Component {
         });
     };
 
+    resetPassword = (token, newPassword) => {
+        return new Promise((res, rej) => {
+            axios.post('/api/reset', {
+                token: token,
+                newPassword: newPassword,
+            })
+                .then(response => {
+                    return res(response.data);
+                })
+                .catch(err => {
+                    this.handleError(err.response.data.detail);
+                })
+        })
+    };
+
+    forgotPassword = email => {
+        return new Promise((res, rej) => {
+            axios.post('/api/forgot', {
+                email: email,
+            })
+                .then(response => {
+                    res();
+                })
+                .catch(err => {
+                    this.handleError(err.response.data.detail);
+                    rej(err);
+                })
+        })
+    };
+
     addToGroceryList = (recipe_id, ingredients) => {
         // add current recipe to menu
         // add all ingredients to grocery list

@@ -11,7 +11,7 @@ const TagFilterBar = props => {
 
     return (
         <div className={tagsContainerClassName}>
-            <Button onClick={() => props.sortByTag('all')}>All</Button>
+            <Button onClick={() => props.sortByTag('')}>All</Button>
             {recipeTags.map(tag => {
                 return <Button onClick={() => props.sortByTag(tag)}
                                key={tag}>{tag}</Button>

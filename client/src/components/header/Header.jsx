@@ -20,9 +20,6 @@ const Header = () => {
 
     const handlePasswordChange = e => {
         setPassword(e.target.value);
-    handleLoginSubmit = e => {
-        e.preventDefault();
-        this.props.apiStore.userLogin(this.state.email, this.state.password);
     };
 
     const handleLoginSubmit = () => {

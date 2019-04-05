@@ -8,39 +8,36 @@ import {ApiStoreContext} from "../stores/api_store";
 import useScrolledBottom from "../components/utilities/useScrolledBottom";
 
 const UserRecipes = props => {
-    const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
+    const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
     const [loadedAll, setLoadedAll] = useState(false);
+    const [filterTag, setFilterTag] = useState('');
 
     const context = useContext(ApiStoreContext);
 
     const isBottom = useScrolledBottom();
 
     useEffect(() => {
-        if (isBottom && !loadedAll) {
+        if (!loadedAll) {
             context.getRecipes({
                 page: lastRecipePageLoaded + 1,
+                tag: filterTag,
                 author: props.user_id,
             })
                 .then(recipes => {
-                    if (recipes.length === 0) {
+                    if (recipes.length < 12) {
                         setLoadedAll(true);
                     } else {
                         setLastRecipePageLoaded(lastRecipePageLoaded + 1);
                     }
                 });
         }
-    }, [isBottom]);
+    }, [isBottom, filterTag]);
 
     const sortByTag = tag => {
-        if (tag === 'all') {
-            context.getRecipes({
-                author: props.user_id,
-            })
-        } else {
-            context.getRecipes({
-                tag: tag,
-                author: props.user_id,
-            })
+        if (tag !== filterTag) {
+            setLoadedAll(false);
+            setFilterTag(tag);
+            setLastRecipePageLoaded(-1);
         }
     };
 

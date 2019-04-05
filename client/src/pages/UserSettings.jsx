@@ -24,6 +24,10 @@ const UserSettings = props => {
         }
     };
 
+    // using this for now because we can't listen to user object for useEffect hook
+    // because getUser updates that object on every call, so we have to look at an actual value
+    const id = context.user && context.user._id;
+
     useEffect(() => {
         context.getUser(props.user_id)
             .then(user => {
@@ -32,7 +36,7 @@ const UserSettings = props => {
                 setPassword(user.password);
                 setConfirm(user.password);
             })
-    }, [context.user]);
+    }, [id]);
 
     if (!context.isLoggedIn || context.user._id !== props.user_id) {
         return <p>You do not have permission to view this page!</p>
