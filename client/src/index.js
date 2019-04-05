@@ -47,22 +47,11 @@ export default class App extends React.Component {
         }, 4000);
     };
 
-    getUserFromStorage = () => {
-        const foundUser = localStorage.getItem('user');
-        if (foundUser) {
-            this.setState({
-                user: JSON.parse(foundUser),
-            });
-        }
-    };
-
     authenticate = () => {
         axios.post('/api/authenticate')
             .then(response => {
                 this.setState({
                     user: response.data.user,
-                }, () => {
-                    localStorage.setItem('user', JSON.stringify(this.state.user));
                 });
             })
             .catch(err => {
@@ -78,8 +67,6 @@ export default class App extends React.Component {
             .then(response => {
                 this.setState({
                     user: response.data.user,
-                }, () => {
-                    localStorage.setItem('user', JSON.stringify(this.state.user));
                 });
             })
             .catch(err => {
@@ -150,8 +137,6 @@ export default class App extends React.Component {
                 .then(response => {
                     this.setState({
                         user: response.data.user,
-                    }, () => {
-                        localStorage.setItem('user', JSON.stringify(this.state.user));
                     });
                     res();
                 })
@@ -181,8 +166,6 @@ export default class App extends React.Component {
                 .then(response => {
                     this.setState({
                         user: response.data.user,
-                    }, () => {
-                        localStorage.setItem('user', JSON.stringify(this.state.user));
                     });
                     res(response.data.user);
                 })
@@ -335,7 +318,6 @@ export default class App extends React.Component {
     };
 
     componentDidMount() {
-        this.getUserFromStorage();
         this.authenticate();
     }
 
