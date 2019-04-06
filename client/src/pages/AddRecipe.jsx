@@ -54,7 +54,7 @@ const RecipeForm = props => {
             let i = tags.indexOf(tag);
             let newTags = tags;
             newTags.splice(i, 1);
-            setTags(newTags);
+            setTags([...newTags]);
         } else {
             // add it
             let newTags = tags;
