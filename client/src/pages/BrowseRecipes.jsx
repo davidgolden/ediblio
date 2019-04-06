@@ -11,6 +11,7 @@ const BrowseRecipes = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
     const [loadedAll, setLoadedAll] = useState(false);
     const [filterTag, setFilterTag] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
 
     const context = useContext(ApiStoreContext);
 
@@ -24,6 +25,9 @@ const BrowseRecipes = props => {
         if (props.user_id) {
             query.author = props.user_id;
         }
+        if (typeof searchTerm === 'string') {
+            query.searchTerm = searchTerm;
+        }
         if (!loadedAll) {
             context.getRecipes(query)
                 .then(recipes => {
@@ -34,7 +38,13 @@ const BrowseRecipes = props => {
                     }
                 });
         }
-    }, [isBottom, filterTag]);
+    }, [isBottom, filterTag, searchTerm]);
+
+    const searchByTerm = term => {
+        setLoadedAll(false);
+        setSearchTerm(term);
+        setLastRecipePageLoaded(-1);
+    };
 
     const sortByTag = tag => {
         if (tag !== filterTag) {
@@ -50,7 +60,7 @@ const BrowseRecipes = props => {
 
     return (
         <div>
-            <TagFilterBar sortByTag={sortByTag}/>
+            <TagFilterBar sortByTag={sortByTag} searchTerm={searchTerm} setSearchTerm={searchByTerm} />
             <div className={browseRecipesContainerClassName}>
                 {Array.from(context.recipes.values()).map(recipe => {
                     return <RecipeCard key={recipe._id} recipe={recipe}/>

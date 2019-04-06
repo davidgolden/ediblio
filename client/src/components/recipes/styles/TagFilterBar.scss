@@ -2,10 +2,9 @@
 
 .tagsContainer {
   text-align: center;
-  margin-top: 20px;
-  //position: sticky;
-  //top: 50px;
-  //z-index: 3;
+  margin: 10px auto;
+  width: 90%;
+  max-width: 700px;
 
   button {
     color: white;
@@ -17,6 +16,29 @@
 
     &:hover {
       background-color: lighten($otherdark, 10%);
+    }
+  }
+
+  .searchContainer {
+    font-size: 1.5rem;
+    margin-top: 10px;
+    background-color: white;
+    width: 260px;
+    display: inline-block;
+    padding: 5px;
+    border-radius: 5px;
+    max-width: 95%;
+
+    svg {
+      margin-right: 10px;
+    }
+
+    input {
+      padding: 5px;
+      border-radius: 5px;
+      font-size: 1.2rem;
+      color: $dark;
+      max-width: 80%;
     }
   }
 }

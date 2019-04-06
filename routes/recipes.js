@@ -42,6 +42,12 @@ router.route('/recipes')
             q = q.where('author.id')
                 .equals(req.query.author);
         }
+        if (req.query.searchTerm) {
+            const escapedInput = req.query.searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escapedInput, 'gmi');
+            q = q.where('name')
+                .regex(regex);
+        }
         q.limit(page_size)
             .skip(skip)
             .sort({'created_at': 'asc'})

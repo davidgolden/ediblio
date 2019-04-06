@@ -2,11 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b360ea2b-4ea7-4711-b7b1-0edc28f9c2b5" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/client/src/components/utilities/useDebounce.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/dist/bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/dist/bundle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/recipes/TagFilterBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/recipes/TagFilterBar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/recipes/styles/TagFilterBar.scss" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/recipes/styles/TagFilterBar.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/UserRecipes.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/recipes.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/recipes.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -35,13 +37,13 @@
           <entry key="env" value="5" />
           <entry key="gitignore" value="4" />
           <entry key="html" value="14" />
-          <entry key="js" value="213" />
+          <entry key="js" value="214" />
           <entry key="json" value="18" />
-          <entry key="jsx" value="293" />
+          <entry key="jsx" value="296" />
           <entry key="map" value="2" />
           <entry key="md" value="1" />
           <entry key="png" value="1" />
-          <entry key="scss" value="90" />
+          <entry key="scss" value="91" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
@@ -49,10 +51,10 @@
           <entry key="HTML" value="14" />
           <entry key="Image" value="1" />
           <entry key="JSON" value="18" />
-          <entry key="JSX Harmony" value="293" />
-          <entry key="JavaScript" value="213" />
+          <entry key="JSX Harmony" value="296" />
+          <entry key="JavaScript" value="214" />
           <entry key="PLAIN_TEXT" value="11" />
-          <entry key="SCSS" value="90" />
+          <entry key="SCSS" value="91" />
           <entry key="SourceMap" value="2" />
         </counts>
       </usages-collector>
@@ -62,22 +64,22 @@
           <entry key="env" value="73" />
           <entry key="gitignore" value="17" />
           <entry key="html" value="46" />
-          <entry key="js" value="18178" />
+          <entry key="js" value="18418" />
           <entry key="json" value="605" />
-          <entry key="jsx" value="32891" />
+          <entry key="jsx" value="34705" />
           <entry key="md" value="47" />
-          <entry key="scss" value="7795" />
-          <entry key="txt" value="2379" />
+          <entry key="scss" value="8009" />
+          <entry key="txt" value="2410" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="HTML" value="46" />
           <entry key="JSON" value="605" />
-          <entry key="JSX Harmony" value="32891" />
-          <entry key="JavaScript" value="18178" />
-          <entry key="PLAIN_TEXT" value="2612" />
-          <entry key="SCSS" value="7795" />
+          <entry key="JSX Harmony" value="34705" />
+          <entry key="JavaScript" value="18418" />
+          <entry key="PLAIN_TEXT" value="2643" />
+          <entry key="SCSS" value="8009" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -93,10 +95,52 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/src/pages/AddRecipe.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-915">
+              <caret line="58" column="21" selection-start-line="58" selection-start-column="21" selection-end-line="58" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#52#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/recipes.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="874">
-              <caret line="46" column="40" selection-start-line="46" selection-start-column="40" selection-end-line="46" selection-end-column="40" />
+            <state relative-caret-position="314">
+              <caret line="49" column="9" selection-start-line="49" selection-start-column="9" selection-end-line="49" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/client/src/components/recipes/TagFilterBar.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="464">
+              <caret line="39" column="43" selection-start-line="39" selection-start-column="43" selection-end-line="39" selection-end-column="43" />
+              <folding>
+                <element signature="e#0#51#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/src/components/recipes/styles/TagFilterBar.scss">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="385">
+              <caret line="28" column="23" selection-start-line="28" selection-start-column="23" selection-end-line="28" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/src/components/utilities/useDebounce.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="133">
+              <caret line="7" selection-start-line="7" selection-end-line="7" />
             </state>
           </provider>
         </entry>
@@ -104,8 +148,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="9" column="32" selection-start-line="9" selection-start-column="32" selection-end-line="9" selection-end-column="32" />
+            <state relative-caret-position="371">
+              <caret line="62" column="100" selection-start-line="62" selection-start-column="73" selection-end-line="62" selection-end-column="100" />
               <folding>
                 <element signature="e#0#61#0" expanded="true" />
               </folding>
@@ -113,11 +157,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/src/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
+            <state relative-caret-position="190">
+              <caret line="10" column="44" selection-start-line="10" selection-start-column="44" selection-end-line="10" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -181,7 +225,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/client/src/components/utilities/buttons/styles/Button.scss" />
         <option value="$PROJECT_DIR$/client/src/components/header/styles/Header.scss" />
         <option value="$PROJECT_DIR$/client/src/components/utilities/buttons/InCloudButton.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/utilities/buttons/AddToGroceryListButton.jsx" />
@@ -213,25 +256,26 @@
         <option value="$PROJECT_DIR$/client/src/pages/GroceryList.jsx" />
         <option value="$PROJECT_DIR$/client/src/pages/Forgot.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/header/Header.jsx" />
-        <option value="$PROJECT_DIR$/client/src/components/recipes/TagFilterBar.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/utilities/useScrolledBottom.jsx" />
         <option value="$PROJECT_DIR$/client/src/pages/UserRecipes.jsx" />
         <option value="$PROJECT_DIR$/middleware/index.js" />
         <option value="$PROJECT_DIR$/client/src/pages/styles/UserSettings.scss" />
         <option value="$PROJECT_DIR$/client/src/pages/UserSettings.jsx" />
-        <option value="$PROJECT_DIR$/client/src/pages/AddRecipe.jsx" />
         <option value="$PROJECT_DIR$/client/src/pages/styles/BrowseRecipes.scss" />
         <option value="$PROJECT_DIR$/client/src/pages/styles/UserRecipes.scss" />
-        <option value="$PROJECT_DIR$/client/src/components/recipes/styles/TagFilterBar.scss" />
         <option value="$PROJECT_DIR$/client/src/pages/Landing.jsx" />
         <option value="$PROJECT_DIR$/client/src/stores/api_store.js" />
-        <option value="$PROJECT_DIR$/routes/recipes.js" />
         <option value="$PROJECT_DIR$/client/index.html" />
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/webpack.common.js" />
         <option value="$PROJECT_DIR$/server.js" />
-        <option value="$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx" />
         <option value="$PROJECT_DIR$/client/src/index.js" />
+        <option value="$PROJECT_DIR$/client/src/pages/AddRecipe.jsx" />
+        <option value="$PROJECT_DIR$/routes/recipes.js" />
+        <option value="$PROJECT_DIR$/client/src/components/utilities/useDebounce.jsx" />
+        <option value="$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx" />
+        <option value="$PROJECT_DIR$/client/src/components/recipes/styles/TagFilterBar.scss" />
+        <option value="$PROJECT_DIR$/client/src/components/recipes/TagFilterBar.jsx" />
       </list>
     </option>
   </component>
@@ -282,6 +326,29 @@
               <item name="recipe-cloud-v2" type="462c0819:PsiDirectoryNode" />
               <item name="client" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="recipe-cloud-v2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="recipe-cloud-v2" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="recipe-cloud-v2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="recipe-cloud-v2" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="recipes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="recipe-cloud-v2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="recipe-cloud-v2" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="utilities" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="recipe-cloud-v2" type="b2602c69:ProjectViewProjectNode" />
@@ -440,21 +507,7 @@
       <workItem from="1554423586036" duration="9955000" />
       <workItem from="1554481382699" duration="18000" />
       <workItem from="1554493821754" duration="329000" />
-      <workItem from="1554512637015" duration="266000" />
-    </task>
-    <task id="LOCAL-00053" summary="scripts">
-      <created>1552851729002</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1552851729003</updated>
-    </task>
-    <task id="LOCAL-00054" summary="add build script">
-      <created>1552852395983</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1552852395984</updated>
+      <workItem from="1554512637015" duration="4686000" />
     </task>
     <task id="LOCAL-00055" summary="scripts">
       <created>1552852578669</created>
@@ -785,11 +838,25 @@
       <option name="project" value="LOCAL" />
       <updated>1554494034884</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <task id="LOCAL-00102" summary="remove UserRecipes page">
+      <created>1554512971934</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1554512971934</updated>
+    </task>
+    <task id="LOCAL-00103" summary="fix tags">
+      <created>1554513034777</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1554513034777</updated>
+    </task>
+    <option name="localTasksCounter" value="104" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="158318000" />
+    <option name="totallyTimeSpent" value="162738000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -806,7 +873,7 @@
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.65960664" visible="true" weight="0.20735383" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="npm" order="2" sideWeight="0.34039333" side_tool="true" visible="true" weight="0.20735383" />
+      <window_info id="npm" order="2" sideWeight="0.34039333" side_tool="true" weight="0.20735383" />
       <window_info id="DB Browser" order="3" />
       <window_info id="Favorites" order="4" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -835,8 +902,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="remove todo" />
-    <MESSAGE value="add sorting" />
     <MESSAGE value="update readme" />
     <MESSAGE value="listen to id if editing or index if creating recipes" />
     <MESSAGE value="force ssl" />
@@ -860,16 +925,11 @@
     <MESSAGE value="fix sort order" />
     <MESSAGE value="fix authentication bug" />
     <MESSAGE value="remove localstorage until I better understand that" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove localstorage until I better understand that" />
+    <MESSAGE value="remove UserRecipes page" />
+    <MESSAGE value="fix tags" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix tags" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/src/components/utilities/buttons/AddToCloudButton.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="19" column="1" selection-start-line="19" selection-start-column="1" selection-end-line="19" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/src/components/utilities/buttons/AddToGroceryListButton.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="76">
@@ -954,13 +1014,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/recipe.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="367">
-          <caret line="31" column="3" selection-start-line="31" selection-start-column="3" selection-end-line="31" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="38">
@@ -1037,30 +1090,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="411">
           <caret line="118" column="54" lean-forward="true" selection-start-line="118" selection-start-column="54" selection-end-line="118" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/pages/AddRecipe.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2527">
-          <caret line="133" column="66" selection-start-line="133" selection-start-column="66" selection-end-line="133" selection-end-column="66" />
-          <folding>
-            <element signature="e#0#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/TagFilterBar.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="8" column="22" selection-start-line="8" selection-start-column="22" selection-end-line="8" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/styles/TagFilterBar.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" column="22" lean-forward="true" selection-start-line="13" selection-start-column="22" selection-end-line="13" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -1185,27 +1214,68 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/pages/AddRecipe.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-915">
+          <caret line="58" column="21" selection-start-line="58" selection-start-column="21" selection-end-line="58" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/recipe.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="443">
+          <caret line="31" column="3" selection-start-line="31" selection-start-column="3" selection-end-line="31" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="44" selection-start-line="10" selection-start-column="44" selection-end-line="10" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/recipes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="49" column="9" selection-start-line="49" selection-start-column="9" selection-end-line="49" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="9" column="32" selection-start-line="9" selection-start-column="32" selection-end-line="9" selection-end-column="32" />
+        <state relative-caret-position="371">
+          <caret line="62" column="100" selection-start-line="62" selection-start-column="73" selection-end-line="62" selection-end-column="100" />
           <folding>
             <element signature="e#0#61#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/recipes.js">
+    <entry file="file://$PROJECT_DIR$/client/src/components/utilities/useDebounce.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="874">
-          <caret line="46" column="40" selection-start-line="46" selection-start-column="40" selection-end-line="46" selection-end-column="40" />
+        <state relative-caret-position="133">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/index.js">
+    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/styles/TagFilterBar.scss">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        <state relative-caret-position="385">
+          <caret line="28" column="23" selection-start-line="28" selection-start-column="23" selection-end-line="28" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/TagFilterBar.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="39" column="43" selection-start-line="39" selection-start-column="43" selection-end-line="39" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#51#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
