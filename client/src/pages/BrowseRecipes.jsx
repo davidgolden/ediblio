@@ -7,7 +7,7 @@ import LoadingNextPage from '../components/utilities/LoadingNextPage';
 import {ApiStoreContext} from "../stores/api_store";
 import useScrolledBottom from "../components/utilities/useScrolledBottom";
 
-const BrowseRecipes = () => {
+const BrowseRecipes = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
     const [loadedAll, setLoadedAll] = useState(false);
     const [filterTag, setFilterTag] = useState('');
@@ -17,11 +17,15 @@ const BrowseRecipes = () => {
     const isBottom = useScrolledBottom();
 
     useEffect(() => {
+        const query = {
+            page: lastRecipePageLoaded + 1,
+            tag: filterTag,
+        };
+        if (props.user_id) {
+            query.author = props.user_id;
+        }
         if (!loadedAll) {
-            context.getRecipes({
-                page: lastRecipePageLoaded + 1,
-                tag: filterTag,
-            })
+            context.getRecipes(query)
                 .then(recipes => {
                     if (recipes.length < 12) {
                         setLoadedAll(true);

@@ -2,8 +2,6 @@ import React from "react";
 import {ApiStoreContext} from './stores/api_store';
 import {render} from "react-dom";
 import Header from './components/header/Header';
-import UserRecipes from './pages/UserRecipes';
-import UserSettings from './pages/UserSettings';
 import GroceryList from './pages/GroceryList';
 import AddRecipe from './pages/AddRecipe';
 import BrowseRecipes from './pages/BrowseRecipes';
@@ -16,6 +14,7 @@ import Notification from "./components/header/Notification";
 import axios from "axios";
 import {addIngredient, canBeAdded} from "./utils/conversions";
 import './stylesheets/base.scss';
+import UserSettings from "./pages/UserSettings";
 
 let source = createHashSource();
 let history = createHistory(source);
@@ -336,7 +335,7 @@ export default class App extends React.Component {
                     <Notification/>
                     <Router>
                         <BrowseRecipes path={'/recipes'}/>
-                        <UserRecipes path={'/users/:user_id/recipes'}/>
+                        <BrowseRecipes path={'/users/:user_id/recipes'}/>
                         <RecipeContainer path={'/recipes/:recipe_id'}/>
                         <GroceryList path={'/users/:user_id/groceries'}/>
                         <AddRecipe path={'/add'}/>
