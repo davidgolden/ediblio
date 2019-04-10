@@ -71,7 +71,7 @@ app.use(session({
     }),
     cookie: {
         sameSite: true,
-        secure: env,
+        secure: false,
         maxAge: parseInt(SESS_LIFETIME)
     },
     saveUninitialized: false,
