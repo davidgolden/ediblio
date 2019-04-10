@@ -48,7 +48,7 @@ const RecipeContainer = props => {
 
     const handleAddIngredient = () => {
         let ingredientList = recipe.ingredients;
-        let ingredient = {quantity: '', measurement: '#', name: ''};
+        let ingredient = {quantity: '0', measurement: '#', name: ''};
         ingredientList.push(ingredient);
         setRecipe({
             ...recipe,

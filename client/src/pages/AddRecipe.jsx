@@ -74,7 +74,7 @@ const RecipeForm = props => {
 
     const handleAddIngredient = () => {
         let ingredientList = ingredients;
-        ingredientList.push({quantity: '', measurement: '#', name: ''});
+        ingredientList.push({quantity: '0', measurement: '#', name: ''});
         setIngredients([...ingredientList]);
     };
 
