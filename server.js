@@ -3,12 +3,15 @@ const path = require('path');
 
 const bodyParser = require('body-parser');
 const express = require('express');
+const session = require('express-session');
+const connectStore = require('connect-mongo');
 const app = express();
 const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const methodOverride = require('method-override');
 const compression = require('compression');
+const MongoStore = connectStore(session);
 
 const User = require('./models/user');
 
@@ -30,11 +33,22 @@ mongoose.connect(process.env.MONGO, {useNewUrlParser: true, autoIndex: false, us
     .catch(err => console.log(`Database connection error: ${err.message}`));
 
 // PASSPORT CONFIGURATION
-app.use(require('express-session')({
+const SESS_LIFETIME = 1000 * 60 * 60 * 30;
+app.use(session({
+    name: 'recipecloudsession',
     secret: process.env.SESSION_SECRET,
     resave: false,
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection,
+        collection: 'session',
+        ttl: parseInt(SESS_LIFETIME) / 1000
+    }),
+    cookie: {
+        sameSite: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: parseInt(SESS_LIFETIME)
+    },
     saveUninitialized: true,
-    maxAge: 1000 * 60 * 60 * 24,
 }));
 
 //Configure Passport
@@ -56,7 +70,7 @@ passport.use(new LocalStrategy({
 }));
 
 app.use(passport.initialize());
-app.use(passport.session());
+
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });

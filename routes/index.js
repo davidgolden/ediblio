@@ -9,10 +9,10 @@ const express = require('express'),
 
 // authenticate user
 router.post('/authenticate', function (req, res) {
-    if (req.isAuthenticated()) {
-        User.findById(req.user._id).populate('menu').populate('recipes').exec((err, user) => {
-            return res.status(200).send({user: user});
-        })
+    const user = req.session.user;
+
+    if (user) {
+        return res.status(200).send({user: req.session.user});
     } else {
         return res.sendStatus(200);
     }
@@ -26,14 +26,10 @@ router.post('/login', emailToLowerCase, function (req, res, next) {
         }
         if (!user) {
             return res.status(404).send({ detail: 'No user found with those user credentials!' });
+        } else {
+            req.session.user = user;
+            return res.status(200).send(JSON.stringify({user: user}));
         }
-        req.logIn(user, function (err) {
-            if (err) return res.status(404).send({ detail: 'There was a problem logging in!'} );
-
-            User.findById(req.user._id).populate('menu').exec((err, user) => {
-                return res.status(200).send(JSON.stringify({user: user}));
-            })
-        });
     })(req, res, next);
 });
 
@@ -44,8 +40,20 @@ function emailToLowerCase(req, res, next) {
 
 //logout
 router.get('/logout', function (req, res) {
-    req.logout();
-    return res.sendStatus(200);
+    try {
+        const user = req.session.user;
+        if (user) {
+            req.session.destroy(err => {
+                if (err) throw (err);
+                res.clearCookie('recipecloudsession');
+                return res.sendStatus(200);
+            });
+        } else {
+            throw new Error('Something went wrong');
+        }
+    } catch (err) {
+        res.status(422).send({message: err});
+    }
 });
 
 // reset password route
