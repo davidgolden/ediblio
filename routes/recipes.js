@@ -68,21 +68,24 @@ router.route('/recipes')
             cloudinary.v2.uploader.upload(req.body.recipe.image,
                 {
                     resource_type: "image",
-                    public_id: `users/${req.user._id}/recipes/${newRecipe._id}`,
+                    public_id: `users/${req.session.user._id}/recipes/${newRecipe._id}`,
                     overwrite: true,
                 },
                 (error, result) => {
                     newRecipe.image = result.secure_url;
 
                     // add author info to recipe
-                    newRecipe.author.id = req.user._id;
-                    newRecipe.author.username = req.user.username;
+                    newRecipe.author.id = req.session.user._id;
+                    newRecipe.author.username = req.session.user.username;
                     newRecipe.created = Date.now();
                     // save recipe
                     newRecipe.save();
                     // add recipe to user
-                    req.user.recipes.push(newRecipe);
-                    req.user.save();
+
+                    User.findOne({ "_id": req.session.user._id }, (err, user) => {
+                        user.recipes.push(newRecipe);
+                        user.save();
+                    });
 
                     return res.sendStatus(200);
                 });
@@ -108,7 +111,7 @@ router.route('/recipes/:recipe_id')
                 cloudinary.v2.uploader.upload(req.body.image,
                     {
                         resource_type: "image",
-                        public_id: `users/${req.user._id}/recipes/${recipe._id}`,
+                        public_id: `users/${req.session.user._id}/recipes/${recipe._id}`,
                         overwrite: true,
                     },
                     (error, result) => {

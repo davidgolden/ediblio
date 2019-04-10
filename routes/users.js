@@ -29,7 +29,7 @@ router.route('/users')
 
             req.logIn(user, (err) => {
                 if (err) return res.status(404).send({ detail: err.message });
-                return res.status(200).json({user: req.user});
+                return res.status(200).json({user: req.session.user});
             });
         });
     });
@@ -37,7 +37,7 @@ router.route('/users')
 router.route('/users/:user_id')
 // update user
     .patch(middleware.isLoggedIn, (req, res) => {
-        User.findOne(req.user._id, function (err, user) {
+        User.findOne({ "_id": req.session.user._id }, function (err, user) {
             if (err) {
                 return res.status(404).send({ detail: err.message })
             }
@@ -54,7 +54,7 @@ router.route('/users/:user_id')
     })
     // this will ALWAYS return the logged in user's details; can't get another user's data
     .get(middleware.isLoggedIn, (req, res) => {
-        User.findOne(req.user._id, (err, user) => {
+        User.findOne({ "_id": req.session.user._id }, (err, user) => {
             if (err) {
                 return res.status(404).send({ detail: err.message });
             }
@@ -68,7 +68,7 @@ router.route('/users/:user_id')
 
 // DISPLAY GROCERY LIST
 router.get('/users/:user_id/list', (req, res) => {
-    User.findById(req.user._id).populate('menu').exec(function (err, user) {
+    User.findById(req.session.user._id).populate('menu').exec(function (err, user) {
         if (err) {
             return res.status(404).send({ detail: err.message })
         }

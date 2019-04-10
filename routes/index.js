@@ -135,7 +135,7 @@ router.post('/reset', function (req, res) {
 
         req.logIn(user, function (err) {
             if (err) return res.status(404).send({ detail: err });
-            return res.status(200).json({user: req.user});
+            return res.status(200).json({user: req.session.user});
         });
     });
 });

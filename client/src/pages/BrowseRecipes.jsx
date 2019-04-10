@@ -38,7 +38,7 @@ const BrowseRecipes = props => {
                     }
                 });
         }
-    }, [isBottom, filterTag, searchTerm]);
+    }, [isBottom, filterTag, searchTerm, props.user_id]);
 
     const searchByTerm = term => {
         setLoadedAll(false);
