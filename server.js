@@ -31,26 +31,6 @@ mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGO, {useNewUrlParser: true, autoIndex: false, useCreateIndex: true})
     .then(() => console.log(`Database connected`))
     .catch(err => console.log(`Database connection error: ${err.message}`));
-
-// PASSPORT CONFIGURATION
-const SESS_LIFETIME = 1000 * 60 * 60 * 30;
-app.use(session({
-    name: 'recipecloudsession',
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    store: new MongoStore({
-        mongooseConnection: mongoose.connection,
-        collection: 'session',
-        ttl: parseInt(SESS_LIFETIME) / 1000
-    }),
-    cookie: {
-        sameSite: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: parseInt(SESS_LIFETIME)
-    },
-    saveUninitialized: true,
-}));
-
 //Configure Passport
 passport.use(new LocalStrategy({
     usernameField: 'email',
@@ -69,6 +49,23 @@ passport.use(new LocalStrategy({
     });
 }));
 
+const SESS_LIFETIME = 1000 * 60 * 60 * 30;
+app.use(session({
+    name: 'recipecloudsession',
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection,
+        collection: 'session',
+        ttl: parseInt(SESS_LIFETIME) / 1000
+    }),
+    cookie: {
+        sameSite: true,
+        secure: false,
+        maxAge: parseInt(SESS_LIFETIME)
+    },
+    saveUninitialized: true,
+}));
 app.use(passport.initialize());
 
 passport.serializeUser(function (user, done) {
