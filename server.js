@@ -21,6 +21,16 @@ const userRoutes = require('./routes/users'),
 
 const env = process.env.NODE_ENV || "development";
 
+const forceSsl = function (req, res, next) {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(['https://', req.get('Host'), req.url].join(''));
+    }
+    return next();
+};
+if (env === 'production') {
+    app.use(forceSsl);
+}
+
 app.use(compression());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -61,10 +71,10 @@ app.use(session({
     }),
     cookie: {
         sameSite: true,
-        secure: false,
+        secure: env,
         maxAge: parseInt(SESS_LIFETIME)
     },
-    saveUninitialized: true,
+    saveUninitialized: false,
 }));
 app.use(passport.initialize());
 
@@ -77,16 +87,6 @@ passport.deserializeUser(function (id, done) {
         done(err, user);
     });
 });
-
-const forceSsl = function (req, res, next) {
-    if (req.headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(['https://', req.get('Host'), req.url].join(''));
-    }
-    return next();
-};
-if (env === 'production') {
-    app.use(forceSsl);
-}
 
 // NEED TO IMPORT ROUTES
 app.use('/api/', indexRoutes);
