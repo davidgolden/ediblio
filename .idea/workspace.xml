@@ -3,12 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b360ea2b-4ea7-4711-b7b1-0edc28f9c2b5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/dist/bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/dist/bundle.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/recipes.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/recipes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/users.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -66,19 +61,19 @@
           <entry key="html" value="46" />
           <entry key="js" value="19221" />
           <entry key="json" value="605" />
-          <entry key="jsx" value="34755" />
+          <entry key="jsx" value="34924" />
           <entry key="md" value="47" />
           <entry key="scss" value="8009" />
-          <entry key="txt" value="2544" />
+          <entry key="txt" value="2573" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="HTML" value="46" />
           <entry key="JSON" value="605" />
-          <entry key="JSX Harmony" value="34755" />
+          <entry key="JSX Harmony" value="34924" />
           <entry key="JavaScript" value="19221" />
-          <entry key="PLAIN_TEXT" value="2777" />
+          <entry key="PLAIN_TEXT" value="2806" />
           <entry key="SCSS" value="8009" />
         </counts>
       </usages-collector>
@@ -118,8 +113,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="174">
-              <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
+            <state relative-caret-position="198">
+              <caret line="19" column="85" selection-start-line="19" selection-start-column="85" selection-end-line="19" selection-end-column="85" />
               <folding>
                 <element signature="e#0#61#0" expanded="true" />
               </folding>
@@ -482,13 +477,6 @@
       <workItem from="1554493821754" duration="329000" />
       <workItem from="1554512637015" duration="4686000" />
     </task>
-    <task id="LOCAL-00060" summary="scripts...">
-      <created>1552866769224</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
-      <option name="project" value="LOCAL" />
-      <updated>1552866769224</updated>
-    </task>
     <task id="LOCAL-00061" summary="fix add to grocery list duplicates">
       <created>1552875197739</created>
       <option name="number" value="00061" />
@@ -825,11 +813,18 @@
       <option name="project" value="LOCAL" />
       <updated>1554902740978</updated>
     </task>
-    <option name="localTasksCounter" value="109" />
+    <task id="LOCAL-00109" summary="fix session user bugs">
+      <created>1554905827369</created>
+      <option name="number" value="00109" />
+      <option name="presentableId" value="LOCAL-00109" />
+      <option name="project" value="LOCAL" />
+      <updated>1554905827369</updated>
+    </task>
+    <option name="localTasksCounter" value="110" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="169377000" />
+    <option name="totallyTimeSpent" value="169955000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -875,7 +870,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="add error handling" />
     <MESSAGE value="notification styling" />
     <MESSAGE value="fix delete/edit ingredients" />
     <MESSAGE value="keep tags in show recipe from looking like buttons" />
@@ -900,7 +894,8 @@
     <MESSAGE value="test secure" />
     <MESSAGE value="don't save uninitialized" />
     <MESSAGE value="set secure false for now" />
-    <option name="LAST_COMMIT_MESSAGE" value="set secure false for now" />
+    <MESSAGE value="fix session user bugs" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix session user bugs" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/client/src/components/utilities/buttons/Button.jsx">
@@ -1233,8 +1228,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/src/pages/BrowseRecipes.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="174">
-          <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
+        <state relative-caret-position="198">
+          <caret line="19" column="85" selection-start-line="19" selection-start-column="85" selection-end-line="19" selection-end-column="85" />
           <folding>
             <element signature="e#0#61#0" expanded="true" />
           </folding>

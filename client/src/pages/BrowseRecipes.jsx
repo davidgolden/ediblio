@@ -17,6 +17,9 @@ const BrowseRecipes = props => {
 
     const isBottom = useScrolledBottom();
 
+    // apparently console logging user_id is the only way to get useEffect to work :(
+    console.log(props.user_id);
+
     useEffect(() => {
         const query = {
             page: lastRecipePageLoaded + 1,
