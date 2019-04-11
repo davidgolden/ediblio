@@ -94,7 +94,7 @@ const RecipeInformation = props => {
                 alert('Your image size is too big and our image compression tools are not supported on your browser. Please use a smaller image!');
                 return false;
             }
-            processFile(dataURI, 300, 300, file.type)
+            processFile(dataURI, 800, 800, file.type)
                 .then(uri => {
                     setFoundImage(true);
                     setUploadedImage(true);
