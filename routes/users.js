@@ -27,10 +27,8 @@ router.route('/users')
                 return res.status(404).send({ detail: err.message });
             }
 
-            req.logIn(user, (err) => {
-                if (err) return res.status(404).send({ detail: err.message });
-                return res.status(200).json({user: req.session.user});
-            });
+            req.session.user = user;
+            res.status(200).json({user: req.session.user})
         });
     });
 
