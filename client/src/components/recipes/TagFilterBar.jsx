@@ -37,7 +37,7 @@ const TagFilterBar = props => {
             </div>
             <div className={searchContainerClassName}>
                 <FontAwesomeIcon icon={faSearch}/>
-                <input placeholder={'Filter By Name'} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                <input placeholder={'Filter By Name or Ingredient'} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
             </div>
         </div>
     )

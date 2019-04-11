@@ -45,8 +45,14 @@ router.route('/recipes')
         if (req.query.searchTerm) {
             const escapedInput = req.query.searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
             const regex = new RegExp(escapedInput, 'gmi');
-            q = q.where('name')
-                .regex(regex);
+            q = q.or([
+                {'name': regex},
+                {
+                    'ingredients': {
+                        '$elemMatch': {name: regex}
+                    }
+                }
+            ]);
         }
         q.limit(page_size)
             .skip(skip)
@@ -82,7 +88,7 @@ router.route('/recipes')
                     newRecipe.save();
                     // add recipe to user
 
-                    User.findOne({ "_id": req.session.user._id }, (err, user) => {
+                    User.findOne({"_id": req.session.user._id}, (err, user) => {
                         user.recipes.push(newRecipe);
                         user.save();
                     });
