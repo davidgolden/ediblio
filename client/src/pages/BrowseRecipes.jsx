@@ -11,22 +11,20 @@ const BrowseRecipes = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
     const [loadedAll, setLoadedAll] = useState(false);
     const [filterTag, setFilterTag] = useState('');
+    const [filterAuthor, setFilterAuthor] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
 
     const context = useContext(ApiStoreContext);
 
     const isBottom = useScrolledBottom();
 
-    // apparently console logging user_id is the only way to get useEffect to work :(
-    console.log(props.user_id);
-
     useEffect(() => {
         const query = {
             page: lastRecipePageLoaded + 1,
             tag: filterTag,
         };
-        if (props.user_id) {
-            query.author = props.user_id;
+        if (filterAuthor) {
+            query.author = filterAuthor;
         }
         if (typeof searchTerm === 'string') {
             query.searchTerm = searchTerm;
@@ -41,7 +39,13 @@ const BrowseRecipes = props => {
                     }
                 });
         }
-    }, [isBottom, filterTag, searchTerm, props.user_id]);
+    }, [isBottom, filterTag, searchTerm, filterAuthor]);
+
+    useEffect(() => {
+        setFilterAuthor(props.user_id);
+        setLastRecipePageLoaded(-1);
+        setLoadedAll(false);
+    }, [props.user_id]);
 
     const searchByTerm = term => {
         setLoadedAll(false);
