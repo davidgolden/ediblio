@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {recipeTags} from "../../stores/Setings";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSearch} from '@fortawesome/free-solid-svg-icons';
@@ -29,15 +29,20 @@ const TagFilterBar = props => {
     return (
         <div className={tagsContainerClassName}>
             <div>
-                <Button onClick={() => props.sortByTag('')}>All</Button>
                 {recipeTags.map(tag => {
-                    return <Button onClick={() => props.sortByTag(tag)}
+                    const tagClassName = classNames({
+                        [styles.tag]: true,
+                        [styles.tagSelected]: props.selectedTags.includes(tag),
+                    });
+
+                    return <Button className={tagClassName} onClick={() => props.sortByTag(tag)}
                                    key={tag}>{tag}</Button>
                 })}
             </div>
             <div className={searchContainerClassName}>
                 <FontAwesomeIcon icon={faSearch}/>
-                <input placeholder={'Filter By Name or Ingredient'} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                <input placeholder={'Filter By Name or Ingredient'} value={searchTerm}
+                       onChange={e => setSearchTerm(e.target.value)}/>
             </div>
         </div>
     )

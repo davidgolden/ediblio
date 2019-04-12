@@ -10,7 +10,7 @@ import useScrolledBottom from "../components/utilities/useScrolledBottom";
 const BrowseRecipes = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
     const [loadedAll, setLoadedAll] = useState(false);
-    const [filterTag, setFilterTag] = useState('');
+    const [filterTags, setFilterTags] = useState([]);
     const [filterAuthor, setFilterAuthor] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -21,8 +21,10 @@ const BrowseRecipes = props => {
     useEffect(() => {
         const query = {
             page: lastRecipePageLoaded + 1,
-            tag: filterTag,
         };
+        if (filterTags.length > 0) {
+            query.tags = filterTags.toString();
+        }
         if (filterAuthor) {
             query.author = filterAuthor;
         }
@@ -39,7 +41,7 @@ const BrowseRecipes = props => {
                     }
                 });
         }
-    }, [isBottom, filterTag, searchTerm, filterAuthor]);
+    }, [isBottom, filterTags, searchTerm, filterAuthor]);
 
     useEffect(() => {
         setFilterAuthor(props.user_id);
@@ -54,11 +56,15 @@ const BrowseRecipes = props => {
     };
 
     const sortByTag = tag => {
-        if (tag !== filterTag) {
-            setLoadedAll(false);
-            setFilterTag(tag);
-            setLastRecipePageLoaded(-1);
+        let newTags = filterTags;
+        if (newTags.includes(tag)) {
+            newTags.splice(newTags.indexOf(tag), 1);
+        } else {
+            newTags.push(tag);
         }
+        setLoadedAll(false);
+        setFilterTags([...newTags]);
+        setLastRecipePageLoaded(-1);
     };
 
     const browseRecipesContainerClassName = classNames({
@@ -67,7 +73,7 @@ const BrowseRecipes = props => {
 
     return (
         <div>
-            <TagFilterBar sortByTag={sortByTag} searchTerm={searchTerm} setSearchTerm={searchByTerm} />
+            <TagFilterBar sortByTag={sortByTag} selectedTags={filterTags} searchTerm={searchTerm} setSearchTerm={searchByTerm} />
             <div className={browseRecipesContainerClassName}>
                 {Array.from(context.recipes.values()).map(recipe => {
                     return <RecipeCard key={recipe._id} recipe={recipe}/>

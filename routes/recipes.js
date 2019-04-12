@@ -34,9 +34,13 @@ router.route('/recipes')
         const skip = page * page_size;
 
         let q = Recipe.find({});
-        if (req.query.tag) {
-            q = q.where('tags')
-                .in(req.query.tag)
+        if (req.query.tags) {
+            const filterTags = req.query.tags.split(',');
+            q = q.where({
+                'tags': {
+                    '$all': filterTags,
+                }
+            })
         }
         if (req.query.author) {
             q = q.where('author.id')

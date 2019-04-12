@@ -38,7 +38,7 @@ app.use(methodOverride('_method'));
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(env === 'production' ? process.env.MONGO : process.env.MONGO_DEV,
+mongoose.connect(1 ? process.env.MONGO : process.env.MONGO_DEV,
     {useNewUrlParser: true, autoIndex: false, useCreateIndex: true})
     .then(() => console.log(`Database connected`))
     .catch(err => console.log(`Database connection error: ${err.message}`));

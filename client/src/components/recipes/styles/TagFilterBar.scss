@@ -4,9 +4,8 @@
   text-align: center;
   margin: 10px auto;
   width: 90%;
-  max-width: 700px;
 
-  button {
+  .tag {
     color: white;
     background-color: $otherdark;
     border-radius: 10px;
@@ -16,6 +15,14 @@
 
     &:hover {
       background-color: lighten($otherdark, 10%);
+    }
+
+    &Selected {
+      background-color: $other;
+
+      &:hover {
+        background-color: $other;
+      }
     }
   }
 

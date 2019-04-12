@@ -43,41 +43,46 @@ export const canBeAdded = (m1, m2) => {
     return true;
 };
 
+export const conversions = {
+    cup: {
+        to_tbsp: value => value / 16,
+        to_tsp: value => value / 48,
+    },
+    tbsp: {
+        to_cup: value => value * 16,
+        to_tsp: value => value / 4,
+    },
+    tsp: {
+        to_cup: value => value * 48,
+        to_tbsp: value => value * 4,
+    }
+};
+
 // return { quantity: x, measurement: y }
 // m1 is grocery list item, m2 is new ingredient (adding new ingredient to grocery list)
 export const addIngredient = (q1, m1, q2, m2) => {
-    console.log(q1)
-    console.log(q2)
     let q, m;
     if (m1 === 'tsp' && m2 === 'tbsp') {
         m = m2;
         q = (q1 / 4) + q2;
-    }
-    if (m1 === 'tsp' && m2 === 'cup') {
+    } else if (m1 === 'tsp' && m2 === 'cup') {
         m = m2;
         q = (q1/48) + q2;
-    }
-    if (m1 === 'tbsp' && m2 === 'tsp') {
+    } else if (m1 === 'tbsp' && m2 === 'tsp') {
         m = m1;
         q = q1 + (q2 / 4);
-    }
-    if (m1 === 'tbsp' && m2 === 'cup') {
+    } else if (m1 === 'tbsp' && m2 === 'cup') {
         m = m2;
         q = (q1 / 16) + q2;
-    }
-    if (m1 === 'cup' && m2 === 'tsp') {
+    } else if (m1 === 'cup' && m2 === 'tsp') {
         m = m1;
         q = q1 + (q2 / 48);
-    }
-    if (m1 === 'cup' && m2 === 'tbsp') {
+    } else if (m1 === 'cup' && m2 === 'tbsp') {
         m = m1;
         q = q1 + (q2 / 16);
-    }
-    if (m1 === m2) {
+    } else if (m1 === m2) {
         q = q1 + q2;
         m = m1;
-
-        console.log('q: ', q);
     }
     return { quantity: q, measurement: m };
 };
