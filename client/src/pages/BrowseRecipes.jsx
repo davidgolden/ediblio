@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import RecipeCard from "../components/RecipeCard";
 import classNames from 'classnames';
 import styles from './styles/BrowseRecipes.scss';
-import TagFilterBar from "../components/recipes/TagFilterBar";
+import SortingBar from "../components/recipes/SortingBar";
 import LoadingNextPage from '../components/utilities/LoadingNextPage';
 import {ApiStoreContext} from "../stores/api_store";
 import useScrolledBottom from "../components/utilities/useScrolledBottom";
@@ -13,6 +13,8 @@ const BrowseRecipes = props => {
     const [filterTags, setFilterTags] = useState([]);
     const [filterAuthor, setFilterAuthor] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [sortBy, setSortBy] = useState('name');
+    const [orderBy, setOrderBy] = useState('asc');
 
     const context = useContext(ApiStoreContext);
 
@@ -21,6 +23,8 @@ const BrowseRecipes = props => {
     useEffect(() => {
         const query = {
             page: lastRecipePageLoaded + 1,
+            orderBy: orderBy,
+            sortBy: sortBy,
         };
         if (filterTags.length > 0) {
             query.tags = filterTags.toString();
@@ -41,7 +45,7 @@ const BrowseRecipes = props => {
                     }
                 });
         }
-    }, [isBottom, filterTags, searchTerm, filterAuthor]);
+    }, [isBottom, filterTags, searchTerm, filterAuthor, orderBy, sortBy]);
 
     useEffect(() => {
         setFilterAuthor(props.user_id);
@@ -53,6 +57,18 @@ const BrowseRecipes = props => {
         setLoadedAll(false);
         setSearchTerm(term);
         setLastRecipePageLoaded(-1);
+    };
+
+    const handleSortByChange = value => {
+        setLoadedAll(false);
+        setLastRecipePageLoaded(-1);
+        setSortBy(value);
+    };
+
+    const handleOrderByChange = value => {
+        setLoadedAll(false);
+        setLastRecipePageLoaded(-1);
+        setOrderBy(value);
     };
 
     const sortByTag = tag => {
@@ -73,7 +89,16 @@ const BrowseRecipes = props => {
 
     return (
         <div>
-            <TagFilterBar sortByTag={sortByTag} selectedTags={filterTags} searchTerm={searchTerm} setSearchTerm={searchByTerm} />
+            <SortingBar
+                sortByTag={sortByTag}
+                selectedTags={filterTags}
+                searchTerm={searchTerm}
+                setSearchTerm={searchByTerm}
+                sortBy={sortBy}
+                orderBy={orderBy}
+                handleSortByChange={handleSortByChange}
+                handleOrderByChange={handleOrderByChange}
+            />
             <div className={browseRecipesContainerClassName}>
                 {Array.from(context.recipes.values()).map(recipe => {
                     return <RecipeCard key={recipe._id} recipe={recipe}/>
