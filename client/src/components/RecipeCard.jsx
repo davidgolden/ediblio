@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import styles from './styles/RecipeCard.scss';
 import RecipeButtons from "./recipes/RecipeButtons";
 import {ApiStoreContext} from "../stores/api_store";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faUser} from '@fortawesome/free-solid-svg-icons';
 
 const RecipeCard = props => {
 
@@ -32,6 +34,9 @@ const RecipeCard = props => {
     const recipeCardButtonClassName = classNames({
         [styles.recipeCardButtons]: true,
     });
+    const userImageClassName = classNames({
+        [styles.userImage]: true,
+    });
 
     return (
         <div className={recipeCardClassName}>
@@ -50,6 +55,11 @@ const RecipeCard = props => {
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />
+            </div>
+            <div className={userImageClassName}>
+                {props.recipe.author_id.profileImage ?
+                <img src={props.recipe.author_id.profileImage} /> :
+                    <FontAwesomeIcon icon={faUser}/>}
             </div>
         </div>
     )

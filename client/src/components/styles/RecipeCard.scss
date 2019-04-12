@@ -29,12 +29,36 @@
   }
 
   &:hover {
+    .userImage {
+      position: absolute;
+      top: 13px;
+      right: 15px;
+      z-index: 1;
+      display: inline;
+      opacity: 1;
+
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+      }
+
+      svg {
+        color: white;
+        background-color: lightgray;
+        font-size: 1.8rem;
+        padding: 10px;
+        border-radius: 100%;
+      }
+    }
+
     .recipeCardText {
       color: $primary-color;
       text-decoration: none;
     }
 
     .recipeCardButtons {
+      opacity: 1;
       display: inline;
       position: absolute;
       top: 13px;
@@ -84,5 +108,13 @@
 
   &Buttons {
     display: none;
+    transition: opacity .25s ease;
+    opacity: 0;
+  }
+
+  .userImage {
+    display: none;
+    transition: opacity .25s ease;
+    opacity: 0;
   }
 }
