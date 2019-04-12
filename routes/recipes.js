@@ -22,8 +22,8 @@ const express = require('express'),
 
 cloudinary.config({
     cloud_name: 'recipecloud',
-    api_key: '771378164651634',
-    api_secret: '7vCnBsgJs5ZtAYR0lsU0IGUc8aw'
+    api_key: process.env.CLOUDINARY_KEY,
+    api_secret: process.env.CLOUDINARY_SECRET
 });
 
 // get all recipes

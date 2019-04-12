@@ -5,6 +5,12 @@
   max-width: 90%;
   margin: 50px auto;
 
+  img {
+    border-radius: 100%;
+    height: 200px;
+    width: 200px;
+  }
+
   > div {
     margin: 10px 0;
     font-size: 1.4rem;

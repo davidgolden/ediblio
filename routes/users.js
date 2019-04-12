@@ -3,6 +3,14 @@ const express = require('express'),
     User = require('../models/user'),
     middleware = require('../middleware');
 
+const cloudinary = require('cloudinary');
+
+cloudinary.config({
+    cloud_name: 'recipecloud',
+    api_key: process.env.CLOUDINARY_KEY,
+    api_secret: process.env.CLOUDINARY_SECRET
+});
+
 router.route('/users')
 // get all users
     .get((req, res) => {
@@ -40,8 +48,23 @@ router.route('/users/:user_id')
                 return res.status(404).send({ detail: err.message })
             }
             for (let key in req.body) {
-                if (req.body.hasOwnProperty(key)) {
+                if (req.body.hasOwnProperty(key) && key !== 'profileImage') {
                     user[key] = req.body[key];
+                } else if (key === 'profileImage') {
+                    cloudinary.v2.uploader.upload(req.body.profileImage,
+                        {
+                            resource_type: "image",
+                            public_id: `users/${req.session.user._id}/profileImage`,
+                            overwrite: true,
+                            transformation: [
+                                {width: 400, height: 400, gravity: "face", radius: "max", crop: "crop"},
+                                {height: 200, width: 200, crop: "fill"}
+                            ]
+                        },
+                        (error, result) => {
+                            user.profileImage = result.secure_url;
+                            user.save();
+                     });
                 }
             }
             user.save();

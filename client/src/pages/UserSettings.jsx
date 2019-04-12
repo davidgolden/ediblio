@@ -3,10 +3,12 @@ import styles from './styles/UserSettings.scss';
 import classNames from 'classnames';
 import Button from "../components/utilities/buttons/Button";
 import {ApiStoreContext} from "../stores/api_store";
+import {processFile} from "../utils/images";
 
 const UserSettings = props => {
     const context = useContext(ApiStoreContext);
 
+    const [profileImage, setProfileImage] = useState(context.user ? context.user.profileImage : '');
     const [username, setUsername] = useState(context.user ? context.user.username : '');
     const [email, setEmail] = useState(context.user ? context.user.email : '');
     const [password, setPassword] = useState(context.user ? context.user.password : '');
@@ -20,7 +22,8 @@ const UserSettings = props => {
             context.patchUser({
                 username: username,
                 email: email,
-                password: password
+                password: password,
+                profileImage: profileImage,
             });
             setCurrent(true);
         }
@@ -32,13 +35,30 @@ const UserSettings = props => {
 
     useEffect(() => {
         setCurrent(false);
-    }, [username, email, password, confirm]);
+    }, [username, email, password, confirm, profileImage]);
+
+    const handleFileUpload = file => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+        fileReader.onloadend = readerEvent => {
+            const dataURI = readerEvent.target.result;
+            if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+                alert('Your image size is too big and our image compression tools are not supported on your browser. Please use a smaller image!');
+                return false;
+            }
+            processFile(dataURI, 800, 800, file.type)
+                .then(uri => {
+                    setProfileImage(uri);
+                });
+        };
+    };
 
     useEffect(() => {
         context.getUser(props.user_id)
             .then(user => {
                 setUsername(user.username);
                 setEmail(user.email);
+                setProfileImage(user.profileImage);
                 setPassword(user.password);
                 setConfirm(user.password);
                 setCurrent(true);
@@ -60,6 +80,10 @@ const UserSettings = props => {
     return (
         <div className={settingsContainerClassName}>
             <h1>Edit Profile</h1>
+            <div>
+                {profileImage && <img src={profileImage} />}
+                <input onChange={e => handleFileUpload(e.target.files[0])} type={'file'} accept={'image/*'} />
+            </div>
             <div>
                 <label htmlFor='username'>Username</label>
                 <input type='text' name='username' value={username}
