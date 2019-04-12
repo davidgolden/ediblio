@@ -46,7 +46,7 @@ const RecipeCard = props => {
             <div className={recipeCardButtonClassName}>
                 <RecipeButtons
                     recipe_id={props.recipe._id}
-                    author_id={props.recipe.author.id}
+                    author_id={props.recipe.author_id._id}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />

@@ -43,7 +43,7 @@ router.route('/recipes')
             })
         }
         if (req.query.author) {
-            q = q.where('author.id')
+            q = q.where('author_id')
                 .equals(req.query.author);
         }
         if (req.query.searchTerm) {
@@ -61,6 +61,10 @@ router.route('/recipes')
         q.limit(page_size)
             .skip(skip)
             .sort({[req.query.sortBy]: req.query.orderBy})
+            .populate('author_id', {
+                'username': 'username',
+                'profileImage': 'profileImage',
+            }, 'users')
             .exec((err, recipes) => {
                 if (err) {
                     res.status(404).send({detail: err.message})
@@ -85,9 +89,7 @@ router.route('/recipes')
                     newRecipe.image = result.secure_url;
 
                     // add author info to recipe
-                    newRecipe.author.id = req.session.user._id;
-                    newRecipe.author.username = req.session.user.username;
-                    newRecipe.created = Date.now();
+                    newRecipe.author_id = req.session.user._id;
                     // save recipe
                     newRecipe.save();
                     // add recipe to user
@@ -104,7 +106,12 @@ router.route('/recipes')
 
 router.route('/recipes/:recipe_id')
     .get((req, res) => {
-        Recipe.findById(req.params.recipe_id, (err, recipe) => {
+        Recipe.findById(req.params.recipe_id)
+            .populate('author_id', {
+                'username': 'username',
+                'profileImage': 'profileImage',
+            }, 'users')
+            .exec((err, recipe) => {
             if (err) {
                 return res.status(404).send({detail: err.message});
             }

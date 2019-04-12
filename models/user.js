@@ -47,7 +47,7 @@ userSchema.pre('save', function (next) {
 });
 
 userSchema.post('remove', function (user) {
-    Recipes.deleteMany({'author.id': user._id})
+    Recipes.deleteMany({'author_id': user._id})
 });
 
 userSchema.methods.comparePassword = function (candidatePassword, cb) {

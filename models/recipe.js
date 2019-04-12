@@ -17,13 +17,10 @@ const recipeSchema = new mongoose.Schema({
     ingredients: [
             IngredientSchema,
         ],
-    author: {
-        id: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User'
-        },
-        username: String
-      }
+    author_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
 }, {
     timestamps: {
         createdAt: 'created_at',
@@ -32,7 +29,7 @@ const recipeSchema = new mongoose.Schema({
 });
 
 recipeSchema.post('remove', function(doc) {
-    cloudinary.uploader.destroy(`users/${doc.author.id}/recipes/${doc._id}`);
+    cloudinary.uploader.destroy(`users/${doc.author_id}/recipes/${doc._id}`);
 });
 
 module.exports = mongoose.model('recipes', recipeSchema);

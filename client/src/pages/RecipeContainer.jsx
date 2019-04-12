@@ -88,7 +88,7 @@ const RecipeContainer = props => {
         <div className={recipeContainerClassName}>
 
             <div className={recipeEditButtonsClassName}>
-                {recipe && context.isLoggedIn && (recipe.author.id === context.user._id || context.user.isAdmin) && (
+                {recipe && context.isLoggedIn && (recipe.author_id._id === context.user._id || context.user.isAdmin) && (
                     <Button className={toggleEditClassName} onClick={toggleEdit}>
                         {edit === false ? (
                             <React.Fragment>
@@ -100,7 +100,7 @@ const RecipeContainer = props => {
                     </Button>)}
                 {recipe && context.isLoggedIn && <RecipeButtons
                     recipe_id={recipe._id}
-                    author_id={recipe.author.id}
+                    author_id={recipe.author_id._id}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />}

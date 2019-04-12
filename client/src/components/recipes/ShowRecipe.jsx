@@ -39,8 +39,8 @@ const ShowRecipe = props => {
             <div className={showRecipeTitleClassName}>
                 {props.recipe && <div>
                     <h1>{props.recipe.name}</h1>
-                    <h2>Submitted by <Link to={`/users/${props.recipe.author.id}/recipes`}>
-                        {props.recipe.author.username}
+                    <h2>Submitted by <Link to={`/users/${props.recipe.author_id._id}/recipes`}>
+                        {props.recipe.author_id.username}
                     </Link>. {props.recipe.url &&
                     <a href={props.recipe.url} target='_blank'>View Original Recipe</a>}</h2>
                     <div>
