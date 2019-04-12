@@ -27,7 +27,7 @@ const SortingBar = props => {
     });
     const orderButtonClassName = classNames({
         [styles.orderButton]: true,
-        [styles.orderButtonHighlight]: props.orderBy === 'desc',
+        [styles.orderButtonHighlight]: props.orderBy === 'asc',
     });
 
     return (

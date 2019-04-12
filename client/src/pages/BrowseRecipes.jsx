@@ -13,8 +13,8 @@ const BrowseRecipes = props => {
     const [filterTags, setFilterTags] = useState([]);
     const [filterAuthor, setFilterAuthor] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-    const [sortBy, setSortBy] = useState('name');
-    const [orderBy, setOrderBy] = useState('asc');
+    const [sortBy, setSortBy] = useState('created_at');
+    const [orderBy, setOrderBy] = useState('desc');
 
     const context = useContext(ApiStoreContext);
 
