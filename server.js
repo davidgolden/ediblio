@@ -60,7 +60,7 @@ passport.use(new LocalStrategy({
     });
 }));
 
-const SESS_LIFETIME = 1000 * 60 * 60 * 30;
+const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
 app.use(session({
     name: 'recipecloudsession',
     secret: process.env.SESSION_SECRET,
@@ -68,12 +68,12 @@ app.use(session({
     store: new MongoStore({
         mongooseConnection: mongoose.connection,
         collection: 'session',
-        ttl: parseInt(SESS_LIFETIME) / 1000
+        ttl: SESS_LIFETIME
     }),
     cookie: {
         sameSite: true,
         secure: false,
-        maxAge: parseInt(SESS_LIFETIME)
+        maxAge: SESS_LIFETIME
     },
     saveUninitialized: false,
 }));
