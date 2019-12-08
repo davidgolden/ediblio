@@ -293,7 +293,7 @@ export default class App extends React.Component {
             const i = onCurrentList(ingredient.name);
             if (i > -1) {
                 let m = currentGroceryList[i].measurement;
-                let q = parseInt(currentGroceryList[i].quantity);
+                let q = Number(currentGroceryList[i].quantity);
                 // check if item can be added
                 if (canBeAdded(m, ingredient.measurement)) {
                     // if it can be added, add it

@@ -84,5 +84,5 @@ export const addIngredient = (q1, m1, q2, m2) => {
         q = q1 + q2;
         m = m1;
     }
-    return { quantity: q, measurement: m };
+    return { quantity: `${q}`, measurement: m };
 };
