@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
 const IngredientSchema = require('./ingredient');
+const CollectionSchema = require('./collection');
 
 const passportLocalMongoose = require('passport-local-mongoose');
 
@@ -12,12 +13,7 @@ const userSchema = new mongoose.Schema({
     password: {type: String, required: true},
     resetToken: String,
     tokenExpires: Date,
-    recipes: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'recipes'
-        }
-    ],
+    collections: [CollectionSchema],
     menu: [
         {
             type: mongoose.Schema.Types.ObjectId,

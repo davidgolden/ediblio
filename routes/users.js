@@ -11,6 +11,21 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_SECRET
 });
 
+// const Collection = require("../models/collection");
+// (async function() {
+//     const users = await User.find({});
+//     for (let i = 0; i < users.length; i++) {
+//         const user = users[i];
+//         console.log(user.username);
+//         user.collections = [{
+//             name: "Favorites",
+//             recipes: [],
+//         }]
+//         await user.save();
+//     }
+// })();
+
+
 router.route('/users')
 // get all users
     .get((req, res) => {

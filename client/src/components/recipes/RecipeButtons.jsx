@@ -11,12 +11,13 @@ const RecipeButtons = props => {
 
     const context = useContext(ApiStoreContext);
 
-    const addToCloud = () => {
-        let currentCloud = context.user.recipes;
-        currentCloud.push(props.recipe_id);
-        context.patchUser({
-            recipes: currentCloud,
-        })
+    const addToCollection = (collectionName = "Favorites") => {
+        const collection = context.user.collections.find(c => c.name === collectionName);
+        console.log(context.user.collections);
+        if (collection) {
+            collection.recipes.push(props.recipe_id);
+            context.putCollection(collection);
+        }
     };
 
     const removeFromCloud = () => {
@@ -48,7 +49,7 @@ const RecipeButtons = props => {
             {inCloud && !isAuthor &&
             <RemoveButton onClick={removeFromCloud}/>}
 
-            {!inCloud && !isAuthor && <AddToCloudButton disabled={inCloud} onClick={addToCloud}/>}
+            {!inCloud && !isAuthor && <AddToCloudButton disabled={inCloud} onClick={() => addToCollection()}/>}
 
             <AddToGroceryListButton
                 disabled={inMenu}

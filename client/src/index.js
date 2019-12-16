@@ -146,6 +146,24 @@ export default class App extends React.Component {
         });
     };
 
+    putCollection = collectionObj => {
+        return new Promise((res, rej) => {
+            axios.patch(`/api/users/${this.state.user._id}/collections/${collectionObj._id}`, {
+                ...collectionObj
+            })
+                .then(response => {
+                    this.setState({
+                        user: response.data.user,
+                    });
+                    res();
+                })
+                .catch(err => {
+                    this.handleError(err.response.data.detail);
+                    rej(err);
+                })
+        });
+    };
+
     getUserLists = id => {
         return new Promise((res, rej) => {
             axios.get(`/api/users/${id}/list`)
