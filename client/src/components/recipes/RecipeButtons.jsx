@@ -13,7 +13,6 @@ const RecipeButtons = props => {
 
     const addToCollection = (collectionName = "Favorites") => {
         const collection = context.user.collections.find(c => c.name === collectionName);
-        console.log(context.user.collections);
         if (collection) {
             collection.recipes.push(props.recipe_id);
             context.putCollection(collection);
@@ -32,7 +31,7 @@ const RecipeButtons = props => {
         return false;
     }
 
-    const inCloud = !!(context.user.recipes.find(id => id === props.recipe_id));
+    // const inCloud = !!(context.user.recipes.find(id => id === props.recipe_id));
     const inMenu = !!(context.user.menu.find(item => item._id === props.recipe_id) || context.user.menu.includes(props.recipe_id));
     const isAuthor = props.author_id === context.user._id;
 
@@ -44,12 +43,12 @@ const RecipeButtons = props => {
     return (
         <React.Fragment>
 
-            {(inCloud || isAuthor) && <InCloudButton disabled={true}/>}
+            {/*{(isAuthor) && <InCloudButton disabled={true}/>}*/}
 
-            {inCloud && !isAuthor &&
-            <RemoveButton onClick={removeFromCloud}/>}
+            {/*{!isAuthor &&*/}
+            {/*<RemoveButton onClick={removeFromCloud}/>}*/}
 
-            {!inCloud && !isAuthor && <AddToCloudButton disabled={inCloud} onClick={() => addToCollection()}/>}
+            <AddToCloudButton recipe_id={props.recipe_id} addToCollection={addToCollection}/>
 
             <AddToGroceryListButton
                 disabled={inMenu}

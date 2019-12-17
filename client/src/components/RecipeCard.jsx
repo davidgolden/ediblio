@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {Link} from "@reach/router";
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -11,6 +11,7 @@ import {faUser} from '@fortawesome/free-solid-svg-icons';
 const RecipeCard = props => {
 
     const context = useContext(ApiStoreContext);
+    const [showButtons, setShowButtons] = useState(false);
 
     const deleteRecipe = () => {
         if (confirm('Are you sure you want to do that?')) {
@@ -39,7 +40,7 @@ const RecipeCard = props => {
     });
 
     return (
-        <div className={recipeCardClassName}>
+        <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)} onMouseLeave={() => setShowButtons(false)}>
             <Link to={`/recipes/${props.recipe._id}`}>
                 <div>
                     <img src={props.recipe.image} className={recipeCardImageClassName}/>
@@ -49,12 +50,12 @@ const RecipeCard = props => {
                 </div>
             </Link>
             <div className={recipeCardButtonClassName}>
-                <RecipeButtons
+                {showButtons && <RecipeButtons
                     recipe_id={props.recipe._id}
                     author_id={props.recipe.author_id._id}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
-                />
+                />}
             </div>
             <div className={userImageClassName}>
                 {props.recipe.author_id.profileImage ?

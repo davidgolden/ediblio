@@ -5,6 +5,7 @@ import styles from './styles/Button.scss';
 const Button = props => {
     const buttonClassName = classNames({
         [styles.button]: true,
+        [styles.buttonDisabled]: props.disabled,
         [props.className]: props.className,
     });
 

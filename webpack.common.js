@@ -37,18 +37,17 @@ module.exports = {
                 }
             },
             {
-                test: /\.scss$/,
+                test: /\.s?css$/,
                 use: [
                     "style-loader", // creates style nodes from JS strings
-                    {loader: 'css-loader', options: {modules: true, importLoaders: 1}},
+                    {
+                        loader: 'css-loader', options: {
+                            modules: true,
+                            importLoaders: 1,
+                            localIdentName: '[name]_[hash].[ext]'
+                        }
+                    },
                     "sass-loader" // compiles Sass to CSS, using Node Sass by default
-                ]
-            },
-            {
-                test: /\.css$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    "css-loader"
                 ]
             },
             {

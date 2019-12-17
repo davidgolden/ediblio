@@ -5,6 +5,11 @@
   border: none;
   transition: background-color .25s ease, color .25s ease;
   cursor: pointer;
+
+  &Disabled {
+    opacity: .5;
+    pointer-events: none;
+  }
 }
 
 .stockButtonsBar {
@@ -40,6 +45,40 @@
     pointer-events: none;
     opacity: .5;
     cursor: default;
+  }
+}
+
+.collectionDialog {
+  > div {
+    position: absolute;
+    top: -5px;
+    background-color: $light;
+    left: 40px;
+    z-index: 2;
+    font-size: 1.5rem;
+    width: 200px;
+    border-radius: 10px;
+    color: $dark;
+
+    button {
+      font-size: 1.2rem;
+      width: 100%;
+      padding: 5px;
+      margin: 0 !important;
+
+      &:hover {
+        background-color: $other;
+        color: $light;
+      }
+    }
+
+    input {
+      padding: 5px;
+      font-size: 1.2rem;
+      width: 180px;
+      border-radius: 5px;
+      margin: 5px;
+    }
   }
 }
 

@@ -28,54 +28,53 @@
     }
   }
 
-  &:hover {
-    .userImage {
-      position: absolute;
-      top: 13px;
-      right: 15px;
-      z-index: 1;
-      display: inline;
-      opacity: 1;
+  .userImage {
+    position: absolute;
+    top: 13px;
+    right: 15px;
+    z-index: 1;
+    display: inline;
+    opacity: 1;
 
-      img {
-        width: 50px;
-        height: 50px;
-        border-radius: 100%;
-      }
+    img {
+      width: 50px;
+      height: 50px;
+      border-radius: 100%;
+    }
 
-      svg {
-        color: white;
-        background-color: lightgray;
-        font-size: 1.8rem;
-        padding: 10px;
-        border-radius: 100%;
+    svg {
+      color: white;
+      background-color: lightgray;
+      font-size: 1.8rem;
+      padding: 10px;
+      border-radius: 100%;
+    }
+  }
+
+  .recipeCardText {
+    color: $primary-color;
+    text-decoration: none;
+  }
+
+  .recipeCardButtons {
+    opacity: 1;
+    display: inline;
+    position: absolute;
+    top: 13px;
+    left: 15px;
+    z-index: 1;
+
+    &:hover {
+      .recipeCard {
+        pointer-events: none;
       }
     }
 
-    .recipeCardText {
-      color: $primary-color;
-      text-decoration: none;
-    }
-
-    .recipeCardButtons {
-      opacity: 1;
-      display: inline;
-      position: absolute;
-      top: 13px;
-      left: 15px;
-      z-index: 1;
-
-      &:hover {
-        .recipeCard {
-          pointer-events: none;
-        }
-      }
-
-      button {
-        border-radius: 0;
-        margin-left: 3px;
-      }
-    }
+    //
+    //button {
+    //  border-radius: 0;
+    //  margin-left: 3px;
+    //}
   }
 
   a {
