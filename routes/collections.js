@@ -9,7 +9,7 @@ router.patch('/users/:user_id/collections/:collection_id', middleware.isLoggedIn
         "$set": {
             [`collections.$`]: req.body,
         }
-    });
+    }, {new: true});
 
     res.status(200).json({user})
 });
