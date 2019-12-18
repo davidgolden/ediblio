@@ -21,20 +21,18 @@ const AddToCloudButton = props => {
     const collectionDialogClassName = classNames({
         [styles.collectionDialog]: true,
     });
+    function handleKeyDown(e) {
+        if (e.which === 13 && dialogOpen && createNew && collectionName) {
+            context.createCollection(collectionName);
+            setCreateNew(false);
+            setCollectionName("");
+        }
+    }
 
     useEffect(() => {
-        function handleKeyDown(e) {
-            console.log(e.which, dialogOpen, createNew, collectionName);
-            if (e.which === 13 && dialogOpen && createNew && collectionName) {
-                console.log('here')
-                context.createCollection(collectionName);
-                // setCreateNew(false);
-            }
-        }
-
         addEventListener('keydown', handleKeyDown);
         return () => removeEventListener('keydown', handleKeyDown);
-    }, []);
+    });
 
     return (
         <div onMouseLeave={() => setDialogOpen(true)} className={collectionDialogClassName}>

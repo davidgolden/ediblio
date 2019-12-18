@@ -167,7 +167,6 @@ export default class App extends React.Component {
     createCollection = name => {
         return new Promise((res, rej) => {
             axios.patch(`/api/users/${this.state.user._id}`, {
-                ...this.state.user,
                 collections: this.state.user.collections.concat([{
                     name,
                     recipes: [],
