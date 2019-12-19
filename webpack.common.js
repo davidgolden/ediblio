@@ -6,7 +6,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 outputFolder = 'client/dist/';
 
 module.exports = {
-    entry: "./client/src/index.js",
+    entry: ["core-js/stable", "regenerator-runtime/runtime", "./client/src/index.js"],
     output: {
         path: path.resolve(__dirname, outputFolder),
         filename: "bundle.js",
@@ -27,12 +27,9 @@ module.exports = {
         rules: [
             {
                 test: /\.js|.jsx?$/,
-                exclude: /(node_modules)/,
                 loader: 'babel-loader',
                 options: {
-                    plugins: [['@babel/plugin-proposal-decorators', {
-                        legacy: true,
-                    }], ["@babel/plugin-proposal-class-properties", {"loose": true}],],
+                    plugins: [["@babel/plugin-proposal-class-properties", {"loose": true}]],
                     presets: ['@babel/preset-env', '@babel/preset-react']
                 }
             },
