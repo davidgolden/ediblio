@@ -70,11 +70,15 @@
       }
     }
 
-    //
-    //button {
-    //  border-radius: 0;
-    //  margin-left: 3px;
-    //}
+
+    > button, > div > button {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 2px;
+      display: block;
+      border-radius: 0;
+      margin-left: 3px;
+    }
   }
 
   a {
