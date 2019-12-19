@@ -9,7 +9,7 @@ import {ApiStoreContext} from "../../../stores/api_store";
 const AddToCloudButton = props => {
 
     const context = useContext(ApiStoreContext);
-    const [dialogOpen, setDialogOpen] = useState(true);
+    const [dialogOpen, setDialogOpen] = useState(false);
     const [createNew, setCreateNew] = useState(false);
     const [collectionName, setCollectionName] = useState("");
 
@@ -35,7 +35,7 @@ const AddToCloudButton = props => {
     });
 
     return (
-        <div onMouseLeave={() => setDialogOpen(true)} className={collectionDialogClassName}>
+        <div onMouseLeave={() => setDialogOpen(false)} className={collectionDialogClassName}>
             <Button onMouseOver={() => setDialogOpen(true)} className={removeButtonClassName}>
                 <FontAwesomeIcon icon={faPlus}/>
             </Button>
@@ -44,7 +44,7 @@ const AddToCloudButton = props => {
                 <ul>
                     {context.user.collections.map(c => {
                         return <li key={c._id}>
-                            <Button disabled={c.recipes.includes(props.recipe_id)} onClick={() => props.addToCollection(c.name)}>{c.name}</Button>
+                            <Button disabled={c.recipes.find(r => r._id === props.recipe_id)} onClick={() => props.addToCollection(c.name)}>{c.name}</Button>
                         </li>
                     })}
                 </ul>

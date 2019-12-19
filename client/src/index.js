@@ -195,6 +195,24 @@ export default class App extends React.Component {
         });
     };
 
+    removeCollection = async id => {
+        return new Promise((res, rej) => {
+            axios.delete(`/api/collections/${id}`)
+                .then(() => {
+                    this.setState({
+                        user: {
+                            ...this.state.user,
+                            collections: {
+                                ...this.state.user.collections.filter(c => c._id !== id),
+                            }
+                        }
+                    });
+                    res();
+                })
+                .catch(rej)
+        })
+    };
+
     getUserLists = id => {
         return new Promise((res, rej) => {
             axios.get(`/api/users/${id}/list`)

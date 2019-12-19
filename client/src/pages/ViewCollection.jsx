@@ -8,6 +8,7 @@ import LoadingNextPage from "../components/utilities/LoadingNextPage";
 
 const ViewCollection  = props => {
     const [recipes, setRecipes] = useState([]);
+    const [title, setTitle] = useState("");
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
     const [loadedAll, setLoadedAll] = useState(false);
 
@@ -22,6 +23,7 @@ const ViewCollection  = props => {
             })
                 .then(collection => {
                     setRecipes(r => r.concat(collection.recipes));
+                    if (!title) setTitle(collection.name);
                     if (collection.recipes.length < 12) {
                         setLoadedAll(true);
                     } else {
@@ -36,7 +38,8 @@ const ViewCollection  = props => {
     });
 
     return (
-        <div>
+        <div className={styles.collectionsContainer}>
+            <h1>{title}</h1>
             <div className={browseRecipesContainerClassName}>
                 {recipes.map(recipe => {
                     return <RecipeCard key={recipe._id} recipe={recipe}/>
