@@ -7,6 +7,12 @@
 .recipeEditButtons {
   text-align: center;
   margin-top: 20px;
+  position: relative;
+
+  > div {
+    display: inline-block;
+    position: relative;
+  }
 
   button {
     border-radius: 5px;

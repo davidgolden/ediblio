@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import RecipeForm from './AddRecipe';
 import ShowRecipe from '../components/recipes/ShowRecipe';
 import styles from './styles/RecipeContainer.scss';
@@ -98,12 +98,12 @@ const RecipeContainer = props => {
                             </React.Fragment>)
                         }
                     </Button>)}
-                {recipe && context.isLoggedIn && <RecipeButtons
-                    recipe_id={recipe._id}
-                    author_id={recipe.author_id._id}
-                    addToGroceryList={addToGroceryList}
-                    deleteRecipe={deleteRecipe}
-                />}
+                    {recipe && context.isLoggedIn && <RecipeButtons
+                        recipe_id={recipe._id}
+                        author_id={recipe.author_id._id}
+                        addToGroceryList={addToGroceryList}
+                        deleteRecipe={deleteRecipe}
+                    />}
             </div>
             {edit === true ? (
                 <RecipeForm

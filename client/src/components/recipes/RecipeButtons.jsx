@@ -11,27 +11,27 @@ const RecipeButtons = props => {
 
     const context = useContext(ApiStoreContext);
 
-    const addToCloud = () => {
-        let currentCloud = context.user.recipes;
-        currentCloud.push(props.recipe_id);
-        context.patchUser({
-            recipes: currentCloud,
-        })
+    const addToCollection = (collectionName = "Favorites") => {
+        const collection = context.user.collections.find(c => c.name === collectionName);
+        if (collection) {
+            collection.recipes.push(props.recipe_id);
+            context.putCollection(collection);
+        }
     };
 
-    const removeFromCloud = () => {
-        let currentCloud = context.user.recipes;
-        currentCloud = currentCloud.filter(recipe_id => recipe_id !== props.recipe_id);
-        context.patchUser({
-            recipes: currentCloud,
-        })
+    const removeFromCollection = (collectionId, recipeId) => {
+        const collection = context.user.collections.find(c => c._id === collectionId);
+        if (collection) {
+            collection.recipes = collection.recipes.filter(r => r._id !== recipeId);
+            context.putCollection(collection);
+        }
     };
 
     if (!context.isLoggedIn) {
         return false;
     }
 
-    const inCloud = !!(context.user.recipes.find(id => id === props.recipe_id));
+    // const inCloud = !!(context.user.recipes.find(id => id === props.recipe_id));
     const inMenu = !!(context.user.menu.find(item => item._id === props.recipe_id) || context.user.menu.includes(props.recipe_id));
     const isAuthor = props.author_id === context.user._id;
 
@@ -43,12 +43,7 @@ const RecipeButtons = props => {
     return (
         <React.Fragment>
 
-            {(inCloud || isAuthor) && <InCloudButton disabled={true}/>}
-
-            {inCloud && !isAuthor &&
-            <RemoveButton onClick={removeFromCloud}/>}
-
-            {!inCloud && !isAuthor && <AddToCloudButton disabled={inCloud} onClick={addToCloud}/>}
+            <AddToCloudButton recipe_id={props.recipe_id} removeFromCollection={removeFromCollection} addToCollection={addToCollection}/>
 
             <AddToGroceryListButton
                 disabled={inMenu}

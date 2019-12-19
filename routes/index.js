@@ -8,11 +8,10 @@ const express = require('express'),
     URLSafeBase64 = require('urlsafe-base64');
 
 // authenticate user
-router.post('/authenticate', function (req, res) {
-    const user = req.session.user;
-
-    if (user) {
-        return res.status(200).send({user: req.session.user});
+router.post('/authenticate', async function (req, res) {
+    if (req.session.user) {
+        const user = await User.findById(req.session.user._id);
+        return res.status(200).send({user});
     } else {
         return res.sendStatus(200);
     }

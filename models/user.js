@@ -12,12 +12,10 @@ const userSchema = new mongoose.Schema({
     password: {type: String, required: true},
     resetToken: String,
     tokenExpires: Date,
-    recipes: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'recipes'
-        }
-    ],
+    collections: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'collections'
+    }],
     menu: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -27,6 +25,25 @@ const userSchema = new mongoose.Schema({
     groceryList: {
         type: [IngredientSchema]
     }
+}, {
+    toJSON: {
+        virtuals: true,
+    },
+    toObject: {
+        virtuals: true,
+    }
+});
+
+userSchema.pre('find', function() {
+    this.populate('collections');
+});
+
+userSchema.pre('findOne', function() {
+    this.populate('collections');
+});
+
+userSchema.pre('findOneAndUpdate', function() {
+    this.populate('collections');
 });
 
 userSchema.pre('save', function (next) {

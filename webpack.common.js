@@ -1,21 +1,13 @@
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const TerserPlugin = require('terser-webpack-plugin');
 
 outputFolder = 'client/dist/';
 
 module.exports = {
-    entry: "./client/src/index.js",
+    entry: ["./polyfills.js", "./client/src/index.js"],
     output: {
         path: path.resolve(__dirname, outputFolder),
         filename: "bundle.js",
-    },
-    optimization: {
-        minimizer: [
-            new TerserPlugin(),
-            new OptimizeCSSAssetsPlugin({})
-        ],
     },
     plugins: [
         new MiniCssExtractPlugin({
@@ -27,28 +19,23 @@ module.exports = {
         rules: [
             {
                 test: /\.js|.jsx?$/,
-                exclude: /(node_modules)/,
                 loader: 'babel-loader',
                 options: {
-                    plugins: [['@babel/plugin-proposal-decorators', {
-                        legacy: true,
-                    }], ["@babel/plugin-proposal-class-properties", {"loose": true}],],
-                    presets: ['@babel/preset-env', '@babel/preset-react']
+                    babelrc: true,
                 }
             },
             {
-                test: /\.scss$/,
+                test: /\.s?css$/,
                 use: [
                     "style-loader", // creates style nodes from JS strings
-                    {loader: 'css-loader', options: {modules: true, importLoaders: 1}},
+                    {
+                        loader: 'css-loader', options: {
+                            modules: true,
+                            importLoaders: 1,
+                            localIdentName: '[name]_[hash].[ext]'
+                        }
+                    },
                     "sass-loader" // compiles Sass to CSS, using Node Sass by default
-                ]
-            },
-            {
-                test: /\.css$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    "css-loader"
                 ]
             },
             {

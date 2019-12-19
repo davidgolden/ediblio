@@ -17,6 +17,7 @@ const User = require('./models/user');
 
 const userRoutes = require('./routes/users'),
     recipeRoutes = require('./routes/recipes'),
+    collectionRoutes = require('./routes/collections'),
     indexRoutes = require('./routes/index');
 
 const env = process.env.NODE_ENV || "development";
@@ -93,6 +94,7 @@ passport.deserializeUser(function (id, done) {
 app.use('/api/', indexRoutes);
 app.use('/api/', userRoutes);
 app.use('/api/', recipeRoutes);
+app.use('/api/', collectionRoutes);
 
 // this is needed in order to send static files like index.html... DO NOT GET RID OF IT!!!
 app.use(express.static(path.join(__dirname, "client")));

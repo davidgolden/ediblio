@@ -11,3 +11,30 @@
     font-size: 2rem;
   }
 }
+
+.collectionsContainer {
+  h1 {
+    text-align: center;
+    padding-top: 1rem;
+  }
+}
+
+.userRecipesContainer {
+  text-align: center;
+
+  > div {
+    display: inline-block;
+    padding: 1rem;
+
+    h3 {
+      display: inline-block;
+      font-size: 2rem;
+      vertical-align: middle;
+      padding: 0 1rem;
+    }
+
+    button {
+      vertical-align: middle;
+    }
+  }
+}

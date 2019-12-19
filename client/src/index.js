@@ -15,6 +15,8 @@ import axios from "axios";
 import {addIngredient, canBeAdded} from "./utils/conversions";
 import './stylesheets/base.scss';
 import UserSettings from "./pages/UserSettings";
+import ViewUserRecipes from "./pages/ViewUserRecipes";
+import ViewCollection from "./pages/ViewCollection";
 
 let source = createHashSource();
 let history = createHistory(source);
@@ -82,6 +84,11 @@ export default class App extends React.Component {
             });
     };
 
+    getCollectionRecipes = async (collectionId, query) => {
+        const response = await axios.get(`/api/collections/${collectionId}`, query);
+        return response.data.collection;
+    };
+
     getRecipes = params => {
         // accepted params: author, tags, page, page_size
         const requestParams = params;
@@ -144,6 +151,66 @@ export default class App extends React.Component {
                     rej(err);
                 })
         });
+    };
+
+    putCollection = collectionObj => {
+        return new Promise((res, rej) => {
+            axios.patch(`/api/collections/${collectionObj._id}`, {
+                ...collectionObj
+            })
+                .then(response => {
+                    this.setState({
+                        user: {
+                            ...this.state.user,
+                            collections: this.state.user.collections.map(c => {
+                                if (c._id === collectionObj._id) {
+                                    return response.data.collection;
+                                }
+                                return c;
+                            })
+                        },
+                    });
+                    res();
+                })
+                .catch(err => {
+                    this.handleError(err.response.data.detail);
+                    rej(err);
+                })
+        });
+    };
+
+    createCollection = name => {
+        return new Promise((res, rej) => {
+            axios.post(`/api/collections`, {name})
+                .then(response => {
+                    this.setState({
+                        user: response.data.user,
+                    });
+                    res();
+                })
+                .catch(err => {
+                    this.handleError(err.response.data.detail);
+                    rej(err);
+                })
+        });
+    };
+
+    removeCollection = async id => {
+        return new Promise((res, rej) => {
+            axios.delete(`/api/collections/${id}`)
+                .then(() => {
+                    this.setState({
+                        user: {
+                            ...this.state.user,
+                            collections: {
+                                ...this.state.user.collections.filter(c => c._id !== id),
+                            }
+                        }
+                    });
+                    res();
+                })
+                .catch(rej)
+        })
     };
 
     getUserLists = id => {
@@ -335,7 +402,8 @@ export default class App extends React.Component {
                     <Notification/>
                     <Router>
                         <BrowseRecipes path={'/recipes'}/>
-                        <BrowseRecipes path={'/users/:user_id/recipes'}/>
+                        <ViewUserRecipes path={'/users/:user_id/recipes'}/>
+                        <ViewCollection path={'/collections/:collection_id'}/>
                         <RecipeContainer path={'/recipes/:recipe_id'}/>
                         <GroceryList path={'/users/:user_id/groceries'}/>
                         <AddRecipe path={'/add'}/>
