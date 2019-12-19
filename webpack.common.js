@@ -1,21 +1,13 @@
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const TerserPlugin = require('terser-webpack-plugin');
 
 outputFolder = 'client/dist/';
 
 module.exports = {
-    entry: ["core-js/stable", "regenerator-runtime/runtime", "./client/src/index.js"],
+    entry: ["./polyfills.js", "./client/src/index.js"],
     output: {
         path: path.resolve(__dirname, outputFolder),
         filename: "bundle.js",
-    },
-    optimization: {
-        minimizer: [
-            new TerserPlugin(),
-            new OptimizeCSSAssetsPlugin({})
-        ],
     },
     plugins: [
         new MiniCssExtractPlugin({
@@ -29,8 +21,7 @@ module.exports = {
                 test: /\.js|.jsx?$/,
                 loader: 'babel-loader',
                 options: {
-                    plugins: [["@babel/plugin-proposal-class-properties", {"loose": true}]],
-                    presets: ['@babel/preset-env', '@babel/preset-react']
+                    babelrc: true,
                 }
             },
             {

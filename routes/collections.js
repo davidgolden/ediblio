@@ -24,6 +24,11 @@ router.delete('/collections/:collection_id', middleware.isLoggedIn, async (req, 
     const collection = await Collection.findById(req.params.collection_id);
     if (collection.ownerId.toString() === req.session.user._id) {
         await Collection.findByIdAndDelete(req.params.collection_id);
+        await User.findByIdAndUpdate(req.session.user._id, {
+            "$pull": {
+                collections: req.params.collection_id,
+            }
+        });
         return res.sendStatus(200);
     }
     return res.sendStatus(404);
