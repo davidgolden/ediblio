@@ -19,12 +19,12 @@ const RecipeButtons = props => {
         }
     };
 
-    const removeFromCloud = () => {
-        let currentCloud = context.user.recipes;
-        currentCloud = currentCloud.filter(recipe_id => recipe_id !== props.recipe_id);
-        context.patchUser({
-            recipes: currentCloud,
-        })
+    const removeFromCollection = (collectionId, recipeId) => {
+        const collection = context.user.collections.find(c => c._id === collectionId);
+        if (collection) {
+            collection.recipes = collection.recipes.filter(r => r._id !== recipeId);
+            context.putCollection(collection);
+        }
     };
 
     if (!context.isLoggedIn) {
@@ -43,12 +43,7 @@ const RecipeButtons = props => {
     return (
         <React.Fragment>
 
-            {/*{(isAuthor) && <InCloudButton disabled={true}/>}*/}
-
-            {/*{!isAuthor &&*/}
-            {/*<RemoveButton onClick={removeFromCloud}/>}*/}
-
-            <AddToCloudButton recipe_id={props.recipe_id} addToCollection={addToCollection}/>
+            <AddToCloudButton recipe_id={props.recipe_id} removeFromCollection={removeFromCollection} addToCollection={addToCollection}/>
 
             <AddToGroceryListButton
                 disabled={inMenu}

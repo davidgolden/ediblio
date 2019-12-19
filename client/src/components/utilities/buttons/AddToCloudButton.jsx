@@ -21,6 +21,7 @@ const AddToCloudButton = props => {
     const collectionDialogClassName = classNames({
         [styles.collectionDialog]: true,
     });
+
     function handleKeyDown(e) {
         if (e.which === 13 && dialogOpen && createNew && collectionName) {
             context.createCollection(collectionName);
@@ -40,11 +41,20 @@ const AddToCloudButton = props => {
                 <FontAwesomeIcon icon={faPlus}/>
             </Button>
             {dialogOpen && <div>
-                Add to Collection
                 <ul>
                     {context.user.collections.map(c => {
+                        const inCollection = c.recipes.find(r => r._id === props.recipe_id);
                         return <li key={c._id}>
-                            <Button disabled={c.recipes.find(r => r._id === props.recipe_id)} onClick={() => props.addToCollection(c.name)}>{c.name}</Button>
+                            <Button onClick={() => {
+                                if (inCollection) {
+                                    props.removeFromCollection(c._id, props.recipe_id);
+                                } else {
+                                    props.addToCollection(c.name);
+                                }
+                            }}>
+                                {inCollection ? "Remove from " : "Add to "}
+                                {c.name}
+                            </Button>
                         </li>
                     })}
                 </ul>
