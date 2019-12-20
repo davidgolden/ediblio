@@ -1,10 +1,10 @@
 import React, {useContext, useState, useEffect} from 'react';
 import axios from 'axios';
-import {Link} from "@reach/router";
 import CollectionCard from "../client/src/components/CollectionCard";
 import styles from './styles/BrowseRecipes.scss';
 import {ApiStoreContext} from "../client/src/stores/api_store";
 import DeleteButton from "../client/src/components/utilities/buttons/DeleteButton";
+import Link from 'next/link';
 
 export default function ViewUserRecipes(props) {
     const [collections, setCollections] = useState([]);
@@ -30,7 +30,7 @@ export default function ViewUserRecipes(props) {
                 <div>
                     <h3>{c.name}</h3><DeleteButton onClick={() => removeFromCollection(c._id)}/>
                 </div>
-                <Link to={`/collections/${c._id}`}>
+                <Link href={`/collections/${c._id}`}>
                     <CollectionCard images={c.recipes}/>
                 </Link>
             </div>)}

@@ -6,7 +6,7 @@ module.exports = withCSS(withSass({
     cssLoaderOptions: {
         // url: false, // otherwise not resolving url(image.png) -> url(./image.png)
         // exportOnlyLocals: false,
-        localIdentName: '[name]_[hash:base64:5]',
+        localIdentName: '[local]_[hash:base64:5]',
     },
     webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
         config.module.rules.push({

@@ -1,5 +1,4 @@
-import React, { useContext, useState } from 'react';
-import {Link} from "@reach/router";
+import React, {useContext, useState} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styles from './styles/RecipeCard.scss';
@@ -7,6 +6,7 @@ import RecipeButtons from "./recipes/RecipeButtons";
 import {ApiStoreContext} from "../stores/api_store";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faUser} from '@fortawesome/free-solid-svg-icons';
+import Link from "next/link";
 
 const RecipeCard = props => {
 
@@ -40,14 +40,17 @@ const RecipeCard = props => {
     });
 
     return (
-        <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)} onMouseLeave={() => setShowButtons(false)}>
-            <Link to={`/recipes/${props.recipe._id}`}>
-                <div>
-                    <img src={props.recipe.image} className={recipeCardImageClassName}/>
-                </div>
-                <div className={recipeCardTextClassName}>
-                    <h3>{props.recipe.name}</h3>
-                </div>
+        <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)}
+             onMouseLeave={() => setShowButtons(false)}>
+            <Link href={`/recipes/${props.recipe._id}`}>
+                <>
+                    <div>
+                        <img src={props.recipe.image} className={recipeCardImageClassName}/>
+                    </div>
+                    <div className={recipeCardTextClassName}>
+                        <h3>{props.recipe.name}</h3>
+                    </div>
+                </>
             </Link>
             <div className={recipeCardButtonClassName}>
                 {showButtons && <RecipeButtons
@@ -59,7 +62,7 @@ const RecipeCard = props => {
             </div>
             <div className={userImageClassName}>
                 {props.recipe.author_id.profileImage ?
-                <img src={props.recipe.author_id.profileImage} /> :
+                    <img src={props.recipe.author_id.profileImage}/> :
                     <FontAwesomeIcon icon={faUser}/>}
             </div>
         </div>

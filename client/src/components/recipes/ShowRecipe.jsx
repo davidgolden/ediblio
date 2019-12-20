@@ -2,11 +2,11 @@ import React, {useState, useContext} from 'react';
 import AddIngredients from './AddIngredients';
 import classNames from 'classnames';
 import styles from './styles/ShowRecipe.scss';
-import {Link} from '@reach/router';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faShoppingBag} from '@fortawesome/free-solid-svg-icons';
 import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
+import Link from "next/link";
 
 const ShowRecipe = props => {
     const [added, setAdded] = useState(false);
@@ -39,8 +39,10 @@ const ShowRecipe = props => {
             <div className={showRecipeTitleClassName}>
                 {props.recipe && <div>
                     <h1>{props.recipe.name}</h1>
-                    <h2>Submitted by <Link to={`/users/${props.recipe.author_id._id}/recipes`}>
-                        {props.recipe.author_id.username}
+                    <h2>Submitted by <Link href={`/users/${props.recipe.author_id._id}/recipes`}>
+                        <a>
+                            {props.recipe.author_id.username}
+                        </a>
                     </Link>. {props.recipe.url &&
                     <a href={props.recipe.url} target='_blank'>View Original Recipe</a>}</h2>
                     <div>
