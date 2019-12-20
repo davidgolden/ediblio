@@ -38,9 +38,12 @@
 
     svg {
       margin-right: 10px;
+      width: 20px;
+      vertical-align: middle;
     }
 
     input {
+      vertical-align: middle;
       padding: 5px;
       border-radius: 5px;
       font-size: 1.2rem;
@@ -64,6 +67,10 @@
     padding: 10px 12px;
     border-radius: 5px;
     margin: 10px 0 0;
+
+    svg {
+      width: 20px;
+    }
 
     &Highlight {
       background-color: $other;

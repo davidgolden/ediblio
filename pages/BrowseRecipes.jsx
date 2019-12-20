@@ -6,6 +6,8 @@ import SortingBar from "../client/src/components/recipes/SortingBar";
 import LoadingNextPage from '../client/src/components/utilities/LoadingNextPage';
 import useScrolledBottom from "../client/src/components/utilities/useScrolledBottom";
 import {ApiStoreContext} from "../client/src/stores/api_store";
+import Header from "../client/src/components/header/Header";
+import Notification from "../client/src/components/header/Notification";
 
 const BrowseRecipes = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);

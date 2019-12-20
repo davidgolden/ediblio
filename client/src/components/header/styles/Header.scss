@@ -4,10 +4,29 @@
   background-color: $other;
   color: white;
   min-height: 50px;
+  height: 50px;
   overflow: hidden;
   position: sticky;
   top: 0;
   z-index: 2;
+
+  h1 {
+    display: inline;
+    margin-left: 1.5rem;
+
+    a {
+      text-decoration: none;
+      line-height: 50px;
+      color: $otherdark;
+
+      svg {
+        font-size: 2rem;
+        color: white;
+        width: 50px;
+        vertical-align: middle;
+      }
+    }
+  }
 
   > div { // container of everything that's not the navigation links
     position: absolute;
@@ -41,50 +60,36 @@
       color: white;
       font-size: 1rem;
     }
-  }
 
-  h1 {
-    display: inline;
-    margin-left: 1.5rem;
 
-    a {
-      text-decoration: none;
-      line-height: 50px;
-      color: $otherdark;
+
+    a, button {
+      margin-right: 10px;
+      background-color: inherit;
     }
 
-    svg {
-      font-size: 2rem;
-      color: white;
-    }
-  }
+    ul {
+      list-style: none;
+      display: inline-block;
+      margin: 0;
+      vertical-align: middle;
+      padding-right: 10px;
 
-  a, button {
-    margin-right: 10px;
-    background-color: inherit;
-  }
+      li {
+        float: left;
 
-  ul {
-    list-style: none;
-    display: inline-block;
-    margin: 0;
-    vertical-align: middle;
-    padding-right: 10px;
+        input, button {
+          margin-right: 10px;
+          padding: 5px;
+          height: 30px;
+        }
 
-    li {
-      float: left;
-
-      input, button {
-        margin-right: 10px;
-        padding: 5px;
-        height: 30px;
-      }
-
-      button {
-        line-height: 30px;
-        padding: 0 10px;
-        vertical-align: middle;
-        border-radius: 10px;
+        button {
+          line-height: 30px;
+          padding: 0 10px;
+          vertical-align: middle;
+          border-radius: 10px;
+        }
       }
     }
   }

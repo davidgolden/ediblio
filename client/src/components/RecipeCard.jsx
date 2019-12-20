@@ -43,14 +43,14 @@ const RecipeCard = props => {
         <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)}
              onMouseLeave={() => setShowButtons(false)}>
             <Link href={`/recipes/${props.recipe._id}`}>
-                <>
+                <a>
                     <div>
                         <img src={props.recipe.image} className={recipeCardImageClassName}/>
                     </div>
                     <div className={recipeCardTextClassName}>
                         <h3>{props.recipe.name}</h3>
                     </div>
-                </>
+                </a>
             </Link>
             <div className={recipeCardButtonClassName}>
                 {showButtons && <RecipeButtons

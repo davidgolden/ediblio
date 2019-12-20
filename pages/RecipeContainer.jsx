@@ -12,6 +12,7 @@ import {ApiStoreContext} from "../client/src/stores/api_store";
 const RecipeContainer = props => {
     const [edit, setEdit] = useState(false);
     const [recipe, setRecipe] = useState(null);
+    console.log(props.recipe_id);
 
     const context = useContext(ApiStoreContext);
 
@@ -86,7 +87,6 @@ const RecipeContainer = props => {
 
     return (
         <div className={recipeContainerClassName}>
-
             <div className={recipeEditButtonsClassName}>
                 {recipe && context.isLoggedIn && (recipe.author_id._id === props.query.user._id || props.query.user.isAdmin) && (
                     <Button className={toggleEditClassName} onClick={toggleEdit}>
@@ -125,6 +125,12 @@ const RecipeContainer = props => {
             )}
         </div>
     )
+};
+
+RecipeContainer.getInitialProps = ({query}) => {
+    return {
+        recipe_id: query.recipe_id,
+    };
 };
 
 export default RecipeContainer;
