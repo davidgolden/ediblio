@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
-import RecipeInformation from '../components/recipes/RecipeInformation';
-import AddIngredients from '../components/recipes/AddIngredients';
-import Button from "../components/utilities/buttons/Button";
-import {recipeTags} from "../stores/Setings";
+import RecipeInformation from '../client/src/components/recipes/RecipeInformation';
+import AddIngredients from '../client/src/components/recipes/AddIngredients';
+import Button from "../client/src/components/utilities/buttons/Button";
+import {recipeTags} from "../client/src/stores/Setings";
 import styles from './styles/AddRecipe.scss';
 import classNames from 'classnames';
-import {ApiStoreContext} from "../stores/api_store";
+import {ApiStoreContext} from "../client/src/stores/api_store";
 
 const AddTags = (props) => {
     const tagClassName = classNames({

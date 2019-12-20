@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
-import AddIngredients from '../components/recipes/AddIngredients';
+import AddIngredients from '../client/src/components/recipes/AddIngredients';
 import styles from './styles/GroceryList.scss';
 import classNames from 'classnames';
-import Button from "../components/utilities/buttons/Button";
-import RemoveButton from "../components/utilities/buttons/RemoveButton"
+import Button from "../client/src/components/utilities/buttons/Button";
+import RemoveButton from "../client/src/components/utilities/buttons/RemoveButton"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
-import {ApiStoreContext} from "../stores/api_store";
+import {ApiStoreContext} from "../client/src/stores/api_store";
 
 const GroceryList = props => {
     const context = useContext(ApiStoreContext);

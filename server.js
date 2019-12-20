@@ -1,18 +1,20 @@
 require('dotenv').config({path: './.env'});
-const path = require('path');
+const express = require('express');
+const compression = require('compression');
+const next = require('next');
+
+const port = parseInt(5000, 10);
+const dev = process.env.NODE_ENV !== 'production';
+const app = next({dev});
+const handle = app.getRequestHandler();
 
 const bodyParser = require('body-parser');
-const express = require('express');
 const session = require('express-session');
 const connectStore = require('connect-mongo');
-const app = express();
 const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const methodOverride = require('method-override');
-const compression = require('compression');
 const MongoStore = connectStore(session);
-
 const User = require('./models/user');
 
 const userRoutes = require('./routes/users'),
@@ -32,10 +34,6 @@ if (env === 'production') {
     app.use(forceSsl);
 }
 
-app.use(compression());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
-app.use(methodOverride('_method'));
 
 mongoose.Promise = global.Promise;
 
@@ -62,23 +60,6 @@ passport.use(new LocalStrategy({
 }));
 
 const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
-app.use(session({
-    name: 'recipecloudsession',
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    store: new MongoStore({
-        mongooseConnection: mongoose.connection,
-        collection: 'session',
-        ttl: SESS_LIFETIME
-    }),
-    cookie: {
-        sameSite: true,
-        secure: false,
-        maxAge: SESS_LIFETIME
-    },
-    saveUninitialized: false,
-}));
-app.use(passport.initialize());
 
 passport.serializeUser(function (user, done) {
     done(null, user.id);
@@ -90,25 +71,68 @@ passport.deserializeUser(function (id, done) {
     });
 });
 
-// NEED TO IMPORT ROUTES
-app.use('/api/', indexRoutes);
-app.use('/api/', userRoutes);
-app.use('/api/', recipeRoutes);
-app.use('/api/', collectionRoutes);
 
-// this is needed in order to send static files like index.html... DO NOT GET RID OF IT!!!
-app.use(express.static(path.join(__dirname, "client")));
 
-app.get('*', function (req, res) {
-    res.sendFile(path.resolve(__dirname, 'client', 'index.html'));
-});
+app.prepare().then(() => {
+    const server = express();
+    server.use(compression());
 
-const port = process.env.PORT || 5000;
+    server.use(bodyParser.urlencoded({extended: true}));
+    server.use(bodyParser.json());
 
-app.listen(port, function (err) {
-    if (err) {
-        console.log(err);
-        return;
-    }
-    console.log('Listening at http://localhost:5000');
+    server.use(session({
+        name: 'recipecloudsession',
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        store: new MongoStore({
+            mongooseConnection: mongoose.connection,
+            collection: 'session',
+            ttl: SESS_LIFETIME
+        }),
+        cookie: {
+            sameSite: true,
+            secure: false,
+            maxAge: SESS_LIFETIME
+        },
+        saveUninitialized: false,
+    }));
+
+    server.use(passport.initialize());
+
+    // NEED TO IMPORT ROUTES
+    server.use('/api/', indexRoutes);
+    server.use('/api/', userRoutes);
+    server.use('/api/', recipeRoutes);
+    server.use('/api/', collectionRoutes);
+
+    {/*<Index path={'/recipes'}/>*/}
+    {/*<ViewUserRecipes path={'/users/:user_id/recipes'}/>*/}
+    {/*<ViewCollection path={'/collections/:collection_id'}/>*/}
+    {/*<RecipeContainer path={'/recipes/:recipe_id'}/>*/}
+    {/*<GroceryList path={'/users/:user_id/groceries'}/>*/}
+    {/*<AddRecipe path={'/add'}/>*/}
+    {/*<UserSettings path={'/users/:user_id/settings'}/>*/}
+    {/*<ForgotPassword path={'/forgot'}/>*/}
+    {/*<Landing path={'/register'}/>*/}
+
+    // server.get()
+
+    // server.get("/", async (req, res) => {
+    //     return app.render(req, res,'/BrowseRecipes', {
+    //         user: req.session.user,
+    //     })
+    // });
+
+    server.all('*', (req, res) => {
+        return app.render(req, res,'/BrowseRecipes', {
+            ...req.query,
+            user: req.session.user,
+        })
+        // return handle(req, res)
+    });
+
+    server.listen(port, err => {
+        if (err) throw err;
+        console.log(`> Ready on http://localhost:${port}`)
+    })
 });

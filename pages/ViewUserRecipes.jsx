@@ -1,10 +1,10 @@
 import React, {useContext, useState, useEffect} from 'react';
 import axios from 'axios';
 import {Link} from "@reach/router";
-import CollectionCard from "../components/CollectionCard";
+import CollectionCard from "../client/src/components/CollectionCard";
 import styles from './styles/BrowseRecipes.scss';
-import {ApiStoreContext} from "../stores/api_store";
-import DeleteButton from "../components/utilities/buttons/DeleteButton";
+import {ApiStoreContext} from "../client/src/stores/api_store";
+import DeleteButton from "../client/src/components/utilities/buttons/DeleteButton";
 
 export default function ViewUserRecipes(props) {
     const [collections, setCollections] = useState([]);

@@ -3,8 +3,8 @@ import classNames from 'classnames';
 import styles from './styles/Landing.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCloudUploadAlt, faSearchPlus, faListOl, faShoppingCart} from '@fortawesome/free-solid-svg-icons'
-import Button from "../components/utilities/buttons/Button";
-import {ApiStoreContext} from "../stores/api_store";
+import Button from "../client/src/components/utilities/buttons/Button";
+import {ApiStoreContext} from "../client/src/stores/api_store";
 
 const Landing = props => {
     const [username, setUsername] = useState('');

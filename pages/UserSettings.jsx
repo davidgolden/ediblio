@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import styles from './styles/UserSettings.scss';
 import classNames from 'classnames';
-import Button from "../components/utilities/buttons/Button";
-import {ApiStoreContext} from "../stores/api_store";
-import {processFile} from "../utils/images";
+import Button from "../client/src/components/utilities/buttons/Button";
+import {ApiStoreContext} from "../client/src/stores/api_store";
+import {processFile} from "../client/src/utils/images";
 
 const UserSettings = props => {
     const context = useContext(ApiStoreContext);

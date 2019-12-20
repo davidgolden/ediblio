@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import classNames from 'classnames';
 import styles from './styles/Forgot.scss';
-import {ApiStoreContext} from "../stores/api_store";
+import {ApiStoreContext} from "../client/src/stores/api_store";
 
 const ForgotPassword = props => {
     const [email, setEmail] = useState('');

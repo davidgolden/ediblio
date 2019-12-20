@@ -1,11 +1,11 @@
 import React, {useState, useEffect, useContext} from 'react';
-import RecipeCard from "../components/RecipeCard";
+import RecipeCard from "../client/src/components/RecipeCard";
 import classNames from 'classnames';
 import styles from './styles/BrowseRecipes.scss';
-import SortingBar from "../components/recipes/SortingBar";
-import LoadingNextPage from '../components/utilities/LoadingNextPage';
-import {ApiStoreContext} from "../stores/api_store";
-import useScrolledBottom from "../components/utilities/useScrolledBottom";
+import SortingBar from "../client/src/components/recipes/SortingBar";
+import LoadingNextPage from '../client/src/components/utilities/LoadingNextPage';
+import useScrolledBottom from "../client/src/components/utilities/useScrolledBottom";
+import {ApiStoreContext} from "../client/src/stores/api_store";
 
 const BrowseRecipes = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
@@ -15,6 +15,7 @@ const BrowseRecipes = props => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('created_at');
     const [orderBy, setOrderBy] = useState('desc');
+    const [recipes, setRecipes] = useState([]);
 
     const context = useContext(ApiStoreContext);
 
@@ -38,6 +39,7 @@ const BrowseRecipes = props => {
         if (!loadedAll) {
             context.getRecipes(query)
                 .then(recipes => {
+                    setRecipes(r => r.concat(recipes));
                     if (recipes.length < 12) {
                         setLoadedAll(true);
                     } else {
@@ -100,12 +102,12 @@ const BrowseRecipes = props => {
                 handleOrderByChange={handleOrderByChange}
             />
             <div className={browseRecipesContainerClassName}>
-                {Array.from(context.recipes.values()).map(recipe => {
+                {recipes.map(recipe => {
                     return <RecipeCard key={recipe._id} recipe={recipe}/>
                 })}
-                {context.recipes.size === 0 && <p>There doesn't seem to be anything here...</p>}
+                {recipes.length === 0 && <p>There doesn't seem to be anything here...</p>}
             </div>
-            {loadedAll || context.recipes.size !== 0 || <LoadingNextPage/>}
+            {loadedAll || recipes.length !== 0 || <LoadingNextPage/>}
         </div>
     )
 };

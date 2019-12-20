@@ -1,10 +1,10 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {ApiStoreContext} from "../stores/api_store";
-import useScrolledBottom from "../components/utilities/useScrolledBottom";
+import {ApiStoreContext} from "../client/src/stores/api_store";
+import useScrolledBottom from "../client/src/components/utilities/useScrolledBottom";
 import classNames from "classnames";
 import styles from "./styles/BrowseRecipes.scss";
-import RecipeCard from "../components/RecipeCard";
-import LoadingNextPage from "../components/utilities/LoadingNextPage";
+import RecipeCard from "../client/src/components/RecipeCard";
+import LoadingNextPage from "../client/src/components/utilities/LoadingNextPage";
 
 const ViewCollection  = props => {
     const [recipes, setRecipes] = useState([]);
