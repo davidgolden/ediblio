@@ -251,10 +251,10 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="npm.Build-Dev" />
       <item itemvalue="npm.Build-Prod" />
-      <item itemvalue="npm.Build" />
       <item itemvalue="npm.Start Server" />
+      <item itemvalue="npm.Build" />
+      <item itemvalue="npm.Build-Dev" />
     </list>
   </component>
   <component name="SvnConfiguration">
