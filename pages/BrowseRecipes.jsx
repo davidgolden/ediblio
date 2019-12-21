@@ -6,6 +6,7 @@ import SortingBar from "../client/src/components/recipes/SortingBar";
 import LoadingNextPage from '../client/src/components/utilities/LoadingNextPage';
 import useScrolledBottom from "../client/src/components/utilities/useScrolledBottom";
 import {ApiStoreContext} from "../client/src/stores/api_store";
+import axios from 'axios';
 
 function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
@@ -13,14 +14,14 @@ function useForceUpdate(){
 }
 
 const BrowseRecipes = props => {
-    const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
+    const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
     const [loadedAll, setLoadedAll] = useState(false);
     const [filterTags, setFilterTags] = useState([]);
     const [filterAuthor, setFilterAuthor] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('created_at');
     const [orderBy, setOrderBy] = useState('desc');
-    const [recipes, setRecipes] = useState(new Map());
+    const [recipes, setRecipes] = useState(new Map(props.recipes || []));
 
     const forceUpdate = useForceUpdate();
 
@@ -132,6 +133,23 @@ const BrowseRecipes = props => {
             {loadedAll || recipes.size !== 0 || <LoadingNextPage/>}
         </div>
     )
+};
+
+BrowseRecipes.getInitialProps = async ({req}) => {
+    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
+    const response = await axios.get(`${hostname}/api/recipes`, {
+        headers: {
+            cookie: req.headers.cookie,
+        },
+        params: {
+            page: 0,
+            orderBy: 'desc',
+            sortBy: 'created_at',
+        }
+    });
+    return {
+        recipes: response.data.recipes.map(r => [r._id, r]),
+    }
 };
 
 export default BrowseRecipes;
