@@ -15,11 +15,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="76" column="32" lean-forward="true" selection-start-line="76" selection-start-column="32" selection-end-line="76" selection-end-column="32" />
+            <state relative-caret-position="273">
+              <caret line="13" column="29" lean-forward="true" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/server.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="428">
+              <caret line="179" column="42" lean-forward="true" selection-start-line="179" selection-start-column="42" selection-end-line="179" selection-end-column="42" />
             </state>
           </provider>
         </entry>
@@ -115,7 +124,6 @@
         <option value="$PROJECT_DIR$/pages/GroceryList.jsx" />
         <option value="$PROJECT_DIR$/pages/RecipeContainer.jsx" />
         <option value="$PROJECT_DIR$/routes/index.js" />
-        <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/pages/styles/Landing.scss" />
         <option value="$PROJECT_DIR$/pages/_app.js" />
         <option value="$PROJECT_DIR$/routes/users.js" />
@@ -125,6 +133,7 @@
         <option value="$PROJECT_DIR$/pages/ViewUserRecipes.jsx" />
         <option value="$PROJECT_DIR$/pages/UserSettings.jsx" />
         <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/server.js" />
       </list>
     </option>
   </component>
@@ -318,20 +327,6 @@
       <workItem from="1576813535353" duration="11458000" />
       <workItem from="1576877719872" duration="622000" />
       <workItem from="1576897776521" duration="22604000" />
-    </task>
-    <task id="LOCAL-00092" summary="first working draft (all pages working, lots of bugs)">
-      <created>1554292534384</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1554292534385</updated>
-    </task>
-    <task id="LOCAL-00093" summary="implement cloudinary for storing images">
-      <created>1554347826847</created>
-      <option name="number" value="00093" />
-      <option name="presentableId" value="LOCAL-00093" />
-      <option name="project" value="LOCAL" />
-      <updated>1554347826847</updated>
     </task>
     <task id="LOCAL-00094" summary="working tags; working user settings">
       <created>1554467049853</created>
@@ -662,11 +657,25 @@
       <option name="project" value="LOCAL" />
       <updated>1576954899129</updated>
     </task>
-    <option name="localTasksCounter" value="141" />
+    <task id="LOCAL-00141" summary="fix next-css version">
+      <created>1576955156280</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1576955156280</updated>
+    </task>
+    <task id="LOCAL-00142" summary="fix port">
+      <created>1576955519053</created>
+      <option name="number" value="00142" />
+      <option name="presentableId" value="LOCAL-00142" />
+      <option name="project" value="LOCAL" />
+      <updated>1576955519053</updated>
+    </task>
+    <option name="localTasksCounter" value="143" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="266152000" />
+    <option name="totallyTimeSpent" value="266735000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -679,7 +688,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="-660" width="1920" height="1200" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.625" visible="true" weight="0.13576333" />
       <window_info id="Structure" order="1" sideWeight="0.375" side_tool="true" weight="0.13576333" />
@@ -710,8 +718,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="add user profile images, remove public facing api keys (whoops!) and add new keys :)" />
-    <MESSAGE value="change author model" />
     <MESSAGE value="add profile images to recipe cards" />
     <MESSAGE value="session" />
     <MESSAGE value="change parseInt to Number() as parseInt doesn't handle decimals without leading 0s" />
@@ -735,7 +741,9 @@
     <MESSAGE value="fix view collection" />
     <MESSAGE value="optimizations" />
     <MESSAGE value="specify npm version" />
-    <option name="LAST_COMMIT_MESSAGE" value="specify npm version" />
+    <MESSAGE value="fix next-css version" />
+    <MESSAGE value="fix port" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix port" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/client/index.html" />
@@ -940,8 +948,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="76" column="32" lean-forward="true" selection-start-line="76" selection-start-column="32" selection-end-line="76" selection-end-column="32" />
+        <state relative-caret-position="273">
+          <caret line="13" column="29" lean-forward="true" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
         </state>
       </provider>
     </entry>
@@ -1024,13 +1032,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="583">
-          <caret line="167" column="41" lean-forward="true" selection-start-line="167" selection-start-column="41" selection-end-line="167" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pages/Forgot.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="363">
@@ -1106,6 +1107,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="448">
           <caret line="49" column="10" lean-forward="true" selection-start-line="49" selection-start-column="10" selection-end-line="49" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="428">
+          <caret line="179" column="42" lean-forward="true" selection-start-line="179" selection-start-column="42" selection-end-line="179" selection-end-column="42" />
         </state>
       </provider>
     </entry>
