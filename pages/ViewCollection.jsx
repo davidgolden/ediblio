@@ -69,7 +69,7 @@ ViewCollection.getInitialProps = async ({req, query}) => {
         },
     });
     return {
-        recipes: response.data.recipes.map(r => [r._id, r]),
+        recipes: response.data.collection.recipes.map(r => [r._id, r]),
         collection_id: query.collection_id,
     };
 };
