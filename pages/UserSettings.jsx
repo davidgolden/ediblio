@@ -1,18 +1,19 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import styles from './styles/UserSettings.scss';
 import classNames from 'classnames';
 import Button from "../client/src/components/utilities/buttons/Button";
 import {ApiStoreContext} from "../client/src/stores/api_store";
 import {processFile} from "../client/src/utils/images";
+import axios from "axios";
 
 const UserSettings = props => {
     const context = useContext(ApiStoreContext);
 
-    const [profileImage, setProfileImage] = useState(context.user ? context.user.profileImage : '');
-    const [username, setUsername] = useState(context.user ? context.user.username : '');
-    const [email, setEmail] = useState(context.user ? context.user.email : '');
-    const [password, setPassword] = useState(context.user ? context.user.password : '');
-    const [confirm, setConfirm] = useState(context.user ? context.user.password : '');
+    const [profileImage, setProfileImage] = useState(props.user ? props.user.profileImage : '');
+    const [username, setUsername] = useState(props.user ? props.user.username : '');
+    const [email, setEmail] = useState(props.user ? props.user.email : '');
+    const [password, setPassword] = useState(props.user ? props.user.password : '');
+    const [confirm, setConfirm] = useState(props.user ? props.user.password : '');
     const [current, setCurrent] = useState(true);
 
     const handleSubmit = () => {
@@ -28,10 +29,6 @@ const UserSettings = props => {
             setCurrent(true);
         }
     };
-
-    // using this for now because we can't listen to user object for useEffect hook
-    // because getUser updates that object on every call, so we have to look at an actual value
-    const id = context.user && context.user._id;
 
     useEffect(() => {
         setCurrent(false);
@@ -53,19 +50,7 @@ const UserSettings = props => {
         };
     };
 
-    useEffect(() => {
-        context.getUser(props.user_id)
-            .then(user => {
-                setUsername(user.username);
-                setEmail(user.email);
-                setProfileImage(user.profileImage);
-                setPassword(user.password);
-                setConfirm(user.password);
-                setCurrent(true);
-            })
-    }, [id]);
-
-    if (!context.isLoggedIn || context.user._id !== props.user_id) {
+    if (!context.user || context.user._id !== props.user_id) {
         return <p>You do not have permission to view this page!</p>
     }
 
@@ -81,8 +66,8 @@ const UserSettings = props => {
         <div className={settingsContainerClassName}>
             <h1>Edit Profile</h1>
             <div>
-                {profileImage && <img src={profileImage} />}
-                <input onChange={e => handleFileUpload(e.target.files[0])} type={'file'} accept={'image/*'} />
+                {profileImage && <img src={profileImage}/>}
+                <input onChange={e => handleFileUpload(e.target.files[0])} type={'file'} accept={'image/*'}/>
             </div>
             <div>
                 <label htmlFor='username'>Username</label>
@@ -105,10 +90,25 @@ const UserSettings = props => {
                        onChange={e => setConfirm(e.target.value)}/>
             </div>
             <div>
-                <Button className={submitButtonClassName} onClick={handleSubmit}>{current ? 'Up to Date' : 'Submit'}</Button>
+                <Button className={submitButtonClassName}
+                        onClick={handleSubmit}>{current ? 'Up to Date' : 'Submit'}</Button>
             </div>
         </div>
     )
-}
+};
+
+UserSettings.getInitialProps = async ({query, req}) => {
+    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
+    const response = await axios.get(`${hostname}/api/users/${query.user_id}`, {
+        headers: {
+            cookie: req.headers.cookie,
+        }
+    });
+    console.log(response.data);
+    return {
+        user: response.data.user,
+        user_id: query.user_id,
+    }
+};
 
 export default UserSettings;

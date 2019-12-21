@@ -9,8 +9,8 @@ const express = require('express'),
 
 // authenticate user
 router.post('/authenticate', async function (req, res) {
-    if (req.session.user) {
-        const user = await User.findById(req.session.user._id);
+    if (req.isAuthenticated()) {
+        const user = await User.findById(req.user._id);
         return res.status(200).send({user});
     } else {
         return res.sendStatus(200);
@@ -18,18 +18,8 @@ router.post('/authenticate', async function (req, res) {
 });
 
 // handle login logic
-router.post('/login', emailToLowerCase, function (req, res, next) {
-    passport.authenticate('local', function (err, user, info) {
-        if (err) {
-            return res.status(404).send({ detail: err });
-        }
-        if (!user) {
-            return res.status(404).send({ detail: 'No user found with those user credentials!' });
-        } else {
-            req.session.user = user;
-            return res.status(200).send(JSON.stringify({user: user}));
-        }
-    })(req, res, next);
+router.post('/login', emailToLowerCase, passport.authenticate('local'), function(req, res) {
+    res.status(200).json({user: req.user});
 });
 
 function emailToLowerCase(req, res, next) {
@@ -40,16 +30,18 @@ function emailToLowerCase(req, res, next) {
 //logout
 router.get('/logout', function (req, res) {
     try {
-        const user = req.session.user;
-        if (user) {
-            req.session.destroy(err => {
-                if (err) throw (err);
-                res.clearCookie('recipecloudsession');
-                return res.sendStatus(200);
-            });
-        } else {
-            throw new Error('Something went wrong');
-        }
+        req.logout();
+        res.clearCookie('recipecloudsession');
+        res.sendStatus(200);
+        // if (user) {
+        //     req.session.destroy(err => {
+        //         if (err) throw (err);
+        //
+        //         return res.sendStatus(200);
+        //     });
+        // } else {
+        //     throw new Error('Something went wrong');
+        // }
     } catch (err) {
         res.status(422).send({message: err});
     }
@@ -134,7 +126,7 @@ router.post('/reset', function (req, res) {
 
         req.logIn(user, function (err) {
             if (err) return res.status(404).send({ detail: err });
-            return res.status(200).json({user: req.session.user});
+            return res.status(200);
         });
     });
 });

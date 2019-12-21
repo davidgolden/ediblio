@@ -3,17 +3,18 @@ const express = require('express');
 const compression = require('compression');
 const next = require('next');
 
-const port = parseInt(5000, 10);
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({dev});
 const handle = app.getRequestHandler();
 
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const connectStore = require('connect-mongo');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const {Strategy, ExtractJwt} = require('passport-jwt');
 const MongoStore = connectStore(session);
 const User = require('./models/user');
 
@@ -41,6 +42,9 @@ mongoose.connect(1 ? process.env.MONGO : process.env.MONGO_DEV,
     {useNewUrlParser: true, autoIndex: false, useCreateIndex: true})
     .then(() => console.log(`Database connected`))
     .catch(err => console.log(`Database connection error: ${err.message}`));
+
+const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
+
 //Configure Passport
 passport.use(new LocalStrategy({
     usernameField: 'email',
@@ -59,69 +63,72 @@ passport.use(new LocalStrategy({
     });
 }));
 
-const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
+passport.use('JWT', new Strategy({
+    secretOrKey: process.env.SESSION_SECRET,
+    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("jwt"),
+    ignoreExpiration: true,
+    session: true,
+}, async (token, done) => {
+    try {
+        return done(null, token.user);
+    } catch (error) {
+        done(error);
+    }
+}));
 
 passport.serializeUser(function (user, done) {
-    done(null, user.id);
+    done(null, user._id);
 });
 
-passport.deserializeUser(function (id, done) {
-    User.findById(id, function (err, user) {
-        done(err, user);
-    });
+passport.deserializeUser(async function (id, done) {
+    const user = await User.findById(id);
+    done(null, user);
 });
 
 app.prepare().then(() => {
     const server = express();
+    server.enable('trust proxy');
     server.use(compression());
 
-    server.use(bodyParser.urlencoded({extended: true}));
+    server.use(bodyParser.urlencoded({extended: false}));
     server.use(bodyParser.json());
+    server.use(cookieParser());
 
     server.use(session({
-        name: 'recipecloudsession',
         secret: process.env.SESSION_SECRET,
-        resave: false,
+        resave: true,
         store: new MongoStore({
             mongooseConnection: mongoose.connection,
             collection: 'session',
             ttl: SESS_LIFETIME
         }),
         cookie: {
-            sameSite: true,
-            secure: false,
+            // sameSite: true,
+            // secure: false,
             maxAge: SESS_LIFETIME
         },
         saveUninitialized: false,
     }));
-
     server.use(passport.initialize());
+    server.use(passport.session());
 
-    // NEED TO IMPORT ROUTES
     server.use('/api/', indexRoutes);
     server.use('/api/', userRoutes);
     server.use('/api/', recipeRoutes);
     server.use('/api/', collectionRoutes);
 
     server.get("/", async (req, res) => {
-        return app.render(req, res,'/BrowseRecipes', {
-            ...req.query,
-            user: req.session.user,
-        })
+        return app.render(req, res,'/BrowseRecipes', req.query)
     });
 
     server.get("/recipes", (req, res) => {
-        return app.render(req, res,'/BrowseRecipes', {
-            ...req.query,
-            user: req.session.user,
-        })
+        return app.render(req, res,'/BrowseRecipes', req.query)
     });
 
     server.get("/recipes/:recipe_id", (req, res) => {
         return app.render(req, res,'/RecipeContainer', {
             ...req.query,
             recipe_id: req.params.recipe_id,
-            user: req.session.user,
         })
     });
 
@@ -129,7 +136,6 @@ app.prepare().then(() => {
         return app.render(req, res,'/GroceryList', {
             ...req.query,
             user_id: req.params.user_id,
-            user: req.session.user,
         })
     });
 
@@ -137,7 +143,6 @@ app.prepare().then(() => {
         return app.render(req, res,'/UserSettings', {
             ...req.query,
             user_id: req.params.user_id,
-            user: req.session.user,
         })
     });
 
@@ -145,7 +150,6 @@ app.prepare().then(() => {
         return app.render(req, res,'/ViewUserRecipes', {
             ...req.query,
             user_id: req.params.user_id,
-            user: req.session.user,
         })
     });
 
@@ -153,7 +157,6 @@ app.prepare().then(() => {
         return app.render(req, res,'/ViewCollection', {
             ...req.query,
             collection_id: req.params.collection_id,
-            user: req.session.user,
         })
     });
 
@@ -166,16 +169,14 @@ app.prepare().then(() => {
     });
 
     server.get("/add", (req, res) => {
-        return app.render(req, res,'/AddRecipe', {
-            ...req.query,
-            user: req.session.user,
-        })
+        return app.render(req, res,'/AddRecipe', req.query)
     });
 
     server.all('*', (req, res) => {
         return handle(req, res)
     });
 
+    const port = 2000;
     server.listen(port, err => {
         if (err) throw err;
         console.log(`> Ready on http://localhost:${port}`)

@@ -7,6 +7,11 @@ import LoadingNextPage from '../client/src/components/utilities/LoadingNextPage'
 import useScrolledBottom from "../client/src/components/utilities/useScrolledBottom";
 import {ApiStoreContext} from "../client/src/stores/api_store";
 
+function useForceUpdate(){
+    const [value, setValue] = useState(0); // integer state
+    return () => setValue(value => ++value); // update the state to force render
+}
+
 const BrowseRecipes = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
     const [loadedAll, setLoadedAll] = useState(false);
@@ -16,6 +21,8 @@ const BrowseRecipes = props => {
     const [sortBy, setSortBy] = useState('created_at');
     const [orderBy, setOrderBy] = useState('desc');
     const [recipes, setRecipes] = useState(new Map());
+
+    const forceUpdate = useForceUpdate();
 
     const context = useContext(ApiStoreContext);
 
@@ -61,25 +68,25 @@ const BrowseRecipes = props => {
         setLoadedAll(false);
     }, [props.user_id]);
 
-    const searchByTerm = term => {
+    function searchByTerm(term) {
         setLoadedAll(false);
         setSearchTerm(term);
         setLastRecipePageLoaded(-1);
     };
 
-    const handleSortByChange = value => {
+    function handleSortByChange(value) {
         setLoadedAll(false);
         setLastRecipePageLoaded(-1);
         setSortBy(value);
-    };
+    }
 
-    const handleOrderByChange = value => {
+    function handleOrderByChange(value) {
         setLoadedAll(false);
         setLastRecipePageLoaded(-1);
         setOrderBy(value);
-    };
+    }
 
-    const sortByTag = tag => {
+    function sortByTag(tag) {
         let newTags = filterTags;
         if (newTags.includes(tag)) {
             newTags.splice(newTags.indexOf(tag), 1);
@@ -89,15 +96,15 @@ const BrowseRecipes = props => {
         setLoadedAll(false);
         setFilterTags([...newTags]);
         setLastRecipePageLoaded(-1);
-    };
+    }
 
     async function removeRecipe(id) {
         await context.deleteRecipe(id);
         setRecipes(r => {
-            const m = r;
-            m.delete(id);
-            return m;
-        })
+            r.delete(id);
+            return r;
+        });
+        forceUpdate();
     }
 
     const browseRecipesContainerClassName = classNames({

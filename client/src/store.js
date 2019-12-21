@@ -18,20 +18,12 @@ class Store {
         }, 4000);
     };
 
-    authenticate = () => {
-        axios.post('/api/authenticate')
-            .then(response => {
-                this.user = response.data.user;
-            })
-            .catch(err => {
-                this.handleError(err.response.data.detail);
-            });
-    };
-
     userLogin = (email, password) => {
         axios.post('/api/login', {
             email: email,
             password: password,
+        }, {
+            withCredentials: true,
         })
             .then(response => {
                 this.user = response.data.user;
@@ -86,7 +78,7 @@ class Store {
 
     patchUser = partialUserObj => {
         return new Promise((res, rej) => {
-            axios.patch(`/api/users/${this.state.user._id}`, {
+            axios.patch(`/api/users/${this.user._id}`, {
                 ...partialUserObj
             })
                 .then(response => {
@@ -151,33 +143,6 @@ class Store {
                     res();
                 })
                 .catch(rej)
-        })
-    };
-
-    getUserLists = id => {
-        return new Promise((res, rej) => {
-            axios.get(`/api/users/${id}/list`)
-                .then(response => {
-                    res(response.data);
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej(err);
-                })
-        })
-    };
-
-    getUser = id => {
-        return new Promise((res, rej) => {
-            axios.get(`/api/users/${id}`)
-                .then(response => {
-                    this.user = response.data.user;
-                    res(response.data.user);
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej(err);
-                })
         })
     };
 

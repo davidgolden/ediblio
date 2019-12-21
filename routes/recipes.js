@@ -82,20 +82,20 @@ router.route('/recipes')
             cloudinary.v2.uploader.upload(req.body.recipe.image,
                 {
                     resource_type: "image",
-                    public_id: `users/${req.session.user._id}/recipes/${newRecipe._id}`,
+                    public_id: `users/${req.user._id}/recipes/${newRecipe._id}`,
                     overwrite: true,
                 },
                 (error, result) => {
                     newRecipe.image = result.secure_url;
 
                     // add author info to recipe
-                    newRecipe.author_id = req.session.user._id;
+                    newRecipe.author_id = req.user._id;
                     // save recipe
                     newRecipe.save();
                     // add recipe to user
 
                     // TODO: this needs to be replaced with adding to user's favorites
-                    // User.findOne({"_id": req.session.user._id}, (err, user) => {
+                    // User.findOne({"_id": req.user._id}, (err, user) => {
                     //     user.recipes.push(newRecipe);
                     //     user.save();
                     // });
@@ -129,7 +129,7 @@ router.route('/recipes/:recipe_id')
                 cloudinary.v2.uploader.upload(req.body.image,
                     {
                         resource_type: "image",
-                        public_id: `users/${req.session.user._id}/recipes/${recipe._id}`,
+                        public_id: `users/${req.user._id}/recipes/${recipe._id}`,
                         overwrite: true,
                     },
                     (error, result) => {

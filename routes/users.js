@@ -50,15 +50,16 @@ router.route('/users')
                 return res.status(404).send({detail: err.message});
             }
 
-            req.session.user = user;
-            res.status(200).json({user: req.session.user})
+            req.login(user, function() {
+                res.status(200);
+            });
         });
     });
 
 router.route('/users/:user_id')
 // update user
     .patch(middleware.isLoggedIn, (req, res) => {
-        User.findOne({"_id": req.session.user._id}, function (err, user) {
+        User.findOne({"_id": req.user._id}, function (err, user) {
             if (err) {
                 return res.status(404).send({detail: err.message})
             }
@@ -69,7 +70,7 @@ router.route('/users/:user_id')
                     cloudinary.v2.uploader.upload(req.body.profileImage,
                         {
                             resource_type: "image",
-                            public_id: `users/${req.session.user._id}/profileImage`,
+                            public_id: `users/${req.user._id}/profileImage`,
                             overwrite: true,
                             transformation: [
                                 {width: 400, height: 400, gravity: "face", radius: "max", crop: "crop"},
@@ -90,7 +91,7 @@ router.route('/users/:user_id')
     })
     // this will ALWAYS return the logged in user's details; can't get another user's data
     .get(middleware.isLoggedIn, (req, res) => {
-        User.findOne({"_id": req.session.user._id}, (err, user) => {
+        User.findOne({"_id": req.user._id}, (err, user) => {
             if (err) {
                 return res.status(404).send({detail: err.message});
             }
@@ -103,8 +104,8 @@ router.route('/users/:user_id')
     });
 
 // DISPLAY GROCERY LIST
-router.get('/users/:user_id/list', (req, res) => {
-    User.findById(req.session.user._id).populate('menu').exec(function (err, user) {
+router.get('/users/:user_id/list', middleware.isLoggedIn, (req, res) => {
+    User.findById(req.user._id).populate('menu').exec(function (err, user) {
         if (err) {
             return res.status(404).send({detail: err.message})
         }
@@ -115,7 +116,7 @@ router.get('/users/:user_id/list', (req, res) => {
 // get certain collection details about a user's collections
 router.get('/users/:user_id/collections', async (req, res) => {
     const collections = await Collection.find({
-        "ownerId": req.session.user._id,
+        "ownerId": req.params.user_id,
     });
     return res.status(200).send({
         collections: collections.map(c => {
