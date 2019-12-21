@@ -50,7 +50,7 @@ const UserSettings = props => {
         };
     };
 
-    if (!context.user || context.user._id !== props.user_id) {
+    if (!props.user) {
         return <p>You do not have permission to view this page!</p>
     }
 
