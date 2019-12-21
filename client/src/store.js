@@ -1,74 +1,33 @@
 import React from "react";
-import {ApiStoreContext} from './stores/api_store';
-import {render} from "react-dom";
-import Header from './components/header/Header';
-import GroceryList from './pages/GroceryList';
-import AddRecipe from './pages/AddRecipe';
-import BrowseRecipes from './pages/BrowseRecipes';
-import Landing from './pages/Landing';
-import ForgotPassword from './pages/Forgot';
-import RecipeContainer from "./pages/RecipeContainer";
-import {createHistory, LocationProvider, Router} from "@reach/router";
-import createHashSource from 'hash-source'
-import Notification from "./components/header/Notification";
 import axios from "axios";
 import {addIngredient, canBeAdded} from "./utils/conversions";
 import './stylesheets/base.scss';
-import UserSettings from "./pages/UserSettings";
-import ViewUserRecipes from "./pages/ViewUserRecipes";
-import ViewCollection from "./pages/ViewCollection";
+import {observable} from "mobx";
+import Router from 'next/router';
 
-let source = createHashSource();
-let history = createHistory(source);
-
-export default class App extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            recipes: new Map(),
-            user: null,
-            distanceToBottom: 1,
-            notificationMessage: '',
-            notificationType: '',
-            lastRequestParams: {},
-        }
-    }
+class Store {
+    @observable user = null;
+    notificationMessage = '';
+    notificationType = '';
 
     handleError = error => {
-        this.setState({
-            notificationMessage: 'Oops! ' + error,
-            notificationType: 'error',
-        });
+        this.notificationMessage = 'Oops! ' + error;
+        this.notificationType = 'error';
         setTimeout(() => {
-            this.setState({
-                notificationMessage: '',
-                notificationType: '',
-            });
+            this.notificationMessage = '';
+            this.notificationType = '';
         }, 4000);
-    };
-
-    authenticate = () => {
-        axios.post('/api/authenticate')
-            .then(response => {
-                this.setState({
-                    user: response.data.user,
-                });
-            })
-            .catch(err => {
-                this.handleError(err.response.data.detail);
-            });
     };
 
     userLogin = (email, password) => {
         axios.post('/api/login', {
             email: email,
             password: password,
+        }, {
+            withCredentials: true,
         })
             .then(response => {
-                this.setState({
-                    user: response.data.user,
-                });
+                this.user = response.data.user;
             })
             .catch(err => {
                 this.handleError(err.response.data.detail);
@@ -78,9 +37,7 @@ export default class App extends React.Component {
     userLogout = () => {
         axios.get('/api/logout')
             .then(() => {
-                this.setState({
-                    user: null,
-                });
+                this.user = null;
             });
     };
 
@@ -97,36 +54,7 @@ export default class App extends React.Component {
                 params: requestParams,
             })
                 .then(response => {
-                    // if not loading first page, add new recipes. otherwise, replace them.
-                    let recipes = this.state.recipes;
-
-                    if (requestParams.page !== 'undefined' && requestParams.page === 0) {
-                        recipes.clear();
-                    }
-
-                    response.data.recipes.forEach(item => {
-                        recipes.set(item._id, item);
-                    });
-
-                    this.setState({
-                        recipes: recipes,
-                    });
-
                     return res(response.data.recipes);
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej(err);
-                })
-        })
-    };
-
-    getRecipe = id => {
-        return new Promise((res, rej) => {
-            axios.get(`/api/recipes/${id}`)
-                .then(response => {
-                    // do something
-                    res(response.data.recipe);
                 })
                 .catch(err => {
                     this.handleError(err.response.data.detail);
@@ -137,13 +65,11 @@ export default class App extends React.Component {
 
     patchUser = partialUserObj => {
         return new Promise((res, rej) => {
-            axios.patch(`/api/users/${this.state.user._id}`, {
+            axios.patch(`/api/users/${this.user._id}`, {
                 ...partialUserObj
             })
                 .then(response => {
-                    this.setState({
-                        user: response.data.user,
-                    });
+                    this.user = response.data.user;
                     res();
                 })
                 .catch(err => {
@@ -159,17 +85,15 @@ export default class App extends React.Component {
                 ...collectionObj
             })
                 .then(response => {
-                    this.setState({
-                        user: {
-                            ...this.state.user,
-                            collections: this.state.user.collections.map(c => {
-                                if (c._id === collectionObj._id) {
-                                    return response.data.collection;
-                                }
-                                return c;
-                            })
-                        },
-                    });
+                    this.user = {
+                        ...this.user,
+                        collections: this.user.collections.map(c => {
+                            if (c._id === collectionObj._id) {
+                                return response.data.collection;
+                            }
+                            return c;
+                        })
+                    };
                     res();
                 })
                 .catch(err => {
@@ -183,9 +107,7 @@ export default class App extends React.Component {
         return new Promise((res, rej) => {
             axios.post(`/api/collections`, {name})
                 .then(response => {
-                    this.setState({
-                        user: response.data.user,
-                    });
+                    this.user = response.data.user;
                     res();
                 })
                 .catch(err => {
@@ -199,46 +121,15 @@ export default class App extends React.Component {
         return new Promise((res, rej) => {
             axios.delete(`/api/collections/${id}`)
                 .then(() => {
-                    this.setState({
-                        user: {
-                            ...this.state.user,
-                            collections: {
-                                ...this.state.user.collections.filter(c => c._id !== id),
-                            }
+                    this.user = {
+                        ...this.user,
+                        collections: {
+                            ...this.user.collections.filter(c => c._id !== id),
                         }
-                    });
+                    };
                     res();
                 })
                 .catch(rej)
-        })
-    };
-
-    getUserLists = id => {
-        return new Promise((res, rej) => {
-            axios.get(`/api/users/${id}/list`)
-                .then(response => {
-                    res(response.data);
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej(err);
-                })
-        })
-    };
-
-    getUser = id => {
-        return new Promise((res, rej) => {
-            axios.get(`/api/users/${id}`)
-                .then(response => {
-                    this.setState({
-                        user: response.data.user,
-                    });
-                    res(response.data.user);
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej(err);
-                })
         })
     };
 
@@ -261,12 +152,6 @@ export default class App extends React.Component {
         return new Promise((res, rej) => {
             axios.delete(`/api/recipes/${id}`)
                 .then(() => {
-                    // do something
-                    let recipes = this.state.recipes;
-                    recipes.delete(id);
-                    this.setState({
-                        recipes: recipes,
-                    });
                     res();
                 })
                 .catch(err => {
@@ -279,11 +164,9 @@ export default class App extends React.Component {
         return new Promise((res, rej) => {
             axios.post('/api/users', {...user})
                 .then(response => {
-                    this.setState({
-                        user: response.data.user,
-                    }, () => {
-                        localStorage.setItem('user', JSON.stringify(this.state.user));
-                    });
+                    this.user = response.data.user;
+                    localStorage.setItem('user', JSON.stringify(this.user));
+                    Router.push("/");
                     res();
                 })
                 .catch(err => {
@@ -341,10 +224,10 @@ export default class App extends React.Component {
     addToGroceryList = (recipe_id, ingredients) => {
         // add current recipe to menu
         // add all ingredients to grocery list
-        const currentMenu = this.state.user.menu;
+        const currentMenu = this.user.menu;
         currentMenu.push(recipe_id);
 
-        const currentGroceryList = this.state.user.groceryList;
+        const currentGroceryList = this.user.groceryList;
 
         const onCurrentList = ingredient => {
             return currentGroceryList.findIndex(item => {
@@ -382,40 +265,10 @@ export default class App extends React.Component {
             groceryList: currentGroceryList,
         });
     };
-
-    componentDidMount() {
-        this.authenticate();
-    }
-
-    render() {
-
-        const isLoggedIn = !!(this.state.user && this.state.user._id);
-
-        return (
-            <ApiStoreContext.Provider value={{
-                ...this.state,
-                ...this,
-                isLoggedIn,
-            }}>
-                <LocationProvider history={history}>
-                    <Header/>
-                    <Notification/>
-                    <Router>
-                        <BrowseRecipes path={'/recipes'}/>
-                        <ViewUserRecipes path={'/users/:user_id/recipes'}/>
-                        <ViewCollection path={'/collections/:collection_id'}/>
-                        <RecipeContainer path={'/recipes/:recipe_id'}/>
-                        <GroceryList path={'/users/:user_id/groceries'}/>
-                        <AddRecipe path={'/add'}/>
-                        <UserSettings path={'/users/:user_id/settings'}/>
-                        <ForgotPassword path={'/forgot'}/>
-                        <Landing path={'/register'}/>
-                        <BrowseRecipes default/>
-                    </Router>
-                </LocationProvider>
-            </ApiStoreContext.Provider>
-        )
-    }
 }
 
-render(<App/>, document.getElementById("app"));
+const store = new Store();
+
+const storeContext = new React.createContext(store);
+
+export {store, storeContext};

@@ -1,4 +1,4 @@
-@import "../../styles/variables";
+@import "../../client/src/styles/variables";
 
 .groceryListContainer {
   border-radius: 10px;
@@ -54,6 +54,7 @@
       svg {
         margin-left: 5px;
         font-size: 1rem;
+        width: 20px;
       }
     }
   }

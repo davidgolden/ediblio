@@ -1,13 +1,12 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import InCloudButton from "../utilities/buttons/InCloudButton";
-import RemoveButton from "../utilities/buttons/RemoveButton";
 import AddToCloudButton from "../utilities/buttons/AddToCloudButton";
 import AddToGroceryListButton from "../utilities/buttons/AddToGroceryListButton";
 import DeleteButton from "../utilities/buttons/DeleteButton";
 import {ApiStoreContext} from "../../stores/api_store";
+import {observer} from "mobx-react";
 
-const RecipeButtons = props => {
+const RecipeButtons = observer(props => {
 
     const context = useContext(ApiStoreContext);
 
@@ -27,7 +26,7 @@ const RecipeButtons = props => {
         }
     };
 
-    if (!context.isLoggedIn) {
+    if (!context.user) {
         return false;
     }
 
@@ -54,7 +53,7 @@ const RecipeButtons = props => {
 
         </React.Fragment>
     )
-};
+});
 
 RecipeButtons.propTypes = {
     recipe_id: PropTypes.string.isRequired,

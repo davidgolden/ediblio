@@ -1,19 +1,21 @@
-import React, { useContext, useState, useEffect } from 'react';
-import AddIngredients from '../components/recipes/AddIngredients';
+import React, {useContext, useState, useEffect} from 'react';
+import AddIngredients from '../client/src/components/recipes/AddIngredients';
 import styles from './styles/GroceryList.scss';
 import classNames from 'classnames';
-import Button from "../components/utilities/buttons/Button";
-import RemoveButton from "../components/utilities/buttons/RemoveButton"
+import Button from "../client/src/components/utilities/buttons/Button";
+import RemoveButton from "../client/src/components/utilities/buttons/RemoveButton"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
-import {ApiStoreContext} from "../stores/api_store";
+import {ApiStoreContext} from "../client/src/stores/api_store";
+import axios from "axios";
+// import fetch from "isomorphic-unfetch";
 
 const GroceryList = props => {
     const context = useContext(ApiStoreContext);
 
     const [storeMode, setStoreMode] = useState(false);
-    const [groceryList, setGroceryList] = useState(context.user ? context.user.groceryList : []);
-    const [menu, setMenu] = useState(context.user ? context.user.menu : []);
+    const [groceryList, setGroceryList] = useState(props.groceryList || []);
+    const [menu, setMenu] = useState(props.menu || []);
     const [isCurrent, setIsCurrent] = useState(true);
 
     const handleUpdateIngredient = (index, ingredient) => {
@@ -53,14 +55,6 @@ const GroceryList = props => {
     const toggleStoreMode = () => {
         setStoreMode(!storeMode);
     };
-
-    useEffect(() => {
-        context.getUserLists(props.user_id)
-            .then(data => {
-                setGroceryList(data.groceryList);
-                setMenu(data.menu);
-            });
-    }, [context.user]);
 
     const updateList = () => {
         context.patchUser({
@@ -113,6 +107,19 @@ const GroceryList = props => {
             <Button onClick={toggleStoreMode}>Toggle Store Mode</Button>
         </div>
     )
+};
+
+GroceryList.getInitialProps = async ({req, query}) => {
+    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
+    const response = await axios.get(`${hostname}/api/users/${query.user_id}/list`, {
+        headers: {
+            cookie: req.headers.cookie,
+        }
+    });
+    return {
+        groceryList: response.data.groceryList,
+        menu: response.data.menu,
+    };
 };
 
 export default GroceryList;

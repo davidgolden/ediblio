@@ -1,17 +1,19 @@
 import React, {useState, useContext, useEffect} from 'react';
 import RecipeForm from './AddRecipe';
-import ShowRecipe from '../components/recipes/ShowRecipe';
+import ShowRecipe from '../client/src/components/recipes/ShowRecipe';
 import styles from './styles/RecipeContainer.scss';
 import classNames from 'classnames';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSearch, faEdit} from '@fortawesome/free-solid-svg-icons'
-import Button from "../components/utilities/buttons/Button";
-import RecipeButtons from "../components/recipes/RecipeButtons";
-import {ApiStoreContext} from "../stores/api_store";
+import Button from "../client/src/components/utilities/buttons/Button";
+import RecipeButtons from "../client/src/components/recipes/RecipeButtons";
+import {ApiStoreContext} from "../client/src/stores/api_store";
+import {observer} from "mobx-react";
+import axios from "axios";
 
-const RecipeContainer = props => {
+const RecipeContainer = observer(props => {
     const [edit, setEdit] = useState(false);
-    const [recipe, setRecipe] = useState(null);
+    const [recipe, setRecipe] = useState(props.recipe);
 
     const context = useContext(ApiStoreContext);
 
@@ -22,13 +24,6 @@ const RecipeContainer = props => {
     const updateRecipe = fullRecipe => {
         setRecipe(fullRecipe);
     };
-
-    useEffect(() => {
-        context.getRecipe(props.recipe_id)
-            .then(recipe => {
-                setRecipe(recipe);
-            });
-    }, [context.recipes.get(props.recipe_id)]);
 
     const toggleEdit = () => {
         setEdit(!edit);
@@ -86,9 +81,8 @@ const RecipeContainer = props => {
 
     return (
         <div className={recipeContainerClassName}>
-
             <div className={recipeEditButtonsClassName}>
-                {recipe && context.isLoggedIn && (recipe.author_id._id === context.user._id || context.user.isAdmin) && (
+                {recipe && context.user && (recipe.author_id._id === context.user._id || context.user.isAdmin) && (
                     <Button className={toggleEditClassName} onClick={toggleEdit}>
                         {edit === false ? (
                             <React.Fragment>
@@ -98,7 +92,7 @@ const RecipeContainer = props => {
                             </React.Fragment>)
                         }
                     </Button>)}
-                    {recipe && context.isLoggedIn && <RecipeButtons
+                    {recipe && context.user && <RecipeButtons
                         recipe_id={recipe._id}
                         author_id={recipe.author_id._id}
                         addToGroceryList={addToGroceryList}
@@ -107,7 +101,7 @@ const RecipeContainer = props => {
             </div>
             {edit === true ? (
                 <RecipeForm
-                    user={props.user}
+                    // user={props.user}
                     tags={props.tags}
                     recipe={recipe}
                     toggleEdit={toggleEdit}
@@ -125,6 +119,19 @@ const RecipeContainer = props => {
             )}
         </div>
     )
+});
+
+RecipeContainer.getInitialProps = async ({req, query}) => {
+    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
+    const response = await axios.get(`${hostname}/api/recipes/${query.recipe_id}`, {
+        headers: {
+            cookie: req.headers.cookie,
+        },
+    });
+    return {
+        recipe: response.data.recipe,
+        recipe_id: query.recipe_id,
+    };
 };
 
 export default RecipeContainer;

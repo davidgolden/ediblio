@@ -1,11 +1,13 @@
 import React, { useState, useContext } from 'react';
-import RecipeInformation from '../components/recipes/RecipeInformation';
-import AddIngredients from '../components/recipes/AddIngredients';
-import Button from "../components/utilities/buttons/Button";
-import {recipeTags} from "../stores/Setings";
+import RecipeInformation from '../client/src/components/recipes/RecipeInformation';
+import AddIngredients from '../client/src/components/recipes/AddIngredients';
+import Button from "../client/src/components/utilities/buttons/Button";
+import {recipeTags} from "../client/src/stores/Setings";
 import styles from './styles/AddRecipe.scss';
 import classNames from 'classnames';
-import {ApiStoreContext} from "../stores/api_store";
+import {ApiStoreContext} from "../client/src/stores/api_store";
+import {observer} from "mobx-react";
+import Router from 'next/router';
 
 const AddTags = (props) => {
     const tagClassName = classNames({
@@ -37,7 +39,7 @@ const AddTags = (props) => {
     )
 };
 
-const RecipeForm = props => {
+const RecipeForm = observer(props => {
     const [name, setName] = useState(props.editMode ? props.recipe.name : '');
     const [url, setUrl] = useState(props.editMode ? props.recipe.url : '');
     const [image, setImage] = useState(props.editMode ? props.recipe.image : '');
@@ -95,7 +97,7 @@ const RecipeForm = props => {
         } else {
             context.createRecipe({name: name, url: url, image: image, notes: notes, ingredients: ingredients, tags: tags})
                 .then(() => {
-                    props.navigate("/");
+                    Router.push("/");
                 })
         }
     };
@@ -129,13 +131,13 @@ const RecipeForm = props => {
             />
             <AddTags toggleTag={toggleTag} selectedTags={tags}/>
             <div>
-                {context.isLoggedIn ?
+                {context.user ?
                     <Button className={submitButtonClassName} onClick={handleSubmit}>Submit!</Button> :
                     <p>You must be logged in to add a recipe!</p>}
             </div>
         </div>
     )
-};
+});
 
 RecipeForm.defaultProps = {
     editMode: false,
