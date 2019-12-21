@@ -95,6 +95,7 @@ app.prepare().then(() => {
     server.use(cookieParser());
 
     server.use(session({
+        name: 'recipecloudsession',
         secret: process.env.SESSION_SECRET,
         resave: true,
         store: new MongoStore({
@@ -103,8 +104,8 @@ app.prepare().then(() => {
             ttl: SESS_LIFETIME
         }),
         cookie: {
-            // sameSite: true,
-            // secure: false,
+            sameSite: true,
+            secure: false,
             maxAge: SESS_LIFETIME
         },
         saveUninitialized: false,

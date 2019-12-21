@@ -3,6 +3,7 @@ import axios from "axios";
 import {addIngredient, canBeAdded} from "./utils/conversions";
 import './stylesheets/base.scss';
 import {observable} from "mobx";
+import Router from 'next/router';
 
 class Store {
     @observable user = null;
@@ -165,6 +166,7 @@ class Store {
                 .then(response => {
                     this.user = response.data.user;
                     localStorage.setItem('user', JSON.stringify(this.user));
+                    Router.push("/");
                     res();
                 })
                 .catch(err => {

@@ -15,7 +15,7 @@ class MyDocument extends App {
 
         return {
             ...appProps,
-            user: appContext.ctx.req.user,
+            user: appContext.ctx.req?.user,
         }
     }
 

@@ -51,7 +51,7 @@ router.route('/users')
             }
 
             req.login(user, function() {
-                res.status(200);
+                res.status(200).json({user: req.user});
             });
         });
     });
