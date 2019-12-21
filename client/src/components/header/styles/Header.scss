@@ -4,20 +4,56 @@
   background-color: $other;
   color: white;
   min-height: 50px;
+  height: 50px;
   overflow: hidden;
   position: sticky;
   top: 0;
   z-index: 2;
 
-  > div { // container of everything that's not the navigation links
+  h1 {
+    display: inline;
+    margin-left: 1.5rem;
+    font-size: 2.5rem;
+
+    a {
+      text-decoration: none;
+      line-height: 50px;
+      color: $otherdark;
+
+      svg {
+        font-size: 2rem;
+        color: white;
+        width: 45px;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  .linksContainer { // container of everything that's not the navigation links
+    display: none;
     position: absolute;
     line-height: 50px;
     top: 0;
     right: 2rem;
     margin-left: 1.5rem;
 
-    @media(max-width: 770px) {
-      position: static;
+    &Visible {
+      display: inline-block;
+    }
+
+    @media(min-width: 770px) {
+      display: inline-block;
+    }
+
+    form {
+      display: inline-block;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      color: $otherdark;
     }
 
     input {
@@ -35,57 +71,39 @@
       padding: 5px 10px;
       font-size: 1rem;
       border-radius: 5px;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
     }
 
     a { // user settings, forgot password, register
-      color: white;
+      color: white !important;
       font-size: 1rem;
-    }
-  }
 
-  h1 {
-    display: inline;
-    margin-left: 1.5rem;
-
-    a {
-      text-decoration: none;
-      line-height: 50px;
-      color: $otherdark;
-    }
-
-    svg {
-      font-size: 2rem;
-      color: white;
-    }
-  }
-
-  a, button {
-    margin-right: 10px;
-    background-color: inherit;
-  }
-
-  ul {
-    list-style: none;
-    display: inline-block;
-    margin: 0;
-    vertical-align: middle;
-    padding-right: 10px;
-
-    li {
-      float: left;
-
-      input, button {
-        margin-right: 10px;
-        padding: 5px;
-        height: 30px;
+      &:last-of-type {
+        svg {
+          color: white;
+        }
       }
+    }
 
-      button {
-        line-height: 30px;
-        padding: 0 10px;
-        vertical-align: middle;
-        border-radius: 10px;
-      }
+    a, button {
+      margin-right: 10px;
+    }
+
+    input, button {
+      margin-right: 10px;
+      padding: 5px;
+      height: 30px;
+    }
+
+    button {
+      line-height: 30px;
+      padding: 0 10px;
+      vertical-align: middle;
+      border-radius: 10px;
     }
   }
 
@@ -104,29 +122,18 @@
   }
 }
 
-.linksContainer {
-  display: none;
-
-  &Visible {
-    display: inline-block;
-  }
-
-  @media(min-width: 770px) {
-    display: inline-block;
-  }
-
-  form {
-    display: inline-block;
-  }
-}
-
 .mobileHam {
   position: absolute;
   display: none;
-  right: 0;
+  right: 10px;
   top: 2px;
   font-size: 2rem;
   padding: 0;
+  width: 30px;
+
+  svg {
+    vertical-align: middle;
+  }
 
   @media(max-width: 770px) {
     display: inline;

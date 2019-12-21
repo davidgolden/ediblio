@@ -1,4 +1,4 @@
-@import "../../styles/variables";
+@import "../../client/src/styles/variables";
 
 .recipeContainer {
 
@@ -9,6 +9,12 @@
   margin-top: 20px;
   position: relative;
 
+  svg {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+
   > div {
     display: inline-block;
     position: relative;
@@ -17,6 +23,7 @@
   button {
     border-radius: 5px;
     margin-left: 10px;
+    vertical-align: middle;
   }
 
   .toggleEdit {
