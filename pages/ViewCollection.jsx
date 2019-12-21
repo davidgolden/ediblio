@@ -11,7 +11,7 @@ const ViewCollection  = props => {
     const [recipes, setRecipes] = useState(new Map(props.recipes || []));
     const [title, setTitle] = useState("");
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
-    const [loadedAll, setLoadedAll] = useState(false);
+    const [loadedAll, setLoadedAll] = useState(props.loadedAll);
 
     const context = useContext(ApiStoreContext);
 
@@ -71,6 +71,7 @@ ViewCollection.getInitialProps = async ({req, query}) => {
     return {
         recipes: response.data.collection.recipes.map(r => [r._id, r]),
         collection_id: query.collection_id,
+        loadedAll: response.data.collection.recipes.length < 12,
     };
 };
 

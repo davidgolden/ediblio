@@ -7,15 +7,8 @@ import DeleteButton from "../client/src/components/utilities/buttons/DeleteButto
 import Link from 'next/link';
 
 export default function ViewUserRecipes(props) {
-    const [collections, setCollections] = useState([]);
+    const [collections, setCollections] = useState(props.collections || []);
     const context = useContext(ApiStoreContext);
-
-    useEffect(() => {
-        axios.get(`/api/users/${props.user_id}/collections`)
-            .then(response => {
-                setCollections(response.data.collections);
-            })
-    }, []);
 
     function removeFromCollection(id) {
         context.removeCollection(id)
@@ -40,8 +33,15 @@ export default function ViewUserRecipes(props) {
     )
 }
 
-ViewUserRecipes.getInitialProps = ({query}) => {
+ViewUserRecipes.getInitialProps = async ({req, query}) => {
+    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
+    const response = await axios.get(`${hostname}/api/users/${query.user_id}/collections`, {
+        headers: {
+            cookie: req.headers.cookie,
+        },
+    });
     return {
+        collections: response.data.collections,
         user_id: query.user_id,
     }
 };

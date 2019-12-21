@@ -15,7 +15,7 @@ function useForceUpdate(){
 
 const BrowseRecipes = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
-    const [loadedAll, setLoadedAll] = useState(false);
+    const [loadedAll, setLoadedAll] = useState(props.loadedAll);
     const [filterTags, setFilterTags] = useState([]);
     const [filterAuthor, setFilterAuthor] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
@@ -54,7 +54,7 @@ const BrowseRecipes = props => {
                 })
                 .then(response => {
                     response.forEach(rec => recipes.set(rec._id, rec));
-                    if (recipes.size < 12) {
+                    if (response.length < 12) {
                         setLoadedAll(true);
                     } else {
                         setLastRecipePageLoaded(lastRecipePageLoaded + 1);
@@ -149,6 +149,7 @@ BrowseRecipes.getInitialProps = async ({req}) => {
     });
     return {
         recipes: response.data.recipes.map(r => [r._id, r]),
+        loadedAll: response.data.recipes.length < 12,
     }
 };
 
