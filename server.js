@@ -32,7 +32,7 @@ const forceSsl = function (req, res, next) {
     return next();
 };
 if (env === 'production') {
-    app.use(forceSsl);
+
 }
 
 
@@ -87,6 +87,7 @@ passport.deserializeUser(async function (id, done) {
 
 app.prepare().then(() => {
     const server = express();
+    // server.use(forceSsl);
     server.enable('trust proxy');
     server.use(compression());
 
