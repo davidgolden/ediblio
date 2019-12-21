@@ -62,20 +62,6 @@ class Store {
         })
     };
 
-    getRecipe = id => {
-        return new Promise((res, rej) => {
-            axios.get(`/api/recipes/${id}`)
-                .then(response => {
-                    // do something
-                    res(response.data.recipe);
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej(err);
-                })
-        })
-    };
-
     patchUser = partialUserObj => {
         return new Promise((res, rej) => {
             axios.patch(`/api/users/${this.user._id}`, {

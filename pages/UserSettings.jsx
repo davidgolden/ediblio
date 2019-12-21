@@ -104,7 +104,6 @@ UserSettings.getInitialProps = async ({query, req}) => {
             cookie: req.headers.cookie,
         }
     });
-    console.log(response.data);
     return {
         user: response.data.user,
         user_id: query.user_id,

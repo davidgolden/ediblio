@@ -5,11 +5,12 @@ import classNames from "classnames";
 import styles from "./styles/BrowseRecipes.scss";
 import RecipeCard from "../client/src/components/RecipeCard";
 import LoadingNextPage from "../client/src/components/utilities/LoadingNextPage";
+import axios from "axios";
 
 const ViewCollection  = props => {
-    const [recipes, setRecipes] = useState(new Map());
+    const [recipes, setRecipes] = useState(new Map(props.recipes || []));
     const [title, setTitle] = useState("");
-    const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
+    const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
     const [loadedAll, setLoadedAll] = useState(false);
 
     const context = useContext(ApiStoreContext);
@@ -60,10 +61,17 @@ const ViewCollection  = props => {
     )
 };
 
-ViewCollection.getInitialProps = ({query}) => {
+ViewCollection.getInitialProps = async ({req, query}) => {
+    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
+    const response = await axios.get(`${hostname}/api/collections/${query.collection_id}`, {
+        headers: {
+            cookie: req.headers.cookie,
+        },
+    });
     return {
+        recipes: response.data.recipes.map(r => [r._id, r]),
         collection_id: query.collection_id,
-    }
+    };
 };
 
 export default ViewCollection;

@@ -9,10 +9,11 @@ import Button from "../client/src/components/utilities/buttons/Button";
 import RecipeButtons from "../client/src/components/recipes/RecipeButtons";
 import {ApiStoreContext} from "../client/src/stores/api_store";
 import {observer} from "mobx-react";
+import axios from "axios";
 
 const RecipeContainer = observer(props => {
     const [edit, setEdit] = useState(false);
-    const [recipe, setRecipe] = useState(null);
+    const [recipe, setRecipe] = useState(props.recipe);
 
     const context = useContext(ApiStoreContext);
 
@@ -23,13 +24,6 @@ const RecipeContainer = observer(props => {
     const updateRecipe = fullRecipe => {
         setRecipe(fullRecipe);
     };
-
-    useEffect(() => {
-        context.getRecipe(props.recipe_id)
-            .then(recipe => {
-                setRecipe(recipe);
-            });
-    }, []);
 
     const toggleEdit = () => {
         setEdit(!edit);
@@ -127,8 +121,15 @@ const RecipeContainer = observer(props => {
     )
 });
 
-RecipeContainer.getInitialProps = ({query}) => {
+RecipeContainer.getInitialProps = async ({req, query}) => {
+    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
+    const response = await axios.get(`${hostname}/api/recipes/${query.recipe_id}`, {
+        headers: {
+            cookie: req.headers.cookie,
+        },
+    });
     return {
+        recipe: response.data.recipe,
         recipe_id: query.recipe_id,
     };
 };
