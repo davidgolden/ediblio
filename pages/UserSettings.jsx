@@ -98,8 +98,7 @@ const UserSettings = props => {
 };
 
 UserSettings.getInitialProps = async ({query, req}) => {
-    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
-    const response = await axios.get(`${hostname}/api/users/${query.user_id}`, {
+    const response = await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}`, {
         headers: {
             cookie: req.headers.cookie,
         }

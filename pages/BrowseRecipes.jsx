@@ -136,8 +136,7 @@ const BrowseRecipes = props => {
 };
 
 BrowseRecipes.getInitialProps = async ({req}) => {
-    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
-    const response = await axios.get(`${hostname}/api/recipes`, {
+    const response = await axios.get(`${req.protocol}://${req.headers.host}/api/recipes`, {
         headers: {
             cookie: req.headers.cookie,
         },

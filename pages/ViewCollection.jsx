@@ -62,8 +62,7 @@ const ViewCollection  = props => {
 };
 
 ViewCollection.getInitialProps = async ({req, query}) => {
-    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
-    const response = await axios.get(`${hostname}/api/collections/${query.collection_id}`, {
+    const response = await axios.get(`${req.protocol}://${req.headers.host}/api/collections/${query.collection_id}`, {
         headers: {
             cookie: req.headers.cookie,
         },

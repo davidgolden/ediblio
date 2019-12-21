@@ -34,8 +34,7 @@ export default function ViewUserRecipes(props) {
 }
 
 ViewUserRecipes.getInitialProps = async ({req, query}) => {
-    const hostname = process.env.NODE_ENV === 'development' ? `http://${req.headers.host}` : `https://${req.hostname}`;
-    const response = await axios.get(`${hostname}/api/users/${query.user_id}/collections`, {
+    const response = await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}/collections`, {
         headers: {
             cookie: req.headers.cookie,
         },

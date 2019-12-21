@@ -16,10 +16,6 @@
   },
   "author": "David Golden",
   "license": "ISC",
-  "browser": {
-    "mongoose": false,
-    "fs": false
-  },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.7.6",
     "@babel/runtime": "^7.7.7",

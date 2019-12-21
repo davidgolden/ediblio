@@ -31,10 +31,6 @@ const forceSsl = function (req, res, next) {
     }
     return next();
 };
-if (env === 'production') {
-
-}
-
 
 mongoose.Promise = global.Promise;
 
@@ -87,7 +83,9 @@ passport.deserializeUser(async function (id, done) {
 
 app.prepare().then(() => {
     const server = express();
-    // server.use(forceSsl);
+    if (process.env.NODE_ENV === 'production') {
+        server.use(forceSsl);
+    }
     server.enable('trust proxy');
     server.use(compression());
 
