@@ -6,8 +6,9 @@ import {faCloud, faSearch, faListUl, faPlus, faBook, faUser, faHamburger} from '
 import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
+import {observer} from "mobx-react";
 
-const Header = (props) => {
+const Header = observer((props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showNav, setShowNav] = useState(false);
@@ -61,40 +62,30 @@ const Header = (props) => {
             </Button>
 
             <div className={linksContainerClassName}>
-                {props.user ? <React.Fragment>
-                        <ul>
-                            <li>
-                                <Link href={'/'}>
-                                    <a className={headerLinkClassName}>
-                                        <FontAwesomeIcon icon={faSearch}/>
-                                    </a>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={`/users/${props.user._id}/groceries`}>
-                                    <a className={headerLinkClassName}>
-                                        <FontAwesomeIcon icon={faListUl}/>
-                                    </a>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={'/add'}>
-                                    <a className={headerLinkClassName}>
-                                        <FontAwesomeIcon icon={faPlus}/>
-                                    </a>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={`/users/${props.user._id}/recipes`}>
-                                    <a className={headerLinkClassName}>
-                                        <FontAwesomeIcon icon={faBook}/>
-                                    </a>
-                                </Link>
-                            </li>
-                        </ul>
-                        <Link href={`/users/${props.user._id}/settings`}>
+                {context.user ? <React.Fragment>
+                        <Link href={'/'}>
+                            <a className={headerLinkClassName}>
+                                <FontAwesomeIcon icon={faSearch}/>
+                            </a>
+                        </Link>
+                        <Link href={`/users/${context.user._id}/groceries`}>
+                            <a className={headerLinkClassName}>
+                                <FontAwesomeIcon icon={faListUl}/>
+                            </a>
+                        </Link>
+                        <Link href={'/add'}>
+                            <a className={headerLinkClassName}>
+                                <FontAwesomeIcon icon={faPlus}/>
+                            </a>
+                        </Link>
+                        <Link href={`/users/${context.user._id}/recipes`}>
+                            <a className={headerLinkClassName}>
+                                <FontAwesomeIcon icon={faBook}/>
+                            </a>
+                        </Link>
+                        <Link href={`/users/${context.user._id}/settings`}>
                             <a className={userLinkClassName}>
-                                <FontAwesomeIcon icon={faUser}/> <span>{props.user.username}</span>
+                                <FontAwesomeIcon icon={faUser}/> <span>{context.user.username}</span>
                             </a>
                         </Link>
                         <Button className={logoutClassName} onClick={context.userLogout}>Log Out</Button>
@@ -123,6 +114,6 @@ const Header = (props) => {
             </div>
         </nav>
     )
-};
+});
 
 export default Header;

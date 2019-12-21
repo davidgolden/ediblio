@@ -15,7 +15,7 @@ const RecipeCard = props => {
 
     const deleteRecipe = () => {
         if (confirm('Are you sure you want to do that?')) {
-            context.deleteRecipe(props.recipe._id);
+            props.deleteRecipe(props.recipe._id);
         }
     };
 
@@ -71,6 +71,7 @@ const RecipeCard = props => {
 
 RecipeCard.propTypes = {
     recipe: PropTypes.object,
+    deleteRecipe: PropTypes.func.isRequired,
 };
 
 export default RecipeCard;

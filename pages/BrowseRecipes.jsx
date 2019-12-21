@@ -6,8 +6,6 @@ import SortingBar from "../client/src/components/recipes/SortingBar";
 import LoadingNextPage from '../client/src/components/utilities/LoadingNextPage';
 import useScrolledBottom from "../client/src/components/utilities/useScrolledBottom";
 import {ApiStoreContext} from "../client/src/stores/api_store";
-import Header from "../client/src/components/header/Header";
-import Notification from "../client/src/components/header/Notification";
 
 const BrowseRecipes = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
@@ -17,7 +15,7 @@ const BrowseRecipes = props => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('created_at');
     const [orderBy, setOrderBy] = useState('desc');
-    const [recipes, setRecipes] = useState([]);
+    const [recipes, setRecipes] = useState(new Map());
 
     const context = useContext(ApiStoreContext);
 
@@ -40,9 +38,15 @@ const BrowseRecipes = props => {
         }
         if (!loadedAll) {
             context.getRecipes(query)
-                .then(recipes => {
-                    setRecipes(r => r.concat(recipes));
-                    if (recipes.length < 12) {
+                .then(response => {
+                    if (query.page !== 'undefined' && query.page === 0) {
+                        recipes.clear();
+                    }
+                    return response;
+                })
+                .then(response => {
+                    response.forEach(rec => recipes.set(rec._id, rec));
+                    if (recipes.size < 12) {
                         setLoadedAll(true);
                     } else {
                         setLastRecipePageLoaded(lastRecipePageLoaded + 1);
@@ -87,6 +91,15 @@ const BrowseRecipes = props => {
         setLastRecipePageLoaded(-1);
     };
 
+    async function removeRecipe(id) {
+        await context.deleteRecipe(id);
+        setRecipes(r => {
+            const m = r;
+            m.delete(id);
+            return m;
+        })
+    }
+
     const browseRecipesContainerClassName = classNames({
         [styles.browseRecipesContainer]: true,
     });
@@ -104,12 +117,12 @@ const BrowseRecipes = props => {
                 handleOrderByChange={handleOrderByChange}
             />
             <div className={browseRecipesContainerClassName}>
-                {recipes.map(recipe => {
-                    return <RecipeCard key={recipe._id} recipe={recipe}/>
+                {Array.from(recipes.values()).map(recipe => {
+                    return <RecipeCard deleteRecipe={removeRecipe} key={recipe._id} recipe={recipe}/>
                 })}
-                {recipes.length === 0 && <p>There doesn't seem to be anything here...</p>}
+                {recipes.size === 0 && <p>There doesn't seem to be anything here...</p>}
             </div>
-            {loadedAll || recipes.length !== 0 || <LoadingNextPage/>}
+            {loadedAll || recipes.size !== 0 || <LoadingNextPage/>}
         </div>
     )
 };

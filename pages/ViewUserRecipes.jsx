@@ -11,7 +11,7 @@ export default function ViewUserRecipes(props) {
     const context = useContext(ApiStoreContext);
 
     useEffect(() => {
-        axios.get(`api/users/${props.user_id}/collections`)
+        axios.get(`/api/users/${props.user_id}/collections`)
             .then(response => {
                 setCollections(response.data.collections);
             })
@@ -31,9 +31,17 @@ export default function ViewUserRecipes(props) {
                     <h3>{c.name}</h3><DeleteButton onClick={() => removeFromCollection(c._id)}/>
                 </div>
                 <Link href={`/collections/${c._id}`}>
-                    <CollectionCard images={c.recipes}/>
+                    <a>
+                        <CollectionCard images={c.recipes}/>
+                    </a>
                 </Link>
             </div>)}
         </div>
     )
 }
+
+ViewUserRecipes.getInitialProps = ({query}) => {
+    return {
+        user_id: query.user_id,
+    }
+};

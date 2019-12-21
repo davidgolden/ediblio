@@ -7,7 +7,7 @@ import RecipeCard from "../client/src/components/RecipeCard";
 import LoadingNextPage from "../client/src/components/utilities/LoadingNextPage";
 
 const ViewCollection  = props => {
-    const [recipes, setRecipes] = useState([]);
+    const [recipes, setRecipes] = useState(new Map());
     const [title, setTitle] = useState("");
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(-1);
     const [loadedAll, setLoadedAll] = useState(false);
@@ -22,7 +22,7 @@ const ViewCollection  = props => {
                 page: lastRecipePageLoaded + 1,
             })
                 .then(collection => {
-                    setRecipes(r => r.concat(collection.recipes));
+                    collection.recipes.forEach(r => recipes.set(r._id, r));
                     if (!title) setTitle(collection.name);
                     if (collection.recipes.length < 12) {
                         setLoadedAll(true);
@@ -33,6 +33,15 @@ const ViewCollection  = props => {
         }
     }, [isBottom]);
 
+    function removeRecipe(id) {
+        context.deleteRecipe(id);
+        setRecipes(r => {
+            const m = r;
+            m.delete(id);
+            return m;
+        })
+    }
+
     const browseRecipesContainerClassName = classNames({
         [styles.browseRecipesContainer]: true,
     });
@@ -41,14 +50,20 @@ const ViewCollection  = props => {
         <div className={styles.collectionsContainer}>
             <h1>{title}</h1>
             <div className={browseRecipesContainerClassName}>
-                {recipes.map(recipe => {
-                    return <RecipeCard key={recipe._id} recipe={recipe}/>
+                {Array.from(recipes.values()).map(recipe => {
+                    return <RecipeCard deleteRecipe={removeRecipe} key={recipe._id} recipe={recipe}/>
                 })}
                 {recipes.size === 0 && <p>There doesn't seem to be anything here...</p>}
             </div>
             {loadedAll || recipes.size !== 0 || <LoadingNextPage/>}
         </div>
     )
-}
+};
+
+ViewCollection.getInitialProps = ({query}) => {
+    return {
+        collection_id: query.collection_id,
+    }
+};
 
 export default ViewCollection;

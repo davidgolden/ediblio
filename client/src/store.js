@@ -2,39 +2,26 @@ import React from "react";
 import axios from "axios";
 import {addIngredient, canBeAdded} from "./utils/conversions";
 import './stylesheets/base.scss';
+import {observable} from "mobx";
 
 class Store {
-    constructor(props) {
-
-        this.state = {
-            recipes: new Map(),
-            user: null,
-            distanceToBottom: 1,
-            notificationMessage: '',
-            notificationType: '',
-            lastRequestParams: {},
-        }
-    }
+    @observable user = null;
+    notificationMessage = '';
+    notificationType = '';
 
     handleError = error => {
-        // this.setState({
-        //     notificationMessage: 'Oops! ' + error,
-        //     notificationType: 'error',
-        // });
+        this.notificationMessage = 'Oops! ' + error;
+        this.notificationType = 'error';
         setTimeout(() => {
-            // this.setState({
-            //     notificationMessage: '',
-            //     notificationType: '',
-            // });
+            this.notificationMessage = '';
+            this.notificationType = '';
         }, 4000);
     };
 
     authenticate = () => {
         axios.post('/api/authenticate')
             .then(response => {
-                // this.setState({
-                //     user: response.data.user,
-                // });
+                this.user = response.data.user;
             })
             .catch(err => {
                 this.handleError(err.response.data.detail);
@@ -47,9 +34,7 @@ class Store {
             password: password,
         })
             .then(response => {
-                // this.setState({
-                //     user: response.data.user,
-                // });
+                this.user = response.data.user;
             })
             .catch(err => {
                 this.handleError(err.response.data.detail);
@@ -59,9 +44,7 @@ class Store {
     userLogout = () => {
         axios.get('/api/logout')
             .then(() => {
-                // this.setState({
-                //     user: null,
-                // });
+                this.user = null;
             });
     };
 
@@ -78,21 +61,6 @@ class Store {
                 params: requestParams,
             })
                 .then(response => {
-                    // if not loading first page, add new recipes. otherwise, replace them.
-                    let recipes = this.state.recipes;
-
-                    if (requestParams.page !== 'undefined' && requestParams.page === 0) {
-                        recipes.clear();
-                    }
-
-                    response.data.recipes.forEach(item => {
-                        recipes.set(item._id, item);
-                    });
-
-                    // this.setState({
-                    //     recipes: recipes,
-                    // });
-
                     return res(response.data.recipes);
                 })
                 .catch(err => {
@@ -122,9 +90,7 @@ class Store {
                 ...partialUserObj
             })
                 .then(response => {
-                    // this.setState({
-                    //     user: response.data.user,
-                    // });
+                    this.user = response.data.user;
                     res();
                 })
                 .catch(err => {
@@ -140,17 +106,15 @@ class Store {
                 ...collectionObj
             })
                 .then(response => {
-                    // this.setState({
-                    //     user: {
-                    //         ...this.state.user,
-                    //         collections: this.state.user.collections.map(c => {
-                    //             if (c._id === collectionObj._id) {
-                    //                 return response.data.collection;
-                    //             }
-                    //             return c;
-                    //         })
-                    //     },
-                    // });
+                    this.user = {
+                        ...this.user,
+                        collections: this.user.collections.map(c => {
+                            if (c._id === collectionObj._id) {
+                                return response.data.collection;
+                            }
+                            return c;
+                        })
+                    };
                     res();
                 })
                 .catch(err => {
@@ -164,9 +128,7 @@ class Store {
         return new Promise((res, rej) => {
             axios.post(`/api/collections`, {name})
                 .then(response => {
-                    // this.setState({
-                    //     user: response.data.user,
-                    // });
+                    this.user = response.data.user;
                     res();
                 })
                 .catch(err => {
@@ -180,14 +142,12 @@ class Store {
         return new Promise((res, rej) => {
             axios.delete(`/api/collections/${id}`)
                 .then(() => {
-                    // this.setState({
-                    //     user: {
-                    //         ...this.state.user,
-                    //         collections: {
-                    //             ...this.state.user.collections.filter(c => c._id !== id),
-                    //         }
-                    //     }
-                    // });
+                    this.user = {
+                        ...this.user,
+                        collections: {
+                            ...this.user.collections.filter(c => c._id !== id),
+                        }
+                    };
                     res();
                 })
                 .catch(rej)
@@ -211,9 +171,7 @@ class Store {
         return new Promise((res, rej) => {
             axios.get(`/api/users/${id}`)
                 .then(response => {
-                    // this.setState({
-                    //     user: response.data.user,
-                    // });
+                    this.user = response.data.user;
                     res(response.data.user);
                 })
                 .catch(err => {
@@ -242,12 +200,6 @@ class Store {
         return new Promise((res, rej) => {
             axios.delete(`/api/recipes/${id}`)
                 .then(() => {
-                    // do something
-                    let recipes = this.state.recipes;
-                    recipes.delete(id);
-                    // this.setState({
-                    //     recipes: recipes,
-                    // });
                     res();
                 })
                 .catch(err => {
@@ -260,11 +212,8 @@ class Store {
         return new Promise((res, rej) => {
             axios.post('/api/users', {...user})
                 .then(response => {
-                    // this.setState({
-                    //     user: response.data.user,
-                    // }, () => {
-                    //     localStorage.setItem('user', JSON.stringify(this.state.user));
-                    // });
+                    this.user = response.data.user;
+                    localStorage.setItem('user', JSON.stringify(this.user));
                     res();
                 })
                 .catch(err => {
@@ -322,10 +271,10 @@ class Store {
     addToGroceryList = (recipe_id, ingredients) => {
         // add current recipe to menu
         // add all ingredients to grocery list
-        const currentMenu = this.state.user.menu;
+        const currentMenu = this.user.menu;
         currentMenu.push(recipe_id);
 
-        const currentGroceryList = this.state.user.groceryList;
+        const currentGroceryList = this.user.groceryList;
 
         const onCurrentList = ingredient => {
             return currentGroceryList.findIndex(item => {

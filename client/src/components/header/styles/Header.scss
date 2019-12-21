@@ -28,15 +28,31 @@
     }
   }
 
-  > div { // container of everything that's not the navigation links
+  .linksContainer { // container of everything that's not the navigation links
+    display: none;
     position: absolute;
     line-height: 50px;
     top: 0;
     right: 2rem;
     margin-left: 1.5rem;
 
-    @media(max-width: 770px) {
-      position: static;
+    &Visible {
+      display: inline-block;
+    }
+
+    @media(min-width: 770px) {
+      display: inline-block;
+    }
+
+    form {
+      display: inline-block;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      color: $otherdark;
     }
 
     input {
@@ -54,43 +70,39 @@
       padding: 5px 10px;
       font-size: 1rem;
       border-radius: 5px;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
     }
 
     a { // user settings, forgot password, register
-      color: white;
+      color: white !important;
       font-size: 1rem;
+
+      &:last-of-type {
+        svg {
+          color: white;
+        }
+      }
     }
-
-
 
     a, button {
       margin-right: 10px;
-      background-color: inherit;
     }
 
-    ul {
-      list-style: none;
-      display: inline-block;
-      margin: 0;
+    input, button {
+      margin-right: 10px;
+      padding: 5px;
+      height: 30px;
+    }
+
+    button {
+      line-height: 30px;
+      padding: 0 10px;
       vertical-align: middle;
-      padding-right: 10px;
-
-      li {
-        float: left;
-
-        input, button {
-          margin-right: 10px;
-          padding: 5px;
-          height: 30px;
-        }
-
-        button {
-          line-height: 30px;
-          padding: 0 10px;
-          vertical-align: middle;
-          border-radius: 10px;
-        }
-      }
+      border-radius: 10px;
     }
   }
 
@@ -109,29 +121,18 @@
   }
 }
 
-.linksContainer {
-  display: none;
-
-  &Visible {
-    display: inline-block;
-  }
-
-  @media(min-width: 770px) {
-    display: inline-block;
-  }
-
-  form {
-    display: inline-block;
-  }
-}
-
 .mobileHam {
   position: absolute;
   display: none;
-  right: 0;
+  right: 10px;
   top: 2px;
   font-size: 2rem;
   padding: 0;
+  width: 30px;
+
+  svg {
+    vertical-align: middle;
+  }
 
   @media(max-width: 770px) {
     display: inline;

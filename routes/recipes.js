@@ -94,10 +94,11 @@ router.route('/recipes')
                     newRecipe.save();
                     // add recipe to user
 
-                    User.findOne({"_id": req.session.user._id}, (err, user) => {
-                        user.recipes.push(newRecipe);
-                        user.save();
-                    });
+                    // TODO: this needs to be replaced with adding to user's favorites
+                    // User.findOne({"_id": req.session.user._id}, (err, user) => {
+                    //     user.recipes.push(newRecipe);
+                    //     user.save();
+                    // });
 
                     return res.sendStatus(200);
                 });

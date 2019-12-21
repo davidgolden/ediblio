@@ -22,13 +22,16 @@ class MyDocument extends App {
     render() {
         try {
             const {Component, pageProps, user} = this.props;
+
+            store.user = user;
+
             return (
                 <>
                     <RecipeCloudHead/>
                     <ApiStoreContext.Provider value={store}>
-                        <Header {...pageProps} user={user}/>
+                        <Header {...pageProps} />
                         <Notification />
-                        <Component {...pageProps} user={user} />
+                        <Component {...pageProps} />
                     </ApiStoreContext.Provider>
                 </>
             )
