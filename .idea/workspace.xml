@@ -16,8 +16,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="12" column="26" selection-start-line="12" selection-start-column="26" selection-end-line="12" selection-end-column="26" />
+            <state relative-caret-position="571">
+              <caret line="50" column="29" lean-forward="true" selection-start-line="50" selection-start-column="29" selection-end-line="50" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/package-lock.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="214">
+              <caret line="4550" column="102" selection-start-line="4550" selection-start-column="95" selection-end-line="4550" selection-end-column="102" />
             </state>
           </provider>
         </entry>
@@ -46,11 +55,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/next.config.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="5" column="23" lean-forward="true" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
+            <state relative-caret-position="42">
+              <caret line="2" selection-start-line="2" selection-end-line="2" />
             </state>
           </provider>
         </entry>
@@ -76,8 +85,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="552">
-              <caret line="92" lean-forward="true" selection-start-line="92" selection-end-line="92" />
+            <state relative-caret-position="462">
+              <caret line="22" column="55" selection-start-line="22" selection-start-column="55" selection-end-line="22" selection-end-column="55" />
             </state>
           </provider>
         </entry>
@@ -393,13 +402,6 @@
       <workItem from="1576813535353" duration="11458000" />
       <workItem from="1576877719872" duration="622000" />
       <workItem from="1576897776521" duration="22604000" />
-    </task>
-    <task id="LOCAL-00097" summary="last fixes">
-      <created>1554468367103</created>
-      <option name="number" value="00097" />
-      <option name="presentableId" value="LOCAL-00097" />
-      <option name="project" value="LOCAL" />
-      <updated>1554468367103</updated>
     </task>
     <task id="LOCAL-00098" summary="last fixes">
       <created>1554470069848</created>
@@ -737,11 +739,18 @@
       <option name="project" value="LOCAL" />
       <updated>1576957672773</updated>
     </task>
-    <option name="localTasksCounter" value="146" />
+    <task id="LOCAL-00146" summary="remove css modules">
+      <created>1576958105058</created>
+      <option name="number" value="00146" />
+      <option name="presentableId" value="LOCAL-00146" />
+      <option name="project" value="LOCAL" />
+      <updated>1576958105058</updated>
+    </task>
+    <option name="localTasksCounter" value="147" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="268974000" />
+    <option name="totallyTimeSpent" value="269512000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -754,9 +763,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="-660" width="1920" height="1200" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.6258322" visible="true" weight="0.13576333" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.6258322" visible="true" weight="0.13576333" />
       <window_info id="Structure" order="1" sideWeight="0.375" side_tool="true" weight="0.13576333" />
       <window_info id="npm" order="2" sideWeight="0.37416777" side_tool="true" weight="0.13576333" />
       <window_info id="DB Browser" order="3" />
@@ -771,7 +779,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32959852" />
       <window_info anchor="bottom" id="DB Execution Console" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.2987862" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.2987862" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="12" />
       <window_info anchor="bottom" id="TypeScript" order="13" />
@@ -785,7 +793,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="session" />
     <MESSAGE value="change parseInt to Number() as parseInt doesn't handle decimals without leading 0s" />
     <MESSAGE value="add collections to model, add route for adding recipe to collection" />
     <MESSAGE value="starting to add dialog box for adding recipes to collections -&gt; weird stuff going on with event listener though" />
@@ -810,16 +817,10 @@
     <MESSAGE value="fix port" />
     <MESSAGE value="next-sass and next-css to dependencies from devdep" />
     <MESSAGE value=".." />
-    <option name="LAST_COMMIT_MESSAGE" value=".." />
+    <MESSAGE value="remove css modules" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove css modules" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/pages/_error.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="84">
-          <caret line="4" column="46" selection-start-line="4" selection-start-column="46" selection-end-line="4" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pages/BrowseUsers.jsx">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1179,24 +1180,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
+    <entry file="file://$PROJECT_DIR$/next.config.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="12" column="26" selection-start-line="12" selection-start-column="26" selection-end-line="12" selection-end-column="26" />
+        <state relative-caret-position="42">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="552">
-          <caret line="92" lean-forward="true" selection-start-line="92" selection-end-line="92" />
+        <state relative-caret-position="462">
+          <caret line="22" column="55" selection-start-line="22" selection-start-column="55" selection-end-line="22" selection-end-column="55" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/next.config.js">
+    <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="5" column="23" lean-forward="true" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
+        <state relative-caret-position="571">
+          <caret line="50" column="29" lean-forward="true" selection-start-line="50" selection-start-column="29" selection-end-line="50" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package-lock.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="4550" column="102" selection-start-line="4550" selection-start-column="95" selection-end-line="4550" selection-end-column="102" />
         </state>
       </provider>
     </entry>

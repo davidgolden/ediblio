@@ -68,8 +68,7 @@
     "babel-loader": "^8.0.5",
     "core-js": "^3.6.0",
     "regenerator-runtime": "^0.13.3",
-    "url-loader": "^0.6.2",
-    "webpack": "^4.41.4"
+    "url-loader": "^0.6.2"
   },
   "browserslist": [
     ">0.2%",
