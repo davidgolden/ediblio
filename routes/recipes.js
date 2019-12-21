@@ -3,7 +3,6 @@ const express = require('express'),
     User = require('../models/user'),
     Recipe = require('../models/recipe'),
     middleware = require('../middleware'),
-    urlMetadata = require('url-metadata'),
     cloudinary = require('cloudinary');
 
 /*
