@@ -35,8 +35,8 @@ const GroceryList = props => {
 
     const handleAddIngredient = (quantity = '1', measurement = '#', name = '') => {
         setGroceryList([
+            {quantity, measurement, name},
             ...groceryList,
-            {quantity, measurement, name}
         ]);
         setIsCurrent(false);
     };

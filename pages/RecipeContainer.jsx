@@ -44,7 +44,7 @@ const RecipeContainer = observer(props => {
     const handleAddIngredient = (quantity = '1', measurement = '#', name = '') => {
         let ingredientList = recipe.ingredients;
         let ingredient = {quantity, measurement, name};
-        ingredientList.push(ingredient);
+        ingredientList.splice(0, 0, ingredient);
         setRecipe({
             ...recipe,
             ingredients: ingredientList,
