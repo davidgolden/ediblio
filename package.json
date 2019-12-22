@@ -9,6 +9,7 @@
     "npm": "6.9.0"
   },
   "scripts": {
+    "test": "jest",
     "dev": "next",
     "build": "next build",
     "start:dev": "NODE_ENV=development node server.js",
@@ -31,6 +32,7 @@
     "cloudinary": "^1.14.0",
     "compression": "^1.7.4",
     "connect-mongo": "^2.0.3",
+    "convert-units": "^2.3.4",
     "cookie-parser": "^1.4.4",
     "dotenv": "^5.0.0",
     "express": "^4.17.1",
@@ -63,6 +65,7 @@
     "@babel/preset-react": "^7.7.4",
     "babel-loader": "^8.0.5",
     "core-js": "^3.6.0",
+    "jest": "^24.9.0",
     "regenerator-runtime": "^0.13.3",
     "url-loader": "^0.6.2"
   },

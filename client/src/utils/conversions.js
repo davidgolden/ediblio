@@ -1,11 +1,12 @@
 // if number of teaspoons divides into 4, then convert to tablespoons
 // but if there's leftover, divide
+const convert = require('convert-units');
 
 // groups of what measurements can be added
 const canBeAddedLookup = [
     ['#'],
-    ['cup', 'ml', 'fl oz', 'pt', 'qt', 'gal', 'tbsp', 'tsp', 'l'],
-    ['oz', 'lb'],
+    ['ml', 'tsp', 'tbsp', 'fl oz', 'cup', 'pt', 'l', 'qt', 'gal'],
+    ['g', 'oz', 'lb'],
 ];
 
 export const canBeAdded = (m1, m2) => {
@@ -13,49 +14,35 @@ export const canBeAdded = (m1, m2) => {
     return canBeAddedLookup.find(g => g.find(t => t === m1)).includes(m2);
 };
 
-export const conversions = {
-    'cup': {
-        'tbsp': v => v / 16,
-        'tsp': v => v / 48,
-        'ml': v => v * 237,
-        'fl oz': v => v * 8.115391,
-        'pt': v => v * 0.5072103,
-    },
-    'tbsp': {
-        'cup': v => v * 16,
-        'tsp': v => v / 4,
-    },
-    'tsp': {
-        'cup': v => v * 48,
-        'tbsp': v => v * 4,
-    }
-};
-
 // return { quantity: x, measurement: y }
 // m1 is grocery list item, m2 is new ingredient (adding new ingredient to grocery list)
+const standardize = { // use the library's nomenclature
+    'fl oz': 'fl-oz',
+    'tbsp': 'Tbs',
+    'pt': 'pnt',
+};
+
+function roundToTwo(num) {
+    return +(Math.round(num + "e+2")  + "e-2");
+}
+
 export const addIngredient = (q1, m1, q2, m2) => {
-    let q, m;
-    if (m1 === 'tsp' && m2 === 'tbsp') {
+    let q = q1 + q2, m = m1;
+    if (m1 === m2) return { quantity: `${q}`, measurement: m };
+
+    const arr = canBeAddedLookup.find(g => g.find(t => t === m1));
+    const index1 = arr.findIndex(t => t === m1);
+    const index2 = arr.findIndex(t => t === m2);
+
+    if (index1 > index2) { // convert m2 to m1
+        q2 = convert(q2).from(standardize[m2] || m2).to(standardize[m1] || m1);
+        m = m1;
+    } else { // convert m1 to m2
+        q1 = convert(q1).from(standardize[m1] || m1).to(standardize[m2] || m2);
         m = m2;
-        q = (q1 / 4) + q2;
-    } else if (m1 === 'tsp' && m2 === 'cup') {
-        m = m2;
-        q = (q1/48) + q2;
-    } else if (m1 === 'tbsp' && m2 === 'tsp') {
-        m = m1;
-        q = q1 + (q2 / 4);
-    } else if (m1 === 'tbsp' && m2 === 'cup') {
-        m = m2;
-        q = (q1 / 16) + q2;
-    } else if (m1 === 'cup' && m2 === 'tsp') {
-        m = m1;
-        q = q1 + (q2 / 48);
-    } else if (m1 === 'cup' && m2 === 'tbsp') {
-        m = m1;
-        q = q1 + (q2 / 16);
-    } else if (m1 === m2) {
-        q = q1 + q2;
-        m = m1;
     }
+
+    q = roundToTwo(q1 + q2);
+
     return { quantity: `${q}`, measurement: m };
 };

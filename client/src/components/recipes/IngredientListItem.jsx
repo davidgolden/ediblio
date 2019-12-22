@@ -35,8 +35,8 @@ const Ingredient = (props) => {
                     <option value='pt'>pt</option>
                     <option value='qt'>qt</option>
                     <option value='ml'>ml</option>
-                    <option value='l'>L</option>
-                    <option value='gram'>gram</option>
+                    <option value='l'>l</option>
+                    <option value='g'>g</option>
                     <option value='gal'>gal</option>
                 </select>
                 <input
