@@ -17,6 +17,13 @@ const ViewUserRecipes = observer((props) => {
     const isBottom = useScrolledBottom();
 
     useEffect(() => {
+        if (props.user_id === context.user._id) {
+            axios.get(`/api/users/${props.user_id}/collections`)
+                .then(response => setCollections(response.data.collections))
+        }
+    }, [context.user?.collections.length !== props.collections.length]);
+
+    useEffect(() => {
         if (!loadedAll) {
             context.getRecipes({
                 page: lastRecipePageLoaded + 1,
