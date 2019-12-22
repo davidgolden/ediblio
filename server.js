@@ -2,6 +2,7 @@ require('dotenv').config({path: './.env'});
 const express = require('express');
 const compression = require('compression');
 const next = require('next');
+const path = require('path');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({dev});
@@ -119,6 +120,11 @@ app.prepare().then(() => {
 
     server.get("/", async (req, res) => {
         return app.render(req, res,'/BrowseRecipes', req.query)
+    });
+
+    server.get('/service-worker.js', (req, res) => {
+        const filePath = path.join(__dirname, '.next/service-worker.js');
+        app.serveStatic(req, res, filePath)
     });
 
     server.get("/recipes", (req, res) => {
