@@ -20,7 +20,7 @@ middlewareObj.checkRecipeOwnership = (req, res, next) => {
       } else {
         // does user own the campground?
         // use equals because one is mongoose object and one is string
-        if(recipe.author_id.equals(req.session.passport.user._id) || req.session.passport.user.isAdmin === true) {
+        if(recipe.author_id.equals(req.user._id) || req.user.isAdmin === true) {
           // if so, redirect
           next();
         } else {
