@@ -60,11 +60,15 @@ const RecipeCard = props => {
                     deleteRecipe={deleteRecipe}
                 />}
             </div>
-            <div className={userImageClassName}>
-                {props.recipe.author_id.profileImage ?
-                    <img src={props.recipe.author_id.profileImage}/> :
-                    <FontAwesomeIcon icon={faUser}/>}
-            </div>
+            {showButtons && <div className={userImageClassName}>
+                <Link href={`/users/${props.recipe.author_id.id}/recipes`}>
+                    <a>
+                        {props.recipe.author_id.profileImage ?
+                            <img src={props.recipe.author_id.profileImage}/> :
+                            <FontAwesomeIcon icon={faUser}/>}
+                    </a>
+                </Link>
+            </div>}
         </div>
     )
 };

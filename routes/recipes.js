@@ -61,6 +61,7 @@ router.route('/recipes')
             .skip(skip)
             .sort({[req.query.sortBy]: req.query.orderBy})
             .populate('author_id', {
+                'id': 'author_id',
                 'username': 'username',
                 'profileImage': 'profileImage',
             }, 'users')
