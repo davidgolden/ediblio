@@ -66,6 +66,14 @@
     border-radius: 10px;
     font-size: 1rem;
 
+    * {
+      vertical-align: middle;
+    }
+
+    svg {
+      width: 20px;
+    }
+
     &:hover {
       background-color: $other;
     }

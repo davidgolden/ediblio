@@ -7,8 +7,9 @@ import {faShoppingBag} from '@fortawesome/free-solid-svg-icons';
 import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
+import {observer} from "mobx-react";
 
-const ShowRecipe = props => {
+const ShowRecipe = observer(props => {
     const [added, setAdded] = useState(false);
     const context = useContext(ApiStoreContext);
 
@@ -65,13 +66,13 @@ const ShowRecipe = props => {
                     handleDeleteIngredient={props.handleDeleteIngredient}
                 />
                 <div className={showRecipeButtonsClassName}>
-                    {context.isLoggedIn ? <Button onClick={handleAddToList}>
+                    {context.user ? <Button onClick={handleAddToList}>
                         <FontAwesomeIcon icon={faShoppingBag}/> {added ? 'Added To' : 'Add To'} Grocery List
                     </Button> : <p>Login or Register to Add to Grocery List</p>}
                 </div>
             </div>}
         </div>
     )
-};
+});
 
 export default ShowRecipe;
