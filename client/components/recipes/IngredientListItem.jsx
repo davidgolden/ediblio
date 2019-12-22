@@ -6,11 +6,12 @@ import RemoveButton from "../utilities/buttons/RemoveButton";
 const Ingredient = (props) => {
     const ingredientRowClassName = classNames({
         [styles.ingredientRow]: true,
+        "draggable": true,
     });
 
     if(!props.storeMode) {
         return (
-            <li className={ingredientRowClassName}>
+            <li className={ingredientRowClassName} data-id={props.dataId}>
                 <input
                     type='number'
                     step="0.01"

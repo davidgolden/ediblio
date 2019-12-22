@@ -41,10 +41,10 @@ const RecipeContainer = observer(props => {
         });
     };
 
-    const handleAddIngredient = () => {
+    const handleAddIngredient = (quantity = '1', measurement = '#', name = '') => {
         let ingredientList = recipe.ingredients;
-        let ingredient = {quantity: '0', measurement: '#', name: ''};
-        ingredientList.push(ingredient);
+        let ingredient = {quantity, measurement, name};
+        ingredientList.splice(0, 0, ingredient);
         setRecipe({
             ...recipe,
             ingredients: ingredientList,

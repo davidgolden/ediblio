@@ -4,6 +4,20 @@ import classNames from 'classnames';
 import styles from './styles/AddIngredients.scss';
 import {faQuestion, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Sortable from "react-sortablejs";
+
+const DefaultItemRenderer = (props) => {
+    const {data: {name, depth}, drag, drop} = props;
+    const ref = React.useRef(null);
+
+    drag(drop(ref));
+
+    return (
+        <div ref={ref} style={{marginLeft: depth * 20}}>
+            {name}
+        </div>
+    );
+};
 
 const measurements = ['tsp', 'teaspoon', 'tbsp', 'tablespoon', 'cup', 'pint', 'pt', 'fl oz', 'fluid ounce', 'quart', 'qt', 'ounce', 'oz', 'milliliter', 'ml', 'pound', 'lb', 'gram', 'gallon', 'gal', 'liter', 'l'];
 const withMeasurement = new RegExp("^([1-9\\.\\/\\s]+)\\s(" + measurements.join("s\?|") + "s?)\\s([a-zA-Z\\s]+)$", "i");
@@ -83,18 +97,27 @@ const AddIngredients = (props) => {
                 <input placeholder={"1.5 cups milk"} value={value} onChange={e => setValue(e.target.value)}/>
                 <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
             </form>
-            <ul>
+            <Sortable
+                options={{
+                    draggable: '.draggable',
+                    disabled: !props.dragEnabled,
+                }}
+                tag={"ul"}
+                onChange={(order, sortable, evt) => {
+                    props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));
+                }}>
                 {props.ingredients.map((item, i) => {
                     return <Ingredient
                         key={item._id ? `${item._id}${i}` : i}
                         value={item}
                         id={i}
+                        dataId={JSON.stringify(item)}
                         handleDeleteIngredient={props.handleDeleteIngredient}
                         handleUpdateIngredient={props.handleUpdateIngredient}
                         storeMode={props.storeMode}
                     />
                 })}
-            </ul>
+            </Sortable>
         </div>
     )
 };
