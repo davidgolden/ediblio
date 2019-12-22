@@ -47,6 +47,7 @@ router.get('/collections/:collection_id', async (req, res) => {
         }
     })
         .populate('author_id', {
+            'id': 'author_id',
             'username': 'username',
             'profileImage': 'profileImage',
         }, 'users')
