@@ -4,9 +4,8 @@
     <list default="true" id="b360ea2b-4ea7-4711-b7b1-0edc28f9c2b5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/recipes/styles/AddIngredients.scss" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/recipes/styles/AddIngredients.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/utilities/buttons/AddToCloudButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/utilities/buttons/AddToCloudButton.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/AddRecipe.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/AddRecipe.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/utils/conversions.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/utils/conversions.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -20,42 +19,33 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server.js">
+        <entry file="file://$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="521">
-              <caret line="91" column="57" selection-start-line="91" selection-start-column="57" selection-end-line="91" selection-end-column="57" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="619">
-              <caret line="60" column="22" lean-forward="true" selection-start-line="60" selection-start-column="22" selection-end-line="60" selection-end-column="22" />
+            <state relative-caret-position="693">
+              <caret line="33" column="50" lean-forward="true" selection-start-line="33" selection-start-column="50" selection-end-line="33" selection-end-column="50" />
               <folding>
-                <element signature="e#0#49#0" expanded="true" />
+                <element signature="e#0#26#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/src/components/recipes/styles/AddIngredients.scss">
+        <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="497">
-              <caret line="70" column="26" selection-start-line="70" selection-start-column="26" selection-end-line="70" selection-end-column="26" />
+            <state relative-caret-position="584">
+              <caret line="58" column="37" selection-start-line="58" selection-start-column="37" selection-end-line="58" selection-end-column="37" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pages/AddRecipe.jsx">
+        <entry file="file://$PROJECT_DIR$/client/src/utils/conversions.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="79" selection-start-line="79" selection-end-line="79" />
+            <state relative-caret-position="441">
+              <caret line="21" column="33" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="33" />
               <folding>
-                <element signature="e#0#52#0" expanded="true" />
+                <element signature="n#!!doc" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -111,8 +101,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/client/src/pages/ViewUserRecipes.jsx" />
-        <option value="$PROJECT_DIR$/polyfills.js" />
         <option value="$PROJECT_DIR$/client/src/pages/ViewCollection.jsx" />
         <option value="$PROJECT_DIR$/client/src/pages/RecipeContainer.jsx" />
         <option value="$PROJECT_DIR$/client/src/pages/styles/RecipeContainer.scss" />
@@ -160,8 +148,10 @@
         <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/client/src/components/utilities/buttons/AddToCloudButton.jsx" />
         <option value="$PROJECT_DIR$/pages/AddRecipe.jsx" />
-        <option value="$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx" />
         <option value="$PROJECT_DIR$/client/src/components/recipes/styles/AddIngredients.scss" />
+        <option value="$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx" />
+        <option value="$PROJECT_DIR$/client/src/utils/conversions.js" />
+        <option value="$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx" />
       </list>
     </option>
   </component>
@@ -227,6 +217,13 @@
               <item name="components" type="462c0819:PsiDirectoryNode" />
               <item name="utilities" type="462c0819:PsiDirectoryNode" />
               <item name="buttons" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="recipe-cloud-v2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="recipe-cloud-v2" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="recipe-cloud-v2" type="b2602c69:ProjectViewProjectNode" />
@@ -418,20 +415,6 @@
       <workItem from="1576813535353" duration="11458000" />
       <workItem from="1576877719872" duration="622000" />
       <workItem from="1576897776521" duration="22604000" />
-    </task>
-    <task id="LOCAL-00100" summary="fix authentication bug">
-      <created>1554470618887</created>
-      <option name="number" value="00100" />
-      <option name="presentableId" value="LOCAL-00100" />
-      <option name="project" value="LOCAL" />
-      <updated>1554470618887</updated>
-    </task>
-    <task id="LOCAL-00101" summary="remove localstorage until I better understand that">
-      <created>1554494034884</created>
-      <option name="number" value="00101" />
-      <option name="presentableId" value="LOCAL-00101" />
-      <option name="project" value="LOCAL" />
-      <updated>1554494034884</updated>
     </task>
     <task id="LOCAL-00102" summary="remove UserRecipes page">
       <created>1554512971934</created>
@@ -762,11 +745,25 @@
       <option name="project" value="LOCAL" />
       <updated>1576959252683</updated>
     </task>
-    <option name="localTasksCounter" value="149" />
+    <task id="LOCAL-00149" summary="initial">
+      <created>1576982336224</created>
+      <option name="number" value="00149" />
+      <option name="presentableId" value="LOCAL-00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1576982336224</updated>
+    </task>
+    <task id="LOCAL-00150" summary="working add ingredient feature">
+      <created>1576982863610</created>
+      <option name="number" value="00150" />
+      <option name="presentableId" value="LOCAL-00150" />
+      <option name="project" value="LOCAL" />
+      <updated>1576982863610</updated>
+    </task>
+    <option name="localTasksCounter" value="151" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="276307000" />
+    <option name="totallyTimeSpent" value="278670000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -810,8 +807,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="starting to add dialog box for adding recipes to collections -&gt; weird stuff going on with event listener though" />
-    <MESSAGE value="create collections" />
     <MESSAGE value="add to collections working" />
     <MESSAGE value="change collection to model, then working add to collection, create collection, view collection" />
     <MESSAGE value="all adding to collection stuff working" />
@@ -835,33 +830,11 @@
     <MESSAGE value="remove css modules" />
     <MESSAGE value="." />
     <MESSAGE value="fix request hostname" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix request hostname" />
+    <MESSAGE value="initial" />
+    <MESSAGE value="working add ingredient feature" />
+    <option name="LAST_COMMIT_MESSAGE" value="working add ingredient feature" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/src/components/utilities/buttons/styles/Button.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="19" column="16" selection-start-line="19" selection-start-column="16" selection-end-line="19" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/utilities/buttons/RemoveButton.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="84">
-          <caret line="9" column="22" lean-forward="true" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="402">
-          <caret line="43" column="22" selection-start-line="43" selection-start-column="22" selection-end-line="43" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pages/styles/RecipeContainer.scss">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="82">
@@ -1207,20 +1180,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
+    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/styles/AddIngredients.scss">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="619">
-          <caret line="60" column="22" lean-forward="true" selection-start-line="60" selection-start-column="22" selection-end-line="60" selection-end-column="22" />
+        <state relative-caret-position="105">
+          <caret line="5" column="3" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/utils/units.js">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/utils/conversions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="441">
+          <caret line="21" column="33" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="33" />
           <folding>
-            <element signature="e#0#49#0" expanded="true" />
+            <element signature="n#!!doc" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/styles/AddIngredients.scss">
+    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/IngredientListItem.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="70" column="26" selection-start-line="70" selection-start-column="26" selection-end-line="70" selection-end-column="26" />
+        <state relative-caret-position="693">
+          <caret line="33" column="50" lean-forward="true" selection-start-line="33" selection-start-column="50" selection-end-line="33" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/components/recipes/AddIngredients.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="584">
+          <caret line="58" column="37" selection-start-line="58" selection-start-column="37" selection-end-line="58" selection-end-column="37" />
         </state>
       </provider>
     </entry>

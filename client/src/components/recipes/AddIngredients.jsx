@@ -5,8 +5,8 @@ import styles from './styles/AddIngredients.scss';
 import {faQuestion, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-const measurements = ['tsp', 'teaspoon', 'tbsp', 'tablespoon', 'cup', 'pint', 'pt', 'fl oz', 'fluid ounce', 'quart', 'qt', 'ounce', 'oz', 'milliliter', 'ml', 'pound', 'lb', 'gram'];
-const withMeasurement = new RegExp("^([1-9\\.\\/\\s]+)\\s(" + measurements.join("s?|") + "s?)\\s([a-zA-Z\\s]+)$", "i");
+const measurements = ['tsp', 'teaspoon', 'tbsp', 'tablespoon', 'cup', 'pint', 'pt', 'fl oz', 'fluid ounce', 'quart', 'qt', 'ounce', 'oz', 'milliliter', 'ml', 'pound', 'lb', 'gram', 'gallon', 'gal', 'liter', 'l'];
+const withMeasurement = new RegExp("^([1-9\\.\\/\\s]+)\\s(" + measurements.join("s\?|") + "s?)\\s([a-zA-Z\\s]+)$", "i");
 const noMeasurement = new RegExp("([1-9\\.\\/\\s]+)\\s([a-zA-Z\\s]+)$", "i");
 
 const shortenedMeasurements = {
@@ -18,6 +18,8 @@ const shortenedMeasurements = {
     'ounce': 'oz',
     'milliliter': 'ml',
     'pound': 'lb',
+    'gallon': 'gal',
+    'liter': 'l'
 };
 
 const AddIngredients = (props) => {
@@ -51,6 +53,8 @@ const AddIngredients = (props) => {
         // test if we've used the long version of a measurement, and switch to abbreviation if necessary
         if (measurement in shortenedMeasurements) {
             measurement = shortenedMeasurements[measurement];
+        } else if (/[\d]*s$/.test(measurement)) { // test that we're not using the plural of something
+            measurement = measurement.substring(0, measurement.length - 1);
         }
 
         setValue("");
@@ -76,7 +80,7 @@ const AddIngredients = (props) => {
                         Add an ingredients like "1 cup rice, 1 apple, or 1 1/2 tbsp salt".
                     </div>
                 </div>
-                <input value={value} onChange={e => setValue(e.target.value)}/>
+                <input placeholder={"1.5 cups milk"} value={value} onChange={e => setValue(e.target.value)}/>
                 <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
             </form>
             <ul>

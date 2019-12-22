@@ -1,60 +1,33 @@
 // if number of teaspoons divides into 4, then convert to tablespoons
 // but if there's leftover, divide
 
+// groups of what measurements can be added
+const canBeAddedLookup = [
+    ['#'],
+    ['cup', 'ml', 'fl oz', 'pt', 'qt', 'gal', 'tbsp', 'tsp', 'l'],
+    ['oz', 'lb'],
+];
+
 export const canBeAdded = (m1, m2) => {
-    if(m1 !== m2) {
-        if(m1 === '#' && m2 === 'lb') {
-            return false;
-        }
-        else if(m1 === '#' && m2 === 'fl oz') {
-            return false;
-        }
-        else if(m1 === '#' && m2 === 'oz') {
-            return false;
-        }
-        else if(m1 === 'lb' && m2 === '#') {
-            return false;
-        }
-        else if(m1 === 'lb' && m2 === 'fl oz') {
-            return false;
-        }
-        else if(m1 === 'lb' && m2 === 'oz') {
-            return false;
-        }
-        else if(m1 === 'fl oz' && m2 === '#') {
-            return false;
-        }
-        else if(m1 === 'fl oz' && m2 === 'lb') {
-            return false;
-        }
-        else if(m1 === 'fl oz' && m2 === 'oz') {
-            return false;
-        }
-        else if(m1 === 'oz' && m2 === 'fl oz') {
-            return false;
-        }
-        else if(m1 === 'oz' && m2 === '#') {
-            return false;
-        }
-        else if(m1 === 'oz' && m2 === 'lb') {
-            return false;
-        }
-    }
-    return true;
+    if (m1 === m2) return true;
+    return canBeAddedLookup.find(g => g.find(t => t === m1)).includes(m2);
 };
 
 export const conversions = {
-    cup: {
-        to_tbsp: value => value / 16,
-        to_tsp: value => value / 48,
+    'cup': {
+        'tbsp': v => v / 16,
+        'tsp': v => v / 48,
+        'ml': v => v * 237,
+        'fl oz': v => v * 8.115391,
+        'pt': v => v * 0.5072103,
     },
-    tbsp: {
-        to_cup: value => value * 16,
-        to_tsp: value => value / 4,
+    'tbsp': {
+        'cup': v => v * 16,
+        'tsp': v => v / 4,
     },
-    tsp: {
-        to_cup: value => value * 48,
-        to_tbsp: value => value * 4,
+    'tsp': {
+        'cup': v => v * 48,
+        'tbsp': v => v * 4,
     }
 };
 
