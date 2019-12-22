@@ -2,32 +2,42 @@
   margin: 2px 0;
   min-height: 35px;
   list-style: none;
+  display: table;
+  width: 100%;
+
+  > * {
+    display: table-cell;
+  }
 
   > input, > select, > button {
-    display: inline-block;
     margin: 0 1px;
-    height: 100%;
+    height: 100%
   }
 
   > input, > select {
     background-color: inherit;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    padding: .5rem;
   }
 
   > input:first-of-type, select {
-    width: 20%;
+    width: 10%;
     min-width: 50px;
   }
 
+  > select {
+    min-width: 70px;
+  }
+
   > input:nth-of-type(2) {
-    width: auto;
-    max-width: 50%;
-    min-width: 100px;
+    width: 60%;
   }
 
   > button {
     border-radius: 10px;
     height: 35px;
+    float: right;
+    width: 40px;
   }
 
   &:nth-of-type(even) {
