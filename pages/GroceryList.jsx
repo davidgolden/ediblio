@@ -33,10 +33,10 @@ const GroceryList = props => {
         setIsCurrent(false);
     };
 
-    const handleAddIngredient = () => {
+    const handleAddIngredient = (quantity = '1', measurement = '#', name = '') => {
         setGroceryList([
             ...groceryList,
-            {quantity: '', measurement: '#', name: ''}
+            {quantity, measurement, name}
         ]);
         setIsCurrent(false);
     };
@@ -108,6 +108,7 @@ const GroceryList = props => {
                 handleDeleteIngredient={handleDeleteIngredient}
                 handleUpdateAllIngredients={handleUpdateAllIngredients}
                 storeMode={storeMode}
+                dragEnabled={true}
             />
             <Button className={saveListClassName} onClick={updateList}>Save Grocery List/Menu</Button>
             <Button onClick={toggleStoreMode}>Toggle Store Mode</Button>

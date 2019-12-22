@@ -99,12 +99,12 @@ const AddIngredients = (props) => {
             </form>
             <Sortable
                 options={{
-                    draggable: '.draggable'
+                    draggable: '.draggable',
+                    disabled: !props.dragEnabled,
                 }}
                 tag={"ul"}
                 onChange={(order, sortable, evt) => {
-                    // order returns array of item keys
-                    props.handleUpdateAllIngredients(order.map(m => JSON.parse(m));
+                    props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));
                 }}>
                 {props.ingredients.map((item, i) => {
                     return <Ingredient
