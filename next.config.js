@@ -1,13 +1,13 @@
 const withSass = require('@zeit/next-sass');
 const withCSS = require('@zeit/next-css');
+const withOffline = require('next-offline');
 
-module.exports = withCSS(withSass({
+module.exports = withCSS(withSass(withOffline({
     cssModules: true,
     cssLoaderOptions: {
-        // url: false, // otherwise not resolving url(image.png) -> url(./image.png)
-        // exportOnlyLocals: false,
         localIdentName: '[local]_[hash:base64:5]',
     },
+    generateInDevMode: true,
     webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
         config.module.rules.push({
             test: /\.(png|jpg|gif)$/,
@@ -37,4 +37,4 @@ module.exports = withCSS(withSass({
 
         return config;
     },
-}));
+})));

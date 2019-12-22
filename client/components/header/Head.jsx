@@ -11,5 +11,6 @@ export default function RecipeCloudHead(props) {
         <meta property="og:description" content="Add, Manage, and Share Recipes and Create Grocery Lists."/>
         <meta property="og:image" content="/images/addrecipe.png"/>
         <link href="https://fonts.googleapis.com/css?family=Markazi+Text" rel="stylesheet"/>
+        <link rel={"manifest"} href={"/manifest.webmanifest"}/>
     </Head>
 }

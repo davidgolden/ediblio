@@ -1,0 +1,20 @@
+{
+  "name": "Recipe Cloud",
+  "short_name": "Recipe Cloud",
+  "icons": [
+    {
+      "src": "/images/recipecloud.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/images/recipecloud.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#D8ECF5",
+  "theme_color": "#164E57",
+  "display": "minimal-ui"
+}
