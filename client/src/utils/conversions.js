@@ -1,88 +1,48 @@
 // if number of teaspoons divides into 4, then convert to tablespoons
 // but if there's leftover, divide
+const convert = require('convert-units');
+
+// groups of what measurements can be added
+const canBeAddedLookup = [
+    ['#'],
+    ['ml', 'tsp', 'tbsp', 'fl oz', 'cup', 'pt', 'l', 'qt', 'gal'],
+    ['g', 'oz', 'lb'],
+];
 
 export const canBeAdded = (m1, m2) => {
-    if(m1 !== m2) {
-        if(m1 === '#' && m2 === 'lb') {
-            return false;
-        }
-        else if(m1 === '#' && m2 === 'fl oz') {
-            return false;
-        }
-        else if(m1 === '#' && m2 === 'oz') {
-            return false;
-        }
-        else if(m1 === 'lb' && m2 === '#') {
-            return false;
-        }
-        else if(m1 === 'lb' && m2 === 'fl oz') {
-            return false;
-        }
-        else if(m1 === 'lb' && m2 === 'oz') {
-            return false;
-        }
-        else if(m1 === 'fl oz' && m2 === '#') {
-            return false;
-        }
-        else if(m1 === 'fl oz' && m2 === 'lb') {
-            return false;
-        }
-        else if(m1 === 'fl oz' && m2 === 'oz') {
-            return false;
-        }
-        else if(m1 === 'oz' && m2 === 'fl oz') {
-            return false;
-        }
-        else if(m1 === 'oz' && m2 === '#') {
-            return false;
-        }
-        else if(m1 === 'oz' && m2 === 'lb') {
-            return false;
-        }
-    }
-    return true;
-};
-
-export const conversions = {
-    cup: {
-        to_tbsp: value => value / 16,
-        to_tsp: value => value / 48,
-    },
-    tbsp: {
-        to_cup: value => value * 16,
-        to_tsp: value => value / 4,
-    },
-    tsp: {
-        to_cup: value => value * 48,
-        to_tbsp: value => value * 4,
-    }
+    if (m1 === m2) return true;
+    return canBeAddedLookup.find(g => g.find(t => t === m1)).includes(m2);
 };
 
 // return { quantity: x, measurement: y }
 // m1 is grocery list item, m2 is new ingredient (adding new ingredient to grocery list)
+const standardize = { // use the library's nomenclature
+    'fl oz': 'fl-oz',
+    'tbsp': 'Tbs',
+    'pt': 'pnt',
+};
+
+function roundToTwo(num) {
+    return +(Math.round(num + "e+2")  + "e-2");
+}
+
 export const addIngredient = (q1, m1, q2, m2) => {
-    let q, m;
-    if (m1 === 'tsp' && m2 === 'tbsp') {
+    let q = q1 + q2, m = m1;
+    if (m1 === m2) return { quantity: `${q}`, measurement: m };
+
+    const arr = canBeAddedLookup.find(g => g.find(t => t === m1));
+    const index1 = arr.findIndex(t => t === m1);
+    const index2 = arr.findIndex(t => t === m2);
+
+    if (index1 > index2) { // convert m2 to m1
+        q2 = convert(q2).from(standardize[m2] || m2).to(standardize[m1] || m1);
+        m = m1;
+    } else { // convert m1 to m2
+        q1 = convert(q1).from(standardize[m1] || m1).to(standardize[m2] || m2);
         m = m2;
-        q = (q1 / 4) + q2;
-    } else if (m1 === 'tsp' && m2 === 'cup') {
-        m = m2;
-        q = (q1/48) + q2;
-    } else if (m1 === 'tbsp' && m2 === 'tsp') {
-        m = m1;
-        q = q1 + (q2 / 4);
-    } else if (m1 === 'tbsp' && m2 === 'cup') {
-        m = m2;
-        q = (q1 / 16) + q2;
-    } else if (m1 === 'cup' && m2 === 'tsp') {
-        m = m1;
-        q = q1 + (q2 / 48);
-    } else if (m1 === 'cup' && m2 === 'tbsp') {
-        m = m1;
-        q = q1 + (q2 / 16);
-    } else if (m1 === m2) {
-        q = q1 + q2;
-        m = m1;
     }
+
+    q = roundToTwo(q1 + q2);
+
     return { quantity: `${q}`, measurement: m };
 };
