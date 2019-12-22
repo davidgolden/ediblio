@@ -1,13 +1,13 @@
 import React, {useState, useContext, useEffect} from 'react';
 import RecipeForm from './AddRecipe';
-import ShowRecipe from '../client/src/components/recipes/ShowRecipe';
+import ShowRecipe from '../client/components/recipes/ShowRecipe';
 import styles from './styles/RecipeContainer.scss';
 import classNames from 'classnames';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSearch, faEdit} from '@fortawesome/free-solid-svg-icons'
-import Button from "../client/src/components/utilities/buttons/Button";
-import RecipeButtons from "../client/src/components/recipes/RecipeButtons";
-import {ApiStoreContext} from "../client/src/stores/api_store";
+import Button from "../client/components/utilities/buttons/Button";
+import RecipeButtons from "../client/components/recipes/RecipeButtons";
+import {ApiStoreContext} from "../client/stores/api_store";
 import {observer} from "mobx-react";
 import axios from "axios";
 

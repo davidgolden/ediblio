@@ -1,11 +1,11 @@
-import {store} from "../client/src/store";
-import {ApiStoreContext} from "../client/src/stores/api_store";
+import {store} from "../client/store";
+import {ApiStoreContext} from "../client/stores/api_store";
 import React from "react";
 import App from 'next/app'
 import ErrorPage from "./_error";
-import RecipeCloudHead from "../client/src/components/header/Head";
-import Header from "../client/src/components/header/Header";
-import Notification from "../client/src/components/header/Notification";
+import RecipeCloudHead from "../client/components/header/Head";
+import Header from "../client/components/header/Header";
+import Notification from "../client/components/header/Notification";
 
 class MyDocument extends App {
 

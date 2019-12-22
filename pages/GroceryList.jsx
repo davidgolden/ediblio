@@ -1,12 +1,12 @@
 import React, {useContext, useState, useEffect} from 'react';
-import AddIngredients from '../client/src/components/recipes/AddIngredients';
+import AddIngredients from '../client/components/recipes/AddIngredients';
 import styles from './styles/GroceryList.scss';
 import classNames from 'classnames';
-import Button from "../client/src/components/utilities/buttons/Button";
-import RemoveButton from "../client/src/components/utilities/buttons/RemoveButton"
+import Button from "../client/components/utilities/buttons/Button";
+import RemoveButton from "../client/components/utilities/buttons/RemoveButton"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
-import {ApiStoreContext} from "../client/src/stores/api_store";
+import {ApiStoreContext} from "../client/stores/api_store";
 import axios from "axios";
 // import fetch from "isomorphic-unfetch";
 

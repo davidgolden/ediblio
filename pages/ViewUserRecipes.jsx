@@ -1,9 +1,9 @@
 import React, {useContext, useState, useEffect} from 'react';
 import axios from 'axios';
-import CollectionCard from "../client/src/components/CollectionCard";
+import CollectionCard from "../client/components/CollectionCard";
 import styles from './styles/BrowseRecipes.scss';
-import {ApiStoreContext} from "../client/src/stores/api_store";
-import DeleteButton from "../client/src/components/utilities/buttons/DeleteButton";
+import {ApiStoreContext} from "../client/stores/api_store";
+import DeleteButton from "../client/components/utilities/buttons/DeleteButton";
 import Link from 'next/link';
 
 export default function ViewUserRecipes(props) {

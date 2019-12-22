@@ -1,9 +1,9 @@
 import React, {useState, useContext, useEffect} from 'react';
 import styles from './styles/UserSettings.scss';
 import classNames from 'classnames';
-import Button from "../client/src/components/utilities/buttons/Button";
-import {ApiStoreContext} from "../client/src/stores/api_store";
-import {processFile} from "../client/src/utils/images";
+import Button from "../client/components/utilities/buttons/Button";
+import {ApiStoreContext} from "../client/stores/api_store";
+import {processFile} from "../client/utils/images";
 import axios from "axios";
 
 const UserSettings = props => {

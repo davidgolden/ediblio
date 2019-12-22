@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
-import RecipeInformation from '../client/src/components/recipes/RecipeInformation';
-import AddIngredients from '../client/src/components/recipes/AddIngredients';
-import Button from "../client/src/components/utilities/buttons/Button";
-import {recipeTags} from "../client/src/stores/Setings";
+import RecipeInformation from '../client/components/recipes/RecipeInformation';
+import AddIngredients from '../client/components/recipes/AddIngredients';
+import Button from "../client/components/utilities/buttons/Button";
+import {recipeTags} from "../client/stores/Setings";
 import styles from './styles/AddRecipe.scss';
 import classNames from 'classnames';
-import {ApiStoreContext} from "../client/src/stores/api_store";
+import {ApiStoreContext} from "../client/stores/api_store";
 import {observer} from "mobx-react";
 import Router from 'next/router';
 

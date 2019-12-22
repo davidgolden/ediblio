@@ -1,10 +1,10 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {ApiStoreContext} from "../client/src/stores/api_store";
-import useScrolledBottom from "../client/src/components/utilities/useScrolledBottom";
+import {ApiStoreContext} from "../client/stores/api_store";
+import useScrolledBottom from "../client/components/utilities/useScrolledBottom";
 import classNames from "classnames";
 import styles from "./styles/BrowseRecipes.scss";
-import RecipeCard from "../client/src/components/RecipeCard";
-import LoadingNextPage from "../client/src/components/utilities/LoadingNextPage";
+import RecipeCard from "../client/components/RecipeCard";
+import LoadingNextPage from "../client/components/utilities/LoadingNextPage";
 import axios from "axios";
 
 const ViewCollection  = props => {

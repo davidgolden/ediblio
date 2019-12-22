@@ -1,11 +1,11 @@
 import React, {useState, useEffect, useContext} from 'react';
-import RecipeCard from "../client/src/components/RecipeCard";
+import RecipeCard from "../client/components/RecipeCard";
 import classNames from 'classnames';
 import styles from './styles/BrowseRecipes.scss';
-import SortingBar from "../client/src/components/recipes/SortingBar";
-import LoadingNextPage from '../client/src/components/utilities/LoadingNextPage';
-import useScrolledBottom from "../client/src/components/utilities/useScrolledBottom";
-import {ApiStoreContext} from "../client/src/stores/api_store";
+import SortingBar from "../client/components/recipes/SortingBar";
+import LoadingNextPage from '../client/components/utilities/LoadingNextPage';
+import useScrolledBottom from "../client/components/utilities/useScrolledBottom";
+import {ApiStoreContext} from "../client/stores/api_store";
 import axios from 'axios';
 
 function useForceUpdate(){
