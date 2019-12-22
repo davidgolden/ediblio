@@ -3,13 +3,35 @@ import axios from 'axios';
 import CollectionCard from "../client/components/CollectionCard";
 import styles from './styles/BrowseRecipes.scss';
 import {ApiStoreContext} from "../client/stores/api_store";
-import DeleteButton from "../client/components/utilities/buttons/DeleteButton";
-import Link from 'next/link';
 import RecipeCard from "../client/components/RecipeCard";
+import useScrolledBottom from "../client/components/utilities/useScrolledBottom";
+import {observer} from "mobx-react";
 
-const ViewUserRecipes = (props) => {
+const ViewUserRecipes = observer((props) => {
+    const [recipes, setRecipes] = useState(new Map(props.recipes || []));
     const [collections, setCollections] = useState(props.collections || []);
+    const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
+    const [loadedAll, setLoadedAll] = useState(props.loadedAll);
     const context = useContext(ApiStoreContext);
+
+    const isBottom = useScrolledBottom();
+
+    useEffect(() => {
+        if (!loadedAll) {
+            context.getRecipes({
+                page: lastRecipePageLoaded + 1,
+                author: props.user_id,
+            })
+                .then(response => {
+                    response.forEach(r => recipes.set(r._id, r));
+                    if (response.length < 12) {
+                        setLoadedAll(true);
+                    } else {
+                        setLastRecipePageLoaded(lastRecipePageLoaded + 1);
+                    }
+                });
+        }
+    }, [isBottom]);
 
     function removeFromCollection(id) {
         context.removeCollection(id)
@@ -21,10 +43,10 @@ const ViewUserRecipes = (props) => {
     return (
         <div className={styles.browseRecipesContainer}>
             {collections.map(c => <CollectionCard key={c._id} removeFromCollection={removeFromCollection} collection={c}/>)}
-            {props.recipes.map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {}} />)}
+            {Array.from(recipes.values()).map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {}} />)}
         </div>
     )
-};
+});
 
 ViewUserRecipes.getInitialProps = async ({req, query}) => {
     const responses = await Promise.all([
@@ -44,7 +66,8 @@ ViewUserRecipes.getInitialProps = async ({req, query}) => {
     ]);
     return {
         collections: responses[0].data.collections,
-        recipes: responses[1].data.recipes,
+        recipes: responses[1].data.recipes.map(r => [r._id, r]),
+        loadedAll: responses[1].data.recipes.length < 12,
         user_id: query.user_id,
     }
 };

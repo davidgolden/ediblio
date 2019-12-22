@@ -120,13 +120,8 @@ class Store {
     removeCollection = async id => {
         return new Promise((res, rej) => {
             axios.delete(`/api/collections/${id}`)
-                .then(() => {
-                    this.user = {
-                        ...this.user,
-                        collections: {
-                            ...this.user.collections.filter(c => c._id !== id),
-                        }
-                    };
+                .then(response => {
+                    this.user = response.data.user;
                     res();
                 })
                 .catch(rej)
