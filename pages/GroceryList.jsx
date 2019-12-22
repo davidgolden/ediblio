@@ -118,7 +118,7 @@ const GroceryList = props => {
 
 GroceryList.getInitialProps = async ({req, query}) => {
     const response = await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}/list`, {
-        headers: {
+        headers: req.headers.cookie && {
             cookie: req.headers.cookie,
         }
     });

@@ -123,7 +123,7 @@ const RecipeContainer = observer(props => {
 
 RecipeContainer.getInitialProps = async ({req, query}) => {
     const response = await axios.get(`${req.protocol}://${req.headers.host}/api/recipes/${query.recipe_id}`, {
-        headers: {
+        headers: req.headers.cookie && {
             cookie: req.headers.cookie,
         },
     });

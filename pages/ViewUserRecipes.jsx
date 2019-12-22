@@ -58,12 +58,12 @@ const ViewUserRecipes = observer((props) => {
 ViewUserRecipes.getInitialProps = async ({req, query}) => {
     const responses = await Promise.all([
         await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}/collections`, {
-            headers: {
+            headers: req.headers.cookie && {
                 cookie: req.headers.cookie,
             },
         }),
         await axios.get(`${req.protocol}://${req.headers.host}/api/recipes`, {
-            headers: {
+            headers: req.headers.cookie && {
                 cookie: req.headers.cookie,
             },
             params: {

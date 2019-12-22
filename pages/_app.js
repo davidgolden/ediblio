@@ -36,7 +36,7 @@ class MyDocument extends App {
                 </>
             )
         } catch (error) {
-            return <ErrorPage/>
+            return <ErrorPage error={error}/>
         }
     }
 }

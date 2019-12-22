@@ -63,7 +63,7 @@ const ViewCollection  = props => {
 
 ViewCollection.getInitialProps = async ({req, query}) => {
     const response = await axios.get(`${req.protocol}://${req.headers.host}/api/collections/${query.collection_id}`, {
-        headers: {
+        headers: req.headers.cookie && {
             cookie: req.headers.cookie,
         },
     });

@@ -137,7 +137,7 @@ const BrowseRecipes = props => {
 
 BrowseRecipes.getInitialProps = async ({req}) => {
     const response = await axios.get(`${req.protocol}://${req.headers.host}/api/recipes`, {
-        headers: {
+        headers: req.headers.cookie && {
             cookie: req.headers.cookie,
         },
         params: {
