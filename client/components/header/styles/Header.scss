@@ -10,6 +10,10 @@
   top: 0;
   z-index: 2;
 
+  @media(max-width: 770px) {
+    overflow: visible;
+  }
+
   h1 {
     display: inline;
     margin-left: 1.5rem;
@@ -43,6 +47,16 @@
 
     @media(min-width: 770px) {
       display: inline-block;
+    }
+
+    @media(max-width: 770px) {
+      position: absolute;
+      line-height: 50px;
+      top: 50px;
+      right: 0;
+      background-color: #2DA2B5;
+      width: calc(100% - 1rem);
+      padding: .5rem;
     }
 
     form {
