@@ -5,8 +5,9 @@ import styles from './styles/BrowseRecipes.scss';
 import {ApiStoreContext} from "../client/stores/api_store";
 import DeleteButton from "../client/components/utilities/buttons/DeleteButton";
 import Link from 'next/link';
+import RecipeCard from "../client/components/RecipeCard";
 
-export default function ViewUserRecipes(props) {
+const ViewUserRecipes = (props) => {
     const [collections, setCollections] = useState(props.collections || []);
     const context = useContext(ApiStoreContext);
 
@@ -18,29 +19,34 @@ export default function ViewUserRecipes(props) {
     }
 
     return (
-        <div className={styles.userRecipesContainer}>
-            {collections.map(c => <div key={c._id}>
-                <div>
-                    <h3>{c.name}</h3><DeleteButton onClick={() => removeFromCollection(c._id)}/>
-                </div>
-                <Link href={`/collections/${c._id}`}>
-                    <a>
-                        <CollectionCard images={c.recipes}/>
-                    </a>
-                </Link>
-            </div>)}
+        <div className={styles.browseRecipesContainer}>
+            {collections.map(c => <CollectionCard key={c._id} removeFromCollection={removeFromCollection} collection={c}/>)}
+            {props.recipes.map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {}} />)}
         </div>
     )
-}
+};
 
 ViewUserRecipes.getInitialProps = async ({req, query}) => {
-    const response = await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}/collections`, {
-        headers: {
-            cookie: req.headers.cookie,
-        },
-    });
+    const responses = await Promise.all([
+        await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}/collections`, {
+            headers: {
+                cookie: req.headers.cookie,
+            },
+        }),
+        await axios.get(`${req.protocol}://${req.headers.host}/api/recipes`, {
+            headers: {
+                cookie: req.headers.cookie,
+            },
+            params: {
+                author: query.user_id,
+            }
+        }),
+    ]);
     return {
-        collections: response.data.collections,
+        collections: responses[0].data.collections,
+        recipes: responses[1].data.recipes,
         user_id: query.user_id,
     }
 };
+
+export default ViewUserRecipes;
