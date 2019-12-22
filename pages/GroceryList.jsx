@@ -18,6 +18,11 @@ const GroceryList = props => {
     const [menu, setMenu] = useState(props.menu || []);
     const [isCurrent, setIsCurrent] = useState(true);
 
+    function handleUpdateAllIngredients(ingredients) {
+        setGroceryList(ingredients);
+        setIsCurrent(false);
+    }
+
     const handleUpdateIngredient = (index, ingredient) => {
         let newGroceryList = groceryList;
         newGroceryList[index] = {
@@ -101,6 +106,7 @@ const GroceryList = props => {
                 handleAddIngredient={handleAddIngredient}
                 handleUpdateIngredient={handleUpdateIngredient}
                 handleDeleteIngredient={handleDeleteIngredient}
+                handleUpdateAllIngredients={handleUpdateAllIngredients}
                 storeMode={storeMode}
             />
             <Button className={saveListClassName} onClick={updateList}>Save Grocery List/Menu</Button>
