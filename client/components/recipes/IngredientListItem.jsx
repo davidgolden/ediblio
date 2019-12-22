@@ -55,7 +55,7 @@ const Ingredient = (props) => {
         return (
             <div className={ingredientRowClassName} data-id={props.dataId}>
                 <RemoveButton onClick={() => props.handleDeleteIngredient(props.id)}/>
-                <p>{props.value.quantity} {props.value.measurement} {props.value.name}</p>
+                <p>{props.value.quantity} {props.value.measurement.replace("#", "")} {props.value.name}</p>
             </div>
         )
     }
