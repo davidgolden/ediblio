@@ -3,12 +3,12 @@
   "short_name": "Recipe Cloud",
   "icons": [
     {
-      "src": "/images/recipecloud.png",
+      "src": "/images/cloud192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/images/recipecloud.png",
+      "src": "/images/cloud512x512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
