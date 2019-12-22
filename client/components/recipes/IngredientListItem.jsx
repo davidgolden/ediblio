@@ -53,7 +53,7 @@ const Ingredient = (props) => {
         )
     } else {
         return (
-            <div className={ingredientRowClassName}>
+            <div className={ingredientRowClassName} data-id={props.dataId}>
                 <RemoveButton onClick={() => props.handleDeleteIngredient(props.id)}/>
                 <p>{props.value.quantity} {props.value.measurement} {props.value.name}</p>
             </div>
