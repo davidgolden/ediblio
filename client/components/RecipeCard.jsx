@@ -70,7 +70,7 @@ const RecipeCard = props => {
 };
 
 RecipeCard.propTypes = {
-    recipe: PropTypes.object,
+    recipe: PropTypes.object.isRequired,
     deleteRecipe: PropTypes.func.isRequired,
 };
 

@@ -22,14 +22,14 @@ router.post('/collections', middleware.isLoggedIn, async (req, res) => {
 
 router.delete('/collections/:collection_id', middleware.isLoggedIn, async (req, res) => {
     const collection = await Collection.findById(req.params.collection_id);
-    if (collection.ownerId.toString() === req.user._id) {
+    if (collection.ownerId.toString() === req.user._id.toString()) {
         await Collection.findByIdAndDelete(req.params.collection_id);
-        await User.findByIdAndUpdate(req.user._id, {
+        const user = await User.findByIdAndUpdate(req.user._id, {
             "$pull": {
                 collections: req.params.collection_id,
             }
-        });
-        return res.sendStatus(200);
+        }, {new: true});
+        return res.status(200).json({user});
     }
     return res.sendStatus(404);
 });
