@@ -33,7 +33,7 @@ const AddToCloudButton = props => {
     useEffect(() => {
         addEventListener('keydown', handleKeyDown);
         return () => removeEventListener('keydown', handleKeyDown);
-    });
+    }, []);
 
     return (
         <div onMouseLeave={() => setDialogOpen(false)} className={collectionDialogClassName}>

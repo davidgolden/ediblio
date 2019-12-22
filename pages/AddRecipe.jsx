@@ -74,10 +74,10 @@ const RecipeForm = observer(props => {
         setIngredients([...ingredientList]);
     };
 
-    const handleAddIngredient = () => {
-        let ingredientList = ingredients;
-        ingredientList.push({quantity: '0', measurement: '#', name: ''});
-        setIngredients([...ingredientList]);
+    const handleAddIngredient = (quantity = 0, measurement = '#', name = '') => {
+        let ingredientList = [...ingredients];
+        ingredientList.splice(0, 0, {quantity, measurement, name});
+        setIngredients(ingredientList);
     };
 
     const handleDeleteIngredient = index => {

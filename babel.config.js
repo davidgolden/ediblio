@@ -3,7 +3,7 @@ const progressiveTargets = {
     "edge": "76",
     "safari": "13",
     "firefox": "70",
-    "node": true,
+    "node": 'current',
 };
 
 module.exports = function(api) {

@@ -5,13 +5,77 @@
     display: inline-block;
   }
 
-  .addIngredientButton {
-    color: $dark;
+  ul {
+    margin-top: 1rem;
+  }
+}
+
+.addIngredientForm {
+  display: table;
+  width: 95%;
+  border: 1px solid $dark;
+  border-radius: 5px;
+  height: 40px;
+  padding: .5rem;
+
+  > div {
+    position: relative;
     cursor: pointer;
-    padding: 10px;
+    width: calc(10px + 1rem);
+
+    svg {
+      width: 10px;
+      background-color: $light;
+      padding: .5rem;
+      border-radius: 20px;
+    }
 
     &:hover {
-      color: $other;
+      > div {
+        display: inline-block;
+      }
+    }
+
+    > div {
+      display: none;
+      position: absolute;
+      bottom: 35px;
+      left: -10px;
+      background-color: white;
+      border: 1px solid $dark;
+      border-radius: 5px;
+      padding: .5rem;
+      font-size: 1.3rem;
+      width: 200px;
     }
   }
+
+  > * {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  input {
+    font-size: 1.2rem;
+    background-color: $light;
+    margin-left: .5rem;
+    height: 100%;
+    padding: .5rem;
+    color: $dark;
+    width: calc(100% - 3.5rem - 10px);
+  }
+
+  button {
+    cursor: pointer;
+    float: right;
+    background-color: $light;
+    padding: .5rem;
+    border-radius: 5px;
+
+    svg {
+      color: $dark;
+      width: 20px;
+    }
+  }
+
 }
