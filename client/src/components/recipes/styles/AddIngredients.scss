@@ -4,21 +4,11 @@
   h3 {
     display: inline-block;
   }
-
-  .addIngredientButton {
-    color: $dark;
-    cursor: pointer;
-    padding: 10px;
-
-    &:hover {
-      color: $other;
-    }
-  }
 }
 
 .addIngredientForm {
   display: table;
-  width: 100%;
+  width: 95%;
   border: 1px solid $dark;
   border-radius: 5px;
   height: 40px;
@@ -51,7 +41,7 @@
       border: 1px solid $dark;
       border-radius: 5px;
       padding: .5rem;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       width: 200px;
     }
   }

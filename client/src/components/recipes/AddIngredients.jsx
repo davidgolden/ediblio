@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import Ingredient from './IngredientListItem'
 import classNames from 'classnames';
 import styles from './styles/AddIngredients.scss';
@@ -8,6 +8,17 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 const measurements = ['tsp', 'teaspoon', 'tbsp', 'tablespoon', 'cup', 'pint', 'pt', 'fl oz', 'fluid ounce', 'quart', 'qt', 'ounce', 'oz', 'milliliter', 'ml', 'pound', 'lb', 'gram'];
 const withMeasurement = new RegExp("^([1-9\\.\\/\\s]+)\\s(" + measurements.join("s?|") + "s?)\\s([a-zA-Z\\s]+)$", "i");
 const noMeasurement = new RegExp("([1-9\\.\\/\\s]+)\\s([a-zA-Z\\s]+)$", "i");
+
+const shortenedMeasurements = {
+    'teaspoon': 'tsp',
+    'tablespoon': 'tbsp',
+    'pint': 'pt',
+    'fluid ounce': 'fl oz',
+    'quart': 'qt',
+    'ounce': 'oz',
+    'milliliter': 'ml',
+    'pound': 'lb',
+};
 
 const AddIngredients = (props) => {
     const [value, setValue] = useState("");
@@ -20,6 +31,12 @@ const AddIngredients = (props) => {
             quantity = match[1];
             measurement = match[2];
             name = match[3];
+
+            if (/\//.test(quantity)) { // using fraction
+                const nums = quantity.split(" ");
+                quantity = Number(nums[0]) + eval(nums[1]);
+            }
+
         } else if (noMeasurement.test(value)) { // no measurement provided: 1 apple
             const match = value.match(noMeasurement);
             quantity = match[1];
@@ -30,6 +47,12 @@ const AddIngredients = (props) => {
             measurement = '#';
             name = value;
         }
+
+        // test if we've used the long version of a measurement, and switch to abbreviation if necessary
+        if (measurement in shortenedMeasurements) {
+            measurement = shortenedMeasurements[measurement];
+        }
+
         setValue("");
         props.handleAddIngredient(quantity, measurement, name);
     }
@@ -37,9 +60,6 @@ const AddIngredients = (props) => {
     const ingredientsContainerClassName = classNames({
         [styles.ingredientsContainer]: true,
         [props.containerClassName]: props.containerClassName,
-    });
-    const addIngredientButtonClassName = classNames({
-        [styles.addIngredientButton]: true,
     });
     const addIngredientFormClassName = classNames({
         [styles.addIngredientForm]: true,
@@ -49,9 +69,6 @@ const AddIngredients = (props) => {
     return (
         <div className={ingredientsContainerClassName}>
             <h3>Ingredient List</h3>
-            {/*<button className={addIngredientButtonClassName} onClick={props.handleAddIngredient}>+*/}
-            {/*    ingredient*/}
-            {/*</button>*/}
             <form onSubmit={extractIngredient} className={addIngredientFormClassName}>
                 <div>
                     <FontAwesomeIcon icon={faQuestion}/>
