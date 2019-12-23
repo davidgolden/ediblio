@@ -22,7 +22,6 @@ class MyDocument extends App {
     render() {
         try {
             const {Component, pageProps, user} = this.props;
-            console.log(this.props);
 
             store.user = user;
 
