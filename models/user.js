@@ -34,6 +34,13 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+userSchema.virtual('clean').get(function() {
+    return {
+        username: this.username,
+        profileImage: this.profileImage,
+    }
+});
+
 userSchema.pre('find', function() {
     this.populate('collections');
 });
