@@ -20,8 +20,8 @@ const DefaultItemRenderer = (props) => {
 };
 
 const measurements = ['tsp', 'teaspoon', 'tbsp', 'tablespoon', 'cup', 'pint', 'pt', 'fl oz', 'fluid ounce', 'quart', 'qt', 'ounce', 'oz', 'milliliter', 'ml', 'pound', 'lb', 'gram', 'gallon', 'gal', 'liter', 'l'];
-const withMeasurement = new RegExp("^([1-9\\.\\/\\s]+)\\s(" + measurements.join("s\?|") + "s?)\\s([a-zA-Z\\s]+)$", "i");
-const noMeasurement = new RegExp("([1-9\\.\\/\\s]+)\\s([a-zA-Z\\s]+)$", "i");
+const withMeasurement = new RegExp("^([0-9\\.\\/\\s]+)\\s(" + measurements.join("s\?|") + "s?)\\s([a-zA-Z\\s]+)$", "i");
+const noMeasurement = new RegExp("([0-9\\.\\/\\s]+)\\s([a-zA-Z\\s]+)$", "i");
 
 const shortenedMeasurements = {
     'teaspoon': 'tsp',
