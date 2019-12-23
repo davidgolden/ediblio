@@ -89,13 +89,20 @@ router.route('/users/:user_id')
 
         });
     })
-    // this will ALWAYS return the logged in user's details; can't get another user's data
-    .get(middleware.isLoggedIn, (req, res) => {
-        User.findOne({"_id": req.user._id}, (err, user) => {
+    .get((req, res) => {
+        User.findOne({"_id": req.params.user_id}, (err, user) => {
             if (err) {
                 return res.status(404).send({detail: err.message});
             }
-            return res.status(200).json({user: user})
+            if (req.isAuthenticated() && req.user._id.toString() === req.params.user_id) {
+                // if user is requesting own data
+                return res.status(200).json({user: user})
+            } else {
+                // if requesting other users' data
+                return res.status(200).json({
+                    user: user.clean,
+                })
+            }
         });
     })
     // delete user account

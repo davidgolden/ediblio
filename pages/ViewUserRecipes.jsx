@@ -6,6 +6,7 @@ import {ApiStoreContext} from "../client/stores/api_store";
 import RecipeCard from "../client/components/RecipeCard";
 import useScrolledBottom from "../client/components/utilities/useScrolledBottom";
 import {observer} from "mobx-react";
+import UserBanner from "../client/components/UserBanner";
 
 const ViewUserRecipes = observer((props) => {
     const [recipes, setRecipes] = useState(new Map(props.recipes || []));
@@ -48,9 +49,14 @@ const ViewUserRecipes = observer((props) => {
     }
 
     return (
-        <div className={styles.browseRecipesContainer}>
-            {collections.map(c => <CollectionCard key={c._id} removeFromCollection={removeFromCollection} collection={c}/>)}
-            {Array.from(recipes.values()).map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {}} />)}
+        <div>
+            <UserBanner user={props.user} images={Array.from(recipes.values()).slice(0, 4).map(r => r.image)}/>
+            <div className={styles.browseRecipesContainer}>
+                {collections.map(c => <CollectionCard key={c._id} removeFromCollection={removeFromCollection}
+                                                      collection={c}/>)}
+                {Array.from(recipes.values()).map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {
+                }}/>)}
+            </div>
         </div>
     )
 });
@@ -67,14 +73,22 @@ ViewUserRecipes.getInitialProps = async ({req, query}) => {
                 cookie: req.headers.cookie,
             },
             params: {
+                orderBy: 'desc',
+                sortBy: 'created_at',
                 author: query.user_id,
             }
+        }),
+        await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}`, {
+            headers: req.headers.cookie && {
+                cookie: req.headers.cookie,
+            },
         }),
     ]);
     return {
         collections: responses[0].data.collections,
         recipes: responses[1].data.recipes.map(r => [r._id, r]),
         loadedAll: responses[1].data.recipes.length < 12,
+        user: responses[2].data.user,
         user_id: query.user_id,
     }
 };
