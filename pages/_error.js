@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function ErrorPage(props) {
-    console.log(error);
+    console.log(props.error);
     return <div>
         Whoops.. looks like we made a mistake!
         <p>{props.error}</p>
