@@ -61,7 +61,7 @@ const RecipeCard = props => {
                 />}
             </div>
             {showButtons && <div className={userImageClassName}>
-                <Link href={`/users/${props.recipe.author_id.id}/recipes`}>
+                <Link href={`/users/${props.recipe.author_id._id}/recipes`}>
                     <a>
                         {props.recipe.author_id.profileImage ?
                             <img src={props.recipe.author_id.profileImage}/> :

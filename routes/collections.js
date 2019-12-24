@@ -46,11 +46,6 @@ router.get('/collections/:collection_id', async (req, res) => {
             "$in": collection.recipes,
         }
     })
-        .populate('author_id', {
-            'id': 'author_id',
-            'username': 'username',
-            'profileImage': 'profileImage',
-        }, 'users')
         .exec(function (err, recipes) {
             res.status(200).json({
                 collection: {

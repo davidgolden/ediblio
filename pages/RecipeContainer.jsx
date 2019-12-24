@@ -58,23 +58,21 @@ const RecipeContainer = observer(props => {
     return (
         <div className={recipeContainerClassName}>
             <div className={recipeEditButtonsClassName}>
-                {recipe && context.user && (recipe.author_id.id === context.user._id || context.user.isAdmin) && (
-                    <Button className={toggleEditClassName} onClick={toggleEdit}>
-                        {edit === false ? (
-                            <React.Fragment>
-                                <FontAwesomeIcon icon={faEdit}/> Edit</React.Fragment>) : (
-                            <React.Fragment>
-                                <FontAwesomeIcon icon={faSearch}/> View
-                            </React.Fragment>)
-                        }
-                    </Button>)}
-                    {recipe && context.user && <RecipeButtons
-                        recipe_id={recipe._id}
-                        author_id={recipe.author_id._id}
-                        addToGroceryList={addToGroceryList}
-                        deleteRecipe={deleteRecipe}
-                    />}
+                <div>
+                    {context.user && (recipe.author_id._id === context.user._id) && (
+                        <Button className={toggleEditClassName} onClick={toggleEdit}>
+                            <FontAwesomeIcon icon={edit ? faSearch : faEdit}/> {edit ? "View" : "Edit"}
+                        </Button>)}
+                </div>
+                <div>{context.user && <RecipeButtons
+                    recipe_id={recipe._id}
+                    author_id={recipe.author_id._id}
+                    addToGroceryList={addToGroceryList}
+                    deleteRecipe={deleteRecipe}
+                />}
+                </div>
             </div>
+
             {edit === true ? (
                 <RecipeForm
                     tags={props.tags}

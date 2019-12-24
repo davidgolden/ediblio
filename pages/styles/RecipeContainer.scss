@@ -15,9 +15,14 @@
     vertical-align: middle;
   }
 
-  > div {
+   > div {
     display: inline-block;
     position: relative;
+
+     > div {
+       display: inline-block;
+       position: relative;
+     }
   }
 
   button {

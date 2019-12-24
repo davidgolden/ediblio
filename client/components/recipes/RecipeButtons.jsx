@@ -48,7 +48,7 @@ const RecipeButtons = observer(props => {
                 disabled={inMenu}
                 onClick={props.addToGroceryList}/>
 
-            {(context.user.isAdmin || isAuthor) &&
+            {(isAuthor) &&
             <DeleteButton onClick={props.deleteRecipe}/>}
 
         </React.Fragment>

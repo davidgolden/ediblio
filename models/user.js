@@ -41,18 +41,6 @@ userSchema.virtual('clean').get(function() {
     }
 });
 
-userSchema.pre('find', function() {
-    this.populate('collections');
-});
-
-userSchema.pre('findOne', function() {
-    this.populate('collections');
-});
-
-userSchema.pre('findOneAndUpdate', function() {
-    this.populate('collections');
-});
-
 userSchema.pre('save', function (next) {
     var user = this;
     var SALT_FACTOR = 5;

@@ -46,17 +46,16 @@ const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
 passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
-}, function (email, password, done) {
-    User.findOne({email: email}, function (err, user) {
-        if (err) return done(err);
-        if (!user) return done(null, false, {message: 'Incorrect email.'});
-        user.comparePassword(password, function (err, isMatch) {
-            if (isMatch) {
-                return done(null, user);
-            } else {
-                return done(null, false, {message: 'Incorrect password.'});
-            }
-        });
+}, async function (email, password, done) {
+    const user = await User.findOne({email: email})
+        .populate('collections');
+    if (!user) return done(null, false, {message: 'Incorrect email.'});
+    user.comparePassword(password, function (err, isMatch) {
+        if (isMatch) {
+            return done(null, user);
+        } else {
+            return done(null, false, {message: 'Incorrect password.'});
+        }
     });
 }));
 
@@ -78,7 +77,8 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async function (id, done) {
-    const user = await User.findById(id);
+    const user = await User.findById(id)
+        .populate('collections');
     done(null, user);
 });
 
@@ -119,7 +119,7 @@ app.prepare().then(() => {
     server.use('/api/', collectionRoutes);
 
     server.get("/", async (req, res) => {
-        return app.render(req, res,'/BrowseRecipes', req.query)
+        return app.render(req, res, '/BrowseRecipes', req.query)
     });
 
     server.get('/service-worker.js', (req, res) => {
@@ -128,54 +128,54 @@ app.prepare().then(() => {
     });
 
     server.get("/recipes", (req, res) => {
-        return app.render(req, res,'/BrowseRecipes', req.query)
+        return app.render(req, res, '/BrowseRecipes', req.query)
     });
 
     server.get("/recipes/:recipe_id", (req, res) => {
-        return app.render(req, res,'/RecipeContainer', {
+        return app.render(req, res, '/RecipeContainer', {
             ...req.query,
             recipe_id: req.params.recipe_id,
         })
     });
 
     server.get("/users/:user_id/groceries", (req, res) => {
-        return app.render(req, res,'/GroceryList', {
+        return app.render(req, res, '/GroceryList', {
             ...req.query,
             user_id: req.params.user_id,
         })
     });
 
     server.get("/users/:user_id/settings", (req, res) => {
-        return app.render(req, res,'/UserSettings', {
+        return app.render(req, res, '/UserSettings', {
             ...req.query,
             user_id: req.params.user_id,
         })
     });
 
     server.get("/users/:user_id/recipes", (req, res) => {
-        return app.render(req, res,'/ViewUserRecipes', {
+        return app.render(req, res, '/ViewUserRecipes', {
             ...req.query,
             user_id: req.params.user_id,
         })
     });
 
     server.get("/collections/:collection_id", (req, res) => {
-        return app.render(req, res,'/ViewCollection', {
+        return app.render(req, res, '/ViewCollection', {
             ...req.query,
             collection_id: req.params.collection_id,
         })
     });
 
     server.get("/register", (req, res) => {
-        return app.render(req, res,'/Landing', req.query)
+        return app.render(req, res, '/Landing', req.query)
     });
 
     server.get("/forgot", (req, res) => {
-        return app.render(req, res,'/Forgot', req.query)
+        return app.render(req, res, '/Forgot', req.query)
     });
 
     server.get("/add", (req, res) => {
-        return app.render(req, res,'/AddRecipe', req.query)
+        return app.render(req, res, '/AddRecipe', req.query)
     });
 
     server.all('*', (req, res) => {

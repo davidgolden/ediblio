@@ -27,12 +27,12 @@ cloudinary.config({
 
 // get all recipes
 router.route('/recipes')
-    .get((req, res) => {
+    .get(async (req, res) => {
         let page_size = req.query.page_size || 12;
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        let q = Recipe.find({});
+        let q =  Recipe.find({});
         if (req.query.tags) {
             const filterTags = req.query.tags.split(',');
             q = q.where({
@@ -60,11 +60,6 @@ router.route('/recipes')
         q.limit(page_size)
             .skip(skip)
             .sort({[req.query.sortBy]: req.query.orderBy})
-            .populate('author_id', {
-                'id': 'author_id',
-                'username': 'username',
-                'profileImage': 'profileImage',
-            }, 'users')
             .exec((err, recipes) => {
                 if (err) {
                     res.status(404).send({detail: err.message})
@@ -107,13 +102,7 @@ router.route('/recipes')
 
 router.route('/recipes/:recipe_id')
     .get((req, res) => {
-        Recipe.findById(req.params.recipe_id)
-            .populate('author_id', {
-                'id': 'author_id',
-                'username': 'username',
-                'profileImage': 'profileImage',
-            }, 'users')
-            .exec((err, recipe) => {
+        Recipe.findById(req.params.recipe_id, (err, recipe) => {
             if (err) {
                 return res.status(404).send({detail: err.message});
             }

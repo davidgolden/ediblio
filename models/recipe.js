@@ -9,17 +9,17 @@ cloudinary.config({
 });
 
 const recipeSchema = new mongoose.Schema({
-    name: { type: String, trim: true, required: true },
-    url: { type: String, trim: true },
+    name: {type: String, trim: true, required: true},
+    url: {type: String, trim: true},
     notes: String,
-    image: { type: String, trim: true, required: true },
+    image: {type: String, trim: true, required: true},
     tags: [String],
     ingredients: [
-            IngredientSchema,
-        ],
+        IngredientSchema,
+    ],
     author_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'users'
     },
 }, {
     timestamps: {
@@ -28,7 +28,31 @@ const recipeSchema = new mongoose.Schema({
     }
 });
 
-recipeSchema.post('remove', function(doc) {
+recipeSchema.pre('find', function () {
+    this.populate('author_id', {
+        "id": "id",
+        "username": "username",
+        "profileImage": "profileImage"
+    });
+});
+
+recipeSchema.pre('findOne', function () {
+    this.populate('author_id', {
+        "id": "id",
+        "username": "username",
+        "profileImage": "profileImage"
+    });
+});
+
+recipeSchema.pre('findOneAndUpdate', function () {
+    this.populate('author_id', {
+        "id": "id",
+        "username": "username",
+        "profileImage": "profileImage"
+    });
+});
+
+recipeSchema.post('remove', function (doc) {
     cloudinary.uploader.destroy(`users/${doc.author_id}/recipes/${doc._id}`);
 });
 
