@@ -50,7 +50,7 @@ router.route('/users')
                 return res.status(404).send({detail: err.message});
             }
 
-            req.login(user, function() {
+            req.login(user, function () {
                 res.status(200).json({user: req.user});
             });
         });
@@ -58,36 +58,30 @@ router.route('/users')
 
 router.route('/users/:user_id')
 // update user
-    .patch(middleware.isLoggedIn, (req, res) => {
-        User.findOne({"_id": req.user._id}, function (err, user) {
-            if (err) {
-                return res.status(404).send({detail: err.message})
-            }
-            for (let key in req.body) {
-                if (req.body.hasOwnProperty(key) && key !== 'profileImage') {
-                    user[key] = req.body[key];
-                } else if (key === 'profileImage') {
-                    cloudinary.v2.uploader.upload(req.body.profileImage,
-                        {
-                            resource_type: "image",
-                            public_id: `users/${req.user._id}/profileImage`,
-                            overwrite: true,
-                            transformation: [
-                                {width: 400, height: 400, gravity: "face", radius: "max", crop: "crop"},
-                                {height: 200, width: 200, crop: "fill"}
-                            ]
-                        },
-                        (error, result) => {
-                            user.profileImage = result.secure_url;
-                            user.save();
-                        });
-                }
-            }
-            user.save();
+    .patch(middleware.isLoggedIn, async (req, res) => {
+        const update = {};
 
-            return res.status(200).json({user: user})
+        for (let key in req.body) {
+            if (req.body.hasOwnProperty(key) && key !== 'profileImage') {
+                update[key] = req.body[key];
+            } else if (key === 'profileImage') {
+                update.profileImage = await cloudinary.v2.uploader.upload(req.body.profileImage,
+                    {
+                        resource_type: "image",
+                        public_id: `users/${req.user._id}/profileImage`,
+                        overwrite: true,
+                        transformation: [
+                            {width: 400, height: 400, gravity: "face", radius: "max", crop: "crop"},
+                            {height: 200, width: 200, crop: "fill"}
+                        ]
+                    });
+            }
+        }
 
-        });
+        const user = await User.findOneAndUpdate({"_id": req.user._id}, update, {new: true})
+            .populate('collections');
+
+        return res.status(200).json({user: user})
     })
     .get((req, res) => {
         User.findOne({"_id": req.params.user_id}, (err, user) => {
