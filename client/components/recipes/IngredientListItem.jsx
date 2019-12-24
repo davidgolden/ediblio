@@ -6,7 +6,7 @@ import RemoveButton from "../utilities/buttons/RemoveButton";
 const Ingredient = (props) => {
     const ingredientRowClassName = classNames({
         [styles.ingredientRow]: true,
-        "draggable": true,
+        "draggable": !props.storeMode,
     });
 
     if(!props.storeMode) {
