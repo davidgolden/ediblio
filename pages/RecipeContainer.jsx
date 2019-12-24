@@ -29,36 +29,12 @@ const RecipeContainer = observer(props => {
         setEdit(!edit);
     };
 
-    const handleUpdateIngredient = (index, ingredient) => {
-        let ingredientList = recipe.ingredients;
-        ingredientList[index] = {
-            ...ingredientList[index],
-            ...ingredient,
-        };
+    function handleUpdateAllIngredients(ingredients) {
         setRecipe({
             ...recipe,
-            ingredients: ingredientList,
+            ingredients: ingredients,
         });
-    };
-
-    const handleAddIngredient = (quantity = '1', measurement = '#', name = '') => {
-        let ingredientList = recipe.ingredients;
-        let ingredient = {quantity, measurement, name};
-        ingredientList.splice(0, 0, ingredient);
-        setRecipe({
-            ...recipe,
-            ingredients: ingredientList,
-        });
-    };
-
-    const handleDeleteIngredient = index => {
-        let ingredientList = recipe.ingredients;
-        ingredientList.splice(index, 1);
-        setRecipe({
-            ...recipe,
-            ingredients: ingredientList,
-        });
-    };
+    }
 
     const deleteRecipe = () => {
         if (confirm('Are you sure you want to do that?')) {
@@ -111,9 +87,7 @@ const RecipeContainer = observer(props => {
                 <ShowRecipe
                     recipe={recipe}
                     addToGroceryList={addToGroceryList}
-                    handleDeleteIngredient={handleDeleteIngredient}
-                    handleAddIngredient={handleAddIngredient}
-                    handleUpdateIngredient={handleUpdateIngredient}
+                    handleUpdateAllIngredients={handleUpdateAllIngredients}
                 />
             )}
         </div>

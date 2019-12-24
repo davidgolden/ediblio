@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import PropTypes from 'prop-types';
 import Ingredient from './IngredientListItem'
 import classNames from 'classnames';
 import styles from './styles/AddIngredients.scss';
@@ -72,8 +73,29 @@ const AddIngredients = (props) => {
         }
 
         setValue("");
-        props.handleAddIngredient(quantity, measurement, name);
+        handleAddIngredient(quantity, measurement, name);
     }
+
+    function handleUpdateIngredient (index, ingredient) {
+        let ingredients = props.ingredients;
+        ingredients[index] = {
+            ...props.ingredients[index],
+            ...ingredient,
+        };
+        props.handleUpdateAllIngredients([...ingredients]);
+    };
+
+    function handleAddIngredient (quantity = 0, measurement = '#', name = '') {
+        let ingredients = props.ingredients;
+        ingredients.splice(0, 0, {quantity, measurement, name});
+        props.handleUpdateAllIngredients([...ingredients]);
+    };
+
+    function handleDeleteIngredient(index) {
+        let ingredients = props.ingredients;
+        ingredients.splice(index, 1);
+        props.handleUpdateAllIngredients([...ingredients]);
+    };
 
     const ingredientsContainerClassName = classNames({
         [styles.ingredientsContainer]: true,
@@ -112,14 +134,19 @@ const AddIngredients = (props) => {
                         value={item}
                         id={i}
                         dataId={JSON.stringify(item)}
-                        handleDeleteIngredient={props.handleDeleteIngredient}
-                        handleUpdateIngredient={props.handleUpdateIngredient}
+                        handleDeleteIngredient={handleDeleteIngredient}
+                        handleUpdateIngredient={handleUpdateIngredient}
                         storeMode={props.storeMode}
                     />
                 })}
             </Sortable>
         </div>
     )
+};
+
+AddIngredients.propTypes = {
+    handleUpdateAllIngredients: PropTypes.func.isRequired,
+    ingredients: PropTypes.array.isRequired,
 };
 
 export default AddIngredients;

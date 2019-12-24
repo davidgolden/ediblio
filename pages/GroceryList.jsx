@@ -23,31 +23,6 @@ const GroceryList = props => {
         setIsCurrent(false);
     }
 
-    const handleUpdateIngredient = (index, ingredient) => {
-        let newGroceryList = groceryList;
-        newGroceryList[index] = {
-            ...newGroceryList[index],
-            ...ingredient,
-        };
-        setGroceryList([...newGroceryList]);
-        setIsCurrent(false);
-    };
-
-    const handleAddIngredient = (quantity = '1', measurement = '#', name = '') => {
-        setGroceryList([
-            {quantity, measurement, name},
-            ...groceryList,
-        ]);
-        setIsCurrent(false);
-    };
-
-    const handleDeleteIngredient = index => {
-        let newGroceryList = groceryList;
-        newGroceryList.splice(index, 1);
-        setGroceryList([...newGroceryList]);
-        setIsCurrent(false);
-    };
-
     const handleDeleteMenuItem = id => {
         // use findIndex rather than filter so we only remove 1 if there are duplicates
         const i = menu.findIndex(item => item._id === id);
@@ -103,9 +78,6 @@ const GroceryList = props => {
             <AddIngredients
                 containerClassName={ingredientsContainerClassName}
                 ingredients={groceryList}
-                handleAddIngredient={handleAddIngredient}
-                handleUpdateIngredient={handleUpdateIngredient}
-                handleDeleteIngredient={handleDeleteIngredient}
                 handleUpdateAllIngredients={handleUpdateAllIngredients}
                 storeMode={storeMode}
                 dragEnabled={true}

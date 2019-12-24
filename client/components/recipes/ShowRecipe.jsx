@@ -1,4 +1,5 @@
 import React, {useState, useContext} from 'react';
+import PropTypes from 'prop-types';
 import AddIngredients from './AddIngredients';
 import classNames from 'classnames';
 import styles from './styles/ShowRecipe.scss';
@@ -61,9 +62,7 @@ const ShowRecipe = observer(props => {
                 <p>{props.recipe.notes}</p>
                 <AddIngredients
                     ingredients={props.recipe.ingredients}
-                    handleAddIngredient={props.handleAddIngredient}
-                    handleUpdateIngredient={props.handleUpdateIngredient}
-                    handleDeleteIngredient={props.handleDeleteIngredient}
+                    handleUpdateAllIngredients={props.handleUpdateAllIngredients}
                 />
                 <div className={showRecipeButtonsClassName}>
                     {context.user ? <Button onClick={handleAddToList}>
@@ -74,5 +73,10 @@ const ShowRecipe = observer(props => {
         </div>
     )
 });
+
+ShowRecipe.propTypes = {
+    handleUpdateAllIngredients: PropTypes.func.isRequired,
+    recipe: PropTypes.object.isRequired,
+};
 
 export default ShowRecipe;

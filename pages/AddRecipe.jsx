@@ -65,26 +65,9 @@ const RecipeForm = observer(props => {
         }
     };
 
-    const handleUpdateIngredient = (index, ingredient) => {
-        let ingredientList = ingredients;
-        ingredientList[index] = {
-            ...ingredientList[index],
-            ...ingredient,
-        };
-        setIngredients([...ingredientList]);
-    };
-
-    const handleAddIngredient = (quantity = 0, measurement = '#', name = '') => {
-        let ingredientList = [...ingredients];
-        ingredientList.splice(0, 0, {quantity, measurement, name});
-        setIngredients(ingredientList);
-    };
-
-    const handleDeleteIngredient = index => {
-        let ingredientList = ingredients;
-        ingredientList.splice(index, 1);
-        setIngredients([...ingredientList]);
-    };
+    function handleUpdateAllIngredients(ingredients) {
+        setIngredients(ingredients);
+    }
 
     const handleSubmit = () => {
         setSubmitted(true);
@@ -125,9 +108,7 @@ const RecipeForm = observer(props => {
             />
             <AddIngredients
                 ingredients={ingredients}
-                handleAddIngredient={handleAddIngredient}
-                handleUpdateIngredient={handleUpdateIngredient}
-                handleDeleteIngredient={handleDeleteIngredient}
+                handleUpdateAllIngredients={handleUpdateAllIngredients}
             />
             <AddTags toggleTag={toggleTag} selectedTags={tags}/>
             <div>
