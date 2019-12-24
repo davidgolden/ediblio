@@ -101,7 +101,6 @@ const RecipeContainer = observer(props => {
             </div>
             {edit === true ? (
                 <RecipeForm
-                    // user={props.user}
                     tags={props.tags}
                     recipe={recipe}
                     toggleEdit={toggleEdit}

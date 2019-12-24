@@ -132,7 +132,7 @@ const RecipeForm = observer(props => {
             <AddTags toggleTag={toggleTag} selectedTags={tags}/>
             <div>
                 {context.user ?
-                    <Button className={submitButtonClassName} onClick={handleSubmit}>Submit!</Button> :
+                    <Button className={submitButtonClassName} onClick={handleSubmit}>{props.editMode ? "Save" : "Submit!"}</Button> :
                     <p>You must be logged in to add a recipe!</p>}
             </div>
         </div>
