@@ -109,6 +109,7 @@ router.route('/recipes/:recipe_id')
     .get((req, res) => {
         Recipe.findById(req.params.recipe_id)
             .populate('author_id', {
+                'id': 'author_id',
                 'username': 'username',
                 'profileImage': 'profileImage',
             }, 'users')

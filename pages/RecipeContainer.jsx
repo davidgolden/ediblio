@@ -58,7 +58,7 @@ const RecipeContainer = observer(props => {
     return (
         <div className={recipeContainerClassName}>
             <div className={recipeEditButtonsClassName}>
-                {recipe && context.user && (recipe.author_id._id === context.user._id || context.user.isAdmin) && (
+                {recipe && context.user && (recipe.author_id.id === context.user._id || context.user.isAdmin) && (
                     <Button className={toggleEditClassName} onClick={toggleEdit}>
                         {edit === false ? (
                             <React.Fragment>
