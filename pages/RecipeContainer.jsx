@@ -10,6 +10,7 @@ import RecipeButtons from "../client/components/recipes/RecipeButtons";
 import {ApiStoreContext} from "../client/stores/api_store";
 import {observer} from "mobx-react";
 import axios from "axios";
+import Router from 'next/router';
 
 const RecipeContainer = observer(props => {
     const [edit, setEdit] = useState(false);
@@ -40,7 +41,7 @@ const RecipeContainer = observer(props => {
         if (confirm('Are you sure you want to do that?')) {
             context.deleteRecipe(props.recipe_id)
                 .then(() => {
-                    props.navigate("/");
+                    Router.push("/");
                 });
         }
     };

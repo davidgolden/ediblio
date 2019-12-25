@@ -3,8 +3,9 @@ import classNames from 'classnames';
 import styles from './styles/Notification.scss';
 import PropTypes from 'prop-types';
 import {ApiStoreContext} from "../../stores/api_store";
+import {observer} from "mobx-react";
 
-const Notification = () => {
+const Notification = observer(() => {
     const context = useContext(ApiStoreContext);
 
     const notificationClassName = classNames({
@@ -18,7 +19,7 @@ const Notification = () => {
             {context.notificationMessage}
         </div>
     );
-};
+});
 
 Notification.propTypes = {
     error: PropTypes.string,

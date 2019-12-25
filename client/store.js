@@ -7,8 +7,8 @@ import Router from 'next/router';
 
 class Store {
     @observable user = null;
-    notificationMessage = '';
-    notificationType = '';
+    @observable notificationMessage = '';
+    @observable notificationType = '';
 
     handleError = error => {
         this.notificationMessage = 'Oops! ' + error;
