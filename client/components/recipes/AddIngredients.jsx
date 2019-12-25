@@ -42,7 +42,7 @@ const AddIngredients = (props) => {
 
     function extractIngredient(e) {
         e.preventDefault();
-        let quantity, measurement, name;
+        let quantity = 0, measurement, name;
         if (withMeasurement.test(value)) { // follows format of "1 cup rice"
             const match = value.match(withMeasurement);
             quantity = match[1];
@@ -51,7 +51,11 @@ const AddIngredients = (props) => {
 
             if (/\//.test(quantity)) { // using fraction
                 const nums = quantity.split(" ");
-                quantity = Number(nums[0]) + eval(nums[1]);
+                if (nums.length > 1) {
+                    quantity = Number(nums[0]) + eval(nums[1]);
+                } else {
+                    quantity = Number(eval(nums[0]));
+                }
             }
 
         } else if (noMeasurement.test(value)) { // no measurement provided: 1 apple
