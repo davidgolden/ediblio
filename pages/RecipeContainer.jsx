@@ -11,6 +11,7 @@ import {ApiStoreContext} from "../client/stores/api_store";
 import {observer} from "mobx-react";
 import axios from "axios";
 import Router from 'next/router';
+import JsonLd from "../client/components/utilities/JsonLd";
 
 const RecipeContainer = observer(props => {
     const [edit, setEdit] = useState(false);
@@ -89,6 +90,15 @@ const RecipeContainer = observer(props => {
                     handleUpdateAllIngredients={handleUpdateAllIngredients}
                 />
             )}
+
+            <JsonLd data={{
+                "@context": "https://schema.org/",
+                "@type": "Recipe",
+                "sameAs": recipe.url,
+                "recipeIngredient": recipe.ingredients,
+                "name": recipe.name,
+                "image": recipe.image,
+            }}/>
         </div>
     )
 });
