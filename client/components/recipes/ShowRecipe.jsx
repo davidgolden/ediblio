@@ -34,12 +34,13 @@ const ShowRecipe = observer(props => {
     });
     const showRecipeIngredientsClassName = classNames({
         [styles.showRecipeIngredients]: true,
+        [styles.showRecipeIngredientsFull]: !props.recipe.image,
     });
 
     return (
         <div className={showRecipeContainerClassName}>
             <div className={showRecipeTitleClassName}>
-                {props.recipe && <div>
+                <div>
                     <h1>{props.recipe.name}</h1>
                     <h2>Submitted by <Link href={`/users/${props.recipe.author_id._id}/recipes`}>
                         <a>
@@ -52,12 +53,12 @@ const ShowRecipe = observer(props => {
                             return <span key={tag}>{tag}</span>
                         })}
                     </div>
-                </div>}
+                </div>
             </div>
             <div className={showRecipeImageClassName}>
-                {props.recipe && <img src={props.recipe.image}/>}
+                <img src={props.recipe.image}/>
             </div>
-            {props.recipe && <div className={showRecipeIngredientsClassName}>
+            <div className={showRecipeIngredientsClassName}>
                 <h3>Recipe Notes</h3>
                 <p>{props.recipe.notes}</p>
                 <AddIngredients
@@ -69,7 +70,7 @@ const ShowRecipe = observer(props => {
                         <FontAwesomeIcon icon={faShoppingBag}/> {added ? 'Added To' : 'Add To'} Grocery List
                     </Button> : <p>Login or Register to Add to Grocery List</p>}
                 </div>
-            </div>}
+            </div>
         </div>
     )
 });

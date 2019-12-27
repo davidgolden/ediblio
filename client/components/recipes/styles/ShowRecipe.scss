@@ -102,6 +102,10 @@
     grid-row-end: 3;
   }
 
+  &Full {
+    grid-column-start: 1;
+  }
+
   h3 {
     font-size: 2rem;
   }
