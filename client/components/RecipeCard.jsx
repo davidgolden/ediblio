@@ -5,7 +5,7 @@ import styles from './styles/RecipeCard.scss';
 import RecipeButtons from "./recipes/RecipeButtons";
 import {ApiStoreContext} from "../stores/api_store";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faUser} from '@fortawesome/free-solid-svg-icons';
+import {faUser, faImage} from '@fortawesome/free-solid-svg-icons';
 import Link from "next/link";
 
 const RecipeCard = props => {
@@ -44,8 +44,8 @@ const RecipeCard = props => {
              onMouseLeave={() => setShowButtons(false)}>
             <Link href={`/recipes/${props.recipe._id}`}>
                 <a>
-                    <div>
-                        <img src={props.recipe.image} className={recipeCardImageClassName}/>
+                    <div className={recipeCardImageClassName}>
+                        {props.recipe.image ? <img src={props.recipe.image} /> : <div><FontAwesomeIcon icon={faImage} /></div>}
                     </div>
                     <div className={recipeCardTextClassName}>
                         <h3>{props.recipe.name}</h3>

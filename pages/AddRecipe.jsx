@@ -153,7 +153,7 @@ const RecipeForm = observer(props => {
     });
     const submitButtonClassName = classNames({
         [styles.submitButton]: true,
-        [styles.submitButtonDisabled]: !(name && image) || submitted,
+        [styles.submitButtonDisabled]: !name || submitted,
     });
 
     return (

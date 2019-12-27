@@ -94,10 +94,28 @@
   }
 
   .recipeCardImage {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 10px;
+    img {
+      object-fit: cover;
+      border-radius: 10px;
+      width: 100%;
+      height: 300px;
+    }
+
+    div {
+      height: 300px;
+      border-radius: 10px;
+      width: 100%;
+      background-color: lightgray;
+
+      svg {
+        width: 50%;
+        color: white;
+        height: 100%;
+      }
+    }
+
+
+
   }
 
   &Text {
