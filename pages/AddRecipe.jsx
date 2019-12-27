@@ -111,7 +111,6 @@ const RecipeForm = observer(props => {
     const handleSubmit = async () => {
         setSubmitted(true);
         const uploadObject = {};
-        console.log(updated);
         if (updated.has('name')) {
             uploadObject.name = name;
         }

@@ -92,10 +92,10 @@ router.route('/recipes/:recipe_id')
         })
     })
     .patch(middleware.checkRecipeOwnership, async (req, res) => {
-        if (req.body.image) { // delete old image before image is changed
-            const recipe = await Recipe.findById(req.params.recipe_id);
-            cloudinary.v2.uploader.destroy(recipe.image);
-        }
+        // if (req.body.image) { // delete old image before image is changed
+        //     const recipe = await Recipe.findById(req.params.recipe_id);
+        //     cloudinary.v2.uploader.destroy(recipe.image);
+        // }
         Recipe.findOneAndUpdate({_id: req.params.recipe_id}, {...req.body}, {new: true}, (err, recipe) => {
             if (err) {
                 return res.status(404).send({detail: err.message})
@@ -109,7 +109,7 @@ router.route('/recipes/:recipe_id')
                 return res.status(404).send({detail: err.message})
             }
 
-            cloudinary.v2.uploader.destroy(recipe.image);
+            // cloudinary.v2.uploader.destroy(recipe.image);
             recipe.remove();
 
             return res.status(200).send('Success!')
