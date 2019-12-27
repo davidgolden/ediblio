@@ -7,8 +7,6 @@ const ImageLoader = props => {
         return (
             <div>
                 <small>Loading Image...</small>
-                <br/>
-                <span>Loading...</span>
             </div>
         )
     } else if (props.foundImage || props.uploadedImage) {

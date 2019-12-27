@@ -42,10 +42,11 @@ const RecipeInformation = props => {
         };
         try {
             const compressedFile = await imageCompression(file, options);
+            setLoading(true);
+            props.handleRecipeImageChange(compressedFile, true);
+            setLoading(false);
             setFoundImage(true);
             setUploadedImage(true);
-
-            props.handleRecipeImageChange(compressedFile, true);
         } catch (error) {
             console.log(error);
         }
