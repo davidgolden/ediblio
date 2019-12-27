@@ -50,7 +50,7 @@ const ViewUserRecipes = observer((props) => {
 
     return (
         <div>
-            <UserBanner user={props.user} images={Array.from(recipes.values()).slice(0, 4).map(r => r.image)}/>
+            <UserBanner user={props.user} images={Array.from(recipes.values()).filter(r => r.image).slice(0, 4).map(r => r.image)}/>
             <div className={styles.browseRecipesContainer}>
                 {collections.map(c => <CollectionCard key={c._id} removeFromCollection={removeFromCollection}
                                                       collection={c}/>)}

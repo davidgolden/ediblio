@@ -37,45 +37,51 @@ const shortenedMeasurements = {
     'liter': 'l'
 };
 
+export function extractIngredient(value) {
+
+    let quantity = 0, measurement, name;
+    if (withMeasurement.test(value)) { // follows format of "1 cup rice"
+        const match = value.match(withMeasurement);
+        quantity = match[1];
+        measurement = match[2];
+        name = match[3];
+
+        if (/\//.test(quantity)) { // using fraction
+            const nums = quantity.split(" ");
+            if (nums.length > 1) {
+                quantity = Number(nums[0]) + eval(nums[1]);
+            } else {
+                quantity = Number(eval(nums[0]));
+            }
+        }
+
+    } else if (noMeasurement.test(value)) { // no measurement provided: 1 apple
+        const match = value.match(noMeasurement);
+        quantity = match[1];
+        measurement = '#';
+        name = match[2];
+    } else { // assume singular: paper towels
+        quantity = 1;
+        measurement = '#';
+        name = value;
+    }
+
+    // test if we've used the long version of a measurement, and switch to abbreviation if necessary
+    if (measurement in shortenedMeasurements) {
+        measurement = shortenedMeasurements[measurement];
+    } else if (/[\d]*s$/.test(measurement)) { // test that we're not using the plural of something
+        measurement = measurement.substring(0, measurement.length - 1);
+    }
+
+   return {quantity, measurement, name};
+}
+
 const AddIngredients = (props) => {
     const [value, setValue] = useState("");
 
-    function extractIngredient(e) {
+    function getIngredient(e) {
         e.preventDefault();
-        let quantity = 0, measurement, name;
-        if (withMeasurement.test(value)) { // follows format of "1 cup rice"
-            const match = value.match(withMeasurement);
-            quantity = match[1];
-            measurement = match[2];
-            name = match[3];
-
-            if (/\//.test(quantity)) { // using fraction
-                const nums = quantity.split(" ");
-                if (nums.length > 1) {
-                    quantity = Number(nums[0]) + eval(nums[1]);
-                } else {
-                    quantity = Number(eval(nums[0]));
-                }
-            }
-
-        } else if (noMeasurement.test(value)) { // no measurement provided: 1 apple
-            const match = value.match(noMeasurement);
-            quantity = match[1];
-            measurement = '#';
-            name = match[2];
-        } else { // assume singular: paper towels
-            quantity = 1;
-            measurement = '#';
-            name = value;
-        }
-
-        // test if we've used the long version of a measurement, and switch to abbreviation if necessary
-        if (measurement in shortenedMeasurements) {
-            measurement = shortenedMeasurements[measurement];
-        } else if (/[\d]*s$/.test(measurement)) { // test that we're not using the plural of something
-            measurement = measurement.substring(0, measurement.length - 1);
-        }
-
+        const {quantity, measurement, name} = extractIngredient(value);
         setValue("");
         handleAddIngredient(quantity, measurement, name);
     }
@@ -113,7 +119,7 @@ const AddIngredients = (props) => {
     return (
         <div className={ingredientsContainerClassName}>
             <h3>Ingredient List</h3>
-            <form onSubmit={extractIngredient} className={addIngredientFormClassName}>
+            <form onSubmit={getIngredient} className={addIngredientFormClassName}>
                 <div>
                     <FontAwesomeIcon icon={faQuestion}/>
                     <div>
