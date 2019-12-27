@@ -27,6 +27,7 @@ export function resize(img, max_height, max_width, type) {
 }
 
 export function processFile(dataURI, max_height, max_width, type = "image/jpeg") {
+    console.log('process', dataURI.length);
     return new Promise(res => {
         const bytes = dataURI.split(',')[0].indexOf('base64') >= 0 ?
             atob(dataURI.split(',')[1]) :
@@ -45,7 +46,9 @@ export function processFile(dataURI, max_height, max_width, type = "image/jpeg")
         const image = new Image(); // helper Image object
         image.src = blobURL;
         image.onload = () => { // have to wait till it's loaded
-            res(resize(image, max_height, max_width, type)); // send it to canvas
+            const resized = resize(image, max_height, max_width, type);
+            console.log('resized ', resized.length);
+            res(resized); // send it to canvas
         }
     })
 }

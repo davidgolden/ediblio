@@ -3,7 +3,6 @@ import axios from 'axios';
 import styles from './styles/RecipeInformation.scss';
 import classNames from 'classnames';
 import ImageLoader from "../utilities/ImageLoader";
-import {processFile} from "../../utils/images";
 
 const RecipeInformation = props => {
     const [foundImage, setFoundImage] = useState(false);
@@ -34,23 +33,22 @@ const RecipeInformation = props => {
         }
     };
 
-    const handleFileUpload = file => {
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(file);
-        fileReader.onloadend = readerEvent => {
-            const dataURI = readerEvent.target.result;
-            if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-                alert('Your image size is too big and our image compression tools are not supported on your browser. Please use a smaller image!');
-                return false;
-            }
-            processFile(dataURI, 800, 800, file.type)
-                .then(uri => {
-                    setFoundImage(true);
-                    setUploadedImage(true);
-
-                    props.handleRecipeImageChange(uri);
-                });
+    const handleFileUpload = async file => {
+        const imageCompression = require('browser-image-compression').default;
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true
         };
+        try {
+            const compressedFile = await imageCompression(file, options);
+            setFoundImage(true);
+            setUploadedImage(true);
+
+            props.handleRecipeImageChange(compressedFile, true);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const recipeInformationClassName = classNames({

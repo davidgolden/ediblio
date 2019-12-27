@@ -69,34 +69,16 @@ router.route('/recipes')
     })
     .post(middleware.isLoggedIn, (req, res) => {
         // create new recipe
-        Recipe.create(req.body.recipe, function (err, newRecipe) {
+        Recipe.create({
+            ...req.body.recipe,
+            author_id: req.user._id,
+        }, function (err, newRecipe) {
             if (err) {
                 return res.status(404).send({detail: err.message});
             }
 
-            cloudinary.v2.uploader.upload(req.body.recipe.image,
-                {
-                    resource_type: "image",
-                    public_id: `users/${req.user._id}/recipes/${newRecipe._id}`,
-                    overwrite: true,
-                },
-                (error, result) => {
-                    newRecipe.image = result.secure_url;
-
-                    // add author info to recipe
-                    newRecipe.author_id = req.user._id;
-                    // save recipe
-                    newRecipe.save();
-                    // add recipe to user
-
-                    // TODO: this needs to be replaced with adding to user's favorites
-                    // User.findOne({"_id": req.user._id}, (err, user) => {
-                    //     user.recipes.push(newRecipe);
-                    //     user.save();
-                    // });
-
-                    return res.sendStatus(200);
-                });
+            newRecipe.save();
+            return res.sendStatus(200);
         });
     });
 
@@ -109,35 +91,25 @@ router.route('/recipes/:recipe_id')
             return res.status(200).json({recipe: recipe});
         })
     })
-    .patch(middleware.checkRecipeOwnership, (req, res) => {
+    .patch(middleware.checkRecipeOwnership, async (req, res) => {
+        if (req.body.image) { // delete old image before image is changed
+            const recipe = await Recipe.findById(req.params.recipe_id);
+            cloudinary.v2.uploader.destroy(recipe.image);
+        }
         Recipe.findOneAndUpdate({_id: req.params.recipe_id}, {...req.body}, {new: true}, (err, recipe) => {
             if (err) {
                 return res.status(404).send({detail: err.message})
             }
-
-            if (req.body.image) {
-                cloudinary.v2.uploader.upload(req.body.image,
-                    {
-                        resource_type: "image",
-                        public_id: `users/${req.user._id}/recipes/${recipe._id}`,
-                        overwrite: true,
-                    },
-                    (error, result) => {
-                        recipe.image = result.secure_url;
-                        recipe.save();
-                        return res.status(200).json({recipe: recipe});
-                    });
-            } else {
-                return res.status(200).json({recipe: recipe});
-            }
+            return res.status(200).json({recipe: recipe});
         });
     })
-    .delete(middleware.checkRecipeOwnership, (req, res) => {
+    .delete(middleware.checkRecipeOwnership, async (req, res) => {
         Recipe.findById(req.params.recipe_id, (err, recipe) => {
             if (err) {
                 return res.status(404).send({detail: err.message})
             }
 
+            cloudinary.v2.uploader.destroy(recipe.image);
             recipe.remove();
 
             return res.status(200).send('Success!')
