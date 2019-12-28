@@ -32,40 +32,74 @@ router.route('/recipes')
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        let q =  Recipe.find({});
+        const aggregationQuery = [];
         if (req.query.tags) {
             const filterTags = req.query.tags.split(',');
-            q = q.where({
-                'tags': {
-                    '$all': filterTags,
+            aggregationQuery.push({
+                $match: {
+                    tags: {
+                        $all: filterTags,
+                    }
                 }
             })
         }
         if (req.query.author) {
-            q = q.where('author_id')
-                .equals(req.query.author);
+            aggregationQuery.push({
+                $match: {author_id: req.query.author}
+            });
         }
         if (req.query.searchTerm) {
             const escapedInput = req.query.searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
             const regex = new RegExp(escapedInput, 'gmi');
-            q = q.or([
-                {'name': regex},
-                {
-                    'ingredients': {
-                        '$elemMatch': {name: regex}
-                    }
+            aggregationQuery.push({
+                $match: {
+                    $or: [
+                        {name: regex},
+                        {
+                            ingredients: {
+                                $elemMatch: {name: regex}
+                            }
+                        }
+                    ]
                 }
-            ]);
+            })
         }
-        q.limit(page_size)
-            .skip(skip)
-            .sort({[req.query.sortBy]: req.query.orderBy})
+
+        aggregationQuery.push({
+            $sort: {[req.query.sortBy]: req.query.orderBy === 'desc' ? -1 : 1}
+        }, {
+            $project: {
+                author_id: 1,
+                name: 1,
+                image: 1,
+                image_defined: {
+                    $cond: [
+                        {$ifNull: ["$image", false]},
+                        true,
+                        false
+                    ]
+                },
+                contains_ingredients: {$gt: [{$size: "$ingredients"}, 0]},
+            }
+        }, {
+            $sort: {"contains_ingredients": -1, "image_defined": -1}
+        }, {
+            $skip: skip
+        }, {
+            $limit: page_size,
+        });
+
+        await Recipe.aggregate(aggregationQuery)
             .exec((err, recipes) => {
-                if (err) {
-                    res.status(404).send({detail: err.message})
-                }
-                return res.status(200).send({recipes: recipes});
-            });
+                Recipe.populate(recipes, {
+                    path: "author_id",
+                    ref: "users",
+                    select: "id username profileImage"
+                }, function(err, populatedRecipes) {
+                    return res.status(200).send({recipes: populatedRecipes});
+                });
+
+            })
     })
     .post(middleware.isLoggedIn, (req, res) => {
         // create new recipe
