@@ -70,4 +70,11 @@ describe("should extract correct ingredients", () => {
         expect(quantity).toEqual(1.5);
         expect(name).toEqual("milk")
     })
+
+    it("2.5 Tbs. flour", () => {
+        const {measurement, quantity, name} = extractIngredient("2.5 Tbs. flour")
+        expect(measurement).toEqual("tbsp");
+        expect(quantity).toEqual(2.5);
+        expect(name).toEqual("flour")
+    })
 });

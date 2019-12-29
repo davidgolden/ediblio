@@ -1,5 +1,5 @@
-const measurements = ['tsp', 'teaspoon', 'tbsp', 'tablespoon', 'cup', 'pint', 'pt', 'fl oz', 'fluid ounce', 'quart', 'qt', 'ounce', 'oz', 'milliliter', 'ml', 'pound', 'lb', 'gram', 'gallon', 'gal', 'liter', 'l'];
-const withMeasurement = new RegExp("^([0-9\\-\\.\\/\\s]+)\\s(" + measurements.join("s\?|") + "s?)\\s(.+)", "i");
+const measurements = ['tsp', 'teaspoon', 'tbsp', 'tbs', 'tablespoon', 'cup', 'pint', 'pt', 'fl oz', 'fluid ounce', 'quart', 'qt', 'ounce', 'oz', 'milliliter', 'ml', 'pound', 'lb', 'gram', 'gallon', 'gal', 'liter', 'l'];
+const withMeasurement = new RegExp("^([0-9\\-\\.\\/\\s]+)\\s(" + measurements.join("s\?\\.?|") + "s?\\s?)\\s(.+)", "i");
 const noMeasurement = new RegExp("([0-9\\.\\/\\s]+)\\s(.+)", "i");
 
 const shortenedMeasurements = {
@@ -12,7 +12,8 @@ const shortenedMeasurements = {
     'milliliter': 'ml',
     'pound': 'lb',
     'gallon': 'gal',
-    'liter': 'l'
+    'liter': 'l',
+    'tbs': 'tbsp',
 };
 
 function convertFractionToDecimal(fraction) {
@@ -26,8 +27,9 @@ function convertFractionToDecimal(fraction) {
 }
 
 function standardizeMeasurement(measurement) {
-    let tmp = measurement;
-    if (/[\d]*s$/.test(measurement)) { // test that we're not using the plural of something
+    let tmp = measurement.replace(".", ""); // remove any abbreviations
+    const pluralRegex = new RegExp("(" + measurements.join("s|") + "s)", "i");
+    if (pluralRegex.test(measurement)) { // test that we're not using the plural of something
         tmp = measurement.substring(0, measurement.length - 1);
     }
     // test if we've used the long version of a measurement, and switch to abbreviation if necessary
