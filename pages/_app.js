@@ -1,4 +1,3 @@
-import {store} from "../client/store";
 import {ApiStoreContext} from "../client/stores/api_store";
 import React from "react";
 import App from 'next/app'
@@ -8,6 +7,8 @@ import Header from "../client/components/header/Header";
 import Notification from "../client/components/header/Notification";
 
 class MyDocument extends App {
+
+    static contextType = ApiStoreContext;
 
     static async getInitialProps(appContext) {
         // calls page's `getInitialProps` and fills `appProps.pageProps`
@@ -23,16 +24,14 @@ class MyDocument extends App {
         try {
             const {Component, pageProps, user} = this.props;
 
-            store.user = user;
+            this.context.user = user;
 
             return (
                 <>
                     <RecipeCloudHead/>
-                    <ApiStoreContext.Provider value={store}>
                         <Header {...pageProps} />
-                        <Notification />
+                        <Notification/>
                         <Component {...pageProps} />
-                    </ApiStoreContext.Provider>
                 </>
             )
         } catch (error) {

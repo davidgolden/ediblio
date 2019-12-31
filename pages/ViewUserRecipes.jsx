@@ -18,7 +18,7 @@ const ViewUserRecipes = observer((props) => {
     const isBottom = useScrolledBottom();
 
     useEffect(() => {
-        if (props.user_id === context.user._id) {
+        if (props.user_id === context.user?._id) {
             axios.get(`/api/users/${props.user_id}/collections`)
                 .then(response => setCollections(response.data.collections))
         }
@@ -41,19 +41,37 @@ const ViewUserRecipes = observer((props) => {
         }
     }, [isBottom]);
 
-    function removeFromCollection(id) {
-        context.removeCollection(id)
+    function deleteCollection(id) {
+        context.deleteCollection(id)
             .then(() => {
                 setCollections(c => c.filter(c => c._id !== id));
             })
     }
 
+    function removeCollection(id) {
+        context.patchUser({
+            collections: context.user.collections.filter(c => c._id !== id).map(c => c._id),
+        })
+    }
+
+    function addCollection(id) {
+        context.patchUser({
+            collections: context.user.collections.map(c => c._id).concat([id]),
+        })
+    }
+
     return (
         <div>
-            <UserBanner user={props.user} images={Array.from(recipes.values()).filter(r => r.image).slice(0, 4).map(r => r.image)}/>
+            <UserBanner user={props.user}
+                        images={Array.from(recipes.values()).filter(r => r.image).slice(0, 4).map(r => r.image)}/>
             <div className={styles.browseRecipesContainer}>
-                {collections.map(c => <CollectionCard key={c._id} removeFromCollection={removeFromCollection}
-                                                      collection={c}/>)}
+                {collections.map(c => <CollectionCard
+                    key={c._id}
+                    removeCollection={removeCollection}
+                    deleteCollection={deleteCollection}
+                    addCollection={addCollection}
+                    collection={c}
+                />)}
                 {Array.from(recipes.values()).map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {
                 }}/>)}
             </div>

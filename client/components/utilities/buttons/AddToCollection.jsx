@@ -7,7 +7,7 @@ import {faPlus} from '@fortawesome/free-solid-svg-icons'
 import {ApiStoreContext} from "../../../stores/api_store";
 import {observer} from "mobx-react";
 
-const AddToCloudButton = observer(props => {
+const AddToCollection = observer(props => {
 
     const context = useContext(ApiStoreContext);
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -37,7 +37,9 @@ const AddToCloudButton = observer(props => {
             </Button>
             {dialogOpen && <div>
                 <ul>
-                    {context.user.collections.map(c => {
+                    {context.user.collections
+                        .filter(c => c.ownerId === context.user._id)
+                        .map(c => {
                         const inCollection = c.recipes.find(r => r._id === props.recipe_id);
                         return <li key={c._id}>
                             <Button onClick={() => {
@@ -62,4 +64,4 @@ const AddToCloudButton = observer(props => {
     )
 });
 
-export default AddToCloudButton;
+export default AddToCollection;

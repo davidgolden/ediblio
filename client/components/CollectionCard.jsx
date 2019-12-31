@@ -1,15 +1,34 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import Link from "next/link";
 import DeleteButton from "./utilities/buttons/DeleteButton";
 import styles from './styles/CollectionCard.scss';
+import {observer} from "mobx-react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import Button from "./utilities/buttons/Button";
+import UserImageSmall from "./utilities/UserImageSmall";
+import {ApiStoreContext} from "../stores/api_store";
 
-export default function CollectionCard(props) {
+const CollectionCard = observer((props) => {
+    const context = useContext(ApiStoreContext);
+
+    const isCollectionOwner = props.collection.ownerId === context.user?._id;
+    const isFollower = !!context.user?.collections.find(c => c._id === props.collection._id);
+
     return (
         <div className={styles.collectionCard}>
             <h3>{props.collection.name}</h3>
-            <DeleteButton
-                onClick={() => props.removeFromCollection(props.collection._id)}/>
+            {isFollower ? <DeleteButton key={'delete'}
+                onClick={() => {
+                    if (isCollectionOwner) {
+                        props.deleteCollection(props.collection._id)
+                    } else {
+                        props.removeCollection(props.collection._id)
+                    }
+                }}/> : <Button key={'add'} onClick={() => props.addCollection(props.collection._id)}>
+                <FontAwesomeIcon icon={faPlus}/>
+            </Button>}
             <Link href={`/collections/${props.collection._id}`}>
                 <a>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width={250} height={200}>
@@ -46,10 +65,16 @@ export default function CollectionCard(props) {
                     </svg>
                 </a>
             </Link>
+            <UserImageSmall id={props.collection.ownerId._id} profileImage={props.collection.ownerId.profileImage}/>
         </div>
     )
-}
+});
 
 CollectionCard.propTypes = {
     collection: PropTypes.object.isRequired,
+    deleteCollection: PropTypes.func.isRequired,
+    removeCollection: PropTypes.func.isRequired,
+    addCollection: PropTypes.func.isRequired,
 };
+
+export default CollectionCard;

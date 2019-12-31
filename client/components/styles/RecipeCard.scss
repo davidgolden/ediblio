@@ -3,7 +3,7 @@
 .recipeCard {
   color: $dark;
   flex: 25%;
-  flex-grow: 1;
+  flex-grow: .5;
   padding: 0 2px;
   position: relative;
   text-align: center;
@@ -25,29 +25,6 @@
 
     > div:first-of-type {
       padding: 5px 10px;
-    }
-  }
-
-  .userImage {
-    position: absolute;
-    top: 13px;
-    right: 15px;
-    z-index: 1;
-
-    img {
-      width: 50px;
-      height: 50px;
-      border-radius: 100%;
-    }
-
-    svg {
-      width: 30px;
-      height: 30px;
-      color: white;
-      background-color: lightgray;
-      font-size: 1.8rem;
-      padding: 10px;
-      border-radius: 100%;
     }
   }
 
@@ -113,9 +90,6 @@
         height: 100%;
       }
     }
-
-
-
   }
 
   &Text {
@@ -131,5 +105,28 @@
     display: none;
     transition: opacity .25s ease;
     opacity: 0;
+  }
+}
+
+.userImage {
+  position: absolute;
+  top: 13px;
+  right: 15px;
+  z-index: 1;
+
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+  }
+
+  svg {
+    width: 30px;
+    height: 30px;
+    color: white;
+    background-color: lightgray;
+    font-size: 1.8rem;
+    padding: 10px;
+    border-radius: 100%;
   }
 }

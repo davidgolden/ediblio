@@ -8,7 +8,7 @@ export default function UserBanner(props) {
     return <div className={styles.userBanner}>
         <div >
             {props.images.map((image, i) => {
-                return <div style={{backgroundImage: `url(${image})`}}/>
+                return <div key={i} style={{backgroundImage: `url(${image})`}}/>
             })}
         </div>
         <div>

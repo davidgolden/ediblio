@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import AddToCloudButton from "../utilities/buttons/AddToCloudButton";
+import AddToCollection from "../utilities/buttons/AddToCollection";
 import AddToGroceryListButton from "../utilities/buttons/AddToGroceryListButton";
 import DeleteButton from "../utilities/buttons/DeleteButton";
 import {ApiStoreContext} from "../../stores/api_store";
@@ -42,7 +42,7 @@ const RecipeButtons = observer(props => {
     return (
         <React.Fragment>
 
-            <AddToCloudButton recipe_id={props.recipe_id} removeFromCollection={removeFromCollection} addToCollection={addToCollection}/>
+            <AddToCollection recipe_id={props.recipe_id} removeFromCollection={removeFromCollection} addToCollection={addToCollection}/>
 
             <AddToGroceryListButton
                 disabled={inMenu}

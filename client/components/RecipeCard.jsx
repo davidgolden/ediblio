@@ -7,6 +7,7 @@ import {ApiStoreContext} from "../stores/api_store";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faUser, faImage} from '@fortawesome/free-solid-svg-icons';
 import Link from "next/link";
+import UserImageSmall from "./utilities/UserImageSmall";
 
 const RecipeCard = props => {
 
@@ -35,9 +36,6 @@ const RecipeCard = props => {
     const recipeCardButtonClassName = classNames({
         [styles.recipeCardButtons]: true,
     });
-    const userImageClassName = classNames({
-        [styles.userImage]: true,
-    });
 
     return (
         <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)}
@@ -60,15 +58,7 @@ const RecipeCard = props => {
                     deleteRecipe={deleteRecipe}
                 />}
             </div>
-            {showButtons && <div className={userImageClassName}>
-                <Link href={`/users/${props.recipe.author_id._id}/recipes`}>
-                    <a>
-                        {props.recipe.author_id.profileImage ?
-                            <img src={props.recipe.author_id.profileImage}/> :
-                            <FontAwesomeIcon icon={faUser}/>}
-                    </a>
-                </Link>
-            </div>}
+            {showButtons && <UserImageSmall id={props.recipe.author_id._id} profileImage={props.recipe.author_id.profileImage}/>}
         </div>
     )
 };

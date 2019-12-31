@@ -32,16 +32,11 @@ router.get('/logout', function (req, res) {
     try {
         req.logout();
         res.clearCookie('recipecloudsession');
-        res.sendStatus(200);
-        // if (user) {
-        //     req.session.destroy(err => {
-        //         if (err) throw (err);
-        //
-        //         return res.sendStatus(200);
-        //     });
-        // } else {
-        //     throw new Error('Something went wrong');
-        // }
+        req.session.destroy(err => {
+            if (err) throw (err);
+
+            return res.sendStatus(200);
+        });
     } catch (err) {
         res.status(422).send({message: err});
     }

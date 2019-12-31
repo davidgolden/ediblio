@@ -25,13 +25,6 @@ const userSchema = new mongoose.Schema({
     groceryList: {
         type: [IngredientSchema]
     }
-}, {
-    toJSON: {
-        virtuals: true,
-    },
-    toObject: {
-        virtuals: true,
-    }
 });
 
 userSchema.virtual('clean').get(function() {

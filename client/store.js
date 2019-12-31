@@ -2,10 +2,10 @@ import React from "react";
 import axios from "axios";
 import {addIngredient, canBeAdded} from "./utils/conversions";
 import './stylesheets/base.scss';
-import {observable} from "mobx";
+import {observable, action} from "mobx";
 import Router from 'next/router';
 
-class Store {
+export default class Store {
     @observable user = null;
     @observable notificationMessage = '';
     @observable notificationType = '';
@@ -19,6 +19,7 @@ class Store {
         }, 4000);
     };
 
+    @action
     userLogin = (email, password) => {
         axios.post('/api/login', {
             email: email,
@@ -34,10 +35,12 @@ class Store {
             })
     };
 
+    @action
     userLogout = () => {
         axios.get('/api/logout')
             .then(() => {
                 this.user = null;
+                // localStorage.setItem('jwt', null);
             });
     };
 
@@ -63,6 +66,7 @@ class Store {
         })
     };
 
+    @action
     patchUser = partialUserObj => {
         return new Promise((res, rej) => {
             axios.patch(`/api/users/${this.user._id}`, {
@@ -79,6 +83,7 @@ class Store {
         });
     };
 
+    @action
     putCollection = collectionObj => {
         return new Promise((res, rej) => {
             axios.patch(`/api/collections/${collectionObj._id}`, {
@@ -103,6 +108,7 @@ class Store {
         });
     };
 
+    @action
     createCollection = name => {
         return new Promise((res, rej) => {
             axios.post(`/api/collections`, {name})
@@ -117,7 +123,8 @@ class Store {
         });
     };
 
-    removeCollection = async id => {
+    @action
+    deleteCollection = async id => {
         return new Promise((res, rej) => {
             axios.delete(`/api/collections/${id}`)
                 .then(response => {
@@ -155,12 +162,12 @@ class Store {
         });
     };
 
+    @action
     registerUser = user => {
         return new Promise((res, rej) => {
             axios.post('/api/users', {...user})
                 .then(response => {
                     this.user = response.data.user;
-                    localStorage.setItem('user', JSON.stringify(this.user));
                     Router.push("/");
                     res();
                 })
@@ -261,9 +268,3 @@ class Store {
         });
     };
 }
-
-const store = new Store();
-
-const storeContext = new React.createContext(store);
-
-export {store, storeContext};

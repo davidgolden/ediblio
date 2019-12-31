@@ -7,7 +7,6 @@ module.exports = withCSS(withSass({
     cssLoaderOptions: {
         localIdentName: '[local]_[hash:base64:5]',
     },
-    // generateInDevMode: true,
     webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
         config.module.rules.push({
             test: /\.(png|jpg|gif)$/,

@@ -11,6 +11,7 @@ const collectionSchema = new mongoose.Schema({
     },
     ownerId: {
         type: mongoose.Schema.ObjectId,
+        ref: 'users',
         required: true,
     }
 }, {

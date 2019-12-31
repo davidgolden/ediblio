@@ -2,7 +2,7 @@
 
 .collectionCard {
   flex: 25%;
-  flex-grow: 1;
+  flex-grow: .5;
   text-align: center;
   position: relative;
   align-self: flex-start;
@@ -19,7 +19,7 @@
     font-size: 2rem;
   }
 
-  button {
+  > button {
     display: none;
     position: absolute;
     top: 13px;
@@ -28,8 +28,12 @@
     height: 40px;
   }
 
+  > div {
+    display: none;
+  }
+
   &:hover {
-    button {
+    > button, > div {
       display: block;
     }
   }

@@ -51,6 +51,7 @@ router.get('/collections/:collection_id', async (req, res) => {
                 collection: {
                     _id: collection._id,
                     name: collection.name,
+                    ownerId: collection.ownerId,
                     recipes
                 }
             });
