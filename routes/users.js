@@ -116,18 +116,27 @@ router.get('/users/:user_id/list', middleware.isLoggedIn, (req, res) => {
 
 // get certain collection details about a user's collections
 router.get('/users/:user_id/collections', async (req, res) => {
-    const collections = await Collection.find({
-        "ownerId": req.params.user_id,
-    });
-    return res.status(200).send({
-        collections: collections.map(c => {
-            return {
-                _id: c._id,
-                name: c.name,
-                recipes: c.recipes
-                    .slice(0, 4)
-                    .map(r => r.image)
-            }
+    const user = await User.findOne({
+        "_id": req.params.user_id,
+    })
+        .populate('collections')
+        .exec();
+
+    Collection.populate(user.collections, {
+        path: 'ownerId',
+        select: '_id profileImage'
+    }, (err, populatedCollections) => {
+        return res.status(200).send({
+            collections: populatedCollections.map(c => {
+                return {
+                    _id: c._id,
+                    name: c.name,
+                    ownerId: c.ownerId,
+                    recipes: c.recipes
+                        .slice(0, 4)
+                        .map(r => r.image)
+                }
+            })
         })
     })
 });
