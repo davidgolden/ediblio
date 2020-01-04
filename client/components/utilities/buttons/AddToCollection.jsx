@@ -38,7 +38,7 @@ const AddToCollection = observer(props => {
             {dialogOpen && <div>
                 <ul>
                     {context.user.collections
-                        .filter(c => c.ownerId === context.user._id)
+                        .filter(c => c.ownerId === context.user?._id)
                         .map(c => {
                         const inCollection = c.recipes.find(r => r._id === props.recipe_id);
                         return <li key={c._id}>

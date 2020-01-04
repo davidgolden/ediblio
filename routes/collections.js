@@ -16,7 +16,9 @@ router.post('/collections', middleware.isLoggedIn, async (req, res) => {
         "$push": {
             collections: collection._id,
         }
-    }, {new: true});
+    }, {new: true})
+        .populate('collections')
+        .exec();
     res.status(200).json({user});
 });
 

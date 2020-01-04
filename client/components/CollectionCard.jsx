@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import Link from "next/link";
 import DeleteButton from "./utilities/buttons/DeleteButton";
@@ -9,26 +9,36 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import Button from "./utilities/buttons/Button";
 import UserImageSmall from "./utilities/UserImageSmall";
 import {ApiStoreContext} from "../stores/api_store";
+import RemoveButton from "./utilities/buttons/RemoveButton";
 
 const CollectionCard = observer((props) => {
+    const [isClient, setIsClient] = useState(false);
     const context = useContext(ApiStoreContext);
 
-    const isCollectionOwner = props.collection.ownerId === context.user?._id;
+    const isCollectionOwner = props.collection.ownerId._id === context.user?._id;
     const isFollower = !!context.user?.collections.find(c => c._id === props.collection._id);
+
+    useEffect(() => {
+        // this is a really shitty way to deal with this, but it's a workaround until hopefully svg bug is fixed in React
+        // since context.user is never defined on the server, we can trust this to render correctly for now...
+        setIsClient(typeof window !== 'undefined');
+    }, [typeof window]);
+
+    let button;
+    if (isClient && isCollectionOwner) {
+        button = <DeleteButton onClick={() => props.deleteCollection(props.collection._id)}/>
+    } else if (isClient && isFollower) {
+        button = <RemoveButton onClick={() => props.removeCollection(props.collection._id)}/>
+    } else if (isClient && context.user) {
+        button = <Button onClick={() => props.addCollection(props.collection._id)}>
+            <FontAwesomeIcon icon={faPlus}/>
+        </Button>
+    }
 
     return (
         <div className={styles.collectionCard}>
             <h3>{props.collection.name}</h3>
-            {isFollower ? <DeleteButton key={'delete'}
-                onClick={() => {
-                    if (isCollectionOwner) {
-                        props.deleteCollection(props.collection._id)
-                    } else {
-                        props.removeCollection(props.collection._id)
-                    }
-                }}/> : <Button key={'add'} onClick={() => props.addCollection(props.collection._id)}>
-                <FontAwesomeIcon icon={faPlus}/>
-            </Button>}
+            {button}
             <Link href={`/collections/${props.collection._id}`}>
                 <a>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width={250} height={200}>
