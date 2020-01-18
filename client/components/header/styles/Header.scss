@@ -137,6 +137,7 @@
 }
 
 .install {
+  display: none;
   background-color: #DA6344 !important;
 
   @media all and (display-mode: standalone) {
