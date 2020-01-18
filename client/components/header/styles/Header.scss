@@ -136,6 +136,14 @@
   }
 }
 
+.install {
+  background-color: #DA6344 !important;
+
+  @media all and (display-mode: standalone) {
+    display: none;
+  }
+}
+
 .mobileHam {
   position: absolute;
   display: none;
