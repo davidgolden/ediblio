@@ -62,10 +62,10 @@ const Header = observer((props) => {
             </Button>
 
             <div className={linksContainerClassName}>
+                <Button id={"installAppButton"} className={styles.install}>
+                    Install App
+                </Button>
                 {context.user ? <React.Fragment>
-                        <Button id={"installAppButton"} className={styles.install}>
-                            Install App
-                        </Button>
                         <Link href={'/'}>
                             <a className={headerLinkClassName}>
                                 <FontAwesomeIcon icon={faSearch}/>
