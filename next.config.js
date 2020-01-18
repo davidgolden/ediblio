@@ -36,4 +36,5 @@ module.exports = withCSS(withSass({
 
         return config;
     },
+    useFileSystemPublicRoutes: false,
 }));

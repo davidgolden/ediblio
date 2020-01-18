@@ -12,24 +12,19 @@ import {ApiStoreContext} from "../stores/api_store";
 import RemoveButton from "./utilities/buttons/RemoveButton";
 
 const CollectionCard = observer((props) => {
-    const [isClient, setIsClient] = useState(false);
+    const [didMount, setDidMount] = React.useState(false);
+    React.useLayoutEffect(() => setDidMount(true), []);
     const context = useContext(ApiStoreContext);
 
     const isCollectionOwner = props.collection.ownerId._id === context.user?._id;
     const isFollower = !!context.user?.collections.find(c => c._id === props.collection._id);
 
-    useEffect(() => {
-        // this is a really shitty way to deal with this, but it's a workaround until hopefully svg bug is fixed in React
-        // since context.user is never defined on the server, we can trust this to render correctly for now...
-        setIsClient(typeof window !== 'undefined');
-    }, [typeof window]);
-
     let button;
-    if (isClient && isCollectionOwner) {
+    if (didMount && isCollectionOwner) {
         button = <DeleteButton onClick={() => props.deleteCollection(props.collection._id)}/>
-    } else if (isClient && isFollower) {
+    } else if (didMount && isFollower) {
         button = <RemoveButton onClick={() => props.removeCollection(props.collection._id)}/>
-    } else if (isClient && context.user) {
+    } else if (didMount && context.user) {
         button = <Button onClick={() => props.addCollection(props.collection._id)}>
             <FontAwesomeIcon icon={faPlus}/>
         </Button>
