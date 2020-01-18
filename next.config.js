@@ -37,5 +37,4 @@ module.exports = withCSS(withSass(withOffline({
 
         return config;
     },
-    // useFileSystemPublicRoutes: false,
 })));
