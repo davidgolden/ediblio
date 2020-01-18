@@ -5,5 +5,6 @@ window.addEventListener('beforeinstallprompt', function(e) {
     installBtn.addEventListener("click", function(e) {
         installBtn.style.display = 'none';
         deferredPrompt.prompt();
+        deferredPrompt = null;
     })
 });
