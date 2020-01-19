@@ -84,9 +84,9 @@ passport.deserializeUser(async function (id, done) {
 
 app.prepare().then(() => {
     const server = express();
-    // if (process.env.NODE_ENV === 'production') {
-    //     server.use(forceSsl);
-    // }
+    if (process.env.NODE_ENV === 'production') {
+        server.use(forceSsl);
+    }
     server.enable('trust proxy');
     server.use(compression());
 
