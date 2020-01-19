@@ -71,7 +71,7 @@ const Header = observer((props) => {
                                 <FontAwesomeIcon icon={faSearch}/>
                             </a>
                         </Link>
-                        <Link href={`/users/${context.user._id}/groceries`}>
+                        <Link href={"/users/[user_id]/groceries"} as={`/users/${context.user._id}/groceries`}>
                             <a className={headerLinkClassName}>
                                 <FontAwesomeIcon icon={faListUl}/>
                             </a>
@@ -81,12 +81,12 @@ const Header = observer((props) => {
                                 <FontAwesomeIcon icon={faPlus}/>
                             </a>
                         </Link>
-                        <Link href={`/users/${context.user._id}/recipes`}>
+                        <Link href={"/users/[user_id]/recipes"} as={`/users/${context.user._id}/recipes`}>
                             <a className={headerLinkClassName}>
                                 <FontAwesomeIcon icon={faBook}/>
                             </a>
                         </Link>
-                        <Link href={`/users/${context.user._id}/settings`}>
+                        <Link href={"/users/[user_id]/settings"} as={`/users/${context.user._id}/settings`}>
                             <a className={userLinkClassName}>
                                 <FontAwesomeIcon icon={faUser}/> <span>{context.user.username}</span>
                             </a>

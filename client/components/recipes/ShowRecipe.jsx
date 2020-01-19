@@ -42,7 +42,7 @@ const ShowRecipe = observer(props => {
             <div className={showRecipeTitleClassName}>
                 <div>
                     <h1>{props.recipe.name}</h1>
-                    <h2>Submitted by <Link href={`/users/${props.recipe.author_id._id}/recipes`}>
+                    <h2>Submitted by <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id._id}/recipes`}>
                         <a>
                             {props.recipe.author_id.username}
                         </a>

@@ -1,16 +1,16 @@
 import React, {useContext, useState, useEffect} from 'react';
-import AddIngredients from '../client/components/recipes/AddIngredients';
-import styles from './styles/GroceryList.scss';
+import AddIngredients from '../../../client/components/recipes/AddIngredients';
+import styles from '../../styles/GroceryList.scss';
 import classNames from 'classnames';
-import Button from "../client/components/utilities/buttons/Button";
-import RemoveButton from "../client/components/utilities/buttons/RemoveButton"
+import Button from "../../../client/components/utilities/buttons/Button";
+import RemoveButton from "../../../client/components/utilities/buttons/RemoveButton"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
-import {ApiStoreContext} from "../client/stores/api_store";
+import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
 // import fetch from "isomorphic-unfetch";
 
-const GroceryList = props => {
+const Groceries = props => {
     const context = useContext(ApiStoreContext);
 
     const [storeMode, setStoreMode] = useState(false);
@@ -88,9 +88,11 @@ const GroceryList = props => {
     )
 };
 
-GroceryList.getInitialProps = async ({req, query}) => {
-    const response = await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}/list`, {
-        headers: req.headers.cookie && {
+Groceries.getInitialProps = async ({req, query}) => {
+    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+
+    const response = await axios.get(`${currentFullUrl}/api/users/${query.user_id}/list`, {
+        headers: req?.headers?.cookie && {
             cookie: req.headers.cookie,
         }
     });
@@ -100,4 +102,4 @@ GroceryList.getInitialProps = async ({req, query}) => {
     };
 };
 
-export default GroceryList;
+export default Groceries;

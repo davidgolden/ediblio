@@ -34,7 +34,7 @@ const CollectionCard = observer((props) => {
         <div className={styles.collectionCard}>
             <h3>{props.collection.name}</h3>
             {button}
-            <Link href={`/collections/${props.collection._id}`}>
+            <Link href={"/collections/[collection._id]"} as={`/collections/${props.collection._id}`}>
                 <a>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width={250} height={200}>
                         <path fill="#164e57"

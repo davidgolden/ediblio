@@ -6,7 +6,7 @@ import {faCloudUploadAlt, faSearchPlus, faListOl, faShoppingCart} from '@fortawe
 import Button from "../client/components/utilities/buttons/Button";
 import {ApiStoreContext} from "../client/stores/api_store";
 
-const Landing = props => {
+const Register = props => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -105,4 +105,4 @@ const Landing = props => {
     )
 };
 
-export default Landing;
+export default Register;

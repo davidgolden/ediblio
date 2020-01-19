@@ -1,14 +1,14 @@
 import React, {useContext, useState, useEffect} from 'react';
 import axios from 'axios';
-import CollectionCard from "../client/components/CollectionCard";
-import styles from './styles/BrowseRecipes.scss';
-import {ApiStoreContext} from "../client/stores/api_store";
-import RecipeCard from "../client/components/RecipeCard";
-import useScrolledBottom from "../client/components/utilities/useScrolledBottom";
+import CollectionCard from "../../../client/components/CollectionCard";
+import styles from '../../styles/BrowseRecipes.scss';
+import {ApiStoreContext} from "../../../client/stores/api_store";
+import RecipeCard from "../../../client/components/RecipeCard";
+import useScrolledBottom from "../../../client/components/utilities/useScrolledBottom";
 import {observer} from "mobx-react";
-import UserBanner from "../client/components/UserBanner";
+import UserBanner from "../../../client/components/UserBanner";
 
-const ViewUserRecipes = observer((props) => {
+const Recipes = observer((props) => {
     const [recipes, setRecipes] = useState(new Map(props.recipes || []));
     const [collections, setCollections] = useState(props.collections || []);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
@@ -79,15 +79,17 @@ const ViewUserRecipes = observer((props) => {
     )
 });
 
-ViewUserRecipes.getInitialProps = async ({req, query}) => {
+Recipes.getInitialProps = async ({req, query}) => {
+    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+
     const responses = await Promise.all([
-        await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}/collections`, {
-            headers: req.headers.cookie && {
+        await axios.get(`${currentFullUrl}/api/users/${query.user_id}/collections`, {
+            headers: req?.headers?.cookie && {
                 cookie: req.headers.cookie,
             },
         }),
-        await axios.get(`${req.protocol}://${req.headers.host}/api/recipes`, {
-            headers: req.headers.cookie && {
+        await axios.get(`${currentFullUrl}/api/recipes`, {
+            headers: req?.headers?.cookie && {
                 cookie: req.headers.cookie,
             },
             params: {
@@ -96,8 +98,8 @@ ViewUserRecipes.getInitialProps = async ({req, query}) => {
                 author: query.user_id,
             }
         }),
-        await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}`, {
-            headers: req.headers.cookie && {
+        await axios.get(`${currentFullUrl}/api/users/${query.user_id}`, {
+            headers: req?.headers?.cookie && {
                 cookie: req.headers.cookie,
             },
         }),
@@ -111,4 +113,4 @@ ViewUserRecipes.getInitialProps = async ({req, query}) => {
     }
 };
 
-export default ViewUserRecipes;
+export default Recipes;

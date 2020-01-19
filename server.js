@@ -84,9 +84,9 @@ passport.deserializeUser(async function (id, done) {
 
 app.prepare().then(() => {
     const server = express();
-    if (process.env.NODE_ENV === 'production') {
-        server.use(forceSsl);
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    //     server.use(forceSsl);
+    // }
     server.enable('trust proxy');
     server.use(compression());
 
@@ -118,64 +118,9 @@ app.prepare().then(() => {
     server.use('/api/', recipeRoutes);
     server.use('/api/', collectionRoutes);
 
-    server.get("/", async (req, res) => {
-        return app.render(req, res, '/BrowseRecipes', req.query)
-    });
-
     server.get('/service-worker.js', (req, res) => {
         const filePath = path.join(__dirname, '.next/service-worker.js');
         app.serveStatic(req, res, filePath)
-    });
-
-    server.get("/recipes", (req, res) => {
-        return app.render(req, res, '/BrowseRecipes', req.query)
-    });
-
-    server.get("/recipes/:recipe_id", (req, res) => {
-        return app.render(req, res, '/RecipeContainer', {
-            ...req.query,
-            recipe_id: req.params.recipe_id,
-        })
-    });
-
-    server.get("/users/:user_id/groceries", (req, res) => {
-        return app.render(req, res, '/GroceryList', {
-            ...req.query,
-            user_id: req.params.user_id,
-        })
-    });
-
-    server.get("/users/:user_id/settings", (req, res) => {
-        return app.render(req, res, '/UserSettings', {
-            ...req.query,
-            user_id: req.params.user_id,
-        })
-    });
-
-    server.get("/users/:user_id/recipes", (req, res) => {
-        return app.render(req, res, '/ViewUserRecipes', {
-            ...req.query,
-            user_id: req.params.user_id,
-        })
-    });
-
-    server.get("/collections/:collection_id", (req, res) => {
-        return app.render(req, res, '/ViewCollection', {
-            ...req.query,
-            collection_id: req.params.collection_id,
-        })
-    });
-
-    server.get("/register", (req, res) => {
-        return app.render(req, res, '/Landing', req.query)
-    });
-
-    server.get("/forgot", (req, res) => {
-        return app.render(req, res, '/Forgot', req.query)
-    });
-
-    server.get("/add", (req, res) => {
-        return app.render(req, res, '/AddRecipe', req.query)
     });
 
     server.all('*', (req, res) => {

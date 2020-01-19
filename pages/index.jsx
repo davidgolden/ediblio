@@ -13,7 +13,7 @@ function useForceUpdate(){
     return () => setValue(value => ++value); // update the state to force render
 }
 
-const BrowseRecipes = props => {
+const Index = props => {
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
     const [loadedAll, setLoadedAll] = useState(props.loadedAll);
     const [filterTags, setFilterTags] = useState([]);
@@ -135,9 +135,11 @@ const BrowseRecipes = props => {
     )
 };
 
-BrowseRecipes.getInitialProps = async ({req}) => {
-    const response = await axios.get(`${req.protocol}://${req.headers.host}/api/recipes`, {
-        headers: req.headers.cookie && {
+Index.getInitialProps = async ({req}) => {
+    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+
+    const response = await axios.get(`${currentFullUrl}/api/recipes`, {
+        headers: req?.headers?.cookie && {
             cookie: req.headers.cookie,
         },
         params: {
@@ -152,4 +154,4 @@ BrowseRecipes.getInitialProps = async ({req}) => {
     }
 };
 
-export default BrowseRecipes;
+export default Index;

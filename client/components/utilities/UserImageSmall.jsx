@@ -12,7 +12,7 @@ export default function UserImageSmall(props) {
     });
 
     return <div className={userImageClassName}>
-        <Link href={`/users/${props.id}/recipes`}>
+        <Link href={"/users/[user_id]/recipes"} as={`/users/${props.id}/recipes`}>
             <a>
                 {props.profileImage ?
                     <img src={props.profileImage}/> :

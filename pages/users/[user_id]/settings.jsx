@@ -1,12 +1,12 @@
 import React, {useState, useContext, useEffect} from 'react';
-import styles from './styles/UserSettings.scss';
+import styles from '../../styles/UserSettings.scss';
 import classNames from 'classnames';
-import Button from "../client/components/utilities/buttons/Button";
-import {ApiStoreContext} from "../client/stores/api_store";
-import {processFile} from "../client/utils/images";
+import Button from "../../../client/components/utilities/buttons/Button";
+import {ApiStoreContext} from "../../../client/stores/api_store";
+import {processFile} from "../../../client/utils/images";
 import axios from "axios";
 
-const UserSettings = props => {
+const Settings = props => {
     const context = useContext(ApiStoreContext);
 
     const [profileImage, setProfileImage] = useState(props.user ? props.user.profileImage : '');
@@ -97,9 +97,11 @@ const UserSettings = props => {
     )
 };
 
-UserSettings.getInitialProps = async ({query, req}) => {
-    const response = await axios.get(`${req.protocol}://${req.headers.host}/api/users/${query.user_id}`, {
-        headers: req.headers.cookie && {
+Settings.getInitialProps = async ({query, req}) => {
+    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+
+    const response = await axios.get(`${currentFullUrl}/api/users/${query.user_id}`, {
+        headers: req?.headers?.cookie && {
             cookie: req.headers.cookie,
         }
     });
@@ -109,4 +111,4 @@ UserSettings.getInitialProps = async ({query, req}) => {
     }
 };
 
-export default UserSettings;
+export default Settings;

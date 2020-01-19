@@ -1,13 +1,13 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {ApiStoreContext} from "../client/stores/api_store";
-import useScrolledBottom from "../client/components/utilities/useScrolledBottom";
+import {ApiStoreContext} from "../../client/stores/api_store";
+import useScrolledBottom from "../../client/components/utilities/useScrolledBottom";
 import classNames from "classnames";
-import styles from "./styles/BrowseRecipes.scss";
-import RecipeCard from "../client/components/RecipeCard";
-import LoadingNextPage from "../client/components/utilities/LoadingNextPage";
+import styles from "../styles/BrowseRecipes.scss";
+import RecipeCard from "../../client/components/RecipeCard";
+import LoadingNextPage from "../../client/components/utilities/LoadingNextPage";
 import axios from "axios";
 
-const ViewCollection  = props => {
+const Collection_id  = props => {
     const [recipes, setRecipes] = useState(new Map(props.recipes || []));
     const [title, setTitle] = useState("");
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
@@ -61,9 +61,11 @@ const ViewCollection  = props => {
     )
 };
 
-ViewCollection.getInitialProps = async ({req, query}) => {
-    const response = await axios.get(`${req.protocol}://${req.headers.host}/api/collections/${query.collection_id}`, {
-        headers: req.headers.cookie && {
+Collection_id.getInitialProps = async ({req, query}) => {
+    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+
+    const response = await axios.get(`${currentFullUrl}/api/collections/${query.collection_id}`, {
+        headers: req?.headers?.cookie && {
             cookie: req.headers.cookie,
         },
     });
@@ -74,4 +76,4 @@ ViewCollection.getInitialProps = async ({req, query}) => {
     };
 };
 
-export default ViewCollection;
+export default Collection_id;

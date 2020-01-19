@@ -1,19 +1,19 @@
 import React, {useState, useContext, useEffect} from 'react';
-import RecipeForm from './AddRecipe';
-import ShowRecipe from '../client/components/recipes/ShowRecipe';
-import styles from './styles/RecipeContainer.scss';
+import RecipeForm from '../add';
+import ShowRecipe from '../../client/components/recipes/ShowRecipe';
+import styles from '../styles/RecipeContainer.scss';
 import classNames from 'classnames';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSearch, faEdit} from '@fortawesome/free-solid-svg-icons'
-import Button from "../client/components/utilities/buttons/Button";
-import RecipeButtons from "../client/components/recipes/RecipeButtons";
-import {ApiStoreContext} from "../client/stores/api_store";
+import Button from "../../client/components/utilities/buttons/Button";
+import RecipeButtons from "../../client/components/recipes/RecipeButtons";
+import {ApiStoreContext} from "../../client/stores/api_store";
 import {observer} from "mobx-react";
 import axios from "axios";
 import Router from 'next/router';
-import JsonLd from "../client/components/utilities/JsonLd";
+import JsonLd from "../../client/components/utilities/JsonLd";
 
-const RecipeContainer = observer(props => {
+const Recipe_id = observer(props => {
     const [edit, setEdit] = useState(false);
     const [recipe, setRecipe] = useState(props.recipe);
 
@@ -103,9 +103,11 @@ const RecipeContainer = observer(props => {
     )
 });
 
-RecipeContainer.getInitialProps = async ({req, query}) => {
-    const response = await axios.get(`${req.protocol}://${req.headers.host}/api/recipes/${query.recipe_id}`, {
-        headers: req.headers.cookie && {
+Recipe_id.getInitialProps = async ({req, query}) => {
+    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+
+    const response = await axios.get(`${currentFullUrl}/api/recipes/${query.recipe_id}`, {
+        headers: req?.headers?.cookie && {
             cookie: req.headers.cookie,
         },
     });
@@ -115,4 +117,4 @@ RecipeContainer.getInitialProps = async ({req, query}) => {
     };
 };
 
-export default RecipeContainer;
+export default Recipe_id;
