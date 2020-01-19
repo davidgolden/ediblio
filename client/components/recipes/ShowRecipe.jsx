@@ -10,6 +10,16 @@ import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
 import {observer} from "mobx-react";
 
+const showRecipeContainerClassName = classNames({
+    [styles.showRecipeContainer]: true,
+});
+const showRecipeTitleClassName = classNames({
+    [styles.showRecipeTitle]: true,
+});
+const showRecipeImageClassName = classNames({
+    [styles.showRecipeImage]: true,
+});
+
 const ShowRecipe = observer(props => {
     const [added, setAdded] = useState(false);
     const context = useContext(ApiStoreContext);
@@ -19,15 +29,6 @@ const ShowRecipe = observer(props => {
         setAdded(true);
     };
 
-    const showRecipeContainerClassName = classNames({
-        [styles.showRecipeContainer]: true,
-    });
-    const showRecipeTitleClassName = classNames({
-        [styles.showRecipeTitle]: true,
-    });
-    const showRecipeImageClassName = classNames({
-        [styles.showRecipeImage]: true,
-    });
     const showRecipeButtonsClassName = classNames({
         [styles.showRecipeButtons]: true,
         [styles.showRecipeButtonsDisabled]: added,

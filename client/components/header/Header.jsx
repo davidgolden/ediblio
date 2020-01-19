@@ -2,7 +2,7 @@ import React, {useState, useContext, useEffect} from 'react';
 import classNames from 'classnames';
 import styles from './styles/Header.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCloud, faSearch, faListUl, faPlus, faBook, faUser, faHamburger} from '@fortawesome/free-solid-svg-icons';
+import {faCloud, faSearch, faListUl, faPlus, faBook, faUser, faHamburger, faChevronLeft} from '@fortawesome/free-solid-svg-icons';
 import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
@@ -28,6 +28,8 @@ const Header = observer((props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showNav, setShowNav] = useState(false);
+    const [didMount, setDidMount] = React.useState(false);
+    React.useLayoutEffect(() => setDidMount(true), []);
 
     const context = useContext(ApiStoreContext);
 
@@ -55,6 +57,10 @@ const Header = observer((props) => {
 
     return (
         <nav className={navContainerClassName}>
+            {didMount && window.history.length > 1 && <Button className={styles.backButton} onClick={() => window.history.back()}>
+                <FontAwesomeIcon icon={faChevronLeft} />
+            </Button>}
+
             <h1>
                 <Link href="/"><a><h1>Recipe Cloud</h1> <FontAwesomeIcon icon={faCloud}/></a></Link>
             </h1>
