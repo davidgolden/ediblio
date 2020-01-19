@@ -3,7 +3,7 @@ import Modal from "./Modal";
 import styles from './styles/InitialPromptModal.scss';
 
 export default function InstallPromptModal(props) {
-    return <Modal className={styles.container} style={{height: "auto"}}>
+    return <Modal className={styles.container}>
         <div className={styles.exampleIcons}>
             <svg>
                 <rect width={50} height={50} fill={"#EDEDED"} />
