@@ -9,7 +9,7 @@ module.exports = withCSS(withSass(withOffline({
     cssLoaderOptions: {
         localIdentName: '[local]_[hash:base64:5]',
     },
-    generateInDevMode: true,
+    // generateInDevMode: true,
     webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
         config.module.rules.push({
             test: /\.(png|jpg|gif)$/,

@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import classNames from 'classnames';
 import styles from './styles/Header.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -7,6 +7,22 @@ import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
 import {observer} from "mobx-react";
+
+const navContainerClassName = classNames({
+    [styles.navContainer]: true,
+});
+const headerLinkClassName = classNames({
+    [styles.headerLink]: true,
+});
+const userLinkClassName = classNames({
+    [styles.userLink]: true,
+});
+const logoutClassName = classNames({
+    [styles.logout]: true,
+});
+const mobileHamClassName = classNames({
+    [styles.mobileHam]: true,
+});
 
 const Header = observer((props) => {
     const [email, setEmail] = useState('');
@@ -31,25 +47,11 @@ const Header = observer((props) => {
         setShowNav(!showNav);
     };
 
-    const navContainerClassName = classNames({
-        [styles.navContainer]: true,
-    });
-    const headerLinkClassName = classNames({
-        [styles.headerLink]: true,
-    });
-    const userLinkClassName = classNames({
-        [styles.userLink]: true,
-    });
-    const logoutClassName = classNames({
-        [styles.logout]: true,
-    });
     const linksContainerClassName = classNames({
         [styles.linksContainer]: true,
         [styles.linksContainerVisible]: showNav,
     });
-    const mobileHamClassName = classNames({
-        [styles.mobileHam]: true,
-    });
+
 
     return (
         <nav className={navContainerClassName}>

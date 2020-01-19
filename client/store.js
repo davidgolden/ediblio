@@ -13,8 +13,30 @@ export default class Store {
             autorun(() => {
                 localStorage.setItem("user", JSON.stringify(toJS(this.user)));
             });
+
+            // open prompt if never visited or not visited in past 24 hours
+            if (localStorage.getItem('hasInstallPromptRun') === null || localStorage.getItem('hasInstallPromptRun') > 1000 * 60 * 60 * 24) {
+                localStorage.setItem('hasInstallPromptRun', Date.now().toString());
+                this.checkIfShouldShowInstallPrompt();
+            }
         }
     }
+
+    checkIfShouldShowInstallPrompt = () => {
+        // Detects if device is on iOS
+        const isIos = function () {
+            const userAgent = window.navigator.userAgent.toLowerCase();
+            return /iphone|ipad|ipod/.test(userAgent);
+        };
+        // Detects if device is in standalone mode
+        const isInStandaloneMode = function () {
+            return ('standalone' in window.navigator) && (window.navigator.standalone);
+        };
+
+        if (isIos() && !isInStandaloneMode()) {
+            this.addModal("installPrompt");
+        }
+    };
 
     @action
     loadUserFromLocalStorage() {
@@ -27,6 +49,18 @@ export default class Store {
     @observable user = null;
     @observable notificationMessage = '';
     @observable notificationType = '';
+
+    @observable modalStack = [];
+
+    @action
+    addModal = (type) => {
+        this.modalStack.push(type)
+    };
+
+    @action
+    removeTopModal = () => {
+        this.modalStack.pop();
+    };
 
     handleError = error => {
         this.notificationMessage = 'Oops! ' + error;

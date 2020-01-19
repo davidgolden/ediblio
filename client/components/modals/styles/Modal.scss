@@ -1,0 +1,39 @@
+.modalBackground {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, .5);
+  z-index: 100;
+
+  .modalContainer {
+    margin: calc(100vh/2 - 300px) auto;
+    width: 800px;
+    max-width: 100%;
+    height: 600px;
+    max-height: 100%;
+    background-color: white;
+    position: relative;
+    padding: 1rem;
+    border-radius: 1rem;
+
+    button {
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: black;
+      background-color: transparent;
+
+      svg {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    .modalContent {
+
+    }
+  }
+}

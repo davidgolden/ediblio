@@ -1,4 +1,6 @@
 import React from 'react';
 import Store from "../store";
 
-export const ApiStoreContext = React.createContext(new Store());
+export const initialStore = new Store();
+
+export const ApiStoreContext = React.createContext(initialStore);
