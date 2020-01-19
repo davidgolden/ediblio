@@ -2,10 +2,28 @@ import React from "react";
 import axios from "axios";
 import {addIngredient, canBeAdded} from "./utils/conversions";
 import './stylesheets/base.scss';
-import {observable, action} from "mobx";
+import {observable, action, autorun, toJS} from "mobx";
 import Router from 'next/router';
 
 export default class Store {
+
+    constructor() {
+        if (typeof window !== 'undefined') {
+            this.loadUserFromLocalStorage();
+            autorun(() => {
+                localStorage.setItem("user", JSON.stringify(toJS(this.user)));
+            });
+        }
+    }
+
+    @action
+    loadUserFromLocalStorage() {
+        const userJson = localStorage.getItem("user");
+        if (userJson) {
+            this.user = JSON.parse(userJson);
+        }
+    }
+
     @observable user = null;
     @observable notificationMessage = '';
     @observable notificationType = '';
