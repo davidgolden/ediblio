@@ -56,7 +56,7 @@ const Header = observer((props) => {
     return (
         <nav className={navContainerClassName}>
             <h1>
-                <a href="/"><h1>Recipe Cloud</h1> <FontAwesomeIcon icon={faCloud}/></a>
+                <Link href="/"><a><h1>Recipe Cloud</h1> <FontAwesomeIcon icon={faCloud}/></a></Link>
             </h1>
 
             <Button onClick={toggleNav} className={mobileHamClassName}>
