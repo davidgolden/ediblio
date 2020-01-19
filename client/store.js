@@ -38,9 +38,7 @@ export default class Store {
         // Firefox 1.0+
         const isFirefox = typeof InstallTrigger !== 'undefined';
         // Safari 3.0+ "[object HTMLElementConstructor]"
-        const isSafari = /constructor/i.test(window.HTMLElement) || (function (p) {
-            return p.toString() === "[object SafariRemoteNotification]";
-        })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+        const isSafari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
         // Internet Explorer 6-11
         const isIE = /*@cc_on!@*/false || !!document.documentMode;
         // Edge 20+
@@ -56,7 +54,7 @@ export default class Store {
         var webkit = !!ua.match(/WebKit/i);
         var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 
-        if (!isInStandaloneMode() && iOSSafari) {
+        if (!isInStandaloneMode() && isIos() && isSafari) {
             this.addModal("installPrompt");
         }
     };
