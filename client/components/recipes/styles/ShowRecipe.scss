@@ -18,6 +18,15 @@
   }
 }
 
+.ratingContainer {
+  span {
+    border: initial !important;
+    padding: initial !important;
+    margin: initial !important;
+    font-size: 2rem !important;
+  }
+}
+
 .showRecipeTitle {
   grid-column-start: 1;
   grid-column-end: 3;

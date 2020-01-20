@@ -2,6 +2,7 @@ const express = require('express'),
     router = express.Router(),
     User = require('../models/user'),
     Recipe = require('../models/recipe'),
+    Rating = require('../models/rating'),
     middleware = require('../middleware'),
     cloudinary = require('cloudinary');
 
@@ -32,7 +33,7 @@ router.route('/recipes')
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        let q =  Recipe.find({});
+        let q = Recipe.find({});
         if (req.query.tags) {
             const filterTags = req.query.tags.split(',');
             q = q.where({
@@ -83,12 +84,20 @@ router.route('/recipes')
     });
 
 router.route('/recipes/:recipe_id')
-    .get((req, res) => {
-        Recipe.findById(req.params.recipe_id, (err, recipe) => {
-            if (err) {
-                return res.status(404).send({detail: err.message});
+    .get(async (req, res) => {
+        const recipe = await Recipe.findById(req.params.recipe_id);
+        const rating = await Rating.aggregate([
+            { "$group": {
+                    "_id": "$recipe_id",
+                    "avgRating": { "$avg": { "$ifNull": ["$rating",0 ] } }
+                }}
+        ]);
+        console.log('rating: ', rating);
+        return res.status(200).json({
+            recipe: {
+                ...recipe._doc,
+                rating,
             }
-            return res.status(200).json({recipe: recipe});
         })
     })
     .patch(middleware.checkRecipeOwnership, async (req, res) => {

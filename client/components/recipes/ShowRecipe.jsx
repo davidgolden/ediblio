@@ -4,11 +4,13 @@ import AddIngredients from './AddIngredients';
 import classNames from 'classnames';
 import styles from './styles/ShowRecipe.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faShoppingBag} from '@fortawesome/free-solid-svg-icons';
+import {faShoppingBag, faStar, faStarHalf, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
 import {observer} from "mobx-react";
+import Rating from 'react-rating';
+import axios from 'axios';
 
 const showRecipeContainerClassName = classNames({
     [styles.showRecipeContainer]: true,
@@ -38,6 +40,8 @@ const ShowRecipe = observer(props => {
         [styles.showRecipeIngredientsFull]: !props.recipe.image,
     });
 
+    console.log(props.recipe);
+
     return (
         <div className={showRecipeContainerClassName}>
             <div className={showRecipeTitleClassName}>
@@ -49,6 +53,23 @@ const ShowRecipe = observer(props => {
                         </a>
                     </Link>. {props.recipe.url &&
                     <a href={props.recipe.url} target='_blank'>View Original Recipe</a>}</h2>
+                    <div className={styles.ratingContainer}>
+                        <Rating
+                            fractions={2}
+                            emptySymbol={"far fa-star"}
+                            fullSymbol="fas fa-star"
+                            quiet={!context.user}
+                            initialRating={props.recipe.rating?.[0]?.avgRating ? Math.round(props.recipe.rating[0].avgRating*2)/2 : 0} // needs to be actual rating
+                            onClick={v => {
+                                axios.post('/api/rating', {
+                                    recipe_id: props.recipe._id,
+                                    rating: v,
+                                })
+                            }} // create rating
+                            // onHover={() => {}} // switch from displaying actual to animation
+                            // onChange={() => {}} // change rating to user's rating
+                        />
+                    </div>
                     <div>
                         {props.recipe.tags.map(tag => {
                             return <span key={tag}>{tag}</span>
