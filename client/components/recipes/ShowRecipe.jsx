@@ -54,8 +54,8 @@ const ShowRecipe = observer(props => {
                     </Link>. {props.recipe.url &&
                     <a href={props.recipe.url} target='_blank'>View Original Recipe</a>}</h2>
                     <div className={styles.ratingContainer}>
-                        {userRating && <>
-                            Your Rating: <Rating
+                        {(userRating || context.user) && <>
+                            <Rating
                             fractions={2}
                             emptySymbol={"far fa-star"}
                             fullSymbol="fas fa-star"
