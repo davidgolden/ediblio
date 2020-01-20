@@ -13,6 +13,7 @@ export default function RecipeCloudHead(props) {
         <meta name="theme-color" content={"#164E57"}/>
         <link rel="apple-touch-icon" href="/images/cloud192x192.png"/>
         <link href="https://fonts.googleapis.com/css?family=Markazi+Text" rel="stylesheet"/>
+        <link rel={"stylesheet"} href={"https://use.fontawesome.com/releases/v5.2.0/css/all.css"}/>
         <link rel={"manifest"} href={"/manifest.webmanifest"}/>
         <script src={"/installPrompt.js"} />
     </Head>

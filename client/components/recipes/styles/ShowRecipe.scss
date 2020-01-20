@@ -18,12 +18,33 @@
   }
 }
 
+.ratingContainer {
+  span {
+    border: initial !important;
+    padding: initial !important;
+    margin: initial !important;
+    font-size: 2rem !important;
+  }
+}
+
 .showRecipeTitle {
   grid-column-start: 1;
   grid-column-end: 3;
   grid-row-start: 1;
   grid-row-end: 2;
   text-align: center;
+
+  h1 span {
+    padding: .25rem !important;
+    display: inline-block;
+    font-size: 1.5rem !important;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      vertical-align: top;
+    }
+  }
 
   a {
     color: $other;

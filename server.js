@@ -22,6 +22,7 @@ const User = require('./models/user');
 const userRoutes = require('./routes/users'),
     recipeRoutes = require('./routes/recipes'),
     collectionRoutes = require('./routes/collections'),
+    ratingRoutes = require('./routes/ratings'),
     indexRoutes = require('./routes/index');
 
 const env = process.env.NODE_ENV || "development";
@@ -117,6 +118,7 @@ app.prepare().then(() => {
     server.use('/api/', userRoutes);
     server.use('/api/', recipeRoutes);
     server.use('/api/', collectionRoutes);
+    server.use('/api/', ratingRoutes);
 
     server.get('/service-worker.js', (req, res) => {
         const filePath = path.join(__dirname, '.next/service-worker.js');
