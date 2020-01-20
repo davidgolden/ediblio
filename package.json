@@ -13,7 +13,8 @@
     "dev": "next",
     "build": "next build",
     "start:dev": "NODE_ENV=development node server.js",
-    "start": "NODE_ENV=production node server.js"
+    "start": "NODE_ENV=production node server.js",
+    "start-pg": "PGUSER=davidgolden PGHOST=localhost PGPORT=5433 PGDATABASE=recipecloud node pg-server.js"
   },
   "author": "David Golden",
   "license": "ISC",
@@ -51,6 +52,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.4.0",
+    "pg": "^7.17.1",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
