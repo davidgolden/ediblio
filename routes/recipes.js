@@ -87,16 +87,25 @@ router.route('/recipes/:recipe_id')
     .get(async (req, res) => {
         const recipe = await Recipe.findById(req.params.recipe_id);
         const rating = await Rating.aggregate([
-            { "$group": {
+            {
+                "$group": {
                     "_id": "$recipe_id",
-                    "avgRating": { "$avg": { "$ifNull": ["$rating",0 ] } }
-                }}
+                    "avgRating": {"$avg": {"$ifNull": ["$rating", 0]}},
+                }
+            },
         ]);
-        console.log('rating: ', rating);
+        let userRating = null;
+        if (req.user) {
+            userRating = await Rating.findOne({
+                author_id: req.user._id,
+                recipe_id: req.params.recipe_id,
+            });
+        }
         return res.status(200).json({
             recipe: {
                 ...recipe._doc,
                 rating,
+                userRating: userRating ? userRating.rating : null,
             }
         })
     })
