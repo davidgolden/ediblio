@@ -6,6 +6,8 @@ const express = require('express'),
     middleware = require('../middleware'),
     cloudinary = require('cloudinary');
 
+const db = require('../db');
+
 /*
 
 /reset
@@ -33,48 +35,47 @@ router.route('/recipes')
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        let q = Recipe.find({});
-        if (req.query.tags) {
-            const filterTags = req.query.tags.split(',');
-            q = q.where({
-                'tags': {
-                    '$all': filterTags,
-                }
-            })
-        }
-        if (req.query.author) {
-            q = q.where('author_id')
-                .equals(req.query.author);
-        }
-        if (req.query.searchTerm) {
-            const escapedInput = req.query.searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            const regex = new RegExp(escapedInput, 'gmi');
-            q = q.or([
-                {'name': regex},
-                {
-                    'ingredients': {
-                        '$elemMatch': {name: regex}
-                    }
-                }
-            ]);
-        }
-        q.limit(page_size)
-            .skip(skip)
-            .sort({[req.query.sortBy]: req.query.orderBy})
-            .aggregate([
-                {
-                    "$group": {
-                        "_id": "$recipe_id",
-                        "avgRating": {"$avg": {"$ifNull": ["$rating", 0]}},
-                    }
-                },
-            ])
-            .exec((err, recipes) => {
-                if (err) {
-                    res.status(404).send({detail: err.message})
-                }
-                return res.status(200).send({recipes: recipes});
-            });
+        const recipes = await db.query(`
+            SELECT * FROM recipes ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};
+        `);
+
+        return res.status(200).send({recipes: recipes.rows});
+
+        // let q = Recipe.find({});
+
+        // if (req.query.author) {
+        //     q = q.where('author_id')
+        //         .equals(req.query.author);
+        // }
+        // if (req.query.searchTerm) {
+        //     const escapedInput = req.query.searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        //     const regex = new RegExp(escapedInput, 'gmi');
+        //     q = q.or([
+        //         {'name': regex},
+        //         {
+        //             'ingredients': {
+        //                 '$elemMatch': {name: regex}
+        //             }
+        //         }
+        //     ]);
+        // }
+        // q.limit(page_size)
+        //     .skip(skip)
+        //     .sort({[req.query.sortBy]: req.query.orderBy})
+        //     .aggregate([
+        //         {
+        //             "$group": {
+        //                 "_id": "$recipe_id",
+        //                 "avgRating": {"$avg": {"$ifNull": ["$rating", 0]}},
+        //             }
+        //         },
+        //     ])
+        //     .exec((err, recipes) => {
+        //         if (err) {
+        //             res.status(404).send({detail: err.message})
+        //         }
+        //         return res.status(200).send({recipes: recipes});
+        //     });
     })
     .post(middleware.isLoggedIn, (req, res) => {
         // create new recipe
