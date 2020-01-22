@@ -53,12 +53,12 @@ const RecipeCard = props => {
             <div className={recipeCardButtonClassName}>
                 {showButtons && <RecipeButtons
                     recipe_id={props.recipe._id}
-                    author_id={props.recipe.author_id._id}
+                    author_id={props.recipe['owner.id']}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />}
             </div>
-            {showButtons && <UserImageSmall id={props.recipe.author_id._id} profileImage={props.recipe.author_id.profileImage}/>}
+            {showButtons && <UserImageSmall id={props.recipe['owner.id']} profileImage={props.recipe['owner.profile_image']}/>}
         </div>
     )
 };

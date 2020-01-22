@@ -35,33 +35,33 @@ router.route('/recipes')
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        const recipes = await db.query(`
-            SELECT * FROM recipes ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};
-        `);
+        let text = `SELECT DISTINCT recipes.*, users.id AS "owner.id", users.profile_image AS "owner.profile_image" FROM recipes INNER JOIN users ON users.id = recipes.author_id `, values;
+
+        if (req.query.author && req.query.searchTerm) {
+            text += `INNER JOIN ingredients ON ingredients.recipe_id = recipes.id WHERE recipes.author_id = $1 AND (lower(recipes.name) LIKE $2 OR lower(ingredients.name) LIKE $2) 
+            ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
+            values = [req.query.author, "%" + req.query.searchTerm.toLowerCase() + "%"];
+        } else if (req.query.author) {
+            text += `INNER JOIN ingredients ON ingredients.recipe_id = recipes.id WHERE recipes.author_id = $1  
+            ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
+            values = [req.query.author];
+        } else if (req.query.searchTerm) {
+            text += `INNER JOIN ingredients ON ingredients.recipe_id = recipes.id WHERE (lower(recipes.name) LIKE $1 OR lower(ingredients.name) LIKE $1) 
+            ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
+            values = ["%" + req.query.searchTerm.toLowerCase() + "%"];
+        } else {
+            text += `ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
+            values = [];
+        }
+
+        const recipes = await db.query({
+            text,
+            values,
+        });
 
         return res.status(200).send({recipes: recipes.rows});
 
-        // let q = Recipe.find({});
-
-        // if (req.query.author) {
-        //     q = q.where('author_id')
-        //         .equals(req.query.author);
-        // }
-        // if (req.query.searchTerm) {
-        //     const escapedInput = req.query.searchTerm.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-        //     const regex = new RegExp(escapedInput, 'gmi');
-        //     q = q.or([
-        //         {'name': regex},
-        //         {
-        //             'ingredients': {
-        //                 '$elemMatch': {name: regex}
-        //             }
-        //         }
-        //     ]);
-        // }
         // q.limit(page_size)
-        //     .skip(skip)
-        //     .sort({[req.query.sortBy]: req.query.orderBy})
         //     .aggregate([
         //         {
         //             "$group": {
@@ -70,12 +70,6 @@ router.route('/recipes')
         //             }
         //         },
         //     ])
-        //     .exec((err, recipes) => {
-        //         if (err) {
-        //             res.status(404).send({detail: err.message})
-        //         }
-        //         return res.status(200).send({recipes: recipes});
-        //     });
     })
     .post(middleware.isLoggedIn, (req, res) => {
         // create new recipe
