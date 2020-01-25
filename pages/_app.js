@@ -6,11 +6,16 @@ import Header from "../client/components/header/Header";
 import Notification from "../client/components/header/Notification";
 import AllModals from "../client/components/modals/styles/AllModals";
 import {ApiStoreContext, initialStore} from "../client/stores/api_store";
+import LogRocket from 'logrocket';
 
 class MyDocument extends App {
     render() {
         try {
             const {Component, pageProps} = this.props;
+
+            if (typeof window !== 'undefined') {
+                // LogRocket.init('gajlpv/recipe-cloud');
+            }
 
             return (
                 <ApiStoreContext.Provider value={initialStore}>
