@@ -11,13 +11,16 @@ const handle = app.getRequestHandler();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const connectStore = require('connect-mongo');
-const mongoose = require('mongoose');
+// const connectStore = require('connect-mongo');
+// const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const {Strategy, ExtractJwt} = require('passport-jwt');
-const MongoStore = connectStore(session);
-const User = require('./models/user');
+// const MongoStore = connectStore(session);
+// const User = require('./models/user');
+const bcrypt = require('bcrypt-nodejs');
+
+const db = require("./db/index");
 
 const userRoutes = require('./routes/users'),
     recipeRoutes = require('./routes/recipes'),
@@ -34,12 +37,12 @@ const forceSsl = function (req, res, next) {
     return next();
 };
 
-mongoose.Promise = global.Promise;
+// mongoose.Promise = global.Promise;
 
-mongoose.connect(1 ? process.env.MONGO : process.env.MONGO_DEV,
-    {useNewUrlParser: true, autoIndex: false, useCreateIndex: true})
-    .then(() => console.log(`Database connected`))
-    .catch(err => console.log(`Database connection error: ${err.message}`));
+// mongoose.connect(1 ? process.env.MONGO : process.env.MONGO_DEV,
+//     {useNewUrlParser: true, autoIndex: false, useCreateIndex: true})
+//     .then(() => console.log(`Database connected`))
+//     .catch(err => console.log(`Database connection error: ${err.message}`));
 
 const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
 
@@ -48,16 +51,27 @@ passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
 }, async function (email, password, done) {
-    const user = await User.findOne({email: email})
-        .populate('collections');
+    const userRes = await db.query(`SELECT * FROM users WHERE users.email = '${email}';`);
+    const user = userRes.rows[0];
+
+    // const user = await User.findOne({email: email})
+    //     .populate('collections');
     if (!user) return done(null, false, {message: 'Incorrect email.'});
-    user.comparePassword(password, function (err, isMatch) {
-        if (isMatch) {
+
+    bcrypt.compare(password, user.password, function(err, res) {
+        if (res) {
             return done(null, user);
         } else {
             return done(null, false, {message: 'Incorrect password.'});
         }
-    });
+    })
+    // user.comparePassword(password, function (err, isMatch) {
+    //     if (isMatch) {
+    //         return done(null, user);
+    //     } else {
+    //         return done(null, false, {message: 'Incorrect password.'});
+    //     }
+    // });
 }));
 
 passport.use('JWT', new Strategy({
@@ -74,13 +88,20 @@ passport.use('JWT', new Strategy({
 }));
 
 passport.serializeUser(function (user, done) {
-    done(null, user._id);
+    done(null, user.id);
 });
 
 passport.deserializeUser(async function (id, done) {
-    const user = await User.findById(id)
-        .populate('collections');
-    done(null, user);
+    const userRes = await db.query(`SELECT users.*, json_build_object('menu',recipes.*) FROM users 
+        FULL JOIN users_menu_recipe ON users.id = users_menu_recipe.user_id
+        FULL JOIN recipes ON recipes.id = users_menu_recipe.recipe_id
+        WHERE users.id = '${id}'
+        GROUP BY users.id, recipes.id;`);
+    console.log(userRes.rows[0]);
+    done(null, userRes.rows[0]);
+    // const user = await User.findById(id)
+    //     .populate('collections');
+    // done(null, user);
 });
 
 app.prepare().then(() => {
@@ -99,11 +120,7 @@ app.prepare().then(() => {
         name: 'recipecloudsession',
         secret: process.env.SESSION_SECRET,
         resave: true,
-        store: new MongoStore({
-            mongooseConnection: mongoose.connection,
-            collection: 'session',
-            ttl: SESS_LIFETIME
-        }),
+        store: new (require('connect-pg-simple')(session))(),
         cookie: {
             sameSite: true,
             secure: false,

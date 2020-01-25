@@ -35,7 +35,8 @@ router.route('/recipes')
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        let text = `SELECT DISTINCT recipes.*, users.id AS "owner.id", users.profile_image AS "owner.profile_image" FROM recipes INNER JOIN users ON users.id = recipes.author_id `, values;
+        let text = `SELECT DISTINCT recipes.*, users.id AS "owner.id", users.profile_image AS "owner.profile_image" FROM recipes INNER JOIN users ON users.id = recipes.author_id `,
+            values;
 
         if (req.query.author && req.query.searchTerm) {
             text += `INNER JOIN ingredients ON ingredients.recipe_id = recipes.id WHERE recipes.author_id = $1 AND (lower(recipes.name) LIKE $2 OR lower(ingredients.name) LIKE $2) 
@@ -71,19 +72,39 @@ router.route('/recipes')
         //         },
         //     ])
     })
-    .post(middleware.isLoggedIn, (req, res) => {
+    .post(middleware.isLoggedIn, async (req, res) => {
         // create new recipe
-        Recipe.create({
-            ...req.body.recipe,
-            author_id: req.user._id,
-        }, function (err, newRecipe) {
-            if (err) {
-                return res.status(404).send({detail: err.message});
-            }
 
-            newRecipe.save();
-            return res.sendStatus(200);
-        });
+        const {name, url, notes, image, ingredients} = req.body.recipe;
+        const text = `INSERT INTO recipes (name, url, notes, image, author_id) VALUES ($1, $2, $3, $4, $5) RETURNING recipes.id;`;
+        const values = [name, url, notes, image, req.user.id];
+
+        let recipeRes = await db.query(text, values);
+
+        if (ingredients.length > 0) {
+            await db.query(
+                `INSERT INTO ingredients (name, quantity, measurement, recipe_id)
+                VALUES ${ingredients.map(ing => `('${ing.name}', '${ing.quantity}', '${ing.measurement}', '${recipeRes.rows[0].id}'), `)}`
+            );
+
+            recipeRes = await db.query(`
+                SELECT DISTINCT recipes.*, ingredients.* AS "ingredients[]" FROM recipes INNER JOIN ingredients ON recipes.id = ingredients.recipe_id WHERE recipes.id = ${recipeRes.rows[0].id};
+            `);
+        }
+
+        return res.status(200).json({recipe: recipeRes.rows[0]});
+
+        // Recipe.create({
+        //     ...req.body.recipe,
+        //     author_id: req.user._id,
+        // }, function (err, newRecipe) {
+        //     if (err) {
+        //         return res.status(404).send({detail: err.message});
+        //     }
+        //
+        //     newRecipe.save();
+        //     return res.sendStatus(200);
+        // });
     });
 
 router.route('/recipes/:recipe_id')

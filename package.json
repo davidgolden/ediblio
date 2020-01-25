@@ -34,6 +34,7 @@
     "cloudinary": "^1.14.0",
     "compression": "^1.7.4",
     "connect-mongo": "^2.0.3",
+    "connect-pg-simple": "^6.1.0",
     "convert-units": "^2.3.4",
     "cookie-parser": "^1.4.4",
     "dotenv": "^5.0.0",

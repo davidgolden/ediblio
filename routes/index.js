@@ -1,21 +1,23 @@
 const express = require('express'),
     router = express.Router(),
     passport = require('passport'),
-    User = require('../models/user'),
+    // User = require('../models/user'),
     nodemailer = require('nodemailer'),
     mg = require('nodemailer-mailgun-transport'),
     urlMetadata = require('url-metadata'),
     URLSafeBase64 = require('urlsafe-base64');
 
+const db = require("../db/index");
+
 // authenticate user
-router.post('/authenticate', async function (req, res) {
-    if (req.isAuthenticated()) {
-        const user = await User.findById(req.user._id);
-        return res.status(200).send({user});
-    } else {
-        return res.sendStatus(200);
-    }
-});
+// router.post('/authenticate', async function (req, res) {
+//     if (req.isAuthenticated()) {
+//         const user = await User.findById(req.user._id);
+//         return res.status(200).send({user});
+//     } else {
+//         return res.sendStatus(200);
+//     }
+// });
 
 // handle login logic
 router.post('/login', emailToLowerCase, passport.authenticate('local'), function(req, res) {

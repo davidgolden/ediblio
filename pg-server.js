@@ -16,10 +16,11 @@ function populate() {
                     const user = users[i];
 
                     const userRes = await pool.query(`
-                    INSERT INTO users (username, email, profile_image, password)
-                    VALUES ('${user.username}', '${user.email}', '${user.profileImage}', '${user.password}') RETURNING *;
-                `);
+                        INSERT INTO users (username, email, profile_image, password)
+                        VALUES ('${user.username}', '${user.email}', '${user.profileImage}', '${user.password}') RETURNING *;
+                    `);
 
+                    // add all user's created recipes
                     await Recipe.find({author_id: user._id}, async (err, recipes) => {
                         for (let i = 0; i < recipes.length; i++) {
                             const recipe = recipes[i];
@@ -37,7 +38,17 @@ function populate() {
                                 });
                             }
                         }
-                    })
+                    });
+
+                    // add user's menu
+                    // await Recipe.find({_id: {$elemMatch: user.menu}}, async (err, recipes) => {
+                    //     for (let i = 0; i < recipes.length; i++) {
+                    //         await pool.query(`
+                    //         INSERT INTO users_menu_recipe (user_id, recipe_id)
+                    //         VALUES ${recipes.map(m => `('${userRes.rows[0].id}', '${m}'),`)}
+                    //     `)
+                    //     }
+                    // });
                 }
             });
         })
