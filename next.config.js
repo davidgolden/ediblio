@@ -42,10 +42,10 @@ module.exports = withCSS(withSass(withOffline({
     generateInDevMode: true,
     workboxOpts: {
         runtimeCaching: [{
-            urlPattern: /\/.*$/,
-            handler: 'StaleWhileRevalidate',
+            urlPattern: /\.(eot|woff|woff2|ttf|ttc|png|svg|jpg|jpeg|gif|cgm|tiff|webp|bmp|ico)$/i,
+            handler: 'CacheFirst',
             options: {
-                cacheName: CACHE_NAME + "-pages",
+                cacheName: CACHE_NAME + "-media",
                 expiration: {
                     maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
                 },
@@ -57,7 +57,7 @@ module.exports = withCSS(withSass(withOffline({
             urlPattern: /\/api.*$/,
             handler: 'NetworkFirst',
             options: {
-                cacheName: CACHE_NAME + "-pages",
+                cacheName: CACHE_NAME + "-api",
                 expiration: {
                     maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
                 },
