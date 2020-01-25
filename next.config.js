@@ -39,10 +39,23 @@ module.exports = withCSS(withSass(withOffline({
 
         return config;
     },
+    generateInDevMode: true,
     workboxOpts: {
         runtimeCaching: [{
             urlPattern: /\/.*$/,
             handler: 'StaleWhileRevalidate',
+            options: {
+                cacheName: CACHE_NAME + "-pages",
+                expiration: {
+                    maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                },
+                cacheableResponse: {
+                    statuses: [200],
+                },
+            },
+        }, {
+            urlPattern: /\/api.*$/,
+            handler: 'NetworkFirst',
             options: {
                 cacheName: CACHE_NAME + "-pages",
                 expiration: {
