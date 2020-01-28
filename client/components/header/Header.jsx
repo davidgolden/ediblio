@@ -41,7 +41,8 @@ const Header = observer((props) => {
         setPassword(e.target.value);
     };
 
-    const handleLoginSubmit = () => {
+    const handleLoginSubmit = e => {
+        e.preventDefault();
         context.userLogin(email, password);
     };
 
@@ -102,14 +103,17 @@ const Header = observer((props) => {
                         <Button className={logoutClassName} onClick={context.userLogout}>Log Out</Button>
                     </React.Fragment> :
                     <React.Fragment>
-                        <input type="email" name="email" placeholder='Email'
-                               value={email}
-                               onChange={handleEmailChange}/>
-                        <input type="password" name="password" placeholder='Password'
-                               value={password}
-                               onChange={handlePasswordChange}/>
-                        <Button className={logoutClassName} onClick={handleLoginSubmit}
-                                value='Login'>Login</Button>
+                        <form onSubmit={handleLoginSubmit}>
+                            <input type="email" name="email" placeholder='Email'
+                                   value={email}
+                                   onChange={handleEmailChange}/>
+                            <input type="password" name="password" placeholder='Password'
+                                   value={password}
+                                   onChange={handlePasswordChange}/>
+                            <Button type='submit' className={logoutClassName}
+                                    value='Login'>Login</Button>
+                        </form>
+
 
                         <Link href={'/forgot'}>
                             <a className={userLinkClassName}>
