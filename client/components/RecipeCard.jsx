@@ -21,7 +21,7 @@ const RecipeCard = props => {
     };
 
     const addToGroceryList = () => {
-        context.addToGroceryList(props.recipe._id, props.recipe.ingredients);
+        context.addToGroceryList(props.recipe.id, props.recipe.ingredients);
     };
 
     const recipeCardClassName = classNames({

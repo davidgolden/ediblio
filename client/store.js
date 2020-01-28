@@ -299,45 +299,49 @@ export default class Store {
     addToGroceryList = (recipe_id, ingredients) => {
         // add current recipe to menu
         // add all ingredients to grocery list
-        const currentMenu = this.user.menu;
-        currentMenu.push(recipe_id);
+        // const currentMenu = this.user.menu;
+        // currentMenu.push(recipe_id);
 
-        const currentGroceryList = this.user.groceryList;
-
-        const onCurrentList = ingredient => {
-            return currentGroceryList.findIndex(item => {
-                return item.name === ingredient ||
-                    item.name === ingredient + 's' ||
-                    item.name === ingredient + 'es' ||
-                    item.name === ingredient.slice(0, -1) ||
-                    item.name === ingredient.slice(0, -2);
-            })
-        };
-
-        ingredients.forEach(ingredient => {
-            const i = onCurrentList(ingredient.name);
-            if (i > -1) {
-                let m = currentGroceryList[i].measurement;
-                let q = Number(currentGroceryList[i].quantity);
-                // check if item can be added
-                if (canBeAdded(m, ingredient.measurement)) {
-                    // if it can be added, add it
-                    let newQM = addIngredient(q, m, Number(ingredient.quantity), ingredient.measurement);
-                    currentGroceryList[i].quantity = newQM.quantity;
-                    currentGroceryList[i].measurement = newQM.measurement;
-                } else {
-                    // if it can't be added, push it to grocery list
-                    currentGroceryList.splice(currentGroceryList.length, 0, ingredient);
-                }
-            } else {
-                // here if ingredient is not on current list
-                currentGroceryList.splice(currentGroceryList.length, 0, ingredient);
-            }
+        axios.post(`/api/users/${this.user.id}/menu`, {
+            recipe_id,
         });
-
-        this.patchUser({
-            menu: currentMenu,
-            groceryList: currentGroceryList,
-        });
+        //
+        // const currentGroceryList = this.user.groceryList;
+        //
+        // const onCurrentList = ingredient => {
+        //     return currentGroceryList.findIndex(item => {
+        //         return item.name === ingredient ||
+        //             item.name === ingredient + 's' ||
+        //             item.name === ingredient + 'es' ||
+        //             item.name === ingredient.slice(0, -1) ||
+        //             item.name === ingredient.slice(0, -2);
+        //     })
+        // };
+        //
+        // ingredients.forEach(ingredient => {
+        //     const i = onCurrentList(ingredient.name);
+        //     if (i > -1) {
+        //         let m = currentGroceryList[i].measurement;
+        //         let q = Number(currentGroceryList[i].quantity);
+        //         // check if item can be added
+        //         if (canBeAdded(m, ingredient.measurement)) {
+        //             // if it can be added, add it
+        //             let newQM = addIngredient(q, m, Number(ingredient.quantity), ingredient.measurement);
+        //             currentGroceryList[i].quantity = newQM.quantity;
+        //             currentGroceryList[i].measurement = newQM.measurement;
+        //         } else {
+        //             // if it can't be added, push it to grocery list
+        //             currentGroceryList.splice(currentGroceryList.length, 0, ingredient);
+        //         }
+        //     } else {
+        //         // here if ingredient is not on current list
+        //         currentGroceryList.splice(currentGroceryList.length, 0, ingredient);
+        //     }
+        // });
+        //
+        // this.patchUser({
+        //     menu: currentMenu,
+        //     groceryList: currentGroceryList,
+        // });
     };
 }

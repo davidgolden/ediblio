@@ -31,8 +31,8 @@ const RecipeButtons = observer(props => {
     }
 
     // const inCloud = !!(context.user.recipes.find(id => id === props.recipe_id));
-    const inMenu = !!(context.user.menu.find(item => item._id === props.recipe_id) || context.user.menu.includes(props.recipe_id));
-    const isAuthor = props.author_id === context.user._id;
+    const inMenu = !!(context.user?.menu?.find(item => item._id === props.recipe_id) || context.user?.menu?.includes(props.recipe_id));
+    const isAuthor = props.author_id === context.user.id;
 
     // if in cloud, show inCloud
     // if in cloud and not author, show remove from cloud

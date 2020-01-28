@@ -61,16 +61,6 @@ router.route('/recipes')
         });
 
         return res.status(200).send({recipes: recipes.rows});
-
-        // q.limit(page_size)
-        //     .aggregate([
-        //         {
-        //             "$group": {
-        //                 "_id": "$recipe_id",
-        //                 "avgRating": {"$avg": {"$ifNull": ["$rating", 0]}},
-        //             }
-        //         },
-        //     ])
     })
     .post(middleware.isLoggedIn, async (req, res) => {
         // create new recipe

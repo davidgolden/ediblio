@@ -92,11 +92,24 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async function (id, done) {
-    const userRes = await db.query(`SELECT users.*, json_build_object('menu',recipes.*) FROM users 
-        FULL JOIN users_menu_recipe ON users.id = users_menu_recipe.user_id
-        FULL JOIN recipes ON recipes.id = users_menu_recipe.recipe_id
-        WHERE users.id = '${id}'
-        GROUP BY users.id, recipes.id;`);
+    const userRes = await db.query(`
+        SELECT users.*, jsonb_set(to_jsonb(recipes.*), '{recipeIds}', "recipeIds") AS menu 
+        FROM users LEFT JOIN (
+            SELECT user_id AS id, jsonb_agg(recipe_id) AS "recipeIds"
+        ) FROM users_menu_recipe WHERE users.id = '${id}' GROUP BY users.id, recipes.id;`);
+    // const userRes = await db.query(`SELECT to_json(sub) AS container_with_things
+    //     FROM  (
+    //        SELECT users.*, recipes.*
+    //        FROM   users
+    //        LEFT   JOIN LATERAL (
+    //           SELECT ARRAY (
+    //              SELECT *
+    //              FROM   recipes
+    //              WHERE  container_id = c.id
+    //              ) AS "thingIds"
+    //           ) ct ON true
+    //        WHERE  c.id IN (<list of container ids>)
+    //        ) sub;`);
     console.log(userRes.rows[0]);
     done(null, userRes.rows[0]);
     // const user = await User.findById(id)

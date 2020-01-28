@@ -6,6 +6,8 @@ const express = require('express'),
 
 const cloudinary = require('cloudinary');
 
+const db = require("../db/index");
+
 cloudinary.config({
     cloud_name: 'recipecloud',
     api_key: process.env.CLOUDINARY_KEY,
@@ -54,6 +56,11 @@ router.route('/users')
                 res.status(200).json({user: req.user});
             });
         });
+    });
+
+router.route('/users/:user_id/menu')
+    .post(middleware.isLoggedIn, async (req,res) => {
+        db.query(`INSERT INTO users_menu_recipe (user_id, recipe_id) VALUES ($1, $2)`, [req.user.id, req.body.recipe_id]);
     });
 
 router.route('/users/:user_id')
