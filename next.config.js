@@ -54,10 +54,10 @@ module.exports = withCSS(withSass(withOffline({
                 },
             },
         }, {
-            urlPattern: /\/api.*$/,
+            urlPattern: /.*$/,
             handler: 'NetworkFirst',
             options: {
-                cacheName: CACHE_NAME + "-api",
+                cacheName: CACHE_NAME + "-pages",
                 expiration: {
                     maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
                 },
