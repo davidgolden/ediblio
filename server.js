@@ -11,13 +11,9 @@ const handle = app.getRequestHandler();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-// const connectStore = require('connect-mongo');
-// const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const {Strategy, ExtractJwt} = require('passport-jwt');
-// const MongoStore = connectStore(session);
-// const User = require('./models/user');
 const bcrypt = require('bcrypt-nodejs');
 
 const db = require("./db/index");
@@ -37,13 +33,6 @@ const forceSsl = function (req, res, next) {
     return next();
 };
 
-// mongoose.Promise = global.Promise;
-
-// mongoose.connect(1 ? process.env.MONGO : process.env.MONGO_DEV,
-//     {useNewUrlParser: true, autoIndex: false, useCreateIndex: true})
-//     .then(() => console.log(`Database connected`))
-//     .catch(err => console.log(`Database connection error: ${err.message}`));
-
 const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
 
 //Configure Passport
@@ -51,11 +40,32 @@ passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
 }, async function (email, password, done) {
-    const userRes = await db.query(`SELECT * FROM users WHERE users.email = '${email}';`);
+    const userRes = await db.query({text: `
+        select users.*, users.id::int,
+COALESCE(json_agg(m) FILTER (WHERE m IS NOT NULL), '[]') menu,
+COALESCE(json_agg(c) FILTER (WHERE c IS NOT NULL), '[]') collections
+from users LEFT JOIN LATERAL (
+	select recipes.* from recipes
+	where recipes.id in (
+		select id from users_recipes_menu
+		where users_recipes_menu.user_id = users.id
+	)
+) m ON true LEFT JOIN LATERAL (
+	select collections.*, json_agg(cr) recipes
+	from collections, LATERAL (
+		select * from recipes
+		where recipes.id in (
+			select recipe_id from recipes_collections
+			where recipes_collections.collection_id = collections.id
+		)
+	) cr
+	where collections.author_id = users.id
+	group by collections.id
+) c ON true
+where users.email = $1
+group by users.id;`, values: [email]});
     const user = userRes.rows[0];
 
-    // const user = await User.findOne({email: email})
-    //     .populate('collections');
     if (!user) return done(null, false, {message: 'Incorrect email.'});
 
     bcrypt.compare(password, user.password, function(err, res) {
@@ -65,13 +75,6 @@ passport.use(new LocalStrategy({
             return done(null, false, {message: 'Incorrect password.'});
         }
     })
-    // user.comparePassword(password, function (err, isMatch) {
-    //     if (isMatch) {
-    //         return done(null, user);
-    //     } else {
-    //         return done(null, false, {message: 'Incorrect password.'});
-    //     }
-    // });
 }));
 
 passport.use('JWT', new Strategy({
@@ -92,29 +95,31 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async function (id, done) {
-    const userRes = await db.query(`
-        SELECT users.*, jsonb_set(to_jsonb(recipes.*), '{recipeIds}', "recipeIds") AS menu 
-        FROM users LEFT JOIN (
-            SELECT user_id AS id, jsonb_agg(recipe_id) AS "recipeIds"
-        ) FROM users_menu_recipe WHERE users.id = '${id}' GROUP BY users.id, recipes.id;`);
-    // const userRes = await db.query(`SELECT to_json(sub) AS container_with_things
-    //     FROM  (
-    //        SELECT users.*, recipes.*
-    //        FROM   users
-    //        LEFT   JOIN LATERAL (
-    //           SELECT ARRAY (
-    //              SELECT *
-    //              FROM   recipes
-    //              WHERE  container_id = c.id
-    //              ) AS "thingIds"
-    //           ) ct ON true
-    //        WHERE  c.id IN (<list of container ids>)
-    //        ) sub;`);
-    console.log(userRes.rows[0]);
+    const userRes = await db.query({text: `
+        select users.*, users.id::int,
+COALESCE(json_agg(m) FILTER (WHERE m IS NOT NULL), '[]') menu,
+COALESCE(json_agg(c) FILTER (WHERE c IS NOT NULL), '[]') collections
+from users LEFT JOIN LATERAL (
+	select recipes.* from recipes
+	where recipes.id in (
+		select id from users_recipes_menu
+		where users_recipes_menu.user_id = users.id
+	)
+) m ON true LEFT JOIN LATERAL (
+	select collections.*, json_agg(cr) recipes
+	from collections, LATERAL (
+		select * from recipes
+		where recipes.id in (
+			select recipe_id from recipes_collections
+			where recipes_collections.collection_id = collections.id
+		)
+	) cr
+	where collections.author_id = users.id
+	group by collections.id
+) c ON true
+where users.id = $1
+group by users.id;`, values: [id]});
     done(null, userRes.rows[0]);
-    // const user = await User.findById(id)
-    //     .populate('collections');
-    // done(null, user);
 });
 
 app.prepare().then(() => {

@@ -35,7 +35,7 @@ router.route('/recipes')
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        let text = `SELECT DISTINCT recipes.*, users.id AS "owner.id", users.profile_image AS "owner.profile_image" FROM recipes INNER JOIN users ON users.id = recipes.author_id `,
+        let text = `SELECT DISTINCT recipes.*, recipes.id::int, users.id::int AS "owner.id", users.profile_image AS "owner.profile_image" FROM recipes INNER JOIN users ON users.id = recipes.author_id `,
             values;
 
         if (req.query.author && req.query.searchTerm) {

@@ -39,7 +39,7 @@ module.exports = withCSS(withSass(withOffline({
 
         return config;
     },
-    generateInDevMode: true,
+    // generateInDevMode: true,
     workboxOpts: {
         runtimeCaching: [{
             urlPattern: /\.(eot|woff|woff2|ttf|ttc|png|svg|jpg|jpeg|gif|cgm|tiff|webp|bmp|ico)$/i,

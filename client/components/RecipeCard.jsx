@@ -16,7 +16,7 @@ const RecipeCard = props => {
 
     const deleteRecipe = () => {
         if (confirm('Are you sure you want to do that?')) {
-            props.deleteRecipe(props.recipe._id);
+            props.deleteRecipe(props.recipe.id);
         }
     };
 
@@ -40,7 +40,7 @@ const RecipeCard = props => {
     return (
         <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)}
              onMouseLeave={() => setShowButtons(false)}>
-            <Link href={`/recipes/[recipe_id]`} as={`/recipes/${props.recipe._id}`}>
+            <Link href={`/recipes/[recipe_id]`} as={`/recipes/${props.recipe.id}`}>
                 <a>
                     <div className={recipeCardImageClassName}>
                         {props.recipe.image ? <img src={props.recipe.image} /> : <div><FontAwesomeIcon icon={faImage} /></div>}
@@ -52,8 +52,8 @@ const RecipeCard = props => {
             </Link>
             <div className={recipeCardButtonClassName}>
                 {showButtons && <RecipeButtons
-                    recipe_id={props.recipe._id}
-                    author_id={props.recipe['owner.id']}
+                    recipe_id={props.recipe.id}
+                    author_id={props.recipe.author_id}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />}

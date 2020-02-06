@@ -123,29 +123,41 @@ router.get('/users/:user_id/list', middleware.isLoggedIn, (req, res) => {
 
 // get certain collection details about a user's collections
 router.get('/users/:user_id/collections', async (req, res) => {
-    const user = await User.findOne({
-        "_id": req.params.user_id,
-    })
-        .populate('collections')
-        .exec();
-
-    Collection.populate(user.collections, {
-        path: 'ownerId',
-        select: '_id profileImage'
-    }, (err, populatedCollections) => {
-        return res.status(200).send({
-            collections: populatedCollections.map(c => {
-                return {
-                    _id: c._id,
-                    name: c.name,
-                    ownerId: c.ownerId,
-                    recipes: c.recipes
-                        .slice(0, 4)
-                        .map(r => r.image)
-                }
-            })
-        })
-    })
+    const query = await db.query({
+        text: `SELECT collections.*, json_agg(recipes.*) AS recipes 
+            FROM collections 
+            INNER JOIN recipes 
+            ON recipes.id IN 
+            (SELECT recipe_id FROM recipes_collections WHERE recipes_collections.collection_id = collections.id) 
+            WHERE collections.author_id = $1
+            GROUP BY collections.id`,
+        values: [req.query.user_id],
+    });
+    console.log('collections: ', req.query.user_id, query.rows[0])
+    return res.status(200).send({collections: query.rows[0]});
+    // const user = await User.findOne({
+    //     "_id": req.params.user_id,
+    // })
+    //     .populate('collections')
+    //     .exec();
+    //
+    // Collection.populate(user.collections, {
+    //     path: 'ownerId',
+    //     select: '_id profileImage'
+    // }, (err, populatedCollections) => {
+    //     return res.status(200).send({
+    //         collections: populatedCollections.map(c => {
+    //             return {
+    //                 _id: c._id,
+    //                 name: c.name,
+    //                 ownerId: c.ownerId,
+    //                 recipes: c.recipes
+    //                     .slice(0, 4)
+    //                     .map(r => r.image)
+    //             }
+    //         })
+    //     })
+    // })
 });
 
 module.exports = router;
