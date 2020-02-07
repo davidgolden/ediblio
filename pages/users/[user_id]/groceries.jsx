@@ -8,7 +8,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
 import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
-// import fetch from "isomorphic-unfetch";
 
 const Groceries = props => {
     const context = useContext(ApiStoreContext);
@@ -25,7 +24,7 @@ const Groceries = props => {
 
     const handleDeleteMenuItem = id => {
         // use findIndex rather than filter so we only remove 1 if there are duplicates
-        const i = menu.findIndex(item => item._id === id);
+        const i = menu.findIndex(item => item.id === id);
         let menuList = menu;
         menuList.splice(i, 1);
         setMenu([...menuList]);
@@ -66,7 +65,7 @@ const Groceries = props => {
             <ul className={menuContainerClassName}>
                 {menu && menu.map((item, i) => {
                     return <li key={i}>
-                        <RemoveButton onClick={() => handleDeleteMenuItem(item._id)}/>
+                        <RemoveButton onClick={() => handleDeleteMenuItem(item.id)}/>
                         <a target='_blank' href={item.url}>
                             {item.name}
                             <FontAwesomeIcon icon={faExternalLinkAlt}/>

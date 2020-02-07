@@ -14,23 +14,8 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_SECRET
 });
 
-// const Collection = require("../models/collection");
-// (async function() {
-//     const users = await User.find({});
-//     for (let i = 0; i < users.length; i++) {
-//         const user = users[i];
-//         console.log(user.username);
-//         user.collections = [{
-//             name: "Favorites",
-//             recipes: [],
-//         }]
-//         await user.save();
-//     }
-// })();
-
-
 router.route('/users')
-// get all users
+    // get all users
     .get((req, res) => {
         User.find({}, function (err, users) {
             if (err) {
@@ -59,12 +44,12 @@ router.route('/users')
     });
 
 router.route('/users/:user_id/menu')
-    .post(middleware.isLoggedIn, async (req,res) => {
+    .post(middleware.isLoggedIn, async (req, res) => {
         db.query(`INSERT INTO users_menu_recipe (user_id, recipe_id) VALUES ($1, $2)`, [req.user.id, req.body.recipe_id]);
     });
 
 router.route('/users/:user_id')
-// update user
+    // update user
     .patch(middleware.isLoggedIn, async (req, res) => {
         const update = {};
 
@@ -112,14 +97,35 @@ router.route('/users/:user_id')
     });
 
 // DISPLAY GROCERY LIST
-router.get('/users/:user_id/list', middleware.isLoggedIn, (req, res) => {
-    User.findById(req.user._id).populate('menu').exec(function (err, user) {
-        if (err) {
-            return res.status(404).send({detail: err.message})
-        }
-        return res.status(200).send({groceryList: user.groceryList, menu: user.menu});
+router.route('/users/:user_id/list')
+    .get(middleware.isLoggedIn, async (req, res) => {
+        const response = await db.query({
+            text: `SELECT
+            COALESCE(json_agg(m) FILTER (WHERE m IS NOT NULL), '[]') menu,
+            COALESCE(json_agg(g) FILTER (WHERE g IS NOT NULL), '[]') grocery_list
+            FROM users
+            LEFT JOIN LATERAL (
+            SELECT * FROM recipes
+            WHERE recipes.id IN (
+            SELECT id FROM users_recipes_menu
+            WHERE users_recipes_menu.user_id = users.id
+            )
+            ) m ON true
+            LEFT JOIN LATERAL (
+            SELECT *
+            FROM ingredients
+            WHERE ingredients.id IN (
+            SELECT user_id FROM users_ingredients_groceries
+            WHERE users_ingredients_groceries.user_id = users.id
+            )
+            ) g ON true
+            where users.id = $1
+            group by users.id;`,
+            values: [req.user.id],
+        });
+
+        return res.status(200).send({groceryList: response.rows[0].grocery_list, menu: response.rows[0].menu});
     });
-});
 
 // get certain collection details about a user's collections
 router.get('/users/:user_id/collections', async (req, res) => {
