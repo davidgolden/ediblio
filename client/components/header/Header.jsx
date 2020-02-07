@@ -62,7 +62,7 @@ const Header = observer((props) => {
             </Button>}
 
             <h1>
-                <Link href="/"><a><h1>Recipe Cloud</h1> <FontAwesomeIcon icon={faCloud}/></a></Link>
+                <Link href="/"><img src={"/images/ediblio_logo.png"} /></Link>
             </h1>
 
             <Button onClick={toggleNav} className={mobileHamClassName}>
