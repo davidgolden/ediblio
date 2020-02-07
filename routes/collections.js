@@ -2,7 +2,6 @@ const express = require('express'),
     router = express.Router(),
     Collection = require('../models/collection'),
     User = require("../models/user"),
-    Recipe = require("../models/recipe"),
     middleware = require('../middleware');
 
 const db = require("../db/index");
