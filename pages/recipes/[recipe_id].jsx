@@ -17,8 +17,6 @@ const Recipe_id = observer(props => {
     const [edit, setEdit] = useState(false);
     const [recipe, setRecipe] = useState(props.recipe);
 
-    console.log('recipe: ', props.recipe);
-
     const context = useContext(ApiStoreContext);
 
     const addToGroceryList = () => {

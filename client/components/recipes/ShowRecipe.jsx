@@ -64,10 +64,10 @@ const ShowRecipe = observer(props => {
                             onClick={async v => {
                                 if (context.user) {
                                     const response = await axios.post('/api/rating', {
-                                        recipe_id: props.recipe._id,
+                                        recipe_id: props.recipe.id,
                                         rating: v,
                                     });
-                                    setAvgRating(Math.round(response.data.avgRating[0].avgRating*2)/2);
+                                    setAvgRating(Math.round(response.data.avg_rating*2)/2);
                                     setUserRating(v);
                                 }
                             }}

@@ -66,7 +66,7 @@ router.post('/forgot', function (req, res) {
             }
 
             await db.query({
-                text: `UPDATE TABLE users SET reset_token = $1, token_expires = $2 WHERE email = $3`,
+                text: `UPDATE users SET reset_token = $1, token_expires = $2 WHERE email = $3`,
                 values: [token, Date.now() + 3600000, email],
             });
             await db.query('COMMIT');
@@ -115,7 +115,7 @@ router.post('/reset', async function (req, res) {
     }
 
     const userRes = await db.query({
-        text: `UPDATE TABLE users SET password = $1, reset_token = NULL, token_expires = NULL RETURNING *`,
+        text: `UPDATE users SET password = $1, reset_token = NULL, token_expires = NULL RETURNING *`,
         values: [saltPassword(req.body.newPassword)],
     });
 
