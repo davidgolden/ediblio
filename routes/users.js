@@ -1,7 +1,6 @@
 const express = require('express'),
     router = express.Router(),
     User = require('../models/user'),
-    Collection = require('../models/collection'),
     middleware = require('../middleware');
 
 const cloudinary = require('cloudinary');
@@ -16,14 +15,11 @@ cloudinary.config({
 
 router.route('/users')
     // get all users
-    .get((req, res) => {
-        User.find({}, function (err, users) {
-            if (err) {
-                return res.status(404).send({detail: err.message})
-            } else {
-                return res.status(200).send({users: users});
-            }
-        }).sort({'Date': -1});
+    .get(async (req, res) => {
+        const response = await db.query({
+            text: `SELECT profile_image, username FROM users`
+        });
+        return res.status(200).send({users: response.rows});
     })
     // create new user (register)
     .post((req, res) => {
@@ -153,29 +149,6 @@ group by collections.id, author.profile_image;`,
         values: [req.params.user_id],
     });
     return res.status(200).send({collections: query.rows});
-    // const user = await User.findOne({
-    //     "_id": req.params.user_id,
-    // })
-    //     .populate('collections')
-    //     .exec();
-    //
-    // Collection.populate(user.collections, {
-    //     path: 'ownerId',
-    //     select: '_id profileImage'
-    // }, (err, populatedCollections) => {
-    //     return res.status(200).send({
-    //         collections: populatedCollections.map(c => {
-    //             return {
-    //                 _id: c._id,
-    //                 name: c.name,
-    //                 ownerId: c.ownerId,
-    //                 recipes: c.recipes
-    //                     .slice(0, 4)
-    //                     .map(r => r.image)
-    //             }
-    //         })
-    //     })
-    // })
 });
 
 module.exports = router;

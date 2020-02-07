@@ -1,8 +1,6 @@
 const express = require('express'),
     router = express.Router(),
-    User = require('../models/user'),
     Recipe = require('../models/recipe'),
-    Rating = require('../models/rating'),
     middleware = require('../middleware'),
     cloudinary = require('cloudinary');
 

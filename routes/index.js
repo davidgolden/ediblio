@@ -1,7 +1,6 @@
 const express = require('express'),
     router = express.Router(),
     passport = require('passport'),
-    // User = require('../models/user'),
     nodemailer = require('nodemailer'),
     mg = require('nodemailer-mailgun-transport'),
     urlMetadata = require('url-metadata'),

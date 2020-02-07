@@ -52,7 +52,7 @@ const Collection_id  = props => {
             <h1>{title}</h1>
             <div className={browseRecipesContainerClassName}>
                 {Array.from(recipes.values()).map(recipe => {
-                    return <RecipeCard deleteRecipe={removeRecipe} key={recipe._id} recipe={recipe}/>
+                    return <RecipeCard deleteRecipe={removeRecipe} key={recipe.id} recipe={recipe}/>
                 })}
                 {recipes.size === 0 && <p>There doesn't seem to be anything here...</p>}
             </div>
@@ -70,7 +70,7 @@ Collection_id.getInitialProps = async ({req, query}) => {
         },
     });
     return {
-        recipes: response.data.collection.recipes.map(r => [r._id, r]),
+        recipes: response.data.collection.recipes.map(r => [r.id, r]),
         collection_id: query.collection_id,
         loadedAll: response.data.collection.recipes.length < 12,
     };
