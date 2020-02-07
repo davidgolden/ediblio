@@ -79,7 +79,6 @@ const Recipe_id = observer(props => {
 
             {edit === true ? (
                 <RecipeForm
-                    tags={props.tags}
                     recipe={recipe}
                     toggleEdit={toggleEdit}
                     editMode={edit}
