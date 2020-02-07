@@ -99,28 +99,67 @@ router.route('/recipes')
 
 router.route('/recipes/:recipe_id')
     .get(async (req, res) => {
-        const recipe = await Recipe.findById(req.params.recipe_id);
-        const rating = await Rating.aggregate([
-            {
-                "$group": {
-                    "_id": "$recipe_id",
-                    "avgRating": {"$avg": {"$ifNull": ["$rating", 0]}},
-                }
-            },
-        ]);
-        let userRating = null;
+        let response;
+
         if (req.user) {
-            userRating = await Rating.findOne({
-                author_id: req.user._id,
-                recipe_id: req.params.recipe_id,
+            response = await db.query({
+                text: `SELECT recipes.*, recipes.id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
+COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
+FROM recipes
+LEFT JOIN LATERAL (
+select rating from ratings
+where ratings.recipe_id = recipes.id
+) ratings ON TRUE 
+LEFT JOIN LATERAL (
+select rating from ratings
+where ratings.recipe_id = recipes.id
+and ratings.author_id = $1
+) user_ratings ON TRUE
+LEFT JOIN LATERAL (
+select * from ingredients
+where ingredients.id in (
+select id from recipes_ingredients
+where recipes_ingredients.recipe_id = recipes.id
+)
+) ingredients ON TRUE
+LEFT JOIN LATERAL (
+select username
+from users
+where users.id = recipes.author_id
+) author ON TRUE
+WHERE recipes.id = $2
+group by recipes.id, author.username;`,
+                values: [req.user.id, req.params.recipe_id]
+            })
+        } else {
+            response = await db.query({
+                text: `SELECT recipes.*, recipes.id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, author.username author_username,
+COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
+FROM recipes
+LEFT JOIN LATERAL (
+select rating from ratings
+where ratings.recipe_id = recipes.id
+) ratings ON TRUE 
+LEFT JOIN LATERAL (
+select * from ingredients
+where ingredients.id in (
+select id from recipes_ingredients
+where recipes_ingredients.recipe_id = recipes.id
+)
+) ingredients ON TRUE
+LEFT JOIN LATERAL (
+select username
+from users
+where users.id = recipes.author_id
+) author ON TRUE
+WHERE recipes.id = $1
+group by recipes.id, author.username;`,
+                values: [req.params.recipe_id]
             });
         }
+
         return res.status(200).json({
-            recipe: {
-                ...recipe._doc,
-                rating,
-                userRating: userRating ? userRating.rating : null,
-            }
+            recipe: response.rows[0]
         })
     })
     .patch(middleware.checkRecipeOwnership, async (req, res) => {

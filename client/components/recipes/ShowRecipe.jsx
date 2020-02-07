@@ -24,8 +24,8 @@ const showRecipeImageClassName = classNames({
 
 const ShowRecipe = observer(props => {
     const [added, setAdded] = useState(false);
-    const [avgRating, setAvgRating] = useState(props.recipe.rating?.[0]?.avgRating ? Math.round(props.recipe.rating[0].avgRating*2)/2 : 0);
-    const [userRating, setUserRating] = useState(props.recipe.userRating);
+    const [avgRating, setAvgRating] = useState(props.recipe.avg_rating ? Math.round(props.recipe.avg_rating*2)/2 : 0);
+    const [userRating, setUserRating] = useState(props.recipe.user_rating);
     const context = useContext(ApiStoreContext);
 
     const handleAddToList = () => {
@@ -47,9 +47,9 @@ const ShowRecipe = observer(props => {
             <div className={showRecipeTitleClassName}>
                 <div>
                     <h1>{props.recipe.name} <span>{avgRating} <FontAwesomeIcon icon={faStar} /></span></h1>
-                    <h2>Submitted by <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id._id}/recipes`}>
+                    <h2>Submitted by <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id}/recipes`}>
                         <a>
-                            {props.recipe.author_id.username}
+                            {props.recipe.author_username}
                         </a>
                     </Link>. {props.recipe.url &&
                     <a href={props.recipe.url} target='_blank'>View Original Recipe</a>}</h2>
@@ -73,11 +73,6 @@ const ShowRecipe = observer(props => {
                             }}
                         />
                         </>}
-                    </div>
-                    <div>
-                        {props.recipe.tags.map(tag => {
-                            return <span key={tag}>{tag}</span>
-                        })}
                     </div>
                 </div>
             </div>

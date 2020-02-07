@@ -12,7 +12,7 @@
     "test": "jest",
     "dev": "next",
     "build": "next build",
-    "start:dev": "NODE_ENV=development PGUSER=davidgolden PGHOST=localhost PGPORT=5433 PGDATABASE=recipecloud node server.js",
+    "start:dev": "NODE_ENV=development PGUSER=davidgolden PGHOST=localhost PGPORT=5433 PGDATABASE=recipecloud nodemon server.js",
     "start": "NODE_ENV=production node server.js",
     "start-pg": "NODE_ENV=development PGUSER=davidgolden PGHOST=localhost PGPORT=5433 PGDATABASE=recipecloud node pg-server.js"
   },
@@ -75,6 +75,7 @@
     "babel-loader": "^8.0.5",
     "core-js": "^3.6.0",
     "jest": "^24.9.0",
+    "nodemon": "^2.0.2",
     "regenerator-runtime": "^0.13.3",
     "url-loader": "^0.6.2"
   },

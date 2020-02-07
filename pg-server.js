@@ -33,10 +33,15 @@ function populate() {
 
                             for (let x = 0; x < recipe.ingredients.length; x++) {
                                 const ing = recipe.ingredients[x];
-                                await db.query({
-                                    text: 'INSERT INTO ingredients (name, quantity, measurement, recipe_id) VALUES ($1, $2, $3, $4)',
-                                    values: [ing.name, ing.quantity, ing.measurement, recipeRes.rows[0].id],
+                                const ingredientRes = await db.query({
+                                    text: 'INSERT INTO ingredients (name, quantity, measurement) VALUES ($1, $2, $3) RETURNING *',
+                                    values: [ing.name, ing.quantity, ing.measurement],
                                 });
+
+                                await db.query({
+                                    text: 'INSERT INTO recipes_ingredients (recipe_id, ingredient_id) VALUES ($1, $2)',
+                                    values: [recipeRes.rows[0].id, ingredientRes.rows[0].id]
+                                })
                             }
                         }
                     });
@@ -120,10 +125,14 @@ async function create() {
     );
     CREATE TABLE ingredients (
         id BIGSERIAL NOT NULL PRIMARY KEY,
-        recipe_id BIGSERIAL REFERENCES recipes(id) ON DELETE CASCADE,
         name TEXT NOT NULL,
         quantity TEXT NOT NULL,
         measurement TEXT NOT NULL
+    );
+    CREATE TABLE recipes_ingredients (
+        id BIGSERIAL NOT NULL PRIMARY KEY,
+        recipe_id BIGSERIAL REFERENCES recipes(id) ON DELETE CASCADE,
+        ingredient_id BIGSERIAL REFERENCES ingredients(id) ON DELETE CASCADE
     );
     CREATE TABLE users_recipes_menu (
         id BIGSERIAL NOT NULL PRIMARY KEY,

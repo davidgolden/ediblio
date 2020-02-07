@@ -17,6 +17,8 @@ const Recipe_id = observer(props => {
     const [edit, setEdit] = useState(false);
     const [recipe, setRecipe] = useState(props.recipe);
 
+    console.log('recipe: ', props.recipe);
+
     const context = useContext(ApiStoreContext);
 
     const addToGroceryList = () => {
@@ -67,8 +69,8 @@ const Recipe_id = observer(props => {
                         </Button>)}
                 </div>
                 <div>{context.user && <RecipeButtons
-                    recipe_id={recipe._id}
-                    author_id={recipe.author_id._id}
+                    recipe_id={recipe.id}
+                    author_id={recipe.author_id}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />}
