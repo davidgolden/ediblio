@@ -1,6 +1,5 @@
 const express = require('express'),
     router = express.Router(),
-    Recipe = require('../models/recipe'),
     middleware = require('../middleware'),
     cloudinary = require('cloudinary');
 
@@ -90,18 +89,6 @@ router.route('/recipes')
         }
 
         return res.status(200).json({recipe: recipeRes.rows[0]});
-
-        // Recipe.create({
-        //     ...req.body.recipe,
-        //     author_id: req.user._id,
-        // }, function (err, newRecipe) {
-        //     if (err) {
-        //         return res.status(404).send({detail: err.message});
-        //     }
-        //
-        //     newRecipe.save();
-        //     return res.sendStatus(200);
-        // });
     });
 
 router.route('/recipes/:recipe_id')
@@ -174,24 +161,69 @@ group by recipes.id, author.username;`,
         //     const recipe = await Recipe.findById(req.params.recipe_id);
         //     cloudinary.v2.uploader.destroy(recipe.image);
         // }
-        Recipe.findOneAndUpdate({_id: req.params.recipe_id}, {...req.body}, {new: true}, (err, recipe) => {
-            if (err) {
-                return res.status(404).send({detail: err.message})
-            }
-            return res.status(200).json({recipe: recipe});
-        });
+        try {
+            let updateString = "";
+            const values = [];
+            const updateArray = Array.from(Object.entries(req.body));
+
+            updateArray.forEach(([key, value], i) => {
+                if (i < updateArray.length - 1) {
+                    updateString += `${key} = $${i+1}, `;
+                } else {
+                    updateString += `${key} = $${i+1}`;
+                }
+                values.push(value);
+            });
+            await db.query({
+                text: `UPDATE recipes SET ${updateString} WHERE id = $${values.length + 1}`,
+                values: values.concat([req.params.recipe_id]),
+            });
+
+            const recipeRes = await db.query({
+                text: `SELECT recipes.*, recipes.id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
+COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
+FROM recipes
+LEFT JOIN LATERAL (
+select rating from ratings
+where ratings.recipe_id = recipes.id
+) ratings ON TRUE 
+LEFT JOIN LATERAL (
+select rating from ratings
+where ratings.recipe_id = recipes.id
+and ratings.author_id = $1
+) user_ratings ON TRUE
+LEFT JOIN LATERAL (
+select * from ingredients
+where ingredients.id in (
+select id from recipes_ingredients
+where recipes_ingredients.recipe_id = recipes.id
+)
+) ingredients ON TRUE
+LEFT JOIN LATERAL (
+select username
+from users
+where users.id = recipes.author_id
+) author ON TRUE
+WHERE recipes.id = $2
+group by recipes.id, author.username;`,
+                values: [req.user.id, req.params.recipe_id]
+            });
+
+            return res.status(200).json({recipe: recipeRes.rows[0]});
+        } catch (error) {
+            return res.status(404).send({detail: error});
+        }
     })
     .delete(middleware.checkRecipeOwnership, async (req, res) => {
-        Recipe.findById(req.params.recipe_id, (err, recipe) => {
-            if (err) {
-                return res.status(404).send({detail: err.message})
-            }
-
-            // cloudinary.v2.uploader.destroy(recipe.image);
-            recipe.remove();
-
+        try {
+            await db.query({
+                text: `DELETE FROM recipes WHERE id = $1`,
+                values: [req.params.recipe_id],
+            });
             return res.status(200).send('Success!')
-        });
+        } catch (error) {
+            return res.status(404).send(error);
+        }
     });
 
 
