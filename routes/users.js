@@ -75,20 +75,23 @@ router.route('/users/:user_id')
 
         return res.status(200).json({user: user})
     })
-    .get((req, res) => {
-        User.findOne({"_id": req.params.user_id}, (err, user) => {
-            if (err) {
-                return res.status(404).send({detail: err.message});
-            }
-            if (req.isAuthenticated() && req.user._id.toString() === req.params.user_id) {
-                // if user is requesting own data
-                return res.status(200).json({user: user})
-            } else {
-                // if requesting other users' data
-                return res.status(200).json({
-                    user: user.clean,
-                })
-            }
+    .get(async (req, res) => {
+        let response;
+        if (req.isAuthenticated() && req.user.id.toString() === req.params.user_id) {
+            response = await db.query({
+                text: `SELECT * FROM users
+                WHERE users.id = $1`,
+                values: [req.params.user_id]
+            })
+        } else {
+            response = await db.query({
+                text: `SELECT username, profile_image FROM users
+                WHERE users.id = $1`,
+                values: [req.params.user_id]
+            })
+        }
+        return res.status(200).json({
+            user: response.rows[0]
         });
     })
     // delete user account
@@ -130,17 +133,26 @@ router.route('/users/:user_id/list')
 // get certain collection details about a user's collections
 router.get('/users/:user_id/collections', async (req, res) => {
     const query = await db.query({
-        text: `SELECT collections.*, json_agg(recipes.*) AS recipes 
-            FROM collections 
-            INNER JOIN recipes 
-            ON recipes.id IN 
-            (SELECT recipe_id FROM recipes_collections WHERE recipes_collections.collection_id = collections.id) 
-            WHERE collections.author_id = $1
-            GROUP BY collections.id`,
-        values: [req.query.user_id],
+        text: `SELECT collections.*, author.profile_image author_image,
+COALESCE(json_agg(recipes.image) FILTER (WHERE recipes IS NOT NULL), '[]') recipes
+FROM collections
+LEFT JOIN LATERAL (
+select recipes.image from recipes
+where recipes.id in (
+select recipe_id from recipes_collections
+where recipes_collections.collection_id = collections.id
+)
+limit 4
+) recipes ON TRUE 
+LEFT JOIN LATERAL (
+select profile_image from users
+where users.id = collections.author_id
+) author ON TRUE
+WHERE collections.author_id = $1
+group by collections.id, author.profile_image;`,
+        values: [req.params.user_id],
     });
-    console.log('collections: ', req.query.user_id, query.rows[0])
-    return res.status(200).send({collections: query.rows[0]});
+    return res.status(200).send({collections: query.rows});
     // const user = await User.findOne({
     //     "_id": req.params.user_id,
     // })

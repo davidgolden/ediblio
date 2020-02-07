@@ -18,7 +18,7 @@ const Recipes = observer((props) => {
     const isBottom = useScrolledBottom();
 
     useEffect(() => {
-        if (props.user_id === context.user?._id) {
+        if (props.user_id === context.user?.id) {
             axios.get(`/api/users/${props.user_id}/collections`)
                 .then(response => setCollections(response.data.collections))
         }
@@ -31,7 +31,7 @@ const Recipes = observer((props) => {
                 author: props.user_id,
             })
                 .then(response => {
-                    response.forEach(r => recipes.set(r._id, r));
+                    response.forEach(r => recipes.set(r.id, r));
                     if (response.length < 12) {
                         setLoadedAll(true);
                     } else {
@@ -44,19 +44,19 @@ const Recipes = observer((props) => {
     function deleteCollection(id) {
         context.deleteCollection(id)
             .then(() => {
-                setCollections(c => c.filter(c => c._id !== id));
+                setCollections(c => c.filter(c => c.id !== id));
             })
     }
 
     function removeCollection(id) {
         context.patchUser({
-            collections: context.user.collections.filter(c => c._id !== id).map(c => c._id),
+            collections: context.user.collections.filter(c => c.id !== id).map(c => c.id),
         })
     }
 
     function addCollection(id) {
         context.patchUser({
-            collections: context.user.collections.map(c => c._id).concat([id]),
+            collections: context.user.collections.map(c => c.id).concat([id]),
         })
     }
 
@@ -66,7 +66,7 @@ const Recipes = observer((props) => {
                         images={Array.from(recipes.values()).filter(r => r.image).slice(0, 4).map(r => r.image)}/>
             <div className={styles.browseRecipesContainer}>
                 {collections.map(c => <CollectionCard
-                    key={c._id}
+                    key={c.id}
                     removeCollection={removeCollection}
                     deleteCollection={deleteCollection}
                     addCollection={addCollection}
@@ -106,7 +106,7 @@ Recipes.getInitialProps = async ({req, query}) => {
     ]);
     return {
         collections: responses[0].data.collections,
-        recipes: responses[1].data.recipes.map(r => [r._id, r]),
+        recipes: responses[1].data.recipes.map(r => [r.id, r]),
         loadedAll: responses[1].data.recipes.length < 12,
         user: responses[2].data.user,
         user_id: query.user_id,

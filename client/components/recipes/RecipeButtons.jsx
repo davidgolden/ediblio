@@ -56,10 +56,8 @@ const RecipeButtons = observer(props => {
 });
 
 RecipeButtons.propTypes = {
-    recipe_id: PropTypes.string.isRequired,
+    recipe_id: PropTypes.number.isRequired,
     author_id: PropTypes.string.isRequired,
-    // removeFromCloud: PropTypes.func.isRequired,
-    // addToCloud: PropTypes.func.isRequired,
     addToGroceryList: PropTypes.func.isRequired,
     deleteRecipe: PropTypes.func.isRequired,
 };

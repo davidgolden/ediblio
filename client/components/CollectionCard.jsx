@@ -16,16 +16,16 @@ const CollectionCard = observer((props) => {
     React.useLayoutEffect(() => setDidMount(true), []);
     const context = useContext(ApiStoreContext);
 
-    const isCollectionOwner = props.collection.ownerId._id === context.user?._id;
+    const isCollectionOwner = props.collection.author_id === context.user?.id;
     const isFollower = !!context.user?.collections.find(c => c._id === props.collection._id);
 
     let button;
     if (didMount && isCollectionOwner) {
-        button = <DeleteButton onClick={() => props.deleteCollection(props.collection._id)}/>
+        button = <DeleteButton onClick={() => props.deleteCollection(props.collection.id)}/>
     } else if (didMount && isFollower) {
-        button = <RemoveButton onClick={() => props.removeCollection(props.collection._id)}/>
+        button = <RemoveButton onClick={() => props.removeCollection(props.collection.id)}/>
     } else if (didMount && context.user) {
-        button = <Button onClick={() => props.addCollection(props.collection._id)}>
+        button = <Button onClick={() => props.addCollection(props.collection.id)}>
             <FontAwesomeIcon icon={faPlus}/>
         </Button>
     }
@@ -34,7 +34,7 @@ const CollectionCard = observer((props) => {
         <div className={styles.collectionCard}>
             <h3>{props.collection.name}</h3>
             {button}
-            <Link href={"/collections/[collection._id]"} as={`/collections/${props.collection._id}`}>
+            <Link href={"/collections/[collection._id]"} as={`/collections/${props.collection.id}`}>
                 <a>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width={250} height={200}>
                         <path fill="#164e57"
@@ -70,7 +70,7 @@ const CollectionCard = observer((props) => {
                     </svg>
                 </a>
             </Link>
-            <UserImageSmall id={props.collection.ownerId._id} profileImage={props.collection.ownerId.profileImage}/>
+            <UserImageSmall id={props.collection.author_id} profileImage={props.collection.author_image}/>
         </div>
     )
 });

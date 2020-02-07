@@ -35,20 +35,29 @@ router.route('/recipes')
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        let text = `SELECT DISTINCT recipes.*, recipes.id::int, users.id::int AS "owner.id", users.profile_image AS "owner.profile_image" FROM recipes INNER JOIN users ON users.id = recipes.author_id `,
+        let text = `SELECT DISTINCT recipes.*, recipes.id::int, users.profile_image AS author_image 
+        FROM recipes 
+        INNER JOIN users ON users.id = recipes.author_id `,
             values;
 
         if (req.query.author && req.query.searchTerm) {
-            text += `INNER JOIN ingredients ON ingredients.recipe_id = recipes.id WHERE recipes.author_id = $1 AND (lower(recipes.name) LIKE $2 OR lower(ingredients.name) LIKE $2) 
-            ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
+            text += `INNER JOIN ingredients ON ingredients.id in (
+                    SELECT ingredient_id FROM recipes_ingredients
+                    where recipes_ingredients.recipe_id = recipes.id
+                    )
+                    WHERE recipes.author_id = $1 AND (lower(recipes.name) LIKE $2 OR lower(ingredients.name) LIKE $2) 
+                    ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
             values = [req.query.author, "%" + req.query.searchTerm.toLowerCase() + "%"];
         } else if (req.query.author) {
-            text += `INNER JOIN ingredients ON ingredients.recipe_id = recipes.id WHERE recipes.author_id = $1  
+            text += `WHERE recipes.author_id = $1  
             ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
             values = [req.query.author];
         } else if (req.query.searchTerm) {
-            text += `INNER JOIN ingredients ON ingredients.recipe_id = recipes.id WHERE (lower(recipes.name) LIKE $1 OR lower(ingredients.name) LIKE $1) 
-            ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
+            text += `INNER JOIN ingredients ON ingredients.id in (
+                    SELECT ingredient_id FROM recipes_ingredients
+                    where recipes_ingredients.recipe_id = recipes.id
+                    ) WHERE (lower(recipes.name) LIKE $1 OR lower(ingredients.name) LIKE $1) 
+                    ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
             values = ["%" + req.query.searchTerm.toLowerCase() + "%"];
         } else {
             text += `ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;

@@ -58,7 +58,7 @@ const RecipeCard = props => {
                     deleteRecipe={deleteRecipe}
                 />}
             </div>
-            {showButtons && <UserImageSmall id={props.recipe['owner.id']} profileImage={props.recipe['owner.profile_image']}/>}
+            {showButtons && <UserImageSmall id={props.recipe.author_id} profileImage={props.recipe.author_image}/>}
         </div>
     )
 };
