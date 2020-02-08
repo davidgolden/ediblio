@@ -1,6 +1,7 @@
 const express = require('express'),
     router = express.Router(),
     Collection = require('../models/collection'),
+    uuidv1 = require('uuid/v1'),
     middleware = require('../middleware');
 
 const db = require("../db/index");
@@ -27,8 +28,8 @@ GROUP BY users.id;
 
 router.post('/collections', middleware.isLoggedIn, async (req, res) => {
     await db.query({
-        text: `INSERT INTO collections (name, author_id) VALUES ($1, $2)`,
-        values: [req.body.name, req.user.id],
+        text: `INSERT INTO collections (id, name, author_id) VALUES ($1, $2, $3)`,
+        values: [uuidv1(), req.body.name, req.user.id],
     });
 
     const response = await db.query({

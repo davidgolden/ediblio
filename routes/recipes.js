@@ -1,6 +1,7 @@
 const express = require('express'),
     router = express.Router(),
     middleware = require('../middleware'),
+    uuidv1 = require("uuid/v1"),
     cloudinary = require('cloudinary');
 
 const db = require('../db');
@@ -75,15 +76,15 @@ router.route('/recipes')
         // create new recipe
 
         const {name, url, notes, image, ingredients} = req.body.recipe;
-        const text = `INSERT INTO recipes (name, url, notes, image, author_id) VALUES ($1, $2, $3, $4, $5) RETURNING recipes.id;`;
-        const values = [name, url, notes, image, req.user.id];
+        const text = `INSERT INTO recipes (id, name, url, notes, image, author_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING recipes.id;`;
+        const values = [uuidv1(), name, url, notes, image, req.user.id];
 
         let recipeRes = await db.query(text, values);
 
         if (ingredients.length > 0) {
             await db.query(
-                `INSERT INTO ingredients (name, quantity, measurement, recipe_id)
-                VALUES ${ingredients.map(ing => `('${ing.name}', '${ing.quantity}', '${ing.measurement}', '${recipeRes.rows[0].id}'), `)}`
+                `INSERT INTO ingredients (id, name, quantity, measurement, recipe_id)
+                VALUES ${ingredients.map(ing => `('${uuidv1()}', '${ing.name}', '${ing.quantity}', '${ing.measurement}', '${recipeRes.rows[0].id}'), `)}`
             );
 
             recipeRes = await db.query(`
@@ -207,12 +208,12 @@ group by recipes.id, author.username;`,
                     let count = 1;
                     let text = newIngredients.map(() => {
                         const str = `($${count}, $${count + 1}, $${count + 2})`;
-                        count += 3;
+                        count += 4;
                         return str;
                     }).join(", ");
                     const ingRes = await client.query({
-                        text: `INSERT INTO ingredients (name, measurement, quantity) VALUES ${text} RETURNING id`,
-                        values: newIngredients.reduce((acc, curr) => acc.concat([curr.name, curr.measurement, curr.quantity]), [])
+                        text: `INSERT INTO ingredients (id, name, measurement, quantity) VALUES ${text} RETURNING id`,
+                        values: newIngredients.reduce((acc, curr) => acc.concat([uuidv1(), curr.name, curr.measurement, curr.quantity]), [])
                     });
 
                     // this is important so we don't delete it later
@@ -221,12 +222,12 @@ group by recipes.id, author.username;`,
                     count = 1;
                     text = ingRes.rows.map(() => {
                         const str = `($${count}, $${count + 1})`;
-                        count += 2;
+                        count += 3;
                         return str;
                     }).join(", ");
                     await client.query({
-                        text: `INSERT INTO recipes_ingredients (recipe_id, ingredient_id) VALUES ${text}`,
-                        values: ingRes.rows.reduce((acc, curr) => acc.concat([req.params.recipe_id, curr.id]), [])
+                        text: `INSERT INTO recipes_ingredients (id, recipe_id, ingredient_id) VALUES ${text}`,
+                        values: ingRes.rows.reduce((acc, curr) => acc.concat([uuidv1(), req.params.recipe_id, curr.id]), [])
                     });
                 }
 

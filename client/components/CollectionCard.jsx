@@ -19,14 +19,12 @@ const CollectionCard = observer((props) => {
     const isCollectionOwner = props.collection.author_id === context.user?.id;
     const isFollower = !!context.user?.collections.find(c => c.id === props.collection.id);
 
-    console.log(typeof props.collection.author_id, typeof context.user?.id)
-
     let button;
-    if (didMount && isCollectionOwner) {
+    if (didMount && isCollectionOwner && !props.collection.is_primary) {
         button = <DeleteButton onClick={() => props.deleteCollection(props.collection.id)}/>
-    } else if (didMount && isFollower) {
+    } else if (didMount && isFollower && !isCollectionOwner) {
         button = <RemoveButton onClick={() => props.removeCollection(props.collection.id)}/>
-    } else if (didMount && context.user) {
+    } else if (didMount && context.user && !isCollectionOwner) {
         button = <Button onClick={() => props.addCollection(props.collection.id)}>
             <FontAwesomeIcon icon={faPlus}/>
         </Button>

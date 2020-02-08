@@ -1,5 +1,6 @@
 const express = require('express'),
     router = express.Router(),
+    uuidv1 = require("uuid/v1"),
     middleware = require('../middleware');
 
 const db = require("../db/index");
@@ -22,8 +23,8 @@ router.post('/rating', middleware.isLoggedIn, async (req, res) => {
             });
         } else {
             rating = await db.query({
-                text: `INSERT INTO ratings (recipe_id, author_id, rating) VALUES ($1, $2, $3) RETURNING *`,
-                values: [req.body.recipe_id, req.user.id, req.body.rating],
+                text: `INSERT INTO ratings (id, recipe_id, author_id, rating) VALUES ($1, $2, $3, $4) RETURNING *`,
+                values: [uuidv1(), req.body.recipe_id, req.user.id, req.body.rating],
             })
         }
 
