@@ -1,40 +1,67 @@
 const express = require('express'),
     router = express.Router(),
     Collection = require('../models/collection'),
-    User = require("../models/user"),
     middleware = require('../middleware');
 
 const db = require("../db/index");
 
+const selectUserWithCollections = `
+        SELECT users.*,
+        COALESCE(json_agg(c) FILTER (WHERE c IS NOT NULL), '[]') collections
+        FROM users
+        LEFT JOIN LATERAL (
+            SELECT collections.*, COALESCE(json_agg(cr) FILTER (WHERE cr IS NOT NULL), '[]') recipes
+                FROM collections LEFT JOIN LATERAL (
+                SELECT * FROM recipes
+        WHERE recipes.id IN (
+            SELECT recipe_id FROM recipes_collections
+            WHERE recipes_collections.collection_id = collections.id
+        )
+   ) cr ON true
+   WHERE collections.author_id = users.id
+   GROUP BY collections.id
+) c ON true
+WHERE users.id = $1
+GROUP BY users.id;
+        `;
+
 router.post('/collections', middleware.isLoggedIn, async (req, res) => {
-    const collection = new Collection({
-        recipes: [],
-        name: req.body.name,
-        ownerId: req.user._id,
+    await db.query({
+        text: `INSERT INTO collections (name, author_id) VALUES ($1, $2)`,
+        values: [req.body.name, req.user.id],
     });
-    await collection.save();
-    const user = await User.findByIdAndUpdate(req.user._id, {
-        "$push": {
-            collections: collection._id,
-        }
-    }, {new: true})
-        .populate('collections')
-        .exec();
-    res.status(200).json({user});
+
+    const response = await db.query({
+        text: selectUserWithCollections,
+        values: [req.user.id]
+    });
+
+    return res.status(200).json({user: response.rows[0]});
 });
 
 router.delete('/collections/:collection_id', middleware.isLoggedIn, async (req, res) => {
-    const collection = await Collection.findById(req.params.collection_id);
-    if (collection.ownerId.toString() === req.user._id.toString()) {
-        await Collection.findByIdAndDelete(req.params.collection_id);
-        const user = await User.findByIdAndUpdate(req.user._id, {
-            "$pull": {
-                collections: req.params.collection_id,
-            }
-        }, {new: true});
-        return res.status(200).json({user});
+    try {
+        const collectionRes = await db.query({
+            text: `DELETE FROM collections WHERE id = $1 AND is_primary != true`,
+            values: [req.params.collection_id],
+        });
+
+        if (collectionRes.rows.length > 0) {
+            await db.query({
+                text: `DELETE FROM users_collections_followers WHERE collection_id = $1`,
+                values: [req.params.collection_id],
+            });
+        }
+
+        const response = await db.query({
+            text: selectUserWithCollections,
+            values: [req.user.id],
+        });
+
+        return res.status(200).json({user: response.rows[0]});
+    } catch (error) {
+        return res.sendStatus(404);
     }
-    return res.sendStatus(404);
 });
 
 router.patch('/collections/:collection_id', middleware.isLoggedIn, async (req, res) => {

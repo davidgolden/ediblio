@@ -35,7 +35,7 @@ router.route('/recipes')
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        let text = `SELECT DISTINCT recipes.*, recipes.id::int, recipes.author_id::int, users.profile_image AS author_image 
+        let text = `SELECT DISTINCT recipes.*, users.profile_image AS author_image 
         FROM recipes 
         INNER JOIN users ON users.id = recipes.author_id `,
             values;
@@ -100,7 +100,7 @@ router.route('/recipes/:recipe_id')
 
         if (req.user) {
             response = await db.query({
-                text: `SELECT recipes.*, recipes.id::int, recipes.author_id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
+                text: `SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
 COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
 FROM recipes
 LEFT JOIN LATERAL (
@@ -130,7 +130,7 @@ group by recipes.id, author.username;`,
             })
         } else {
             response = await db.query({
-                text: `SELECT recipes.*, recipes.id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, author.username author_username,
+                text: `SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, author.username author_username,
 COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
 FROM recipes
 LEFT JOIN LATERAL (
@@ -237,7 +237,7 @@ group by recipes.id, author.username;`,
                 ingredientUpdateString = updateIngredientsQuery('name', values, ingredientUpdateString);
                 ingredientUpdateString += 'END, quantity = CASE id ';
                 ingredientUpdateString = updateIngredientsQuery('quantity', values, ingredientUpdateString);
-                ingredientUpdateString += `END WHERE id IN (${Array.from(Object.values(ingredients)).map(i => i.id).join(", ")}) RETURNING id::int`;
+                ingredientUpdateString += `END WHERE id IN (${Array.from(Object.values(ingredients)).map(i => i.id).join(", ")}) RETURNING id`;
 
                 const updatedIngredients = await client.query(ingredientUpdateString, values);
 
@@ -265,7 +265,7 @@ group by recipes.id, author.username;`,
             await client.query('COMMIT');
 
             const recipeRes = await db.query({
-                text: `SELECT recipes.*, recipes.id::int, recipes.author_id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
+                text: `SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
 COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
 FROM recipes
 LEFT JOIN LATERAL (

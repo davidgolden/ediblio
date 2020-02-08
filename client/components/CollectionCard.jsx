@@ -17,7 +17,9 @@ const CollectionCard = observer((props) => {
     const context = useContext(ApiStoreContext);
 
     const isCollectionOwner = props.collection.author_id === context.user?.id;
-    const isFollower = !!context.user?.collections.find(c => c._id === props.collection._id);
+    const isFollower = !!context.user?.collections.find(c => c.id === props.collection.id);
+
+    console.log(typeof props.collection.author_id, typeof context.user?.id)
 
     let button;
     if (didMount && isCollectionOwner) {
