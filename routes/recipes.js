@@ -5,6 +5,9 @@ const express = require('express'),
 
 const db = require('../db');
 
+const {Pool} = require('pg')
+const pool = new Pool()
+
 /*
 
 /reset
@@ -32,7 +35,7 @@ router.route('/recipes')
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        let text = `SELECT DISTINCT recipes.*, recipes.id::int, users.profile_image AS author_image 
+        let text = `SELECT DISTINCT recipes.*, recipes.id::int, recipes.author_id::int, users.profile_image AS author_image 
         FROM recipes 
         INNER JOIN users ON users.id = recipes.author_id `,
             values;
@@ -97,7 +100,7 @@ router.route('/recipes/:recipe_id')
 
         if (req.user) {
             response = await db.query({
-                text: `SELECT recipes.*, recipes.id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
+                text: `SELECT recipes.*, recipes.id::int, recipes.author_id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
 COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
 FROM recipes
 LEFT JOIN LATERAL (
@@ -112,7 +115,7 @@ and ratings.author_id = $1
 LEFT JOIN LATERAL (
 select * from ingredients
 where ingredients.id in (
-select id from recipes_ingredients
+select ingredient_id from recipes_ingredients
 where recipes_ingredients.recipe_id = recipes.id
 )
 ) ingredients ON TRUE
@@ -157,30 +160,110 @@ group by recipes.id, author.username;`,
         })
     })
     .patch(middleware.checkRecipeOwnership, async (req, res) => {
-        // if (req.body.image) { // delete old image before image is changed
-        //     const recipe = await Recipe.findById(req.params.recipe_id);
-        //     cloudinary.v2.uploader.destroy(recipe.image);
-        // }
         try {
-            let updateString = "";
+            const {name, url, image, notes} = req.body;
+            let {ingredients} = req.body;
+            const updateValues = [];
             const values = [];
-            const updateArray = Array.from(Object.entries(req.body));
 
-            updateArray.forEach(([key, value], i) => {
-                if (i < updateArray.length - 1) {
-                    updateString += `${key} = $${i+1}, `;
-                } else {
-                    updateString += `${key} = $${i+1}`;
-                }
+            function updateQuery(key, value) {
+                updateValues.push(`${key} = $${values.length + 1}`);
                 values.push(value);
-            });
-            await db.query({
-                text: `UPDATE recipes SET ${updateString} WHERE id = $${values.length + 1}`,
-                values: values.concat([req.params.recipe_id]),
-            });
+            }
+
+            function updateIngredientsQuery(type, values, updateString) {
+                for (let k in ingredients) {
+                    if (ingredients.hasOwnProperty(k)) {
+                        const ingredient = ingredients[k];
+                        values.push(ingredient.id, ingredient[type]);
+                        updateString += `WHEN $${values.length - 1} THEN $${values.length} `
+                    }
+                }
+                return updateString;
+            }
+
+            if (typeof name === 'string') {
+                updateQuery('name', name);
+            }
+            if (typeof url === 'string') {
+                updateQuery('url', url);
+            }
+            if (typeof image === 'string') {
+                updateQuery('image', image);
+            }
+            if (typeof notes === 'string') {
+                updateQuery('notes', notes);
+            }
+            if (ingredients) {
+                const client = await pool.connect();
+                await client.query('BEGIN');
+
+                let newIngredients = ingredients.filter(i => !i.id);
+                ingredients = ingredients.filter(i => i.id);
+
+                if (newIngredients.length > 0) {
+                    let count = 1;
+                    let text = newIngredients.map(() => {
+                        const str = `($${count}, $${count + 1}, $${count + 2})`;
+                        count += 3;
+                        return str;
+                    }).join(", ");
+                    const ingRes = await client.query({
+                        text: `INSERT INTO ingredients (name, measurement, quantity) VALUES ${text} RETURNING id`,
+                        values: newIngredients.reduce((acc, curr) => acc.concat([curr.name, curr.measurement, curr.quantity]), [])
+                    });
+
+                    // this is important so we don't delete it later
+                    newIngredients = ingRes.rows;
+
+                    count = 1;
+                    text = ingRes.rows.map(() => {
+                        const str = `($${count}, $${count + 1})`;
+                        count += 2;
+                        return str;
+                    }).join(", ");
+                    await client.query({
+                        text: `INSERT INTO recipes_ingredients (recipe_id, ingredient_id) VALUES ${text}`,
+                        values: ingRes.rows.reduce((acc, curr) => acc.concat([req.params.recipe_id, curr.id]), [])
+                    });
+                }
+
+                const values = [];
+                let ingredientUpdateString = `UPDATE ingredients SET measurement = CASE id `;
+                ingredientUpdateString = updateIngredientsQuery('measurement', values, ingredientUpdateString);
+                ingredientUpdateString += 'END, name = CASE id ';
+                ingredientUpdateString = updateIngredientsQuery('name', values, ingredientUpdateString);
+                ingredientUpdateString += 'END, quantity = CASE id ';
+                ingredientUpdateString = updateIngredientsQuery('quantity', values, ingredientUpdateString);
+                ingredientUpdateString += `END WHERE id IN (${Array.from(Object.values(ingredients)).map(i => i.id).join(", ")}) RETURNING id::int`;
+
+                const updatedIngredients = await client.query(ingredientUpdateString, values);
+
+                await client.query({
+                    text: `DELETE FROM ingredients
+                    WHERE ingredients.id IN (
+                        SELECT ingredient_id FROM recipes_ingredients
+                        WHERE recipes_ingredients.recipe_id = $1
+                        AND recipes_ingredients.ingredient_id
+                        NOT IN (${Array.from(Object.values(updatedIngredients.rows)).map(i => i.id).join(", ")})
+                        ${newIngredients.length > 0 ? `AND recipes_ingredients.ingredient_id
+                        NOT IN (${newIngredients.map(i => i.id).join(", ")})` : ''}
+                )`,
+                    values: [req.params.recipe_id]
+                });
+
+                await client.query('COMMIT');
+            }
+
+            if (updateValues.length > 0) {
+                await db.query({
+                    text: `UPDATE recipes SET ${updateValues.join(", ")} WHERE id = $${values.length + 1}`,
+                    values: values.concat([req.params.recipe_id]),
+                });
+            }
 
             const recipeRes = await db.query({
-                text: `SELECT recipes.*, recipes.id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
+                text: `SELECT recipes.*, recipes.id::int, recipes.author_id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
 COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
 FROM recipes
 LEFT JOIN LATERAL (
@@ -195,7 +278,7 @@ and ratings.author_id = $1
 LEFT JOIN LATERAL (
 select * from ingredients
 where ingredients.id in (
-select id from recipes_ingredients
+select ingredient_id from recipes_ingredients
 where recipes_ingredients.recipe_id = recipes.id
 )
 ) ingredients ON TRUE
@@ -216,6 +299,9 @@ group by recipes.id, author.username;`,
     })
     .delete(middleware.checkRecipeOwnership, async (req, res) => {
         try {
+
+            // TODO need to delete ingredients
+
             await db.query({
                 text: `DELETE FROM recipes WHERE id = $1`,
                 values: [req.params.recipe_id],

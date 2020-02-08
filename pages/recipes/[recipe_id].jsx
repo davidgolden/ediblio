@@ -61,7 +61,7 @@ const Recipe_id = observer(props => {
         <div className={recipeContainerClassName}>
             <div className={recipeEditButtonsClassName}>
                 <div>
-                    {context.user && (recipe.author_id._id === context.user._id) && (
+                    {context.user && (recipe.author_id === context.user.id) && (
                         <Button className={toggleEditClassName} onClick={toggleEdit}>
                             <FontAwesomeIcon icon={edit ? faSearch : faEdit}/> {edit ? "View" : "Edit"}
                         </Button>)}
