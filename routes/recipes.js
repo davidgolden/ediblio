@@ -160,7 +160,11 @@ group by recipes.id, author.username;`,
         })
     })
     .patch(middleware.checkRecipeOwnership, async (req, res) => {
+        const client = await pool.connect();
+
         try {
+            await client.query('BEGIN');
+
             const {name, url, image, notes} = req.body;
             let {ingredients} = req.body;
             const updateValues = [];
@@ -195,8 +199,6 @@ group by recipes.id, author.username;`,
                 updateQuery('notes', notes);
             }
             if (ingredients) {
-                const client = await pool.connect();
-                await client.query('BEGIN');
 
                 let newIngredients = ingredients.filter(i => !i.id);
                 ingredients = ingredients.filter(i => i.id);
@@ -251,16 +253,16 @@ group by recipes.id, author.username;`,
                 )`,
                     values: [req.params.recipe_id]
                 });
-
-                await client.query('COMMIT');
             }
 
             if (updateValues.length > 0) {
-                await db.query({
+                await client.query({
                     text: `UPDATE recipes SET ${updateValues.join(", ")} WHERE id = $${values.length + 1}`,
                     values: values.concat([req.params.recipe_id]),
                 });
             }
+
+            await client.query('COMMIT');
 
             const recipeRes = await db.query({
                 text: `SELECT recipes.*, recipes.id::int, recipes.author_id::int, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
@@ -294,21 +296,38 @@ group by recipes.id, author.username;`,
 
             return res.status(200).json({recipe: recipeRes.rows[0]});
         } catch (error) {
-            return res.status(404).send({detail: error});
+            await client.query('ROLLBACK');
+            res.status(404).send({detail: error});
+        } finally {
+            client.release();
         }
     })
     .delete(middleware.checkRecipeOwnership, async (req, res) => {
+        const client = await pool.connect();
         try {
+            await client.query('BEGIN');
 
-            // TODO need to delete ingredients
+            await client.query({
+                text: `DELETE FROM ingredients where id IN (
+                    SELECT id FROM recipes_ingredients
+                    WHERE recipes_ingredients.recipe_id = $1
+                )`,
+                values: [req.params.recipe_id],
+            });
 
-            await db.query({
+            await client.query({
                 text: `DELETE FROM recipes WHERE id = $1`,
                 values: [req.params.recipe_id],
             });
+
+            await client.query('COMMIT');
+
             return res.status(200).send('Success!')
         } catch (error) {
-            return res.status(404).send(error);
+            await client.query('ROLLBACK');
+            res.status(404).send(error);
+        } finally {
+            client.release();
         }
     });
 
