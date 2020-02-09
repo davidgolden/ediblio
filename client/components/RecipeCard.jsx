@@ -52,8 +52,7 @@ const RecipeCard = props => {
             </Link>
             <div className={recipeCardButtonClassName}>
                 {showButtons && <RecipeButtons
-                    recipe_id={props.recipe.id}
-                    author_id={props.recipe.author_id}
+                    recipe={props.recipe}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />}

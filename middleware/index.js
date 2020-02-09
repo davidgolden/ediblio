@@ -27,4 +27,22 @@ middlewareObj.checkRecipeOwnership = async (req, res, next) => {
   }
 };
 
+middlewareObj.checkCollectionOwnership = async (req, res, next) => {
+  // is user logged in?
+  if(req.isAuthenticated()) {
+    const response = await db.query({
+      text: `SELECT * FROM collections WHERE id = $1 AND author_id = $2`,
+      values: [req.params.collection_id, req.user.id]
+    });
+
+    if (response.rows.length === 0) {
+      return res.status(404).send({ detail: "You don't have permission to do that!" })
+    }
+
+    next();
+  } else {
+    return res.status(404).send({ detail: 'You need to be logged in to do that!' })
+  }
+};
+
 module.exports = middlewareObj;

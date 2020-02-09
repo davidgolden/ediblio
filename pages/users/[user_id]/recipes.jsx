@@ -29,6 +29,8 @@ const Recipes = observer((props) => {
             context.getRecipes({
                 page: lastRecipePageLoaded + 1,
                 author: props.user_id,
+                orderBy: 'desc',
+                sortBy: 'created_at',
             })
                 .then(response => {
                     response.forEach(r => recipes.set(r.id, r));

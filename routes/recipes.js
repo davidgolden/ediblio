@@ -6,8 +6,8 @@ const express = require('express'),
 
 const db = require('../db');
 
-const {Pool} = require('pg')
-const pool = new Pool()
+const {Pool} = require('pg');
+const pool = new Pool();
 
 /*
 
