@@ -39,6 +39,45 @@ router.route('/users')
         }
     });
 
+router.route('/users/:user_id/recipes')
+    .get(middleware.isLoggedIn, async (req, res) => {
+        // get menu
+        try {
+            const response = await db.query({
+                text: `SELECT * FROM recipes
+WHERE recipes.id IN (
+SELECT recipe_id FROM users_recipes_menu
+WHERE users_recipes_menu.user_id = $1
+);`,
+                values: [req.user.id]
+            });
+
+            res.status(200).send({menu: response.rows});
+
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    });
+
+router.route('/users/:user_id/ingredients')
+    .get(middleware.isLoggedIn, async (req, res) => {
+        // get grocery list
+        try {
+            const response = await db.query({
+                text: `SELECT * FROM ingredients
+WHERE id IN (
+SELECT ingredient_id FROM users_ingredients_groceries
+WHERE users_ingredients_groceries.user_id = $1
+);`,
+                values: [req.user.id],
+            });
+
+            res.status(200).send({groceryList: response.rows});
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    });
+
 router.route('/users/:user_id/recipes/:recipe_id')
     .post(middleware.isLoggedIn, async (req, res) => {
         // add full recipe to grocery list
@@ -166,40 +205,6 @@ router.route('/users/:user_id')
     .delete((req, res) => {
         res.sendStatus(404);
     });
-
-// DISPLAY GROCERY LIST
-router.route('/users/:user_id/list')
-    .get(middleware.isLoggedIn, async (req, res) => {
-        const response = await db.query({
-            text: `SELECT
-            COALESCE(json_agg(m) FILTER (WHERE m IS NOT NULL), '[]') menu,
-            COALESCE(json_agg(g) FILTER (WHERE g IS NOT NULL), '[]') grocery_list
-            FROM users
-            LEFT JOIN LATERAL (
-            SELECT * FROM recipes
-            WHERE recipes.id IN (
-            SELECT id FROM users_recipes_menu
-            WHERE users_recipes_menu.user_id = users.id
-            )
-            ) m ON true
-            LEFT JOIN LATERAL (
-            SELECT *
-            FROM ingredients
-            WHERE ingredients.id IN (
-            SELECT user_id FROM users_ingredients_groceries
-            WHERE users_ingredients_groceries.user_id = users.id
-            )
-            ) g ON true
-            where users.id = $1
-            group by users.id;`,
-            values: [req.user.id],
-        });
-
-        return res.status(200).send({groceryList: response.rows[0].grocery_list, menu: response.rows[0].menu});
-    })
-    .patch(middleware.isLoggedIn, async (req, res) => {
-
-    })
 
 // get certain collection details about a user's collections
 router.get('/users/:user_id/collections', async (req, res) => {

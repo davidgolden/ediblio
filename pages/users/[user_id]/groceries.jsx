@@ -91,14 +91,22 @@ const Groceries = props => {
 Groceries.getInitialProps = async ({req, query}) => {
     const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
 
-    const response = await axios.get(`${currentFullUrl}/api/users/${query.user_id}/list`, {
-        headers: req?.headers?.cookie && {
-            cookie: req.headers.cookie,
-        }
-    });
+    const response = await Promise.all([
+        await axios.get(`${currentFullUrl}/api/users/${query.user_id}/recipes`, {
+            headers: req?.headers?.cookie && {
+                cookie: req.headers.cookie,
+            }
+        }),
+        await axios.get(`${currentFullUrl}/api/users/${query.user_id}/ingredients`, {
+            headers: req?.headers?.cookie && {
+                cookie: req.headers.cookie,
+            }
+        })
+    ]);
+
     return {
-        groceryList: response.data.groceryList,
-        menu: response.data.menu,
+        groceryList: response[1].data.groceryList,
+        menu: response[0].data.menu,
     };
 };
 
