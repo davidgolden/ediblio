@@ -40,8 +40,9 @@ router.route('/users')
         }
     });
 
-router.route('/users/:user_id/menu')
+router.route('/users/:user_id/recipes/:recipe_id')
     .post(middleware.isLoggedIn, async (req, res) => {
+        // add full recipe to grocery list
         try {
             await db.query({
                 text: `INSERT INTO users_menu_recipe (user_id, recipe_id) VALUES ($1, $2)`,
@@ -52,6 +53,9 @@ router.route('/users/:user_id/menu')
         } catch (error) {
             res.status(404).send({detail: error.message});
         }
+    })
+    .patch(middleware.isLoggedIn, async (req, res) => {
+        // add partial recipe to grocery list
     });
 
 router.route('/users/:user_id/collections/:collection_id')
@@ -181,7 +185,10 @@ router.route('/users/:user_id/list')
         });
 
         return res.status(200).send({groceryList: response.rows[0].grocery_list, menu: response.rows[0].menu});
-    });
+    })
+    .patch(middleware.isLoggedIn, async (req, res) => {
+
+    })
 
 // get certain collection details about a user's collections
 router.get('/users/:user_id/collections', async (req, res) => {
