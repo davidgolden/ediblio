@@ -50,16 +50,24 @@ const Recipes = observer((props) => {
             })
     }
 
-    function removeCollection(id) {
-        context.patchUser({
-            collections: context.user.collections.filter(c => c.id !== id).map(c => c.id),
-        })
+    async function unfollowCollection(id) {
+        try {
+            await axios.delete(`/api/users/${context.user.id}/collections/${id}`);
+            context.user.collections = context.user.collections.filter(c => c.id !== id);
+        } catch (error) {
+            context.handleError(error);
+        }
     }
 
-    function addCollection(id) {
-        context.patchUser({
-            collections: context.user.collections.map(c => c.id).concat([id]),
-        })
+    async function followCollection(id) {
+        try {
+            await axios.post(`/api/users/${context.user.id}/collections/${id}`);
+
+            const response = await axios.get(`/api/collections/${id}`);
+            context.user.collections.push(response.data.collection);
+        } catch (error) {
+            context.handleError(error);
+        }
     }
 
     return (
@@ -69,9 +77,9 @@ const Recipes = observer((props) => {
             <div className={styles.browseRecipesContainer}>
                 {collections.map(c => <CollectionCard
                     key={c.id}
-                    removeCollection={removeCollection}
+                    unfollowCollection={unfollowCollection}
                     deleteCollection={deleteCollection}
-                    addCollection={addCollection}
+                    followCollection={followCollection}
                     collection={c}
                 />)}
                 {Array.from(recipes.values()).map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {

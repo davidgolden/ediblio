@@ -9,24 +9,50 @@ import axios from "axios";
 const Settings = props => {
     const context = useContext(ApiStoreContext);
 
-    const [profileImage, setProfileImage] = useState(props.user ? props.user.profileImage : '');
+    const [profileImage, setProfileImage] = useState(props.user ? props.user.profile_image : '');
     const [username, setUsername] = useState(props.user ? props.user.username : '');
     const [email, setEmail] = useState(props.user ? props.user.email : '');
     const [password, setPassword] = useState(props.user ? props.user.password : '');
     const [confirm, setConfirm] = useState(props.user ? props.user.password : '');
     const [current, setCurrent] = useState(true);
+    const [displayImage, setDisplayImage] = useState(null);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (password !== confirm) {
             return alert('Passwords do not match!')
         } else {
-            context.patchUser({
-                username: username,
-                email: email,
-                password: password,
-                profileImage: profileImage,
-            });
-            setCurrent(true);
+            try {
+                const query = {};
+
+                if (username !== props.user.username) {
+                    query.username = username;
+                }
+                if (email !== props.user.email) {
+                    query.email = email;
+                }
+                if (password !== props.user.password) {
+                    query.password = password;
+                }
+                if (profileImage !== props.user.profile_image) {
+                    const fd = new FormData();
+                    fd.append('file', profileImage);
+                    fd.append('upload_preset', 'profile_image');
+                    fd.append('resource_type', 'image');
+                    fd.append('folder', props.user.id);
+                    const response = await axios.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
+                    query.profileImage = response.data.secure_url;
+                }
+
+                const response = await axios.patch(`/api/users/${context.user.id}`, query);
+
+                context.user = {
+                    ...context.user,
+                    ...response.data.user,
+                };
+                setCurrent(true);
+            } catch (error) {
+                context.handleError(error);
+            }
         }
     };
 
@@ -34,20 +60,21 @@ const Settings = props => {
         setCurrent(false);
     }, [username, email, password, confirm, profileImage]);
 
-    const handleFileUpload = file => {
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(file);
-        fileReader.onloadend = readerEvent => {
-            const dataURI = readerEvent.target.result;
-            if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-                alert('Your image size is too big and our image compression tools are not supported on your browser. Please use a smaller image!');
-                return false;
-            }
-            processFile(dataURI, 800, 800, file.type)
-                .then(uri => {
-                    setProfileImage(uri);
-                });
+    const handleFileUpload = async file => {
+        const imageCompression = require('browser-image-compression').default;
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true
         };
+        try {
+            const compressedFile = await imageCompression(file, options);
+            const blobURL = window.URL.createObjectURL(compressedFile);
+            setDisplayImage(blobURL);
+            setProfileImage(compressedFile);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     if (!props.user) {
@@ -66,7 +93,7 @@ const Settings = props => {
         <div className={settingsContainerClassName}>
             <h1>Edit Profile</h1>
             <div>
-                {profileImage && <img src={profileImage}/>}
+                {(profileImage || displayImage) && <img src={displayImage || profileImage}/>}
                 <input onChange={e => handleFileUpload(e.target.files[0])} type={'file'} accept={'image/*'}/>
             </div>
             <div>

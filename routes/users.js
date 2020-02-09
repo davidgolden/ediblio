@@ -1,6 +1,8 @@
 const express = require('express'),
     router = express.Router(),
-    User = require('../models/user'),
+    {hashPassword} = require("../utils"),
+    uuidv1 = require('uuid/v1'),
+    bcrypt = require('bcrypt-nodejs'),
     middleware = require('../middleware');
 
 const cloudinary = require('cloudinary');
@@ -22,54 +24,109 @@ router.route('/users')
         return res.status(200).send({users: response.rows});
     })
     // create new user (register)
-    .post((req, res) => {
-        let newUser = new User({
-            username: req.body.username,
-            email: req.body.email.toLowerCase(),
-            password: req.body.password
-        });
-        newUser.save((err, user) => {
-            if (err) {
-                return res.status(404).send({detail: err.message});
-            }
+    .post(async (req, res) => {
+        try {
+            const response = await db.query({
+                text: `INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
+                values: [req.body.username, req.body.email.toLowerCase(), hashPassword(req.body.password)]
+            });
 
-            req.login(user, function () {
+            req.login(response.rows[0], function () {
                 res.status(200).json({user: req.user});
             });
-        });
+
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
     });
 
 router.route('/users/:user_id/menu')
     .post(middleware.isLoggedIn, async (req, res) => {
-        db.query(`INSERT INTO users_menu_recipe (user_id, recipe_id) VALUES ($1, $2)`, [req.user.id, req.body.recipe_id]);
+        try {
+            await db.query({
+                text: `INSERT INTO users_menu_recipe (user_id, recipe_id) VALUES ($1, $2)`,
+                values: [req.user.id, req.body.recipe_id]
+            });
+            res.sendStatus(200);
+
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    });
+
+router.route('/users/:user_id/collections/:collection_id')
+    .post(middleware.isLoggedIn, async (req, res) => {
+        try {
+            await db.query({
+                text: `INSERT INTO users_collections_followers (id, user_id, collection_id) VALUES ($1, $2, $3)`,
+                values: [uuidv1(), req.user.id, req.params.collection_id],
+            });
+
+            return res.sendStatus(200);
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    })
+    .delete(middleware.isLoggedIn, async (req, res) => {
+        try {
+            await db.query({
+                text: `DELETE FROM users_collections_followers WHERE user_id = $1 AND collection_id = $2`,
+                values: [req.user.id, req.params.collection_id],
+            });
+
+            return res.sendStatus(200);
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
     });
 
 router.route('/users/:user_id')
     // update user
     .patch(middleware.isLoggedIn, async (req, res) => {
-        const update = {};
+        try {
+            const {username, email, profileImage, password} = req.body;
 
-        for (let key in req.body) {
-            if (req.body.hasOwnProperty(key) && key !== 'profileImage') {
-                update[key] = req.body[key];
-            } else if (key === 'profileImage') {
-                update.profileImage = await cloudinary.v2.uploader.upload(req.body.profileImage,
-                    {
-                        resource_type: "image",
-                        public_id: `users/${req.user._id}/profileImage`,
-                        overwrite: true,
-                        transformation: [
-                            {width: 400, height: 400, gravity: "face", radius: "max", crop: "crop"},
-                            {height: 200, width: 200, crop: "fill"}
-                        ]
-                    });
+            const updateValues = [];
+            const values = [];
+
+            function updateQuery(key, value) {
+                updateValues.push(`${key} = $${values.length + 1}`);
+                values.push(value);
             }
+
+            if (typeof username === 'string') {
+                updateQuery('username', username);
+            }
+            if (typeof email === 'string') {
+                updateQuery('email', email);
+            }
+            if (typeof password === 'string') {
+                const userRes = await db.query({
+                    text: `SELECT password FROM users WHERE id = $1`,
+                    values: [req.user.id],
+                });
+                if (password !== userRes.rows[0].password) {
+                    updateQuery('password', await hashPassword(password));
+                }
+            }
+            if (typeof profileImage === 'string') {
+                updateQuery('profile_image', profileImage);
+            }
+
+            if (updateValues.length > 0) {
+                const response = await db.query({
+                    text: `UPDATE users SET ${updateValues.join(", ")} WHERE id = $${values.length + 1} RETURNING *`,
+                    values: values.concat([req.user.id]),
+                });
+
+                return res.status(200).send({user: response.rows[0]})
+            }
+
+            return res.sendStatus(200);
+
+        } catch (error) {
+            res.status(404).send({detail: error.message});
         }
-
-        const user = await User.findOneAndUpdate({"_id": req.user._id}, update, {new: true})
-            .populate('collections');
-
-        return res.status(200).json({user: user})
     })
     .get(async (req, res) => {
         let response;
@@ -92,7 +149,7 @@ router.route('/users/:user_id')
     })
     // delete user account
     .delete((req, res) => {
-
+        res.sendStatus(404);
     });
 
 // DISPLAY GROCERY LIST

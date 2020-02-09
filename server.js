@@ -59,6 +59,10 @@ LEFT JOIN LATERAL (
         )
     ) cr ON true
     WHERE collections.author_id = users.id
+    OR collections.id IN (
+        SELECT collection_id FROM users_collections_followers
+        WHERE users_collections_followers.user_id = users.id
+    )
     GROUP BY collections.id
 ) c ON true
 LEFT JOIN LATERAL (

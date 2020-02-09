@@ -17,15 +17,15 @@ const CollectionCard = observer((props) => {
     const context = useContext(ApiStoreContext);
 
     const isCollectionOwner = props.collection.author_id === context.user?.id;
-    const isFollower = !!context.user?.collections.find(c => c.id === props.collection.id);
+    const isFollower = !!context.user?.collections?.find(c => c.id === props.collection.id);
 
     let button;
     if (didMount && isCollectionOwner && !props.collection.is_primary) {
         button = <DeleteButton onClick={() => props.deleteCollection(props.collection.id)}/>
     } else if (didMount && isFollower && !isCollectionOwner) {
-        button = <RemoveButton onClick={() => props.removeCollection(props.collection.id)}/>
+        button = <RemoveButton onClick={async () => await props.unfollowCollection(props.collection.id)}/>
     } else if (didMount && context.user && !isCollectionOwner) {
-        button = <Button onClick={() => props.addCollection(props.collection.id)}>
+        button = <Button onClick={async () => await props.followCollection(props.collection.id)}>
             <FontAwesomeIcon icon={faPlus}/>
         </Button>
     }
@@ -78,8 +78,8 @@ const CollectionCard = observer((props) => {
 CollectionCard.propTypes = {
     collection: PropTypes.object.isRequired,
     deleteCollection: PropTypes.func.isRequired,
-    removeCollection: PropTypes.func.isRequired,
-    addCollection: PropTypes.func.isRequired,
+    unfollowCollection: PropTypes.func.isRequired,
+    followCollection: PropTypes.func.isRequired,
 };
 
 export default CollectionCard;

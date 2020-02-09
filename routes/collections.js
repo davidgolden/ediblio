@@ -1,13 +1,9 @@
 const express = require('express'),
     router = express.Router(),
-    Collection = require('../models/collection'),
     uuidv1 = require('uuid/v1'),
     middleware = require('../middleware');
 
 const db = require("../db/index");
-
-const {Pool} = require('pg');
-const pool = new Pool();
 
 const selectUserWithCollections = `
         SELECT users.*,
@@ -89,6 +85,16 @@ router.delete('/collections/:collection_id', middleware.isLoggedIn, async (req, 
     }
 });
 
+router.get('/collections/:collection_id', async (req, res) => {
+    const response = await db.query({
+        text: selectCollectionWithRecipes,
+        values: [req.params.collection_id]
+    });
+    res.status(200).json({
+        collection: response.rows[0],
+    });
+});
+
 router.route('/collections/:collection_id/recipes/:recipe_id')
     // add recipe to collection
     .post(middleware.checkCollectionOwnership, async (req, res) => {
@@ -116,16 +122,5 @@ router.route('/collections/:collection_id/recipes/:recipe_id')
             return res.status(404).send({detail: error.message});
         }
     });
-
-router.get('/collections/:collection_id', async (req, res) => {
-    const response = await db.query({
-        text: selectCollectionWithRecipes,
-        values: [req.params.collection_id]
-    });
-    res.status(200).json({
-        collection: response.rows[0],
-    });
-
-});
 
 module.exports = router;

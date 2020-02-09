@@ -1,6 +1,5 @@
 import React from "react";
 import axios from "axios";
-import {addIngredient, canBeAdded} from "./utils/conversions";
 import './stylesheets/base.scss';
 import {observable, action, autorun, toJS} from "mobx";
 import Router from 'next/router';
@@ -137,48 +136,6 @@ export default class Store {
                     rej(err);
                 })
         })
-    };
-
-    @action
-    patchUser = partialUserObj => {
-        return new Promise((res, rej) => {
-            axios.patch(`/api/users/${this.user._id}`, {
-                ...partialUserObj
-            })
-                .then(response => {
-                    this.user = response.data.user;
-                    res();
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej(err);
-                })
-        });
-    };
-
-    @action
-    putCollection = collectionObj => {
-        return new Promise((res, rej) => {
-            axios.patch(`/api/collections/${collectionObj.id}`, {
-                collection: collectionObj
-            })
-                .then(response => {
-                    this.user = {
-                        ...this.user,
-                        collections: this.user.collections.map(c => {
-                            if (c._id === collectionObj._id) {
-                                return response.data.collection;
-                            }
-                            return c;
-                        })
-                    };
-                    res();
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej(err);
-                })
-        });
     };
 
     @action

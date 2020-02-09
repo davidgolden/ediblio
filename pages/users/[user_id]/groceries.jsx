@@ -35,14 +35,15 @@ const Groceries = props => {
         setStoreMode(!storeMode);
     };
 
-    const updateList = () => {
-        context.patchUser({
+    const updateList = async () => {
+        // TODO: this needs completing
+
+        await axios.patch(`/api/users/${context.user.id}`, {
             groceryList: groceryList,
             menu: menu,
-        })
-            .then(() => {
-                setIsCurrent(true);
-            })
+        });
+
+        setIsCurrent(true);
     };
 
     const groceryListContainerClassName = classNames({
