@@ -1,7 +1,6 @@
 const express = require('express'),
     router = express.Router(),
     {hashPassword} = require("../utils"),
-    bcrypt = require('bcrypt-nodejs'),
     middleware = require('../middleware');
 
 const cloudinary = require('cloudinary');
@@ -44,11 +43,12 @@ router.route('/users/:user_id/recipes')
         // get menu
         try {
             const response = await db.query({
-                text: `SELECT * FROM recipes
-WHERE recipes.id IN (
-SELECT recipe_id FROM users_recipes_menu
-WHERE users_recipes_menu.user_id = $1
-);`,
+                text: `
+                SELECT * FROM recipes
+                WHERE recipes.id IN (
+                    SELECT recipe_id FROM users_recipes_menu
+                    WHERE users_recipes_menu.user_id = $1
+                );`,
                 values: [req.user.id]
             });
 
@@ -64,11 +64,18 @@ router.route('/users/:user_id/ingredients')
         // get grocery list
         try {
             const response = await db.query({
-                text: `SELECT * FROM ingredients
-WHERE id IN (
-SELECT ingredient_id FROM users_ingredients_groceries
-WHERE users_ingredients_groceries.user_id = $1
-);`,
+                text: `
+                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, m.short_name measurement, i.name
+                FROM users_ingredients_groceries
+                LEFT JOIN LATERAL (
+                    SELECT short_name FROM measurements
+                    WHERE measurements.id = users_ingredients_groceries.measurement_id
+                ) m ON true
+                LEFT JOIN LATERAL (
+                    SELECT name FROM ingredients
+                    WHERE ingredients.id = users_ingredients_groceries.ingredient_id
+                ) i ON true
+                WHERE users_ingredients_groceries.user_id = $1;`,
                 values: [req.user.id],
             });
 
@@ -90,11 +97,12 @@ router.route('/users/:user_id/recipes/:recipe_id')
 
             // insert all ingredients from recipe into grocery list
             await db.query({
-                text: `INSERT INTO users_ingredients_groceries (user_id, ingredient_id)
-                        SELECT '${req.user.id}', ingredients.id FROM ingredients WHERE id IN (
-                        SELECT recipes_ingredients.ingredient_id from recipes_ingredients WHERE recipes_ingredients.recipe_id = $1
-                    )`,
-                values: [req.params.recipe_id]
+                text: `
+                INSERT INTO users_ingredients_groceries (user_id, ingredient_id, measurement_id, quantity)
+                SELECT $1, recipes_ingredients.ingredient_id, recipes_ingredients.measurement_id, recipes_ingredients.quantity
+                FROM recipes_ingredients
+                WHERE recipes_ingredients.recipe_id = $2`,
+                values: [req.user.id, req.params.recipe_id]
             });
 
             res.sendStatus(200);
@@ -209,23 +217,24 @@ router.route('/users/:user_id')
 // get certain collection details about a user's collections
 router.get('/users/:user_id/collections', async (req, res) => {
     const query = await db.query({
-        text: `SELECT collections.*, author.profile_image author_image,
-COALESCE(json_agg(recipes.image) FILTER (WHERE recipes IS NOT NULL), '[]') recipes
-FROM collections
-LEFT JOIN LATERAL (
-select recipes.image from recipes
-where recipes.id in (
-select recipe_id from recipes_collections
-where recipes_collections.collection_id = collections.id
-)
-limit 4
-) recipes ON TRUE 
-LEFT JOIN LATERAL (
-select profile_image from users
-where users.id = collections.author_id
-) author ON TRUE
-WHERE collections.author_id = $1
-group by collections.id, author.profile_image;`,
+        text: `
+        SELECT collections.*, author.profile_image author_image,
+        COALESCE(json_agg(recipes.image) FILTER (WHERE recipes IS NOT NULL), '[]') recipes
+        FROM collections
+        LEFT JOIN LATERAL (
+            select recipes.image from recipes
+            where recipes.id in (
+                select recipe_id from recipes_collections
+                where recipes_collections.collection_id = collections.id
+            )
+            limit 4
+        ) recipes ON TRUE 
+        LEFT JOIN LATERAL (
+            select profile_image from users
+            where users.id = collections.author_id
+        ) author ON TRUE
+        WHERE collections.author_id = $1
+        group by collections.id, author.profile_image;`,
         values: [req.params.user_id],
     });
     return res.status(200).send({collections: query.rows});

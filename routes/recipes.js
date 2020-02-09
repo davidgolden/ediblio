@@ -28,6 +28,83 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_SECRET
 });
 
+async function getRecipe(recipe_id, user_id) {
+    let response;
+
+    if (user_id) {
+        response = await db.query({
+            text: `
+                SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
+                COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
+                FROM recipes
+                LEFT JOIN LATERAL (
+                    select rating from ratings
+                    where ratings.recipe_id = recipes.id
+                ) ratings ON TRUE 
+                LEFT JOIN LATERAL (
+                    select rating from ratings
+                    where ratings.recipe_id = recipes.id
+                    and ratings.author_id = $1
+                ) user_ratings ON TRUE
+                LEFT JOIN LATERAL (
+                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, m.short_name measurement, i.name as name
+                    FROM recipes_ingredients
+                    LEFT JOIN LATERAL (
+                        SELECT short_name FROM measurements
+                        WHERE measurements.id = recipes_ingredients.measurement_id
+                    ) m ON true
+                    LEFT JOIN LATERAL (
+                        SELECT name FROM ingredients
+                        WHERE ingredients.id = recipes_ingredients.ingredient_id
+                    ) i ON true
+                    WHERE recipes_ingredients.recipe_id = recipes.id
+                ) ingredients ON true
+                LEFT JOIN LATERAL (
+                    select username
+                    from users
+                    where users.id = recipes.author_id
+                ) author ON TRUE
+                WHERE recipes.id = $2
+                group by recipes.id, author.username;`,
+            values: [user_id, recipe_id]
+        })
+    } else {
+        response = await db.query({
+            text: `
+                SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, author.username author_username,
+                COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
+                FROM recipes
+                LEFT JOIN LATERAL (
+                    select rating from ratings
+                    where ratings.recipe_id = recipes.id
+                ) ratings ON TRUE 
+                LEFT JOIN LATERAL (
+                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, m.short_name measurement, i.name as name
+                    FROM recipes_ingredients
+                    LEFT JOIN LATERAL (
+                        SELECT short_name FROM measurements
+                        WHERE measurements.id = recipes_ingredients.measurement_id
+                    ) m ON true
+                    LEFT JOIN LATERAL (
+                        SELECT name FROM ingredients
+                        WHERE ingredients.id = recipes_ingredients.ingredient_id
+                    ) i ON true
+                    WHERE recipes_ingredients.recipe_id = recipes.id
+                ) ingredients ON true
+                LEFT JOIN LATERAL (
+                    select username
+                    from users
+                    where users.id = recipes.author_id
+                ) author ON TRUE
+                WHERE recipes.id = $1
+                group by recipes.id, author.username;`,
+            values: [recipe_id]
+        });
+    }
+
+    return response.rows[0];
+}
+
 // get all recipes
 router.route('/recipes')
     .get(async (req, res) => {
@@ -81,82 +158,31 @@ router.route('/recipes')
         let recipeRes = await db.query(text, values);
 
         if (ingredients.length > 0) {
-            await db.query(
-                `INSERT INTO ingredients (name, quantity, measurement, recipe_id)
-                VALUES ${ingredients.map(ing => `('${ing.name}', '${ing.quantity}', '${ing.measurement}', '${recipeRes.rows[0].id}'), `)}`
-            );
+            for (let x = 0; x < ingredients.length; x++) {
+                const ing = ingredients[x];
+                const ingredientRes = await db.query({
+                    text: 'INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING *',
+                    values: [ing.name],
+                });
 
-            recipeRes = await db.query(`
-                SELECT DISTINCT recipes.*, ingredients.* AS "ingredients[]" FROM recipes INNER JOIN ingredients ON recipes.id = ingredients.recipe_id WHERE recipes.id = ${recipeRes.rows[0].id};
-            `);
+                await db.query({
+                    text: 'INSERT INTO recipes_ingredients (recipe_id, ingredient_id, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
+                    values: [recipeRes.rows[0].id, ingredientRes.rows[0].id, ing.measurement, ing.quantity]
+                })
+            }
         }
 
-        return res.status(200).json({recipe: recipeRes.rows[0]});
+        const recipe = await getRecipe(recipeRes.rows[0].id, req.user.id);
+
+        return res.status(200).json({recipe});
     });
 
 router.route('/recipes/:recipe_id')
     .get(async (req, res) => {
-        let response;
-
-        if (req.user) {
-            response = await db.query({
-                text: `SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
-COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
-FROM recipes
-LEFT JOIN LATERAL (
-select rating from ratings
-where ratings.recipe_id = recipes.id
-) ratings ON TRUE 
-LEFT JOIN LATERAL (
-select rating from ratings
-where ratings.recipe_id = recipes.id
-and ratings.author_id = $1
-) user_ratings ON TRUE
-LEFT JOIN LATERAL (
-select * from ingredients
-where ingredients.id in (
-select ingredient_id from recipes_ingredients
-where recipes_ingredients.recipe_id = recipes.id
-)
-) ingredients ON TRUE
-LEFT JOIN LATERAL (
-select username
-from users
-where users.id = recipes.author_id
-) author ON TRUE
-WHERE recipes.id = $2
-group by recipes.id, author.username;`,
-                values: [req.user.id, req.params.recipe_id]
-            })
-        } else {
-            response = await db.query({
-                text: `SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, author.username author_username,
-COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
-FROM recipes
-LEFT JOIN LATERAL (
-select rating from ratings
-where ratings.recipe_id = recipes.id
-) ratings ON TRUE 
-LEFT JOIN LATERAL (
-select * from ingredients
-where ingredients.id in (
-select id from recipes_ingredients
-where recipes_ingredients.recipe_id = recipes.id
-)
-) ingredients ON TRUE
-LEFT JOIN LATERAL (
-select username
-from users
-where users.id = recipes.author_id
-) author ON TRUE
-WHERE recipes.id = $1
-group by recipes.id, author.username;`,
-                values: [req.params.recipe_id]
-            });
-        }
+        const recipe = await getRecipe(req.params.recipe_id, req.user.id);
 
         return res.status(200).json({
-            recipe: response.rows[0]
+            recipe
         })
     })
     .patch(middleware.checkRecipeOwnership, async (req, res) => {
@@ -175,17 +201,6 @@ group by recipes.id, author.username;`,
                 values.push(value);
             }
 
-            function updateIngredientsQuery(type, values, updateString) {
-                for (let k in ingredients) {
-                    if (ingredients.hasOwnProperty(k)) {
-                        const ingredient = ingredients[k];
-                        values.push(ingredient.id, ingredient[type]);
-                        updateString += `WHEN $${values.length - 1} THEN $${values.length} `
-                    }
-                }
-                return updateString;
-            }
-
             if (typeof name === 'string') {
                 updateQuery('name', name);
             }
@@ -200,59 +215,23 @@ group by recipes.id, author.username;`,
             }
             if (ingredients) {
 
-                let newIngredients = ingredients.filter(i => !i.id);
-                ingredients = ingredients.filter(i => i.id);
-
-                if (newIngredients.length > 0) {
-                    let count = 1;
-                    let text = newIngredients.map(() => {
-                        const str = `($${count}, $${count + 1}, $${count + 2})`;
-                        count += 3;
-                        return str;
-                    }).join(", ");
-                    const ingRes = await client.query({
-                        text: `INSERT INTO ingredients (name, measurement, quantity) VALUES ${text} RETURNING id`,
-                        values: newIngredients.reduce((acc, curr) => acc.concat([curr.name, curr.measurement, curr.quantity]), [])
-                    });
-
-                    // this is important so we don't delete it later
-                    newIngredients = ingRes.rows;
-
-                    count = 1;
-                    text = ingRes.rows.map(() => {
-                        const str = `($${count}, $${count + 1})`;
-                        count += 2;
-                        return str;
-                    }).join(", ");
-                    await client.query({
-                        text: `INSERT INTO recipes_ingredients (recipe_id, ingredient_id) VALUES ${text}`,
-                        values: ingRes.rows.reduce((acc, curr) => acc.concat([req.params.recipe_id, curr.id]), [])
-                    });
-                }
-
-                const values = [];
-                let ingredientUpdateString = `UPDATE ingredients SET measurement = CASE id `;
-                ingredientUpdateString = updateIngredientsQuery('measurement', values, ingredientUpdateString);
-                ingredientUpdateString += 'END, name = CASE id ';
-                ingredientUpdateString = updateIngredientsQuery('name', values, ingredientUpdateString);
-                ingredientUpdateString += 'END, quantity = CASE id ';
-                ingredientUpdateString = updateIngredientsQuery('quantity', values, ingredientUpdateString);
-                ingredientUpdateString += `END WHERE id IN (${Array.from(Object.values(ingredients)).map(i => i.id).join(", ")}) RETURNING id`;
-
-                const updatedIngredients = await client.query(ingredientUpdateString, values);
-
                 await client.query({
-                    text: `DELETE FROM ingredients
-                    WHERE ingredients.id IN (
-                        SELECT ingredient_id FROM recipes_ingredients
-                        WHERE recipes_ingredients.recipe_id = $1
-                        AND recipes_ingredients.ingredient_id
-                        NOT IN (${Array.from(Object.values(updatedIngredients.rows)).map(i => i.id).join(", ")})
-                        ${newIngredients.length > 0 ? `AND recipes_ingredients.ingredient_id
-                        NOT IN (${newIngredients.map(i => i.id).join(", ")})` : ''}
-                )`,
+                    text: `DELETE FROM recipes_ingredients WHERE recipe_id = $1`,
                     values: [req.params.recipe_id]
                 });
+
+                for (let x = 0; x < ingredients.length; x++) {
+                    const ing = ingredients[x];
+                    const ingredientRes = await client.query({
+                        text: 'INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING *',
+                        values: [ing.name],
+                    });
+
+                    await client.query({
+                        text: 'INSERT INTO recipes_ingredients (recipe_id, ingredient_id, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4);',
+                        values: [req.params.recipe_id, ingredientRes.rows[0].id, ing.measurement, ing.quantity]
+                    })
+                }
             }
 
             if (updateValues.length > 0) {
@@ -265,32 +244,40 @@ group by recipes.id, author.username;`,
             await client.query('COMMIT');
 
             const recipeRes = await db.query({
-                text: `SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
-COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
-FROM recipes
-LEFT JOIN LATERAL (
-select rating from ratings
-where ratings.recipe_id = recipes.id
-) ratings ON TRUE 
-LEFT JOIN LATERAL (
-select rating from ratings
-where ratings.recipe_id = recipes.id
-and ratings.author_id = $1
-) user_ratings ON TRUE
-LEFT JOIN LATERAL (
-select * from ingredients
-where ingredients.id in (
-select ingredient_id from recipes_ingredients
-where recipes_ingredients.recipe_id = recipes.id
-)
-) ingredients ON TRUE
-LEFT JOIN LATERAL (
-select username
-from users
-where users.id = recipes.author_id
-) author ON TRUE
-WHERE recipes.id = $2
-group by recipes.id, author.username;`,
+                text: `
+                SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
+                COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
+                FROM recipes
+                LEFT JOIN LATERAL (
+                    select rating from ratings
+                    where ratings.recipe_id = recipes.id
+                ) ratings ON TRUE 
+                LEFT JOIN LATERAL (
+                    select rating from ratings
+                    where ratings.recipe_id = recipes.id
+                    and ratings.author_id = $1
+                ) user_ratings ON TRUE
+                LEFT JOIN LATERAL (
+                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, m.short_name measurement, i.name as name
+                    FROM recipes_ingredients
+                    LEFT JOIN LATERAL (
+                        SELECT short_name FROM measurements
+                        WHERE measurements.id = recipes_ingredients.measurement_id
+                    ) m ON true
+                    LEFT JOIN LATERAL (
+                        SELECT name FROM ingredients
+                        WHERE ingredients.id = recipes_ingredients.ingredient_id
+                    ) i ON true
+                    WHERE recipes_ingredients.recipe_id = recipes.id
+                ) ingredients ON true
+                LEFT JOIN LATERAL (
+                    select username
+                    from users
+                    where users.id = recipes.author_id
+                ) author ON TRUE
+                WHERE recipes.id = $2
+                group by recipes.id, author.username;
+                `,
                 values: [req.user.id, req.params.recipe_id]
             });
 
@@ -303,31 +290,15 @@ group by recipes.id, author.username;`,
         }
     })
     .delete(middleware.checkRecipeOwnership, async (req, res) => {
-        const client = await pool.connect();
         try {
-            await client.query('BEGIN');
-
-            await client.query({
-                text: `DELETE FROM ingredients where id IN (
-                    SELECT id FROM recipes_ingredients
-                    WHERE recipes_ingredients.recipe_id = $1
-                )`,
-                values: [req.params.recipe_id],
-            });
-
-            await client.query({
+            await db.query({
                 text: `DELETE FROM recipes WHERE id = $1`,
                 values: [req.params.recipe_id],
             });
 
-            await client.query('COMMIT');
-
             return res.status(200).send('Success!')
         } catch (error) {
-            await client.query('ROLLBACK');
-            res.status(404).send(error);
-        } finally {
-            client.release();
+            res.status(404).send({detail: error.message});
         }
     });
 

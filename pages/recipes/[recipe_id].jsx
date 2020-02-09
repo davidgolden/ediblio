@@ -67,8 +67,7 @@ const Recipe_id = observer(props => {
                         </Button>)}
                 </div>
                 <div>{context.user && <RecipeButtons
-                    recipe_id={recipe.id}
-                    author_id={recipe.author_id}
+                    recipe={recipe}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />}

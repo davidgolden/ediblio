@@ -13,6 +13,21 @@ async function populate() {
 
     const users = await User.find({});
 
+    await db.query(`INSERT INTO measurements (short_name, long_name, long_name_plural, type) VALUES
+            ('tsp', 'teaspoon', 'teaspoons', 'volume'),
+            ('tbsp', 'tablespoon', 'tablespoons', 'volume'),
+            ('pt', 'pint', 'pints', 'volume'),
+            ('fl oz', 'fluid ounce', 'fluid ounces', 'volume'),
+            ('qt', 'quart', 'quarts', 'volume'),
+            ('oz', 'ounce', 'ounces', 'weight'),
+            ('ml', 'milliliter', 'milliliters', 'volume'),
+            ('lb', 'pound', 'pounds', 'weight'),
+            ('gal', 'gallon', 'gallons', 'volume'),
+            ('l', 'liter', 'liters', 'volume'),
+            ('c', 'cup', 'cups', 'volume'),
+            ('g', 'gram', 'grams', 'weight'),
+            ('#', '#', '', 'amount')`);
+
     for (let i = 0; i < users.length; i++) {
         const user = users[i];
 
@@ -40,13 +55,13 @@ async function populate() {
                 for (let x = 0; x < recipe.ingredients.length; x++) {
                     const ing = recipe.ingredients[x];
                     const ingredientRes = await db.query({
-                        text: 'INSERT INTO ingredients (name, quantity, measurement) VALUES ($1, $2, $3) RETURNING *',
-                        values: [ing.name, ing.quantity, ing.measurement],
+                        text: 'INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING *',
+                        values: [ing.name],
                     });
 
                     await db.query({
-                        text: 'INSERT INTO recipes_ingredients (recipe_id, ingredient_id) VALUES ($1, $2)',
-                        values: [recipeRes.rows[0].id, ingredientRes.rows[0].id]
+                        text: 'INSERT INTO recipes_ingredients (recipe_id, ingredient_id, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
+                        values: [recipeRes.rows[0].id, ingredientRes.rows[0].id, ing.measurement, Number(ing.quantity)]
                     })
                 }
             }
@@ -108,12 +123,23 @@ async function create() {
     CREATE TABLE users (
         id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
-        username TEXT NOT NULL,
-        email TEXT NOT NULL,
+        username TEXT NOT NULL UNIQUE,
+        email TEXT NOT NULL UNIQUE,
         profile_image TEXT,
         password TEXT NOT NULL,
         reset_token TEXT,
         token_expires TIMESTAMP
+    );
+    CREATE TABLE measurements (
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
+        short_name TEXT NOT NULL UNIQUE,
+        long_name TEXT NOT NULL UNIQUE,
+        long_name_plural TEXT NOT NULL UNIQUE,
+        type TEXT NOT NULL
+    );
+    CREATE TABLE ingredients (
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
+        name TEXT NOT NULL UNIQUE
     );
     CREATE TABLE collections (
         id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
@@ -138,18 +164,13 @@ async function create() {
         recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
         UNIQUE (recipe_id, collection_id)
     );
-    CREATE TABLE ingredients (
-        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
-        created_at DATE NOT NULL DEFAULT CURRENT_DATE,
-        name TEXT NOT NULL,
-        quantity TEXT NOT NULL,
-        measurement TEXT NOT NULL
-    );
     CREATE TABLE recipes_ingredients (
         id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
-        ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE
+        quantity NUMERIC NOT NULL,
+        ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE,
+        measurement_id UUID REFERENCES measurements(id) ON DELETE CASCADE
     );
     CREATE TABLE users_recipes_menu (
         id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
@@ -163,7 +184,9 @@ async function create() {
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         deleted BOOLEAN DEFAULT FALSE,
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-        ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE
+        ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE,
+        measurement_id UUID REFERENCES measurements(id) ON DELETE CASCADE,
+        quantity NUMERIC NOT NULL
     );
     CREATE TABLE users_collections_followers (
         id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
@@ -177,13 +200,14 @@ async function create() {
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
         author_id UUID REFERENCES users(id) ON DELETE CASCADE,
-        rating REAL NOT NULL,
+        rating NUMERIC NOT NULL,
         UNIQUE (recipe_id, author_id)
     );
 `);
 }
 
 create()
+    .then(() => console.log('created'))
     .then(populate)
-    .then(() => console.log('done'));
+    .then(() => console.log('populated'));
 // after running this must run  psql recipecloud -p 5433 < node_modules/connect-pg-simple/table.sql to get sessions working

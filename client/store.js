@@ -8,6 +8,7 @@ export default class Store {
 
     constructor() {
         if (typeof window !== 'undefined') {
+            this.fetchMeasurements();
             this.loadUserFromLocalStorage();
             autorun(() => {
                 localStorage.setItem("user", JSON.stringify(toJS(this.user)));
@@ -71,6 +72,14 @@ export default class Store {
     @observable notificationType = '';
 
     @observable modalStack = [];
+
+    @observable measurements = [];
+
+    @action
+    fetchMeasurements = async () => {
+        const response = await axios.get('/api/measurements');
+        this.measurements = response.data.measurements;
+    };
 
     @action
     addModal = (type) => {

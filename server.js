@@ -22,6 +22,7 @@ const userRoutes = require('./routes/users'),
     recipeRoutes = require('./routes/recipes'),
     collectionRoutes = require('./routes/collections'),
     ratingRoutes = require('./routes/ratings'),
+    measurementRoutes = require('./routes/measurements'),
     indexRoutes = require('./routes/index');
 
 const env = process.env.NODE_ENV || "development";
@@ -66,12 +67,17 @@ LEFT JOIN LATERAL (
     GROUP BY collections.id
 ) c ON true
 LEFT JOIN LATERAL (
-    SELECT *
-    FROM ingredients
-    WHERE ingredients.id IN (
-        SELECT user_id FROM users_ingredients_groceries
-        WHERE users_ingredients_groceries.user_id = users.id
-    )
+    SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, m.short_name, i.name
+    FROM users_ingredients_groceries
+    LEFT JOIN LATERAL (
+        SELECT short_name FROM measurements
+        WHERE measurements.id = users_ingredients_groceries.measurement_id
+    ) m ON true
+    LEFT JOIN LATERAL (
+        SELECT name FROM ingredients
+        WHERE ingredients.id = users_ingredients_groceries.ingredient_id
+    ) i ON true
+    WHERE users_ingredients_groceries.user_id = users.id
 ) g ON true
 `;
 
@@ -152,6 +158,7 @@ app.prepare().then(() => {
     server.use('/api/', recipeRoutes);
     server.use('/api/', collectionRoutes);
     server.use('/api/', ratingRoutes);
+    server.use('/api/', measurementRoutes);
 
     server.get('/service-worker.js', (req, res) => {
         const filePath = path.join(__dirname, '.next/service-worker.js');

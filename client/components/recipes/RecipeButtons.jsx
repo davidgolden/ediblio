@@ -36,17 +36,11 @@ const RecipeButtons = observer(props => {
     };
 
     if (!context.user) {
-        return false;
+        return <div/>;
     }
 
-    // const inCloud = !!(context.user.recipes.find(id => id === props.recipe_id));
     const inMenu = !!(context.user?.menu?.find(item => item && item.id === props.recipe.id) || context.user?.menu?.includes(props.recipe.id));
-    const isAuthor = props.recipe.author_id === context.user.id;
-
-    // if in cloud, show inCloud
-    // if in cloud and not author, show remove from cloud
-    // if not in cloud, show add to cloud
-    // if not on menu show add to grocery list
+    const isAuthor = props.recipe.author_id === context.user?.id;
 
     return (
         <React.Fragment>

@@ -1,9 +1,13 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import classNames from 'classnames';
 import styles from './styles/IngredientListItem.scss';
 import RemoveButton from "../utilities/buttons/RemoveButton";
+import {ApiStoreContext} from "../../stores/api_store";
+import {observer} from "mobx-react";
 
-const Ingredient = (props) => {
+const Ingredient = observer((props) => {
+    const context = useContext(ApiStoreContext);
+
     const ingredientRowClassName = classNames({
         [styles.ingredientRow]: true,
         "draggable": !props.storeMode,
@@ -26,19 +30,7 @@ const Ingredient = (props) => {
                     value={props.value.measurement}
                     onChange={e => props.handleUpdateIngredient(props.id, {measurement: e.target.value})}
                 >
-                    <option value='#'>#</option>
-                    <option value='tsp'>tsp</option>
-                    <option value='tbsp'>tbsp</option>
-                    <option value='cup'>cup</option>
-                    <option value='lb'>lb</option>
-                    <option value='fl oz'>fl oz</option>
-                    <option value='oz'>oz</option>
-                    <option value='pt'>pt</option>
-                    <option value='qt'>qt</option>
-                    <option value='ml'>ml</option>
-                    <option value='l'>l</option>
-                    <option value='g'>g</option>
-                    <option value='gal'>gal</option>
+                    {context.measurements.map(m => <option value={m.short_name}>{m.short_name}</option>)}
                 </select>
                 <input
                     type='text'
@@ -59,6 +51,6 @@ const Ingredient = (props) => {
             </div>
         )
     }
-}
+});
 
 export default Ingredient;
