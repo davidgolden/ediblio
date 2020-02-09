@@ -63,8 +63,7 @@
     "sortablejs": "^1.6.1",
     "url-loader": "^0.6.2",
     "url-metadata": "^2.1.7",
-    "urlsafe-base64": "^1.0.0",
-    "uuid": "^3.4.0"
+    "urlsafe-base64": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.7.7",

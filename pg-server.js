@@ -4,7 +4,6 @@ const User = require('./models/user');
 const Recipe = require("./models/recipe");
 const Collection = require("./models/collection");
 const Rating = require("./models/rating");
-const uuidv1 = require('uuid/v1');
 
 const db = require("./db/index");
 
@@ -18,14 +17,14 @@ async function populate() {
         const user = users[i];
 
         const userRes = await db.query({
-            text: `INSERT INTO users (id, username, email, profile_image, password)
-                        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-            values: [uuidv1(), user.username, user.email, user.profileImage, user.password]
+            text: `INSERT INTO users (username, email, profile_image, password)
+                        VALUES ($1, $2, $3, $4) RETURNING *`,
+            values: [user.username, user.email, user.profileImage, user.password]
         });
 
         await db.query({
-            text: `INSERT INTO collections (id, name, author_id, is_primary) VALUES ($1, $2, $3, $4)`,
-            values: [uuidv1(), 'Favorites', userRes.rows[0].id, true]
+            text: `INSERT INTO collections (name, author_id, is_primary) VALUES ($1, $2, $3)`,
+            values: ['Favorites', userRes.rows[0].id, true]
         });
 
         // add all user's created recipes
@@ -34,20 +33,20 @@ async function populate() {
                 const recipe = recipes[i];
 
                 const recipeRes = await db.query({
-                    text: 'INSERT INTO recipes (id, name, url, notes, image, author_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-                    values: [uuidv1(), recipe.name, recipe.url, recipe.notes, recipe.image, userRes.rows[0].id, recipe.created_at],
+                    text: 'INSERT INTO recipes (name, url, notes, image, author_id, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+                    values: [recipe.name, recipe.url, recipe.notes, recipe.image, userRes.rows[0].id, recipe.created_at],
                 });
 
                 for (let x = 0; x < recipe.ingredients.length; x++) {
                     const ing = recipe.ingredients[x];
                     const ingredientRes = await db.query({
-                        text: 'INSERT INTO ingredients (id, name, quantity, measurement) VALUES ($1, $2, $3, $4) RETURNING *',
-                        values: [uuidv1(), ing.name, ing.quantity, ing.measurement],
+                        text: 'INSERT INTO ingredients (name, quantity, measurement) VALUES ($1, $2, $3) RETURNING *',
+                        values: [ing.name, ing.quantity, ing.measurement],
                     });
 
                     await db.query({
-                        text: 'INSERT INTO recipes_ingredients (id, recipe_id, ingredient_id) VALUES ($1, $2, $3)',
-                        values: [uuidv1(), recipeRes.rows[0].id, ingredientRes.rows[0].id]
+                        text: 'INSERT INTO recipes_ingredients (recipe_id, ingredient_id) VALUES ($1, $2)',
+                        values: [recipeRes.rows[0].id, ingredientRes.rows[0].id]
                     })
                 }
             }
@@ -68,8 +67,8 @@ async function populate() {
             values: [ratings[x].author_id.email]
         });
         await db.query({
-            text: 'INSERT INTO ratings (id, recipe_id, author_id, rating) VALUES ($1, $2, $3, $4)',
-            values: [uuidv1(), recipeRes.rows[0].id, userRes.rows[0].id, ratings[x].rating],
+            text: 'INSERT INTO ratings (recipe_id, author_id, rating) VALUES ($1, $2, $3)',
+            values: [recipeRes.rows[0].id, userRes.rows[0].id, ratings[x].rating],
         })
     }
 
@@ -84,8 +83,8 @@ async function populate() {
         });
 
         const collectionRes = await db.query({
-            text: 'INSERT INTO collections (id, name, author_id) VALUES ($1, $2, $3) RETURNING *',
-            values: [uuidv1(), collections[i].name, userRes.rows[0].id],
+            text: 'INSERT INTO collections (name, author_id) VALUES ($1, $2) RETURNING *',
+            values: [collections[i].name, userRes.rows[0].id],
         });
 
         for (let x = 0; x < collections[i].recipes.length; x++) {
@@ -96,8 +95,8 @@ async function populate() {
             });
 
             await db.query({
-                text: 'INSERT INTO recipes_collections (id, collection_id, recipe_id) VALUES ($1, $2, $3)',
-                values: [uuidv1(), collectionRes.rows[0].id, recipeRes.rows[0].id]
+                text: 'INSERT INTO recipes_collections (collection_id, recipe_id) VALUES ($1, $2)',
+                values: [collectionRes.rows[0].id, recipeRes.rows[0].id]
             })
         }
     }
@@ -105,8 +104,9 @@ async function populate() {
 
 async function create() {
     await db.query(`
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     CREATE TABLE users (
-        id UUID NOT NULL PRIMARY KEY,
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         username TEXT NOT NULL,
         email TEXT NOT NULL,
@@ -116,14 +116,14 @@ async function create() {
         token_expires TIMESTAMP
     );
     CREATE TABLE collections (
-        id UUID NOT NULL PRIMARY KEY,
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         name TEXT NOT NULL,
         author_id UUID REFERENCES users(id) ON DELETE CASCADE,
         is_primary BOOLEAN DEFAULT false
     );
     CREATE TABLE recipes (
-        id UUID NOT NULL PRIMARY KEY,
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         name TEXT NOT NULL,
         url TEXT,
@@ -132,48 +132,48 @@ async function create() {
         author_id UUID REFERENCES users(id) ON DELETE NO ACTION
     );
     CREATE TABLE recipes_collections (
-        id UUID NOT NULL PRIMARY KEY,
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         collection_id UUID REFERENCES collections(id) ON DELETE CASCADE,
         recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
         UNIQUE (recipe_id, collection_id)
     );
     CREATE TABLE ingredients (
-        id UUID NOT NULL PRIMARY KEY,
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         name TEXT NOT NULL,
         quantity TEXT NOT NULL,
         measurement TEXT NOT NULL
     );
     CREATE TABLE recipes_ingredients (
-        id UUID NOT NULL PRIMARY KEY,
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
         ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE
     );
     CREATE TABLE users_recipes_menu (
-        id UUID NOT NULL PRIMARY KEY,
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         deleted BOOLEAN DEFAULT FALSE,
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE
     );
     CREATE TABLE users_ingredients_groceries (
-        id UUID NOT NULL PRIMARY KEY,
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         deleted BOOLEAN DEFAULT FALSE,
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE
     );
     CREATE TABLE users_collections_followers (
-        id UUID NOT NULL PRIMARY KEY,
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         collection_id UUID REFERENCES collections(id) ON DELETE CASCADE,
         UNIQUE (user_id, collection_id)
     );
     CREATE TABLE ratings (
-        id UUID NOT NULL PRIMARY KEY,
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
         author_id UUID REFERENCES users(id) ON DELETE CASCADE,

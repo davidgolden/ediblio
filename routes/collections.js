@@ -1,6 +1,5 @@
 const express = require('express'),
     router = express.Router(),
-    uuidv1 = require('uuid/v1'),
     middleware = require('../middleware');
 
 const db = require("../db/index");
@@ -48,8 +47,8 @@ GROUP BY collections.id;`;
 
 router.post('/collections', middleware.isLoggedIn, async (req, res) => {
     await db.query({
-        text: `INSERT INTO collections (id, name, author_id) VALUES ($1, $2, $3)`,
-        values: [uuidv1(), req.body.name, req.user.id],
+        text: `INSERT INTO collections (name, author_id) VALUES ($1, $2)`,
+        values: [req.body.name, req.user.id],
     });
 
     const response = await db.query({
@@ -100,8 +99,8 @@ router.route('/collections/:collection_id/recipes/:recipe_id')
     .post(middleware.checkCollectionOwnership, async (req, res) => {
         try {
             await db.query({
-                text: `INSERT INTO recipes_collections (id, recipe_id, collection_id) VALUES ($1, $2, $3)`,
-                values: [uuidv1(), req.params.recipe_id, req.params.collection_id],
+                text: `INSERT INTO recipes_collections (recipe_id, collection_id) VALUES ($1, $2)`,
+                values: [req.params.recipe_id, req.params.collection_id],
             });
 
             return res.sendStatus(200);

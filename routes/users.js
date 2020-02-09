@@ -1,7 +1,6 @@
 const express = require('express'),
     router = express.Router(),
     {hashPassword} = require("../utils"),
-    uuidv1 = require('uuid/v1'),
     bcrypt = require('bcrypt-nodejs'),
     middleware = require('../middleware');
 
@@ -44,10 +43,21 @@ router.route('/users/:user_id/recipes/:recipe_id')
     .post(middleware.isLoggedIn, async (req, res) => {
         // add full recipe to grocery list
         try {
+            // insert recipe into menu
             await db.query({
-                text: `INSERT INTO users_menu_recipe (user_id, recipe_id) VALUES ($1, $2)`,
-                values: [req.user.id, req.body.recipe_id]
+                text: `INSERT INTO users_recipes_menu (user_id, recipe_id) VALUES ($1, $2)`,
+                values: [req.user.id, req.params.recipe_id]
             });
+
+            // insert all ingredients from recipe into grocery list
+            await db.query({
+                text: `INSERT INTO users_ingredients_groceries (user_id, ingredient_id)
+                        SELECT '${req.user.id}', ingredients.id FROM ingredients WHERE id IN (
+                        SELECT recipes_ingredients.ingredient_id from recipes_ingredients WHERE recipes_ingredients.recipe_id = $1
+                    )`,
+                values: [req.params.recipe_id]
+            });
+
             res.sendStatus(200);
 
         } catch (error) {
@@ -56,14 +66,15 @@ router.route('/users/:user_id/recipes/:recipe_id')
     })
     .patch(middleware.isLoggedIn, async (req, res) => {
         // add partial recipe to grocery list
+
     });
 
 router.route('/users/:user_id/collections/:collection_id')
     .post(middleware.isLoggedIn, async (req, res) => {
         try {
             await db.query({
-                text: `INSERT INTO users_collections_followers (id, user_id, collection_id) VALUES ($1, $2, $3)`,
-                values: [uuidv1(), req.user.id, req.params.collection_id],
+                text: `INSERT INTO users_collections_followers (user_id, collection_id) VALUES ($1, $2)`,
+                values: [req.user.id, req.params.collection_id],
             });
 
             return res.sendStatus(200);

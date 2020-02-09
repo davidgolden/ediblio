@@ -20,8 +20,9 @@ const RecipeCard = props => {
         }
     };
 
-    const addToGroceryList = () => {
-        context.addToGroceryList(props.recipe.id, props.recipe.ingredients);
+    const addToGroceryList = async () => {
+        // context.addToGroceryList(props.recipe.id, props.recipe.ingredients);
+        await context.addToGroceryList(props.recipe.id);
     };
 
     const recipeCardClassName = classNames({
