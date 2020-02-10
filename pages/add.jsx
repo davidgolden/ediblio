@@ -119,7 +119,9 @@ const RecipeForm = observer(props => {
                 handleRecipeNotesChange={handleNotesChange}
             />
             <AddIngredients
+                canAdd={true}
                 ingredients={ingredients}
+                handleUpdateIngredient={() => {}}
                 handleUpdateAllIngredients={handleUpdateAllIngredients}
             />
             <div>

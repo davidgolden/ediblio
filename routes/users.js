@@ -6,6 +6,8 @@ const express = require('express'),
 const cloudinary = require('cloudinary');
 
 const db = require("../db/index");
+const {Pool} = require('pg');
+const pool = new Pool();
 
 cloudinary.config({
     cloud_name: 'recipecloud',
@@ -190,7 +192,37 @@ router.route('/users/:user_id/recipes/:recipe_id')
     })
     .patch(middleware.isLoggedIn, async (req, res) => {
         // add partial recipe to grocery list
+        const client = await pool.connect();
+        try {
+            await client.query("BEGIN");
+            // insert recipe into menu
+            await client.query({
+                text: `INSERT INTO users_recipes_menu (user_id, recipe_id) VALUES ($1, $2)`,
+                values: [req.user.id, req.params.recipe_id]
+            });
 
+            for (let x = 0; x < req.body.ingredients.length; x++) {
+                const ing = req.body.ingredients[x];
+                const ingredientRes = await client.query({
+                    text: 'INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING *',
+                    values: [ing.name],
+                });
+
+                await client.query({
+                    text: 'INSERT INTO users_ingredients_groceries (user_id, ingredient_id, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
+                    values: [req.user.id, ingredientRes.rows[0].id, ing.measurement, ing.quantity]
+                })
+            }
+
+            await client.query("COMMIT");
+            res.sendStatus(200);
+
+        } catch (error) {
+            await client.query("ROLLBACK");
+            res.status(404).send({detail: error.message});
+        } finally {
+            client.release();
+        }
     });
 
 router.route('/users/:user_id/collections/:collection_id')

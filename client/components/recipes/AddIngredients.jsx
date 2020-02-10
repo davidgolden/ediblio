@@ -25,11 +25,11 @@ const AddIngredients = (props) => {
         });
     }
 
-    function addToIngredientsToRemove(id) {
-        if (props.ingredientIdsToRemove.includes(id)) {
-            props.setIngredientIdsToRemove(props.ingredientIdsToRemove.filter(ingredientId => ingredientId !== id));
+    function addToSelectedIngredientIds(id) {
+        if (props.selectedIngredientIds.includes(id)) {
+            props.setSelectedIngredientIds(props.selectedIngredientIds.filter(ingredientId => ingredientId !== id));
         } else {
-            props.setIngredientIdsToRemove(props.ingredientIdsToRemove.concat([id]));
+            props.setSelectedIngredientIds(props.selectedIngredientIds.concat([id]));
         }
     }
 
@@ -45,7 +45,7 @@ const AddIngredients = (props) => {
     return (
         <div className={ingredientsContainerClassName}>
             <h3>Ingredient List</h3>
-            <form onSubmit={getIngredient} className={addIngredientFormClassName}>
+            {props.canAdd && <form onSubmit={getIngredient} className={addIngredientFormClassName}>
                 <div>
                     <FontAwesomeIcon icon={faQuestion}/>
                     <div>
@@ -54,7 +54,7 @@ const AddIngredients = (props) => {
                 </div>
                 <input placeholder={"1.5 cups milk"} value={value} onChange={e => setValue(e.target.value)}/>
                 <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
-            </form>
+            </form>}
             <Sortable
                 options={{
                     draggable: '.draggable',
@@ -72,8 +72,8 @@ const AddIngredients = (props) => {
                         dataId={JSON.stringify(item)}
                         handleUpdateIngredient={handleUpdateIngredient}
                         storeMode={props.storeMode}
-                        ingredientToRemove={props.ingredientIdsToRemove.includes(item.id)}
-                        addToIngredientsToRemove={addToIngredientsToRemove}
+                        selectedIngredientId={props.selectedIngredientIds.includes(item.id)}
+                        addToSelectedIngredientIds={addToSelectedIngredientIds}
                     />
                 })}
             </Sortable>
@@ -82,10 +82,12 @@ const AddIngredients = (props) => {
 };
 
 AddIngredients.propTypes = {
-    handleAddIngredient: PropTypes.func.isRequired,
+    canAdd: PropTypes.bool,
+    storeMode: PropTypes.bool,
+    handleAddIngredient: PropTypes.func,
     handleUpdateIngredient: PropTypes.func.isRequired,
-    ingredientIdsToRemove: PropTypes.array.isRequired,
-    setIngredientIdsToRemove: PropTypes.func.isRequired,
+    selectedIngredientIds: PropTypes.array.isRequired,
+    setSelectedIngredientIds: PropTypes.func.isRequired,
     ingredients: PropTypes.array.isRequired,
 };
 

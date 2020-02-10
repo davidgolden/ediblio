@@ -126,12 +126,13 @@ const Groceries = props => {
             <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
             <h2>My Grocery List</h2>
             <AddIngredients
+                canAdd={true}
                 containerClassName={ingredientsContainerClassName}
                 ingredients={groceryList}
                 handleAddIngredient={handleAddIngredient}
                 handleUpdateIngredient={handleUpdateIngredient}
-                ingredientIdsToRemove={ingredientIdsToRemove}
-                setIngredientIdsToRemove={setIngredientIdsToRemove}
+                selectedIngredientIds={ingredientIdsToRemove}
+                setSelectedIngredientIds={setIngredientIdsToRemove}
                 storeMode={storeMode}
                 dragEnabled={true}
             />

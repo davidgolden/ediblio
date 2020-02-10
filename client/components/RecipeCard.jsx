@@ -1,17 +1,32 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styles from './styles/RecipeCard.scss';
 import RecipeButtons from "./recipes/RecipeButtons";
-import {ApiStoreContext} from "../stores/api_store";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faUser, faImage} from '@fortawesome/free-solid-svg-icons';
+import {faImage} from '@fortawesome/free-solid-svg-icons';
 import Link from "next/link";
 import UserImageSmall from "./utilities/UserImageSmall";
+import axios from "axios";
+
+const addToGroceryList = async () => {
+    await axios.post(`/api/users/${this.user.id}/recipes/${props.recipe.id}`);
+};
+
+const recipeCardClassName = classNames({
+    [styles.recipeCard]: true,
+});
+const recipeCardImageClassName = classNames({
+    [styles.recipeCardImage]: true,
+});
+const recipeCardTextClassName = classNames({
+    [styles.recipeCardText]: true,
+});
+const recipeCardButtonClassName = classNames({
+    [styles.recipeCardButtons]: true,
+});
 
 const RecipeCard = props => {
-
-    const context = useContext(ApiStoreContext);
     const [showButtons, setShowButtons] = useState(false);
 
     const deleteRecipe = () => {
@@ -19,24 +34,6 @@ const RecipeCard = props => {
             props.deleteRecipe(props.recipe.id);
         }
     };
-
-    const addToGroceryList = async () => {
-        // context.addToGroceryList(props.recipe.id, props.recipe.ingredients);
-        await context.addToGroceryList(props.recipe.id);
-    };
-
-    const recipeCardClassName = classNames({
-        [styles.recipeCard]: true,
-    });
-    const recipeCardImageClassName = classNames({
-        [styles.recipeCardImage]: true,
-    });
-    const recipeCardTextClassName = classNames({
-        [styles.recipeCardText]: true,
-    });
-    const recipeCardButtonClassName = classNames({
-        [styles.recipeCardButtons]: true,
-    });
 
     return (
         <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)}

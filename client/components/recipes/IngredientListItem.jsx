@@ -1,4 +1,5 @@
 import React, {useContext, useState, useRef, useEffect} from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styles from './styles/IngredientListItem.scss';
 import {ApiStoreContext} from "../../stores/api_store";
@@ -36,7 +37,7 @@ const Ingredient = observer((props) => {
 
     if(!props.storeMode) {
         return (
-            <li className={ingredientRowClassName} data-id={props.dataId}>
+            <li className={ingredientRowClassName}>
                 <div onClick={handleClick} ref={ref}>
                 {editing ? <input
                     type='number'
@@ -63,17 +64,29 @@ const Ingredient = observer((props) => {
                     value={name}
                 /> : <span>{props.value.name}</span>}
                 </div>
-                <Checkbox checked={props.ingredientToRemove} onChange={() => props.addToIngredientsToRemove(props.id)}/>
+                <Checkbox checked={props.selectedIngredientId} onChange={() => props.addToSelectedIngredientIds(props.id)}/>
             </li>
         )
     } else {
         return (
             <div className={ingredientRowClassName} data-id={props.dataId}>
-                <Checkbox checked={props.ingredientToRemove} onChange={() => props.addToIngredientsToRemove(props.id)}/>
+                <Checkbox checked={props.selectedIngredientId} onChange={() => props.addToSelectedIngredientIds(props.id)}/>
                 <p>{props.value.quantity} {props.value.measurement.replace("#", "")} {props.value.name}</p>
             </div>
         )
     }
 });
+
+Ingredient.propTypes = {
+    value: PropTypes.shape({
+        measurement: PropTypes.string.isRequired,
+        quantity: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+    }).isRequired,
+    selectedIngredientId: PropTypes.bool.isRequired,
+    addToSelectedIngredientIds: PropTypes.func.isRequired,
+    storeMode: PropTypes.bool,
+    handleUpdateIngredient: PropTypes.func.isRequired,
+};
 
 export default Ingredient;

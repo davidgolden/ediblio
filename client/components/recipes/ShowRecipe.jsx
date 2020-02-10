@@ -26,11 +26,16 @@ const ShowRecipe = observer(props => {
     const [added, setAdded] = useState(false);
     const [avgRating, setAvgRating] = useState(props.recipe.avg_rating ? Math.round(props.recipe.avg_rating*2)/2 : 0);
     const [userRating, setUserRating] = useState(props.recipe.user_rating);
+    const [ingredientIdsToAdd, setIngredientIdsToAdd] = useState(props.recipe.ingredients.map(ing => ing.id));
     const context = useContext(ApiStoreContext);
 
-    const handleAddToList = () => {
-        props.addToGroceryList();
-        setAdded(true);
+    const handleAddToList = async () => {
+        try {
+            await props.addToGroceryList(props.recipe.ingredients.filter(ing => ingredientIdsToAdd.includes(ing.id)));
+            setAdded(true);
+        } catch (error) {
+            context.handleError(error);
+        }
     };
 
     const showRecipeButtonsClassName = classNames({
@@ -83,8 +88,11 @@ const ShowRecipe = observer(props => {
                 <h3>Recipe Notes</h3>
                 <p>{props.recipe.notes}</p>
                 <AddIngredients
+                    canAdd={false}
                     ingredients={props.recipe.ingredients}
-                    handleUpdateAllIngredients={props.handleUpdateAllIngredients}
+                    selectedIngredientIds={ingredientIdsToAdd}
+                    setSelectedIngredientIds={setIngredientIdsToAdd}
+                    handleUpdateIngredient={props.handleUpdateIngredient}
                 />
                 <div className={showRecipeButtonsClassName}>
                     {context.user ? <Button onClick={handleAddToList}>
@@ -97,7 +105,7 @@ const ShowRecipe = observer(props => {
 });
 
 ShowRecipe.propTypes = {
-    handleUpdateAllIngredients: PropTypes.func.isRequired,
+    handleUpdateIngredient: PropTypes.func.isRequired,
     recipe: PropTypes.object.isRequired,
 };
 

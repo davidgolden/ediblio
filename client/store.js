@@ -261,14 +261,4 @@ export default class Store {
                 })
         })
     };
-
-    addToGroceryList = async (recipe_id, ingredients) => {
-        // add full recipe and ingredients to menu/grocery list
-
-        await axios.post(`/api/users/${this.user.id}/recipes/${recipe_id}`);
-
-        // axios.post(`/api/users/${this.user.id}/menu`, {
-        //     recipe_id,
-        // });
-    };
 }

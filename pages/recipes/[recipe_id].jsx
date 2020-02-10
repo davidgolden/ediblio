@@ -13,14 +13,26 @@ import axios from "axios";
 import Router from 'next/router';
 import JsonLd from "../../client/components/utilities/JsonLd";
 
+const recipeContainerClassName = classNames({
+    [styles.recipeContainer]: true,
+});
+const recipeEditButtonsClassName = classNames({
+    [styles.recipeEditButtons]: true,
+});
+const toggleEditClassName = classNames({
+    [styles.toggleEdit]: true,
+});
+
 const Recipe_id = observer(props => {
     const [edit, setEdit] = useState(false);
     const [recipe, setRecipe] = useState(props.recipe);
 
     const context = useContext(ApiStoreContext);
 
-    const addToGroceryList = () => {
-        context.addToGroceryList(recipe._id, recipe.ingredients);
+    const addToGroceryList = async (ingredients) => {
+        await axios.patch(`/api/users/${context.user.id}/recipes/${props.recipe.id}`, {
+            ingredients,
+        });
     };
 
     const updateRecipe = fullRecipe => {
@@ -31,11 +43,16 @@ const Recipe_id = observer(props => {
         setEdit(!edit);
     };
 
-    function handleUpdateAllIngredients(ingredients) {
+    function handleUpdateIngredient(ingredient) {
         setRecipe({
             ...recipe,
-            ingredients: ingredients,
-        });
+            ingredients: recipe.ingredients.map(ing => {
+                if (ing.id === ingredient.id) {
+                    return ingredient;
+                }
+                return ing;
+            })
+        })
     }
 
     const deleteRecipe = () => {
@@ -46,16 +63,6 @@ const Recipe_id = observer(props => {
                 });
         }
     };
-
-    const recipeContainerClassName = classNames({
-        [styles.recipeContainer]: true,
-    });
-    const recipeEditButtonsClassName = classNames({
-        [styles.recipeEditButtons]: true,
-    });
-    const toggleEditClassName = classNames({
-        [styles.toggleEdit]: true,
-    });
 
     return (
         <div className={recipeContainerClassName}>
@@ -80,12 +87,13 @@ const Recipe_id = observer(props => {
                     toggleEdit={toggleEdit}
                     editMode={edit}
                     updateRecipe={updateRecipe}
+                    handleUpdateIngredient={handleUpdateIngredient}
                 />
             ) : (
                 <ShowRecipe
                     recipe={recipe}
                     addToGroceryList={addToGroceryList}
-                    handleUpdateAllIngredients={handleUpdateAllIngredients}
+                    handleUpdateIngredient={handleUpdateIngredient}
                 />
             )}
 
