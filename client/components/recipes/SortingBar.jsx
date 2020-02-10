@@ -32,17 +32,6 @@ const SortingBar = props => {
 
     return (
         <div className={tagsContainerClassName}>
-            <div>
-                {recipeTags.map(tag => {
-                    const tagClassName = classNames({
-                        [styles.tag]: true,
-                        [styles.tagSelected]: props.selectedTags.includes(tag),
-                    });
-
-                    return <Button className={tagClassName} onClick={() => props.sortByTag(tag)}
-                                   key={tag}>{tag}</Button>
-                })}
-            </div>
             <div className={searchContainerClassName}>
                 <FontAwesomeIcon icon={faSearch}/>
                 <input placeholder={'Filter By Name or Ingredient'} value={searchTerm}
