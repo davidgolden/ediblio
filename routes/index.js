@@ -118,7 +118,7 @@ router.post('/reset', async function (req, res) {
 
     const userRes = await db.query({
         text: `UPDATE users SET password = $1, reset_token = NULL, token_expires = NULL RETURNING *`,
-        values: [hashPassword(req.body.newPassword)],
+        values: [await hashPassword(req.body.newPassword)],
     });
 
     await db.query('COMMIT');

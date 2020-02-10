@@ -1,7 +1,7 @@
 {
-  "name": "recipe-react",
-  "version": "1.0.0",
-  "description": "Recipe Cloud refactor using ReactJS",
+  "name": "ediblio",
+  "version": "3.0.0",
+  "description": "Recipe Sharing and Grocery List Creation Platform",
   "main": "server.js",
   "mode": "production",
   "engines": {
@@ -14,7 +14,7 @@
     "build": "next build",
     "start:dev": "NODE_ENV=development PGUSER=davidgolden PGHOST=localhost PGPORT=5433 PGDATABASE=recipecloud nodemon server.js",
     "start": "NODE_ENV=production node server.js",
-    "start-pg": "NODE_ENV=development PGUSER=davidgolden PGHOST=localhost PGPORT=5433 PGDATABASE=recipecloud node pg-server.js"
+    "start-pg": "NODE_ENV=development PGUSER=davidgolden PGHOST=localhost PGPORT=5433 PGDATABASE=recipecloud node postgres-migration.js"
   },
   "author": "David Golden",
   "license": "ISC",

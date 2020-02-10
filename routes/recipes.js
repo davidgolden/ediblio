@@ -179,7 +179,7 @@ router.route('/recipes')
 
 router.route('/recipes/:recipe_id')
     .get(async (req, res) => {
-        const recipe = await getRecipe(req.params.recipe_id, req.user.id);
+        const recipe = await getRecipe(req.params.recipe_id, req.user && req.user.id);
 
         return res.status(200).json({
             recipe

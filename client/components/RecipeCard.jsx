@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styles from './styles/RecipeCard.scss';
@@ -8,10 +8,7 @@ import {faImage} from '@fortawesome/free-solid-svg-icons';
 import Link from "next/link";
 import UserImageSmall from "./utilities/UserImageSmall";
 import axios from "axios";
-
-const addToGroceryList = async () => {
-    await axios.post(`/api/users/${this.user.id}/recipes/${props.recipe.id}`);
-};
+import {ApiStoreContext} from "../stores/api_store";
 
 const recipeCardClassName = classNames({
     [styles.recipeCard]: true,
@@ -27,7 +24,12 @@ const recipeCardButtonClassName = classNames({
 });
 
 const RecipeCard = props => {
+    const context = useContext(ApiStoreContext);
     const [showButtons, setShowButtons] = useState(false);
+
+    const addToGroceryList = async () => {
+        await axios.post(`/api/users/${context.user.id}/recipes/${props.recipe.id}`);
+    };
 
     const deleteRecipe = () => {
         if (confirm('Are you sure you want to do that?')) {

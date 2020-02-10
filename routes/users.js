@@ -28,7 +28,13 @@ router.route('/users')
         try {
             const response = await db.query({
                 text: `INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
-                values: [req.body.username, req.body.email.toLowerCase(), hashPassword(req.body.password)]
+                values: [req.body.username, req.body.email.toLowerCase(), await hashPassword(req.body.password)]
+            });
+
+            // create a favorites collection
+            await db.query({
+                text: `INSERT INTO collections (name, author_id, is_primary) VALUES ($1, $2, $3)`,
+                values: ['Favorites', response.rows[0].id, true]
             });
 
             req.login(response.rows[0], function () {
