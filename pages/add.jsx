@@ -33,8 +33,13 @@ const RecipeForm = observer(props => {
 
     async function handleAddIngredient(ingredient) {
         try {
-            const response = await axios.post(`/api/recipes/${props.recipe.id}/ingredients`, ingredient);
-            setIngredients([{...ingredient, id: response.data.id}].concat(ingredients))
+            if (props.editMode) {
+                const response = await axios.post(`/api/recipes/${props.recipe.id}/ingredients`, ingredient);
+                setIngredients([{...ingredient, id: response.data.id}].concat(ingredients))
+            } else {
+                setIngredients([ingredient].concat(ingredients))
+            }
+            addToUpdated('ingredients');
         } catch (error) {
             context.handleError(error);
         }
@@ -42,13 +47,17 @@ const RecipeForm = observer(props => {
 
     async function removeSelectedIngredients() {
         try {
-            await axios.delete(`/api/recipes/${props.recipe.id}/ingredients`, {
-                data: {
-                    ingredient_ids: ingredientIdsToRemove,
-                }
-            });
+            if (props.editMode) {
+                await axios.delete(`/api/recipes/${props.recipe.id}/ingredients`, {
+                    data: {
+                        ingredient_ids: ingredientIdsToRemove,
+                    }
+                });
+                setIngredients(ingredients.filter(ing => !ingredientIdsToRemove.includes(ing.id)));
+            } else {
+                setIngredients(ingredients.filter((ing, idx) => !ingredientIdsToRemove.includes(idx)));
+            }
 
-            setIngredients(ingredients.filter(ing => !ingredientIdsToRemove.includes(ing.id)));
             setIngredientIdsToRemove([]);
         } catch (error) {
             context.handleError(error)

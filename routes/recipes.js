@@ -157,7 +157,7 @@ router.route('/recipes')
 
         let recipeRes = await db.query(text, values);
 
-        if (ingredients.length > 0) {
+        if (ingredients && ingredients.length > 0) {
             for (let x = 0; x < ingredients.length; x++) {
                 const ing = ingredients[x];
                 const ingredientRes = await db.query({

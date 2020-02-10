@@ -66,13 +66,12 @@ const AddIngredients = (props) => {
                 }}>
                 {props.ingredients.map((item, i) => {
                     return <Ingredient
-                        key={item.id}
+                        key={item.id || i}
                         value={item}
-                        id={item.id}
-                        dataId={JSON.stringify(item)}
+                        id={item.id || i}
                         handleUpdateIngredient={handleUpdateIngredient}
                         storeMode={props.storeMode}
-                        selectedIngredientId={props.selectedIngredientIds.includes(item.id)}
+                        selectedIngredientId={props.selectedIngredientIds.includes(item.id || i)}
                         addToSelectedIngredientIds={addToSelectedIngredientIds}
                     />
                 })}
