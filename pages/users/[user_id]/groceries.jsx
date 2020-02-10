@@ -8,6 +8,17 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
 import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
+import Checkbox from "../../../client/components/utilities/Checkbox";
+
+const groceryListContainerClassName = classNames({
+    [styles.groceryListContainer]: true,
+});
+const ingredientsContainerClassName = classNames({
+    [styles.ingredientsContainer]: true,
+});
+const menuContainerClassName = classNames({
+    [styles.menuContainer]: true,
+});
 
 const Groceries = props => {
     const context = useContext(ApiStoreContext);
@@ -15,58 +26,96 @@ const Groceries = props => {
     const [storeMode, setStoreMode] = useState(false);
     const [groceryList, setGroceryList] = useState(props.groceryList || []);
     const [menu, setMenu] = useState(props.menu || []);
-    const [isCurrent, setIsCurrent] = useState(true);
+    const [ingredientIdsToRemove, setIngredientIdsToRemove] = useState([]);
+    const [menuIdsToRemove, setMenuIdsToRemove] = useState([]);
 
-    function handleUpdateAllIngredients(ingredients) {
-        setGroceryList(ingredients);
-        setIsCurrent(false);
+    function toggleMenuIdToRemove(id) {
+        if (menuIdsToRemove.includes(id)) {
+            setMenuIdsToRemove(menuIdsToRemove.filter(recipeId => recipeId !== id));
+        } else {
+            setMenuIdsToRemove(menuIdsToRemove.concat([id]));
+        }
     }
 
-    const handleDeleteMenuItem = id => {
-        // use findIndex rather than filter so we only remove 1 if there are duplicates
-        const i = menu.findIndex(item => item.id === id);
-        let menuList = menu;
-        menuList.splice(i, 1);
-        setMenu([...menuList]);
-        setIsCurrent(false);
+    async function handleDeleteMenuItems() {
+        try {
+            await axios.delete(`/api/users/${context.user.id}/recipes`, {
+                data: {
+                    recipe_ids: menuIdsToRemove,
+                }
+            });
+
+            setMenu(menu.filter(item => !menuIdsToRemove.includes(item.id)));
+            setMenuIdsToRemove([]);
+        } catch (error) {
+            context.handleError(error)
+        }
     };
 
     const toggleStoreMode = () => {
         setStoreMode(!storeMode);
     };
 
-    const updateList = async () => {
-        // TODO: this needs completing
+    async function removeSelectedIngredients() {
+        try {
+            await axios.delete(`/api/users/${context.user.id}/ingredients`, {
+                data: {
+                    ingredient_ids: ingredientIdsToRemove,
+                }
+            });
 
-        await axios.patch(`/api/users/${context.user.id}`, {
-            groceryList: groceryList,
-            menu: menu,
-        });
+            setGroceryList(groceryList.filter(ing => !ingredientIdsToRemove.includes(ing.id)));
+            setIngredientIdsToRemove([]);
+        } catch (error) {
+            context.handleError(error)
+        }
+    }
 
-        setIsCurrent(true);
-    };
+    async function handleAddIngredient(ingredient) {
+        try {
+            const response = await axios.post(`/api/users/${context.user.id}/ingredients`, ingredient);
+            setGroceryList([{...ingredient, id: response.data.id}].concat(groceryList))
+        } catch (error) {
+            context.handleError(error)
+        }
+    }
 
-    const groceryListContainerClassName = classNames({
-        [styles.groceryListContainer]: true,
-    });
-    const ingredientsContainerClassName = classNames({
-        [styles.ingredientsContainer]: true,
-    });
-    const menuContainerClassName = classNames({
-        [styles.menuContainer]: true,
-    });
+    async function handleUpdateIngredient(ingredient) {
+        try {
+            const oldIngredient = groceryList.find(ing => ing.id === ingredient.id);
+            if (oldIngredient.name !== ingredient.name ||
+            oldIngredient.quantity !== ingredient.quantity ||
+            oldIngredient.measurement !== ingredient.measurement) {
+                await axios.patch(`/api/users/${context.user.id}/ingredients/${ingredient.id}`, ingredient);
+            }
+            setGroceryList(groceryList.map(ing => {
+                if (ing.id === ingredient.id) {
+                    return ingredient;
+                }
+                return ing;
+            }))
+        } catch (error) {
+            context.handleError(error)
+        }
+    }
+
     const saveListClassName = classNames({
         [styles.saveListButton]: true,
-        [styles.saveListButtonDisabled]: isCurrent,
+        [styles.saveListButtonDisabled]: ingredientIdsToRemove.length === 0,
+    });
+
+    const saveMenuClassName = classNames({
+        [styles.saveListButton]: true,
+        [styles.saveListButtonDisabled]: menuIdsToRemove.length === 0,
     });
 
     return (
         <div className={groceryListContainerClassName}>
             <h2>My Menu</h2>
             <ul className={menuContainerClassName}>
-                {menu && menu.map((item, i) => {
-                    return <li key={i}>
-                        <RemoveButton onClick={() => handleDeleteMenuItem(item.id)}/>
+                {menu && menu.map((item) => {
+                    return <li key={item.id}>
+                        <Checkbox checked={menuIdsToRemove.includes(item.id)} onChange={() => toggleMenuIdToRemove(item.id)}/>
                         <a target='_blank' href={item.url}>
                             {item.name}
                             <FontAwesomeIcon icon={faExternalLinkAlt}/>
@@ -74,15 +123,19 @@ const Groceries = props => {
                     </li>
                 })}
             </ul>
+            <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
             <h2>My Grocery List</h2>
             <AddIngredients
                 containerClassName={ingredientsContainerClassName}
                 ingredients={groceryList}
-                handleUpdateAllIngredients={handleUpdateAllIngredients}
+                handleAddIngredient={handleAddIngredient}
+                handleUpdateIngredient={handleUpdateIngredient}
+                ingredientIdsToRemove={ingredientIdsToRemove}
+                setIngredientIdsToRemove={setIngredientIdsToRemove}
                 storeMode={storeMode}
                 dragEnabled={true}
             />
-            <Button className={saveListClassName} onClick={updateList}>Save Grocery List/Menu</Button>
+            <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
             <Button onClick={toggleStoreMode}>Toggle Store Mode</Button>
         </div>
     )

@@ -13,31 +13,25 @@ const AddIngredients = (props) => {
 
     function getIngredient(e) {
         e.preventDefault();
-        const {quantity, measurement, name} = extractIngredient(value);
+        const ingredient = extractIngredient(value);
         setValue("");
-        handleAddIngredient(quantity, measurement, name);
+        props.handleAddIngredient(ingredient);
     }
 
-    function handleUpdateIngredient (index, ingredient) {
-        let ingredients = props.ingredients;
-        ingredients[index] = {
-            ...props.ingredients[index],
-            ...ingredient,
-        };
-        props.handleUpdateAllIngredients([...ingredients]);
-    };
+    function handleUpdateIngredient (id, update) {
+        props.handleUpdateIngredient({
+            ...props.ingredients.find(ing => ing.id === id),
+            ...update,
+        });
+    }
 
-    function handleAddIngredient (quantity = 0, measurement = '#', name = '') {
-        let ingredients = props.ingredients;
-        ingredients.splice(0, 0, {quantity, measurement, name});
-        props.handleUpdateAllIngredients([...ingredients]);
-    };
-
-    function handleDeleteIngredient(index) {
-        let ingredients = props.ingredients;
-        ingredients.splice(index, 1);
-        props.handleUpdateAllIngredients([...ingredients]);
-    };
+    function addToIngredientsToRemove(id) {
+        if (props.ingredientIdsToRemove.includes(id)) {
+            props.setIngredientIdsToRemove(props.ingredientIdsToRemove.filter(ingredientId => ingredientId !== id));
+        } else {
+            props.setIngredientIdsToRemove(props.ingredientIdsToRemove.concat([id]));
+        }
+    }
 
     const ingredientsContainerClassName = classNames({
         [styles.ingredientsContainer]: true,
@@ -68,17 +62,18 @@ const AddIngredients = (props) => {
                 }}
                 tag={"ul"}
                 onChange={(order, sortable, evt) => {
-                    props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));
+                    // props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));
                 }}>
                 {props.ingredients.map((item, i) => {
                     return <Ingredient
-                        key={item._id ? `${item._id}${i}` : i}
+                        key={item.id}
                         value={item}
-                        id={i}
+                        id={item.id}
                         dataId={JSON.stringify(item)}
-                        handleDeleteIngredient={handleDeleteIngredient}
                         handleUpdateIngredient={handleUpdateIngredient}
                         storeMode={props.storeMode}
+                        ingredientToRemove={props.ingredientIdsToRemove.includes(item.id)}
+                        addToIngredientsToRemove={addToIngredientsToRemove}
                     />
                 })}
             </Sortable>
@@ -87,7 +82,10 @@ const AddIngredients = (props) => {
 };
 
 AddIngredients.propTypes = {
-    handleUpdateAllIngredients: PropTypes.func.isRequired,
+    handleAddIngredient: PropTypes.func.isRequired,
+    handleUpdateIngredient: PropTypes.func.isRequired,
+    ingredientIdsToRemove: PropTypes.array.isRequired,
+    setIngredientIdsToRemove: PropTypes.func.isRequired,
     ingredients: PropTypes.array.isRequired,
 };
 

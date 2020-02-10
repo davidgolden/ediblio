@@ -57,9 +57,48 @@ router.route('/users/:user_id/recipes')
         } catch (error) {
             res.status(404).send({detail: error.message});
         }
+    })
+    .delete(middleware.isLoggedIn, async (req, res) => {
+        // remove list of recipes from menu
+        try {
+            await db.query({
+                text: `
+                DELETE FROM users_recipes_menu
+                WHERE recipe_id IN (${req.body.recipe_ids.map(id => "'" + id + "'").join(", ")})
+                `,
+            });
+
+            res.sendStatus(200);
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
     });
 
 router.route('/users/:user_id/ingredients')
+    .post(middleware.isLoggedIn, async (req, res) => {
+        // add ingredient to grocery list
+        try {
+            await db.query({
+                text: `INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name`,
+                values: [req.body.name],
+            });
+
+            const response = await db.query({
+                text: `
+                INSERT INTO users_ingredients_groceries (user_id, ingredient_id, measurement_id, quantity)
+                VALUES ($1,
+                    (SELECT id FROM ingredients WHERE name = $2),
+                    (SELECT id FROM measurements WHERE short_name = $3),
+                    $4
+                ) RETURNING *`,
+                values: [req.user.id, req.body.name, req.body.measurement, req.body.quantity],
+            });
+
+            return res.status(200).send(response.rows[0]);
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    })
     .get(middleware.isLoggedIn, async (req, res) => {
         // get grocery list
         try {
@@ -80,6 +119,44 @@ router.route('/users/:user_id/ingredients')
             });
 
             res.status(200).send({groceryList: response.rows});
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    })
+    .delete(middleware.isLoggedIn, async (req, res) => {
+        // remove list of ingredients from grocery list
+        try {
+            await db.query({
+                text: `
+                DELETE FROM users_ingredients_groceries
+                WHERE id IN (${req.body.ingredient_ids.map(id => "'" + id + "'").join(", ")})
+                `,
+            });
+
+            res.sendStatus(200);
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    });
+
+router.route('/users/:user_id/ingredients/:ingredient_id')
+    .patch(middleware.checkIngredientOwnership, async (req, res) => {
+        try {
+            await db.query({
+                text: `INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name`,
+                values: [req.body.name],
+            });
+
+            const response = await db.query({
+                text: `
+            UPDATE users_ingredients_groceries
+            SET ingredient_id = (SELECT id FROM ingredients WHERE name = $1), quantity = $2, measurement_id = (SELECT id FROM measurements WHERE short_name = $3)
+            WHERE id = $4 RETURNING *
+            `,
+                values: [req.body.name, req.body.quantity, req.body.measurement, req.params.ingredient_id],
+            });
+
+            res.status(200).send(response.rows[0]);
         } catch (error) {
             res.status(404).send({detail: error.message});
         }

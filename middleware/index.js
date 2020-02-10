@@ -27,6 +27,24 @@ middlewareObj.checkRecipeOwnership = async (req, res, next) => {
   }
 };
 
+middlewareObj.checkIngredientOwnership = async (req, res, next) => {
+  // is user logged in?
+  if(req.isAuthenticated()) {
+    const response = await db.query({
+      text: `SELECT * FROM users_ingredients_groceries WHERE id = $1 AND user_id = $2`,
+      values: [req.params.ingredient_id, req.user.id]
+    });
+
+    if (response.rows.length === 0) {
+      return res.status(404).send({ detail: "You don't have permission to do that!" })
+    }
+
+    next();
+  } else {
+    return res.status(404).send({ detail: 'You need to be logged in to do that!' })
+  }
+};
+
 middlewareObj.checkCollectionOwnership = async (req, res, next) => {
   // is user logged in?
   if(req.isAuthenticated()) {
