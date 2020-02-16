@@ -9,13 +9,18 @@ import {observer} from "mobx-react";
 import UserBanner from "../../../client/components/UserBanner";
 
 const Recipes = observer((props) => {
-    const [recipes, setRecipes] = useState(new Map(props.recipes || []));
+    const [recipes, setRecipes] = useState(props.recipes);
     const [collections, setCollections] = useState(props.collections || []);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
     const [loadedAll, setLoadedAll] = useState(props.loadedAll);
     const context = useContext(ApiStoreContext);
 
     const isBottom = useScrolledBottom();
+
+    useEffect(() => {
+        // page transition
+        setRecipes(props.recipes);
+    }, [props.recipes]);
 
     useEffect(() => {
         if (props.user_id === context.user?.id) {
@@ -33,7 +38,7 @@ const Recipes = observer((props) => {
                 sortBy: 'created_at',
             })
                 .then(response => {
-                    response.forEach(r => recipes.set(r.id, r));
+                    response.forEach(r => recipes.push(r));
                     if (response.length < 12) {
                         setLoadedAll(true);
                     } else {
@@ -73,7 +78,7 @@ const Recipes = observer((props) => {
     return (
         <div>
             <UserBanner user={props.user}
-                        images={Array.from(recipes.values()).filter(r => r.image).slice(0, 4).map(r => r.image)}/>
+                        images={recipes.filter(r => r.image).slice(0, 4).map(r => r.image)}/>
             <div className={styles.browseRecipesContainer}>
                 {collections.map(c => <CollectionCard
                     key={c.id}
@@ -82,7 +87,7 @@ const Recipes = observer((props) => {
                     followCollection={followCollection}
                     collection={c}
                 />)}
-                {Array.from(recipes.values()).map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {
+                {recipes.map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {
                 }}/>)}
             </div>
         </div>
@@ -116,7 +121,7 @@ Recipes.getInitialProps = async ({req, query}) => {
     ]);
     return {
         collections: responses[0].data.collections,
-        recipes: responses[1].data.recipes.map(r => [r.id, r]),
+        recipes: responses[1].data.recipes,
         loadedAll: responses[1].data.recipes.length < 12,
         user: responses[2].data.user,
         user_id: query.user_id,
