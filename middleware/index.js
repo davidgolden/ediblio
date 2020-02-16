@@ -1,4 +1,4 @@
-var Recipe = require('../models/recipe');
+const db = require("../db/index");
 
 var middlewareObj = {};
 
@@ -9,26 +9,55 @@ middlewareObj.isLoggedIn = (req, res, next) => {
   return res.status(404).send({ detail: 'You need to be logged in to do that!' })
 };
 
-middlewareObj.checkRecipeOwnership = (req, res, next) => {
+middlewareObj.checkRecipeOwnership = async (req, res, next) => {
   // is user logged in?
   if(req.isAuthenticated()) {
-    Recipe.findById(req.params.recipe_id, function(err, recipe) {
-      if(err) {
-        return res.status(404).send(err)
-      } else if(!recipe) {
-        return res.status(404).send({ detail: 'Recipe does not exist!' })
-      } else {
-        // does user own the campground?
-        // use equals because one is mongoose object and one is string
-        if(recipe.author_id.equals(req.user._id) || req.user.isAdmin === true) {
-          // if so, redirect
-          next();
-        } else {
-          // if not, redirect
-          return res.status(404).send({ detail: "You don't have permission to do that!" })
-        }
-      }
+    const response = await db.query({
+      text: `SELECT * FROM recipes WHERE id = $1 AND author_id = $2`,
+      values: [req.params.recipe_id, req.user.id]
     });
+
+    if (response.rows.length === 0) {
+      return res.status(404).send({ detail: "You don't have permission to do that!" })
+    }
+
+    next();
+  } else {
+    return res.status(404).send({ detail: 'You need to be logged in to do that!' })
+  }
+};
+
+middlewareObj.checkIngredientOwnership = async (req, res, next) => {
+  // is user logged in?
+  if(req.isAuthenticated()) {
+    const response = await db.query({
+      text: `SELECT * FROM users_ingredients_groceries WHERE id = $1 AND user_id = $2`,
+      values: [req.params.ingredient_id, req.user.id]
+    });
+
+    if (response.rows.length === 0) {
+      return res.status(404).send({ detail: "You don't have permission to do that!" })
+    }
+
+    next();
+  } else {
+    return res.status(404).send({ detail: 'You need to be logged in to do that!' })
+  }
+};
+
+middlewareObj.checkCollectionOwnership = async (req, res, next) => {
+  // is user logged in?
+  if(req.isAuthenticated()) {
+    const response = await db.query({
+      text: `SELECT * FROM collections WHERE id = $1 AND author_id = $2`,
+      values: [req.params.collection_id, req.user.id]
+    });
+
+    if (response.rows.length === 0) {
+      return res.status(404).send({ detail: "You don't have permission to do that!" })
+    }
+
+    next();
   } else {
     return res.status(404).send({ detail: 'You need to be logged in to do that!' })
   }

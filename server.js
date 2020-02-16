@@ -11,18 +11,18 @@ const handle = app.getRequestHandler();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const connectStore = require('connect-mongo');
-const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const {Strategy, ExtractJwt} = require('passport-jwt');
-const MongoStore = connectStore(session);
-const User = require('./models/user');
+const bcrypt = require('bcrypt-nodejs');
+
+const db = require("./db/index");
 
 const userRoutes = require('./routes/users'),
     recipeRoutes = require('./routes/recipes'),
     collectionRoutes = require('./routes/collections'),
     ratingRoutes = require('./routes/ratings'),
+    measurementRoutes = require('./routes/measurements'),
     indexRoutes = require('./routes/index');
 
 const env = process.env.NODE_ENV || "development";
@@ -34,30 +34,29 @@ const forceSsl = function (req, res, next) {
     return next();
 };
 
-mongoose.Promise = global.Promise;
-
-mongoose.connect(1 ? process.env.MONGO : process.env.MONGO_DEV,
-    {useNewUrlParser: true, autoIndex: false, useCreateIndex: true})
-    .then(() => console.log(`Database connected`))
-    .catch(err => console.log(`Database connection error: ${err.message}`));
-
 const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
+
+const {usersSelector} = require("./utils");
 
 //Configure Passport
 passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
 }, async function (email, password, done) {
-    const user = await User.findOne({email: email})
-        .populate('collections');
+    const userRes = await db.query({text: `${usersSelector}
+where users.email = $1
+group by users.id;`, values: [email]});
+    const user = userRes.rows[0];
+
     if (!user) return done(null, false, {message: 'Incorrect email.'});
-    user.comparePassword(password, function (err, isMatch) {
-        if (isMatch) {
+
+    bcrypt.compare(password, user.password, function(err, res) {
+        if (res) {
             return done(null, user);
         } else {
             return done(null, false, {message: 'Incorrect password.'});
         }
-    });
+    })
 }));
 
 passport.use('JWT', new Strategy({
@@ -74,13 +73,14 @@ passport.use('JWT', new Strategy({
 }));
 
 passport.serializeUser(function (user, done) {
-    done(null, user._id);
+    done(null, user.id);
 });
 
 passport.deserializeUser(async function (id, done) {
-    const user = await User.findById(id)
-        .populate('collections');
-    done(null, user);
+    const userRes = await db.query({text: `${usersSelector}
+where users.id = $1
+group by users.id;`, values: [id]});
+    done(null, userRes.rows[0]);
 });
 
 app.prepare().then(() => {
@@ -99,11 +99,7 @@ app.prepare().then(() => {
         name: 'recipecloudsession',
         secret: process.env.SESSION_SECRET,
         resave: true,
-        store: new MongoStore({
-            mongooseConnection: mongoose.connection,
-            collection: 'session',
-            ttl: SESS_LIFETIME
-        }),
+        store: new (require('connect-pg-simple')(session))(),
         cookie: {
             sameSite: true,
             secure: false,
@@ -119,6 +115,7 @@ app.prepare().then(() => {
     server.use('/api/', recipeRoutes);
     server.use('/api/', collectionRoutes);
     server.use('/api/', ratingRoutes);
+    server.use('/api/', measurementRoutes);
 
     server.get('/service-worker.js', (req, res) => {
         const filePath = path.join(__dirname, '.next/service-worker.js');

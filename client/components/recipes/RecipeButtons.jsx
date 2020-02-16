@@ -5,47 +5,48 @@ import AddToGroceryListButton from "../utilities/buttons/AddToGroceryListButton"
 import DeleteButton from "../utilities/buttons/DeleteButton";
 import {ApiStoreContext} from "../../stores/api_store";
 import {observer} from "mobx-react";
+import axios from "axios";
 
 const RecipeButtons = observer(props => {
-
     const context = useContext(ApiStoreContext);
 
-    const addToCollection = (collectionName = "Favorites") => {
+    const addToCollection = async (collectionName = "Favorites") => {
         const collection = context.user.collections.find(c => c.name === collectionName);
         if (collection) {
-            collection.recipes.push(props.recipe_id);
-            context.putCollection(collection);
+            try {
+                await axios.post(`/api/collections/${collection.id}/recipes/${props.recipe.id}`);
+                collection.recipes.push(props.recipe);
+            } catch (error) {
+                context.handleError(error);
+            }
         }
     };
 
-    const removeFromCollection = (collectionId, recipeId) => {
-        const collection = context.user.collections.find(c => c._id === collectionId);
+    const removeFromCollection = async (collectionId, recipeId) => {
+        const collection = context.user.collections.find(c => c.id === collectionId);
         if (collection) {
-            collection.recipes = collection.recipes.filter(r => r._id !== recipeId);
-            context.putCollection(collection);
+            try {
+                await axios.delete(`/api/collections/${collection.id}/recipes/${props.recipe.id}`);
+                collection.recipes = collection.recipes.filter(r => r.id !== recipeId);
+            } catch (error) {
+                context.handleError(error);
+            }
         }
     };
 
     if (!context.user) {
-        return false;
+        return <div/>;
     }
 
-    // const inCloud = !!(context.user.recipes.find(id => id === props.recipe_id));
-    const inMenu = !!(context.user.menu.find(item => item._id === props.recipe_id) || context.user.menu.includes(props.recipe_id));
-    const isAuthor = props.author_id === context.user._id;
-
-    // if in cloud, show inCloud
-    // if in cloud and not author, show remove from cloud
-    // if not in cloud, show add to cloud
-    // if not on menu show add to grocery list
+    const isAuthor = props.recipe.author_id === context.user?.id;
 
     return (
         <React.Fragment>
 
-            <AddToCollection recipe_id={props.recipe_id} removeFromCollection={removeFromCollection} addToCollection={addToCollection}/>
+            <AddToCollection recipe_id={props.recipe.id} removeFromCollection={removeFromCollection} addToCollection={addToCollection}/>
 
             <AddToGroceryListButton
-                disabled={inMenu}
+                disabled={props.inMenu}
                 onClick={props.addToGroceryList}/>
 
             {(isAuthor) &&
@@ -56,10 +57,7 @@ const RecipeButtons = observer(props => {
 });
 
 RecipeButtons.propTypes = {
-    recipe_id: PropTypes.string.isRequired,
-    author_id: PropTypes.string.isRequired,
-    // removeFromCloud: PropTypes.func.isRequired,
-    // addToCloud: PropTypes.func.isRequired,
+    recipe: PropTypes.object.isRequired,
     addToGroceryList: PropTypes.func.isRequired,
     deleteRecipe: PropTypes.func.isRequired,
 };

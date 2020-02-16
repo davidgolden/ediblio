@@ -2,43 +2,12 @@ import React, { useState, useContext } from 'react';
 import RecipeInformation from '../client/components/recipes/RecipeInformation';
 import AddIngredients from '../client/components/recipes/AddIngredients';
 import Button from "../client/components/utilities/buttons/Button";
-import {recipeTags} from "../client/stores/Setings";
 import styles from './styles/AddRecipe.scss';
 import classNames from 'classnames';
 import {ApiStoreContext} from "../client/stores/api_store";
 import {observer} from "mobx-react";
 import Router from 'next/router';
 import axios from 'axios';
-
-const AddTags = (props) => {
-    const tagClassName = classNames({
-        [styles.tag]: true,
-    });
-
-    const TagList = recipeTags.map((tag, i) => {
-        return (
-            <div className={tagClassName} key={i}>
-                <label>
-                    <input
-                        checked={props.selectedTags.includes(tag)}
-                        type="checkbox"
-                        name="recipe[tags]"
-                        value={tag}
-                        onChange={(e) => props.toggleTag(tag)}
-                    />
-                    {tag}
-                </label>
-            </div>
-        )
-    });
-
-    return (
-        <div>
-            <h3>Add Tags</h3>
-            {TagList}
-        </div>
-    )
-};
 
 const RecipeForm = observer(props => {
     const [name, setName] = useState(props.editMode ? props.recipe.name : '');
@@ -47,9 +16,10 @@ const RecipeForm = observer(props => {
     const [rawImage, setRawImage] = useState('');
     const [notes, setNotes] = useState(props.editMode ? props.recipe.notes : '');
     const [ingredients, setIngredients] = useState(props.editMode ? props.recipe.ingredients : []);
-    const [tags, setTags] = useState(props.editMode ? props.recipe.tags : []);
     const [updated, setUpdated] = useState(new Set());
     const [submitted, setSubmitted] = useState(false);
+
+    const [ingredientIdsToRemove, setIngredientIdsToRemove] = useState([]);
 
     const context = useContext(ApiStoreContext);
 
@@ -61,25 +31,37 @@ const RecipeForm = observer(props => {
         })
     }
 
-    const toggleTag = tag => {
-        addToUpdated('tags');
-        if (tags.includes(tag)) {
-            // remove it
-            let i = tags.indexOf(tag);
-            let newTags = tags;
-            newTags.splice(i, 1);
-            setTags([...newTags]);
-        } else {
-            // add it
-            let newTags = tags;
-            newTags.push(tag);
-            setTags([...newTags]);
+    async function handleAddIngredient(ingredient) {
+        try {
+            if (props.editMode) {
+                const response = await axios.post(`/api/recipes/${props.recipe.id}/ingredients`, ingredient);
+                setIngredients([{...ingredient, id: response.data.id}].concat(ingredients))
+            } else {
+                setIngredients([ingredient].concat(ingredients))
+            }
+            addToUpdated('ingredients');
+        } catch (error) {
+            context.handleError(error);
         }
-    };
+    }
 
-    function handleUpdateAllIngredients(ingredients) {
-        addToUpdated('ingredients');
-        setIngredients(ingredients);
+    async function removeSelectedIngredients() {
+        try {
+            if (props.editMode) {
+                await axios.delete(`/api/recipes/${props.recipe.id}/ingredients`, {
+                    data: {
+                        ingredient_ids: ingredientIdsToRemove,
+                    }
+                });
+                setIngredients(ingredients.filter(ing => !ingredientIdsToRemove.includes(ing.id)));
+            } else {
+                setIngredients(ingredients.filter((ing, idx) => !ingredientIdsToRemove.includes(idx)));
+            }
+
+            setIngredientIdsToRemove([]);
+        } catch (error) {
+            context.handleError(error)
+        }
     }
 
     function handleRecipeImageChange(data, raw = false) {
@@ -131,11 +113,8 @@ const RecipeForm = observer(props => {
         if (updated.has('ingredients')) {
             uploadObject.ingredients = ingredients;
         }
-        if (updated.has('tags')) {
-            uploadObject.tags = tags;
-        }
         if (props.editMode) {
-            context.patchRecipe(props.recipe._id, uploadObject)
+            context.patchRecipe(props.recipe.id, uploadObject)
                 .then(recipe => {
                     props.updateRecipe(recipe);
                     props.toggleEdit();
@@ -155,6 +134,10 @@ const RecipeForm = observer(props => {
         [styles.submitButton]: true,
         [styles.submitButtonDisabled]: !name || submitted,
     });
+    const saveListClassName = classNames({
+        [styles.saveList]: true,
+        [styles.saveListDisabled]: ingredientIdsToRemove.length === 0,
+    });
 
     return (
         <div className={recipeFormClassName}>
@@ -170,11 +153,15 @@ const RecipeForm = observer(props => {
                 handleRecipeNotesChange={handleNotesChange}
             />
             <AddIngredients
+                canAdd={true}
                 ingredients={ingredients}
-                handleUpdateAllIngredients={handleUpdateAllIngredients}
+                handleAddIngredient={handleAddIngredient}
+                selectedIngredientIds={ingredientIdsToRemove}
+                setSelectedIngredientIds={setIngredientIdsToRemove}
+                handleUpdateIngredient={() => {}}
             />
-            <AddTags toggleTag={toggleTag} selectedTags={tags}/>
             <div>
+                <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
                 {context.user ?
                     <Button className={submitButtonClassName} onClick={handleSubmit}>{props.editMode ? "Save" : "Submit!"}</Button> :
                     <p>You must be logged in to add a recipe!</p>}

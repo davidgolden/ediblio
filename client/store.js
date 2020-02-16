@@ -1,6 +1,5 @@
 import React from "react";
 import axios from "axios";
-import {addIngredient, canBeAdded} from "./utils/conversions";
 import './stylesheets/base.scss';
 import {observable, action, autorun, toJS} from "mobx";
 import Router from 'next/router';
@@ -9,6 +8,7 @@ export default class Store {
 
     constructor() {
         if (typeof window !== 'undefined') {
+            this.fetchMeasurements();
             this.loadUserFromLocalStorage();
             autorun(() => {
                 localStorage.setItem("user", JSON.stringify(toJS(this.user)));
@@ -72,6 +72,14 @@ export default class Store {
     @observable notificationType = '';
 
     @observable modalStack = [];
+
+    @observable measurements = [];
+
+    @action
+    fetchMeasurements = async () => {
+        const response = await axios.get('/api/measurements');
+        this.measurements = response.data.measurements;
+    };
 
     @action
     addModal = (type) => {
@@ -137,48 +145,6 @@ export default class Store {
                     rej(err);
                 })
         })
-    };
-
-    @action
-    patchUser = partialUserObj => {
-        return new Promise((res, rej) => {
-            axios.patch(`/api/users/${this.user._id}`, {
-                ...partialUserObj
-            })
-                .then(response => {
-                    this.user = response.data.user;
-                    res();
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej(err);
-                })
-        });
-    };
-
-    @action
-    putCollection = collectionObj => {
-        return new Promise((res, rej) => {
-            axios.patch(`/api/collections/${collectionObj._id}`, {
-                ...collectionObj
-            })
-                .then(response => {
-                    this.user = {
-                        ...this.user,
-                        collections: this.user.collections.map(c => {
-                            if (c._id === collectionObj._id) {
-                                return response.data.collection;
-                            }
-                            return c;
-                        })
-                    };
-                    res();
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej(err);
-                })
-        });
     };
 
     @action
@@ -294,50 +260,5 @@ export default class Store {
                     rej(err);
                 })
         })
-    };
-
-    addToGroceryList = (recipe_id, ingredients) => {
-        // add current recipe to menu
-        // add all ingredients to grocery list
-        const currentMenu = this.user.menu;
-        currentMenu.push(recipe_id);
-
-        const currentGroceryList = this.user.groceryList;
-
-        const onCurrentList = ingredient => {
-            return currentGroceryList.findIndex(item => {
-                return item.name === ingredient ||
-                    item.name === ingredient + 's' ||
-                    item.name === ingredient + 'es' ||
-                    item.name === ingredient.slice(0, -1) ||
-                    item.name === ingredient.slice(0, -2);
-            })
-        };
-
-        ingredients.forEach(ingredient => {
-            const i = onCurrentList(ingredient.name);
-            if (i > -1) {
-                let m = currentGroceryList[i].measurement;
-                let q = Number(currentGroceryList[i].quantity);
-                // check if item can be added
-                if (canBeAdded(m, ingredient.measurement)) {
-                    // if it can be added, add it
-                    let newQM = addIngredient(q, m, Number(ingredient.quantity), ingredient.measurement);
-                    currentGroceryList[i].quantity = newQM.quantity;
-                    currentGroceryList[i].measurement = newQM.measurement;
-                } else {
-                    // if it can't be added, push it to grocery list
-                    currentGroceryList.splice(currentGroceryList.length, 0, ingredient);
-                }
-            } else {
-                // here if ingredient is not on current list
-                currentGroceryList.splice(currentGroceryList.length, 0, ingredient);
-            }
-        });
-
-        this.patchUser({
-            menu: currentMenu,
-            groceryList: currentGroceryList,
-        });
     };
 }

@@ -24,13 +24,18 @@ const showRecipeImageClassName = classNames({
 
 const ShowRecipe = observer(props => {
     const [added, setAdded] = useState(false);
-    const [avgRating, setAvgRating] = useState(props.recipe.rating?.[0]?.avgRating ? Math.round(props.recipe.rating[0].avgRating*2)/2 : 0);
-    const [userRating, setUserRating] = useState(props.recipe.userRating);
+    const [avgRating, setAvgRating] = useState(props.recipe.avg_rating ? Math.round(props.recipe.avg_rating*2)/2 : 0);
+    const [userRating, setUserRating] = useState(props.recipe.user_rating);
+    const [ingredientIdsToAdd, setIngredientIdsToAdd] = useState(props.recipe.ingredients.map(ing => ing.id));
     const context = useContext(ApiStoreContext);
 
-    const handleAddToList = () => {
-        props.addToGroceryList();
-        setAdded(true);
+    const handleAddToList = async () => {
+        try {
+            await props.addToGroceryList(props.recipe.ingredients.filter(ing => ingredientIdsToAdd.includes(ing.id)));
+            setAdded(true);
+        } catch (error) {
+            context.handleError(error);
+        }
     };
 
     const showRecipeButtonsClassName = classNames({
@@ -47,9 +52,9 @@ const ShowRecipe = observer(props => {
             <div className={showRecipeTitleClassName}>
                 <div>
                     <h1>{props.recipe.name} <span>{avgRating} <FontAwesomeIcon icon={faStar} /></span></h1>
-                    <h2>Submitted by <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id._id}/recipes`}>
+                    <h2>Submitted by <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id}/recipes`}>
                         <a>
-                            {props.recipe.author_id.username}
+                            {props.recipe.author_username}
                         </a>
                     </Link>. {props.recipe.url &&
                     <a href={props.recipe.url} target='_blank'>View Original Recipe</a>}</h2>
@@ -64,20 +69,15 @@ const ShowRecipe = observer(props => {
                             onClick={async v => {
                                 if (context.user) {
                                     const response = await axios.post('/api/rating', {
-                                        recipe_id: props.recipe._id,
+                                        recipe_id: props.recipe.id,
                                         rating: v,
                                     });
-                                    setAvgRating(Math.round(response.data.avgRating[0].avgRating*2)/2);
+                                    setAvgRating(Math.round(response.data.avg_rating*2)/2);
                                     setUserRating(v);
                                 }
                             }}
                         />
                         </>}
-                    </div>
-                    <div>
-                        {props.recipe.tags.map(tag => {
-                            return <span key={tag}>{tag}</span>
-                        })}
                     </div>
                 </div>
             </div>
@@ -88,8 +88,11 @@ const ShowRecipe = observer(props => {
                 <h3>Recipe Notes</h3>
                 <p>{props.recipe.notes}</p>
                 <AddIngredients
+                    canAdd={false}
                     ingredients={props.recipe.ingredients}
-                    handleUpdateAllIngredients={props.handleUpdateAllIngredients}
+                    selectedIngredientIds={ingredientIdsToAdd}
+                    setSelectedIngredientIds={setIngredientIdsToAdd}
+                    handleUpdateIngredient={props.handleUpdateIngredient}
                 />
                 <div className={showRecipeButtonsClassName}>
                     {context.user ? <Button onClick={handleAddToList}>
@@ -102,7 +105,7 @@ const ShowRecipe = observer(props => {
 });
 
 ShowRecipe.propTypes = {
-    handleUpdateAllIngredients: PropTypes.func.isRequired,
+    handleUpdateIngredient: PropTypes.func.isRequired,
     recipe: PropTypes.object.isRequired,
 };
 

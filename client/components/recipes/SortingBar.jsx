@@ -7,6 +7,13 @@ import classNames from 'classnames';
 import Button from "../utilities/buttons/Button";
 import useDebounce from "../utilities/useDebounce";
 
+const tagsContainerClassName = classNames({
+    [styles.tagsContainer]: true,
+});
+const searchContainerClassName = classNames({
+    [styles.searchContainer]: true,
+});
+
 const SortingBar = props => {
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -19,12 +26,6 @@ const SortingBar = props => {
         }
     }, [debouncedSearchTerm]);
 
-    const tagsContainerClassName = classNames({
-        [styles.tagsContainer]: true,
-    });
-    const searchContainerClassName = classNames({
-        [styles.searchContainer]: true,
-    });
     const orderButtonClassName = classNames({
         [styles.orderButton]: true,
         [styles.orderButtonHighlight]: props.orderBy === 'asc',
@@ -32,17 +33,6 @@ const SortingBar = props => {
 
     return (
         <div className={tagsContainerClassName}>
-            <div>
-                {recipeTags.map(tag => {
-                    const tagClassName = classNames({
-                        [styles.tag]: true,
-                        [styles.tagSelected]: props.selectedTags.includes(tag),
-                    });
-
-                    return <Button className={tagClassName} onClick={() => props.sortByTag(tag)}
-                                   key={tag}>{tag}</Button>
-                })}
-            </div>
             <div className={searchContainerClassName}>
                 <FontAwesomeIcon icon={faSearch}/>
                 <input placeholder={'Filter By Name or Ingredient'} value={searchTerm}

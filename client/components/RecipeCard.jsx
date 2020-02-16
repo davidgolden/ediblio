@@ -1,46 +1,53 @@
-import React, {useContext, useState} from 'react';
+import React, {useState, useContext} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styles from './styles/RecipeCard.scss';
 import RecipeButtons from "./recipes/RecipeButtons";
-import {ApiStoreContext} from "../stores/api_store";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faUser, faImage} from '@fortawesome/free-solid-svg-icons';
+import {faImage} from '@fortawesome/free-solid-svg-icons';
 import Link from "next/link";
 import UserImageSmall from "./utilities/UserImageSmall";
+import axios from "axios";
+import {ApiStoreContext} from "../stores/api_store";
+
+const recipeCardClassName = classNames({
+    [styles.recipeCard]: true,
+});
+const recipeCardImageClassName = classNames({
+    [styles.recipeCardImage]: true,
+});
+const recipeCardTextClassName = classNames({
+    [styles.recipeCardText]: true,
+});
+const recipeCardButtonClassName = classNames({
+    [styles.recipeCardButtons]: true,
+});
 
 const RecipeCard = props => {
-
     const context = useContext(ApiStoreContext);
     const [showButtons, setShowButtons] = useState(false);
+    const [inMenu, setInMenu] = useState(props.recipe.in_menu);
 
-    const deleteRecipe = () => {
-        if (confirm('Are you sure you want to do that?')) {
-            props.deleteRecipe(props.recipe._id);
+    const addToGroceryList = async () => {
+        try {
+            const response = await axios.post(`/api/users/${context.user.id}/recipes/${props.recipe.id}`);
+            context.user = response.data.user;
+            setInMenu(true);
+        } catch (error) {
+            context.handleError(error);
         }
     };
 
-    const addToGroceryList = () => {
-        context.addToGroceryList(props.recipe._id, props.recipe.ingredients);
+    const deleteRecipe = () => {
+        if (confirm('Are you sure you want to do that?')) {
+            props.deleteRecipe(props.recipe.id);
+        }
     };
-
-    const recipeCardClassName = classNames({
-        [styles.recipeCard]: true,
-    });
-    const recipeCardImageClassName = classNames({
-        [styles.recipeCardImage]: true,
-    });
-    const recipeCardTextClassName = classNames({
-        [styles.recipeCardText]: true,
-    });
-    const recipeCardButtonClassName = classNames({
-        [styles.recipeCardButtons]: true,
-    });
 
     return (
         <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)}
              onMouseLeave={() => setShowButtons(false)}>
-            <Link href={`/recipes/[recipe_id]`} as={`/recipes/${props.recipe._id}`}>
+            <Link href={`/recipes/[recipe_id]`} as={`/recipes/${props.recipe.id}`}>
                 <a>
                     <div className={recipeCardImageClassName}>
                         {props.recipe.image ? <img src={props.recipe.image} /> : <div><FontAwesomeIcon icon={faImage} /></div>}
@@ -52,13 +59,13 @@ const RecipeCard = props => {
             </Link>
             <div className={recipeCardButtonClassName}>
                 {showButtons && <RecipeButtons
-                    recipe_id={props.recipe._id}
-                    author_id={props.recipe.author_id._id}
+                    recipe={props.recipe}
+                    inMenu={inMenu}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />}
             </div>
-            {showButtons && <UserImageSmall id={props.recipe.author_id._id} profileImage={props.recipe.author_id.profileImage}/>}
+            {showButtons && <UserImageSmall id={props.recipe.author_id} profileImage={props.recipe.author_image}/>}
         </div>
     )
 };

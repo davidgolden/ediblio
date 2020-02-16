@@ -12,7 +12,7 @@ export default function UserBanner(props) {
             })}
         </div>
         <div>
-            {props.user.profileImage ? <img src={props.user.profileImage}/> : <FontAwesomeIcon icon={faUser} />}
+            {props.user.profile_image ? <img src={props.user.profile_image}/> : <FontAwesomeIcon icon={faUser} />}
             <h2>{props.user.username}</h2>
         </div>
     </div>

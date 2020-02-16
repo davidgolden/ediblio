@@ -9,7 +9,7 @@ import {observer} from "mobx-react";
 import UserBanner from "../../../client/components/UserBanner";
 
 const Recipes = observer((props) => {
-    const [recipes, setRecipes] = useState(new Map(props.recipes || []));
+    const [recipes, setRecipes] = useState(props.recipes);
     const [collections, setCollections] = useState(props.collections || []);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
     const [loadedAll, setLoadedAll] = useState(props.loadedAll);
@@ -18,7 +18,12 @@ const Recipes = observer((props) => {
     const isBottom = useScrolledBottom();
 
     useEffect(() => {
-        if (props.user_id === context.user?._id) {
+        // page transition
+        setRecipes(props.recipes);
+    }, [props.recipes]);
+
+    useEffect(() => {
+        if (props.user_id === context.user?.id) {
             axios.get(`/api/users/${props.user_id}/collections`)
                 .then(response => setCollections(response.data.collections))
         }
@@ -29,9 +34,11 @@ const Recipes = observer((props) => {
             context.getRecipes({
                 page: lastRecipePageLoaded + 1,
                 author: props.user_id,
+                orderBy: 'desc',
+                sortBy: 'created_at',
             })
                 .then(response => {
-                    response.forEach(r => recipes.set(r._id, r));
+                    response.forEach(r => recipes.push(r));
                     if (response.length < 12) {
                         setLoadedAll(true);
                     } else {
@@ -44,35 +51,43 @@ const Recipes = observer((props) => {
     function deleteCollection(id) {
         context.deleteCollection(id)
             .then(() => {
-                setCollections(c => c.filter(c => c._id !== id));
+                setCollections(c => c.filter(c => c.id !== id));
             })
     }
 
-    function removeCollection(id) {
-        context.patchUser({
-            collections: context.user.collections.filter(c => c._id !== id).map(c => c._id),
-        })
+    async function unfollowCollection(id) {
+        try {
+            await axios.delete(`/api/users/${context.user.id}/collections/${id}`);
+            context.user.collections = context.user.collections.filter(c => c.id !== id);
+        } catch (error) {
+            context.handleError(error);
+        }
     }
 
-    function addCollection(id) {
-        context.patchUser({
-            collections: context.user.collections.map(c => c._id).concat([id]),
-        })
+    async function followCollection(id) {
+        try {
+            await axios.post(`/api/users/${context.user.id}/collections/${id}`);
+
+            const response = await axios.get(`/api/collections/${id}`);
+            context.user.collections.push(response.data.collection);
+        } catch (error) {
+            context.handleError(error);
+        }
     }
 
     return (
         <div>
             <UserBanner user={props.user}
-                        images={Array.from(recipes.values()).filter(r => r.image).slice(0, 4).map(r => r.image)}/>
+                        images={recipes.filter(r => r.image).slice(0, 4).map(r => r.image)}/>
             <div className={styles.browseRecipesContainer}>
                 {collections.map(c => <CollectionCard
-                    key={c._id}
-                    removeCollection={removeCollection}
+                    key={c.id}
+                    unfollowCollection={unfollowCollection}
                     deleteCollection={deleteCollection}
-                    addCollection={addCollection}
+                    followCollection={followCollection}
                     collection={c}
                 />)}
-                {Array.from(recipes.values()).map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {
+                {recipes.map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {
                 }}/>)}
             </div>
         </div>
@@ -106,7 +121,7 @@ Recipes.getInitialProps = async ({req, query}) => {
     ]);
     return {
         collections: responses[0].data.collections,
-        recipes: responses[1].data.recipes.map(r => [r._id, r]),
+        recipes: responses[1].data.recipes,
         loadedAll: responses[1].data.recipes.length < 12,
         user: responses[2].data.user,
         user_id: query.user_id,

@@ -1,21 +1,14 @@
 const express = require('express'),
     router = express.Router(),
     passport = require('passport'),
-    User = require('../models/user'),
     nodemailer = require('nodemailer'),
     mg = require('nodemailer-mailgun-transport'),
     urlMetadata = require('url-metadata'),
     URLSafeBase64 = require('urlsafe-base64');
 
-// authenticate user
-router.post('/authenticate', async function (req, res) {
-    if (req.isAuthenticated()) {
-        const user = await User.findById(req.user._id);
-        return res.status(200).send({user});
-    } else {
-        return res.sendStatus(200);
-    }
-});
+const {hashPassword} = require('../utils');
+
+const db = require("../db/index");
 
 // handle login logic
 router.post('/login', emailToLowerCase, passport.authenticate('local'), function(req, res) {
@@ -56,73 +49,83 @@ router.post('/forgot', function (req, res) {
         }
         let token = URLSafeBase64.encode(buf).toString();
 
-        (function assignToken(err) {
+        (async function assignToken(err) {
             if (err) {
                 return res.status(404).send({ detail: 'There was a problem assigning a token!' })
             }
 
-            User.findOne({email: email}, function (err, user) {
-                if (err) {
-                    return res.status(404).send({ detail: err })
+            await db.query('BEGIN');
+            const response = await db.query({
+                text: `SELECT * FROM users WHERE email = $1`,
+                values: [email],
+            });
+
+            if (response.rows.length === 0) {
+                await db.query('ROLLBACK');
+                return res.status(404).send({ detail: 'No user found!' })
+            }
+
+            await db.query({
+                text: `UPDATE users SET reset_token = $1, token_expires = $2 WHERE email = $3`,
+                values: [token, Date.now() + 3600000, email],
+            });
+            await db.query('COMMIT');
+
+            const auth = {
+                auth: {
+                    api_key: process.env.MAILGUN_API,
+                    domain: 'mg.recipe-cloud.com'
                 }
-                if (!user) {
-                    return res.status(404).send({ detail: 'No user found!' })
-                }
+            };
 
-                user.resetToken = token;
-                user.tokenExpires = Date.now() + 3600000; // 1 hour
+            const transporter = nodemailer.createTransport(mg(auth));
 
-                user.save();
-
-                const auth = {
-                    auth: {
-                        api_key: process.env.MAILGUN_API,
-                        domain: 'mg.recipe-cloud.com'
-                    }
-                }
-
-                const transporter = nodemailer.createTransport(mg(auth));
-
-                let mailOptions = {
-                    from: 'Recipe Cloud <donotreply@recipe-cloud.com>', // sender address
-                    to: req.body.email, // list of receivers
-                    subject: 'Password Reset', // Subject line
-                    html: `You are receiving this because you (or someone else) have requested the reset of the password for your account.<br /><br />
+            let mailOptions = {
+                from: 'Recipe Cloud <donotreply@recipe-cloud.com>', // sender address
+                to: req.body.email, // list of receivers
+                subject: 'Password Reset', // Subject line
+                html: `You are receiving this because you (or someone else) have requested the reset of the password for your account.<br /><br />
                     Your password reset token is ${user.resetToken}. Enter this token on the forgot password page to change your
                     password. Note: This token will expire after 1 hour.<br /><br />
                     If you did not request this, please ignore this email and your password will remain unchanged.` // html body
-                };
+            };
 
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        return res.status(404).send({ detail: 'There was a problem sending reset email.' })
-                    } else {
-                        return res.status(200).send('Success!')
-                    }
-                });
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return res.status(404).send({ detail: 'There was a problem sending reset email.' })
+                } else {
+                    return res.status(200).send('Success!')
+                }
             });
         })();
     })();
 });
 
 // reset password
-router.post('/reset', function (req, res) {
-    User.findOne({resetToken: req.body.token, tokenExpires: {$gt: Date.now()}}, function (err, user) {
-        if (err) {
-            return res.status(404).send({ detail: err.message })
-        }
-        if (!user) {
-            return res.status(404).send('Token is invalid or has expired.')
-        }
-        user.password = req.body.newPassword;
-        user.resetToken = undefined;
-        user.tokenExpires = undefined;
-        user.save();
+router.post('/reset', async function (req, res) {
 
-        req.logIn(user, function (err) {
-            if (err) return res.status(404).send({ detail: err });
-            return res.status(200);
-        });
+    // TODO this needs to use a client connection
+    await db.query('BEGIN');
+    const response = await db.query({
+        text: `SELECT * FROM users WHERE reset_token = $1 AND token_expires > $2`,
+        values: [req.body.token, Date.now()]
+    });
+
+    if (response.rows.length === 0) {
+        await db.query('ROLLBACK');
+        return res.status(404).send('Token is invalid or has expired.')
+    }
+
+    const userRes = await db.query({
+        text: `UPDATE users SET password = $1, reset_token = NULL, token_expires = NULL RETURNING *`,
+        values: [await hashPassword(req.body.newPassword)],
+    });
+
+    await db.query('COMMIT');
+
+    req.logIn(userRes.rows[0], function (err) {
+        if (err) return res.status(404).send({ detail: err });
+        return res.status(200);
     });
 });
 

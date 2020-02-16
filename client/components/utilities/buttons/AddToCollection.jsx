@@ -38,13 +38,13 @@ const AddToCollection = observer(props => {
             {dialogOpen && <div>
                 <ul>
                     {context.user.collections
-                        .filter(c => c.ownerId === context.user?._id)
+                        .filter(c => c.author_id === context.user?.id)
                         .map(c => {
-                        const inCollection = c.recipes.find(r => r._id === props.recipe_id);
-                        return <li key={c._id}>
+                        const inCollection = c.recipes.find(r => r.id === props.recipe_id);
+                        return <li key={c.id}>
                             <Button onClick={() => {
                                 if (inCollection) {
-                                    props.removeFromCollection(c._id, props.recipe_id);
+                                    props.removeFromCollection(c.id, props.recipe_id);
                                 } else {
                                     props.addToCollection(c.name);
                                 }

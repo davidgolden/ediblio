@@ -1,44 +1,48 @@
 const express = require('express'),
     router = express.Router(),
-    User = require("../models/user"),
-    Rating = require('../models/rating'),
     middleware = require('../middleware');
 
+const db = require("../db/index");
+
 router.post('/rating', middleware.isLoggedIn, async (req, res) => {
-    const exists = await Rating.findOne({
-        recipe_id: req.body.recipe_id,
-        author_id: req.user._id,
-    });
-
-    // edit or create new rating
-    let rating;
-    if (exists) {
-        exists.rating = req.body.rating;
-        await exists.save();
-        rating = exists;
-    } else {
-        const newRating = new Rating({
-            recipe_id: req.body.recipe_id,
-            author_id: req.user._id,
-            rating: req.body.rating,
+    try {
+        await db.query("BEGIN");
+        const exists = await db.query({
+            text: `SELECT * FROM ratings WHERE recipe_id = $1 AND author_id = $2`,
+            values: [req.body.recipe_id, req.user.id],
         });
-        await newRating.save();
-        rating = newRating;
-    }
 
-    const avgRating = await Rating.aggregate([
-        {
-            "$group": {
-                "_id": "$recipe_id",
-                "avgRating": {"$avg": {"$ifNull": ["$rating", 0]}}
-            }
+        // edit or create new rating
+        let rating;
+        if (exists.rows.length > 0) {
+            // exists
+            rating = await db.query({
+                text: `UPDATE ratings SET rating = $1 WHERE id = $2 RETURNING *`,
+                values: [req.body.rating, exists.rows[0].id],
+            });
+        } else {
+            rating = await db.query({
+                text: `INSERT INTO ratings (recipe_id, author_id, rating) VALUES ($1, $2, $3) RETURNING *`,
+                values: [req.body.recipe_id, req.user.id, req.body.rating],
+            })
         }
-    ]);
 
-    return res.status(200).json({
-        rating,
-        avgRating,
-    });
+        const average = await db.query({
+            text: `SELECT avg(rating) FROM ratings WHERE recipe_id = $1 GROUP BY id`,
+            values: [req.body.recipe_id],
+        });
+
+        await db.query('COMMIT');
+
+
+        return res.status(200).json({
+            rating: rating.rows[0],
+            avg_rating: average.rows[0].avg,
+        });
+    } catch (error) {
+        await db.query('ROLLBACK');
+        return res.status(404).send(error);
+    }
 });
 
 module.exports = router;

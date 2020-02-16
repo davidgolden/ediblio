@@ -1,0 +1,28 @@
+@import "../../../styles/variables";
+
+.checkbox {
+  span {
+    border: 3px solid $otherdark;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+  }
+
+  cursor: pointer;
+
+  input:checked ~ span::after {
+    content: '\2714';
+    font-size: 35px;
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    transform: rotate(-10deg);
+    color: $otherdark;
+  }
+
+  input {
+    display: none;
+  }
+}

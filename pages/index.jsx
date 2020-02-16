@@ -53,7 +53,7 @@ const Index = props => {
                     return response;
                 })
                 .then(response => {
-                    response.forEach(rec => recipes.set(rec._id, rec));
+                    response.forEach(rec => recipes.set(rec.id, rec));
                     if (response.length < 12) {
                         setLoadedAll(true);
                     } else {
@@ -126,7 +126,7 @@ const Index = props => {
             />
             <div className={browseRecipesContainerClassName}>
                 {Array.from(recipes.values()).map(recipe => {
-                    return <RecipeCard deleteRecipe={removeRecipe} key={recipe._id} recipe={recipe}/>
+                    return <RecipeCard deleteRecipe={removeRecipe} key={recipe.id} recipe={recipe}/>
                 })}
                 {recipes.size === 0 && <p>There doesn't seem to be anything here...</p>}
             </div>
@@ -148,8 +148,9 @@ Index.getInitialProps = async ({req}) => {
             sortBy: 'created_at',
         }
     });
+
     return {
-        recipes: response.data.recipes.map(r => [r._id, r]),
+        recipes: response.data.recipes.map(r => [r.id, r]),
         loadedAll: response.data.recipes.length < 12,
     }
 };
