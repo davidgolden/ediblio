@@ -24,7 +24,7 @@ async function populate() {
             ('lb', 'pound', 'pounds', 'weight'),
             ('gal', 'gallon', 'gallons', 'volume'),
             ('l', 'liter', 'liters', 'volume'),
-            ('c', 'cup', 'cups', 'volume'),
+            ('cup', 'cup', 'cups', 'volume'),
             ('g', 'gram', 'grams', 'weight'),
             ('#', '#', '', 'amount')`);
 
@@ -57,7 +57,7 @@ async function populate() {
 
                     await db.query({
                         text: 'INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
-                        values: [recipeRes.rows[0].id, ing.name, ing.measurement, Number(ing.quantity)]
+                        values: [recipeRes.rows[0].id, ing.name, ing.measurement ? ing.measurement : "#", Number(ing.quantity)]
                     })
                 }
             }
