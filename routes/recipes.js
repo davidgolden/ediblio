@@ -48,7 +48,7 @@ async function getRecipe(recipe_id, user_id) {
                     and ratings.author_id = $1
                 ) user_ratings ON TRUE
                 LEFT JOIN LATERAL (
-                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, recipes_ingredients.name, m.short_name measurement
+                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, recipes_ingredients.name, recipes_ingredients.measurement_id, m.short_name measurement
                     FROM recipes_ingredients
                     LEFT JOIN LATERAL (
                         SELECT short_name FROM measurements

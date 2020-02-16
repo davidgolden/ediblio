@@ -5,6 +5,7 @@ const express = require('express'),
 
 const cloudinary = require('cloudinary');
 const {usersSelector} = require("../utils");
+const {addIngredient, canBeAdded} = require("../client/utils/conversions");
 
 const db = require("../db/index");
 const {Pool} = require('pg');
@@ -86,21 +87,66 @@ router.route('/users/:user_id/recipes')
 router.route('/users/:user_id/ingredients')
     .post(middleware.isLoggedIn, async (req, res) => {
         // add ingredient to grocery list
+        const client = await pool.connect();
         try {
-            const response = await db.query({
+            await client.query("BEGIN");
+
+            const similarIngredient = await client.query({
                 text: `
-                INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity)
-                VALUES ($1,
-                    $2,
-                    (SELECT id FROM measurements WHERE short_name = $3),
-                    $4
-                ) RETURNING *`,
-                values: [req.user.id, req.body.name, req.body.measurement, req.body.quantity],
+                    SELECT users_ingredients_groceries.*, measurements.short_name AS measurement
+                    FROM users_ingredients_groceries
+                    INNER JOIN measurements ON measurements.id = users_ingredients_groceries.measurement_id
+                    WHERE (users_ingredients_groceries.name ILIKE $1
+                    OR users_ingredients_groceries.name ILIKE $2
+                    OR users_ingredients_groceries.name ILIKE $3
+                    OR users_ingredients_groceries.name ILIKE $4
+                    OR users_ingredients_groceries.name ILIKE $5)
+                    AND users_ingredients_groceries.user_id = $6
+                    LIMIT 1
+                    `,
+                values: [req.body.name, req.body.name + "s", req.body.name + "es", req.body.name.slice(0, -1), req.body.name.slice(0, -2), req.user.id],
             });
+
+            let response;
+            if (similarIngredient.rows.length > 0) {
+                // if there's a similar ingredient
+                // check if it can be added
+                let m = similarIngredient.rows[0].measurement;
+                let q = similarIngredient.rows[0].quantity;
+                // check if item can be added
+                if (canBeAdded(m, req.body.measurement)) {
+                    // if it can be added, add it
+                    let newQM = addIngredient(Number(q), m, Number(req.body.quantity), req.body.measurement);
+
+                    response = await client.query({
+                        text: `UPDATE users_ingredients_groceries SET quantity = $1, measurement_id = (SELECT id FROM measurements WHERE short_name = $2) WHERE id = $3 RETURNING *`,
+                        values: [newQM.quantity, newQM.measurement, similarIngredient.rows[0].id],
+                    });
+
+                } else {
+                    // if it can't be added, push it to grocery list
+                    response = await client.query({
+                        text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4) RETURNING *',
+                        values: [req.user.id, req.body.name, req.body.measurement, req.body.quantity]
+                    })
+                }
+
+            } else {
+                // if there aren't any matching ingredients
+                response = await client.query({
+                    text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4) RETURNING *',
+                    values: [req.user.id, req.body.name, req.body.measurement, req.body.quantity]
+                })
+            }
+
+            await client.query("COMMIT");
 
             return res.status(200).send(response.rows[0]);
         } catch (error) {
+            await client.query("ROLLBACK");
             res.status(404).send({detail: error.message});
+        } finally {
+            client.release();
         }
     })
     .get(middleware.isLoggedIn, async (req, res) => {
@@ -165,22 +211,73 @@ router.route('/users/:user_id/ingredients/:ingredient_id')
 router.route('/users/:user_id/recipes/:recipe_id')
     .post(middleware.isLoggedIn, async (req, res) => {
         // add full recipe to grocery list
+        const client = await pool.connect();
         try {
+            await client.query('BEGIN');
             // insert recipe into menu
-            await db.query({
+            await client.query({
                 text: `INSERT INTO users_recipes_menu (user_id, recipe_id) VALUES ($1, $2)`,
                 values: [req.user.id, req.params.recipe_id]
             });
 
-            // insert all ingredients from recipe into grocery list
-            await db.query({
-                text: `
-                INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity)
-                SELECT $1, recipes_ingredients.name, recipes_ingredients.measurement_id, recipes_ingredients.quantity
-                FROM recipes_ingredients
-                WHERE recipes_ingredients.recipe_id = $2`,
-                values: [req.user.id, req.params.recipe_id]
+            const recipeIngredients = await client.query({
+                text: `SELECT * FROM recipes_ingredients WHERE recipes_ingredients.recipe_id = $1`,
+                values: [req.params.recipe_id],
             });
+
+            for (let x = 0; x < recipeIngredients.rows.length; x++) {
+                const ing = recipeIngredients.rows[x];
+
+                // find a similar ingredient on user's grocery list
+                const similarIngredient = await client.query({
+                    text: `
+                    SELECT users_ingredients_groceries.*, measurements.short_name AS measurement
+                    FROM users_ingredients_groceries
+                    INNER JOIN measurements ON measurements.id = users_ingredients_groceries.measurement_id
+                    WHERE (users_ingredients_groceries.name ILIKE $1
+                    OR users_ingredients_groceries.name ILIKE $2
+                    OR users_ingredients_groceries.name ILIKE $3
+                    OR users_ingredients_groceries.name ILIKE $4
+                    OR users_ingredients_groceries.name ILIKE $5)
+                    AND users_ingredients_groceries.user_id = $6
+                    LIMIT 1
+                    `,
+                    values: [ing.name, ing.name + "s", ing.name + "es", ing.name.slice(0, -1), ing.name.slice(0, -2), req.user.id],
+                });
+
+                if (similarIngredient.rows.length > 0) {
+                    // if there's a similar ingredient
+                    // check if it can be added
+                    let m = similarIngredient.rows[0].measurement;
+                    let q = similarIngredient.rows[0].quantity;
+                    // check if item can be added
+                    if (canBeAdded(m, ing.measurement)) {
+                        // if it can be added, add it
+                        let newQM = addIngredient(Number(q), m, Number(ing.quantity), ing.measurement);
+
+                        await client.query({
+                            text: `UPDATE users_ingredients_groceries SET quantity = $1, measurement_id = (SELECT id FROM measurements WHERE short_name = $2) WHERE id = $3`,
+                            values: [newQM.quantity, newQM.measurement, similarIngredient.rows[0].id],
+                        });
+
+                    } else {
+                        // if it can't be added, push it to grocery list
+                        await client.query({
+                            text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, $3, $4)',
+                            values: [req.user.id, ing.name, ing.measurement_id, ing.quantity]
+                        })
+                    }
+
+                } else {
+                    // if there aren't any matching ingredients
+                    await client.query({
+                        text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, $3, $4)',
+                        values: [req.user.id, ing.name, ing.measurement_id, ing.quantity]
+                    })
+                }
+            }
+
+            await client.query("COMMIT");
 
             const response = await db.query({
                 text: usersSelector + 'where users.id = $1 group by users.id',
@@ -190,7 +287,10 @@ router.route('/users/:user_id/recipes/:recipe_id')
             res.status(200).send({user: response.rows[0]});
 
         } catch (error) {
+            await client.query("ROLLBACK");
             res.status(404).send({detail: error.message});
+        } finally {
+            client.release();
         }
     })
     .patch(middleware.isLoggedIn, async (req, res) => {
@@ -207,10 +307,53 @@ router.route('/users/:user_id/recipes/:recipe_id')
             for (let x = 0; x < req.body.ingredients.length; x++) {
                 const ing = req.body.ingredients[x];
 
-                await client.query({
-                    text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
-                    values: [req.user.id, ing.name, ing.measurement, ing.quantity]
-                })
+                // find a similar ingredient on user's grocery list
+                const similarIngredient = await client.query({
+                    text: `
+                    SELECT users_ingredients_groceries.*, measurements.short_name AS measurement
+                    FROM users_ingredients_groceries
+                    INNER JOIN measurements ON measurements.id = users_ingredients_groceries.measurement_id
+                    WHERE (users_ingredients_groceries.name ILIKE $1
+                    OR users_ingredients_groceries.name ILIKE $2
+                    OR users_ingredients_groceries.name ILIKE $3
+                    OR users_ingredients_groceries.name ILIKE $4
+                    OR users_ingredients_groceries.name ILIKE $5)
+                    AND users_ingredients_groceries.user_id = $6
+                    LIMIT 1
+                    `,
+                    values: [ing.name, ing.name + "s", ing.name + "es", ing.name.slice(0, -1), ing.name.slice(0, -2), req.user.id],
+                });
+
+                if (similarIngredient.rows.length > 0) {
+                    // if there's a similar ingredient
+                    // check if it can be added
+                    let m = similarIngredient.rows[0].measurement;
+                    let q = similarIngredient.rows[0].quantity;
+                    // check if item can be added
+                    if (canBeAdded(m, ing.measurement)) {
+                        // if it can be added, add it
+                        let newQM = addIngredient(Number(q), m, Number(ing.quantity), ing.measurement);
+
+                        await client.query({
+                            text: `UPDATE users_ingredients_groceries SET quantity = $1, measurement_id = (SELECT id FROM measurements WHERE short_name = $2) WHERE id = $3`,
+                            values: [newQM.quantity, newQM.measurement, similarIngredient.rows[0].id],
+                        });
+
+                    } else {
+                        // if it can't be added, push it to grocery list
+                        await client.query({
+                            text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, $3, $4)',
+                            values: [req.user.id, ing.name, ing.measurement_id, ing.quantity]
+                        })
+                    }
+
+                } else {
+                    // if there aren't any matching ingredients
+                    await client.query({
+                        text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, $3, $4)',
+                        values: [req.user.id, ing.name, ing.measurement_id, ing.quantity]
+                    })
+                }
             }
 
             await client.query("COMMIT");

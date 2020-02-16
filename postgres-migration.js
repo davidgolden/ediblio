@@ -162,7 +162,7 @@ async function create() {
         recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
         quantity NUMERIC NOT NULL,
         name TEXT NOT NULL,
-        measurement_id UUID REFERENCES measurements(id) ON DELETE CASCADE
+        measurement_id UUID REFERENCES measurements(id) ON DELETE CASCADE NOT NULL
     );
     CREATE TABLE users_recipes_menu (
         id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
@@ -177,7 +177,7 @@ async function create() {
         deleted BOOLEAN DEFAULT FALSE,
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         name TEXT NOT NULL,
-        measurement_id UUID REFERENCES measurements(id) ON DELETE CASCADE,
+        measurement_id UUID REFERENCES measurements(id) ON DELETE CASCADE NOT NULL,
         quantity NUMERIC NOT NULL
     );
     CREATE TABLE users_collections_followers (

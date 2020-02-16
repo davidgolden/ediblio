@@ -159,7 +159,7 @@ const Groceries = props => {
                 storeMode={storeMode}
                 dragEnabled={true}
             />
-            <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
+            <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
             <Button className={clearListClassName} onClick={removeAllIngredients}>Remove All Ingredients</Button>
             <Button onClick={toggleStoreMode}>Toggle Store Mode</Button>
         </div>
