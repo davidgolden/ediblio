@@ -124,16 +124,20 @@ const Settings = props => {
 };
 
 Settings.getInitialProps = async ({query, req}) => {
-    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+    try {
+        const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
 
-    const response = await axios.get(`${currentFullUrl}/api/users/${query.user_id}`, {
-        headers: req?.headers?.cookie && {
-            cookie: req.headers.cookie,
+        const response = await axios.get(`${currentFullUrl}/api/users/${query.user_id}`, {
+            headers: req?.headers?.cookie && {
+                cookie: req.headers.cookie,
+            }
+        });
+        return {
+            user: response.data.user,
+            user_id: query.user_id,
         }
-    });
-    return {
-        user: response.data.user,
-        user_id: query.user_id,
+    } catch (error) {
+        return {}
     }
 };
 

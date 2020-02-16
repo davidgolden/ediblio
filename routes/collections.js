@@ -26,7 +26,7 @@ GROUP BY users.id;
 
 const selectCollectionWithRecipes = `
 SELECT collections.*,
-COALESCE(json_agg(recipes) FILTER (WHERE recipes IS NOT NULL), '[]') recipes
+COALESCE(json_agg(recipes) FILTER (WHERE recipes.id IS NOT NULL), '[]') recipes
 FROM collections
 LEFT JOIN LATERAL (
     select recipes.*, users.profile_image author_image
@@ -59,40 +59,40 @@ router.post('/collections', middleware.isLoggedIn, async (req, res) => {
     return res.status(200).json({user: response.rows[0]});
 });
 
-router.delete('/collections/:collection_id', middleware.isLoggedIn, async (req, res) => {
-    try {
-        const collectionRes = await db.query({
-            text: `DELETE FROM collections WHERE id = $1 AND is_primary != true`,
-            values: [req.params.collection_id],
+router.route('/collections/:collection_id')
+    .get(async (req, res) => {
+        const response = await db.query({
+            text: selectCollectionWithRecipes,
+            values: [req.params.collection_id]
         });
-
-        if (collectionRes.rows.length > 0) {
-            await db.query({
-                text: `DELETE FROM users_collections_followers WHERE collection_id = $1`,
+        res.status(200).json({
+            collection: response.rows[0],
+        });
+    })
+    .delete(middleware.isLoggedIn, async (req, res) => {
+        try {
+            const collectionRes = await db.query({
+                text: `DELETE FROM collections WHERE id = $1 AND is_primary != true`,
                 values: [req.params.collection_id],
             });
+
+            if (collectionRes.rows.length > 0) {
+                await db.query({
+                    text: `DELETE FROM users_collections_followers WHERE collection_id = $1`,
+                    values: [req.params.collection_id],
+                });
+            }
+
+            const response = await db.query({
+                text: selectUserWithCollections,
+                values: [req.user.id],
+            });
+
+            return res.status(200).json({user: response.rows[0]});
+        } catch (error) {
+            return res.sendStatus(404);
         }
-
-        const response = await db.query({
-            text: selectUserWithCollections,
-            values: [req.user.id],
-        });
-
-        return res.status(200).json({user: response.rows[0]});
-    } catch (error) {
-        return res.sendStatus(404);
-    }
-});
-
-router.get('/collections/:collection_id', async (req, res) => {
-    const response = await db.query({
-        text: selectCollectionWithRecipes,
-        values: [req.params.collection_id]
     });
-    res.status(200).json({
-        collection: response.rows[0],
-    });
-});
 
 router.route('/collections/:collection_id/recipes/:recipe_id')
     // add recipe to collection

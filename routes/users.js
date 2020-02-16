@@ -483,7 +483,7 @@ router.get('/users/:user_id/collections', async (req, res) => {
     const query = await db.query({
         text: `
         SELECT collections.*, author.profile_image author_image,
-        COALESCE(json_agg(recipes.*) FILTER (WHERE recipes IS NOT NULL), '[]') recipes
+        COALESCE(json_agg(recipes.*) FILTER (WHERE recipes.id IS NOT NULL), '[]') recipes
         FROM collections
         LEFT JOIN LATERAL (
             select recipes.* from recipes
