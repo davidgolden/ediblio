@@ -71,6 +71,24 @@ const Groceries = props => {
         }
     }
 
+    async function removeAllIngredients() {
+        try {
+            if (confirm("Are you sure you want to do that?")) {
+                await axios.delete(`/api/users/${context.user.id}/ingredients`, {
+                    data: {
+                        ingredient_ids: props.groceryList.map(ing => ing.id),
+                    }
+                });
+
+                setGroceryList([]);
+                setIngredientIdsToRemove([]);
+            }
+
+        } catch (error) {
+            context.handleError(error)
+        }
+    }
+
     async function handleAddIngredient(ingredient) {
         try {
             const response = await axios.post(`/api/users/${context.user.id}/ingredients`, ingredient);
@@ -102,6 +120,11 @@ const Groceries = props => {
     const saveListClassName = classNames({
         [styles.saveListButton]: true,
         [styles.saveListButtonDisabled]: ingredientIdsToRemove.length === 0,
+    });
+
+    const clearListClassName = classNames({
+        [styles.saveListButton]: true,
+        [styles.saveListButtonDisabled]: groceryList.length === 0,
     });
 
     const saveMenuClassName = classNames({
@@ -136,7 +159,8 @@ const Groceries = props => {
                 storeMode={storeMode}
                 dragEnabled={true}
             />
-            <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
+            <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
+            <Button className={clearListClassName} onClick={removeAllIngredients}>Remove All Ingredients</Button>
             <Button onClick={toggleStoreMode}>Toggle Store Mode</Button>
         </div>
     )

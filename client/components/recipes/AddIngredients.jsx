@@ -62,6 +62,7 @@ const AddIngredients = (props) => {
                 }}
                 tag={"ul"}
                 onChange={(order, sortable, evt) => {
+                    // TODO
                     // props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));
                 }}>
                 {props.ingredients.map((item, i) => {
