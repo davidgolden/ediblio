@@ -12,9 +12,9 @@
     "test": "jest",
     "dev": "next",
     "build": "next build",
-    "start:dev": "NODE_ENV=development PGUSER=davidgolden PGHOST=localhost PGPORT=5432 PGDATABASE=recipecloud nodemon server.js",
-    "start": "NODE_ENV=production node server.js",
-    "start-pg": "NODE_ENV=development PGUSER=davidgolden PGHOST=localhost PGPORT=5432 PGDATABASE=recipecloud node postgres-migration.js"
+    "start": "NODE_ENV=production nodemon server.js",
+    "start:prod": "NODE_ENV=production npm run start",
+    "start:dev": "NODE_ENV=development npm run start",
   },
   "author": "David Golden",
   "license": "ISC",
