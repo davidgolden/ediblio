@@ -8,7 +8,6 @@ import {observer} from "mobx-react";
 import axios from "axios";
 
 const RecipeButtons = observer(props => {
-
     const context = useContext(ApiStoreContext);
 
     const addToCollection = async (collectionName = "Favorites") => {
@@ -39,7 +38,6 @@ const RecipeButtons = observer(props => {
         return <div/>;
     }
 
-    const inMenu = !!(context.user?.menu?.find(item => item && item.id === props.recipe.id) || context.user?.menu?.includes(props.recipe.id));
     const isAuthor = props.recipe.author_id === context.user?.id;
 
     return (
@@ -48,7 +46,7 @@ const RecipeButtons = observer(props => {
             <AddToCollection recipe_id={props.recipe.id} removeFromCollection={removeFromCollection} addToCollection={addToCollection}/>
 
             <AddToGroceryListButton
-                disabled={inMenu}
+                disabled={props.inMenu}
                 onClick={props.addToGroceryList}/>
 
             {(isAuthor) &&

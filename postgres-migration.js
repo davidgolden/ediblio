@@ -54,14 +54,10 @@ async function populate() {
 
                 for (let x = 0; x < recipe.ingredients.length; x++) {
                     const ing = recipe.ingredients[x];
-                    const ingredientRes = await db.query({
-                        text: 'INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING *',
-                        values: [ing.name],
-                    });
 
                     await db.query({
-                        text: 'INSERT INTO recipes_ingredients (recipe_id, ingredient_id, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
-                        values: [recipeRes.rows[0].id, ingredientRes.rows[0].id, ing.measurement, Number(ing.quantity)]
+                        text: 'INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
+                        values: [recipeRes.rows[0].id, ing.name, ing.measurement, Number(ing.quantity)]
                     })
                 }
             }
@@ -137,10 +133,6 @@ async function create() {
         long_name_plural TEXT NOT NULL UNIQUE,
         type TEXT NOT NULL
     );
-    CREATE TABLE ingredients (
-        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
-        name TEXT NOT NULL UNIQUE
-    );
     CREATE TABLE collections (
         id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -169,7 +161,7 @@ async function create() {
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
         quantity NUMERIC NOT NULL,
-        ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
         measurement_id UUID REFERENCES measurements(id) ON DELETE CASCADE
     );
     CREATE TABLE users_recipes_menu (
@@ -184,7 +176,7 @@ async function create() {
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,
         deleted BOOLEAN DEFAULT FALSE,
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-        ingredient_id UUID REFERENCES ingredients(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
         measurement_id UUID REFERENCES measurements(id) ON DELETE CASCADE,
         quantity NUMERIC NOT NULL
     );

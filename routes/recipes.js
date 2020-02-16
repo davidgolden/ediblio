@@ -35,7 +35,8 @@ async function getRecipe(recipe_id, user_id) {
         response = await db.query({
             text: `
                 SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
-                COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
+                COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients,
+                CASE WHEN in_menu.id IS NULL THEN FALSE ELSE TRUE END AS in_menu
                 FROM recipes
                 LEFT JOIN LATERAL (
                     select rating from ratings
@@ -47,16 +48,12 @@ async function getRecipe(recipe_id, user_id) {
                     and ratings.author_id = $1
                 ) user_ratings ON TRUE
                 LEFT JOIN LATERAL (
-                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, m.short_name measurement, i.name as name
+                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, recipes_ingredients.name, m.short_name measurement
                     FROM recipes_ingredients
                     LEFT JOIN LATERAL (
                         SELECT short_name FROM measurements
                         WHERE measurements.id = recipes_ingredients.measurement_id
                     ) m ON true
-                    LEFT JOIN LATERAL (
-                        SELECT name FROM ingredients
-                        WHERE ingredients.id = recipes_ingredients.ingredient_id
-                    ) i ON true
                     WHERE recipes_ingredients.recipe_id = recipes.id
                 ) ingredients ON true
                 LEFT JOIN LATERAL (
@@ -64,8 +61,14 @@ async function getRecipe(recipe_id, user_id) {
                     from users
                     where users.id = recipes.author_id
                 ) author ON TRUE
+                LEFT JOIN LATERAL (
+                    SELECT id FROM users_recipes_menu
+                    WHERE users_recipes_menu.recipe_id = recipes.id
+                    AND users_recipes_menu.user_id = $1
+                    LIMIT 1
+                ) in_menu ON True
                 WHERE recipes.id = $2
-                group by recipes.id, author.username;`,
+                group by recipes.id, author.username, in_menu.id;`,
             values: [user_id, recipe_id]
         })
     } else {
@@ -79,16 +82,12 @@ async function getRecipe(recipe_id, user_id) {
                     where ratings.recipe_id = recipes.id
                 ) ratings ON TRUE 
                 LEFT JOIN LATERAL (
-                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, m.short_name measurement, i.name as name
+                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, recipes_ingredients.name, m.short_name measurement
                     FROM recipes_ingredients
                     LEFT JOIN LATERAL (
                         SELECT short_name FROM measurements
                         WHERE measurements.id = recipes_ingredients.measurement_id
                     ) m ON true
-                    LEFT JOIN LATERAL (
-                        SELECT name FROM ingredients
-                        WHERE ingredients.id = recipes_ingredients.ingredient_id
-                    ) i ON true
                     WHERE recipes_ingredients.recipe_id = recipes.id
                 ) ingredients ON true
                 LEFT JOIN LATERAL (
@@ -112,41 +111,72 @@ router.route('/recipes')
         let page = req.query.page || 0;
         const skip = page * page_size;
 
-        let text = `SELECT DISTINCT recipes.*, users.profile_image AS author_image 
-        FROM recipes 
-        INNER JOIN users ON users.id = recipes.author_id `,
-            values;
+        try {
+            // type checking
+            if ((req.query.sortBy !== 'created_at' &&
+                req.query.sortBy !== 'name') &&
+                (req.query.orderBy !== 'asc' &&
+                req.query.orderBy !== 'desc')) {
+                throw Error("Invalid Request");
+            }
 
-        if (req.query.author && req.query.searchTerm) {
-            text += `INNER JOIN ingredients ON ingredients.id in (
-                    SELECT ingredient_id FROM recipes_ingredients
-                    where recipes_ingredients.recipe_id = recipes.id
-                    )
-                    WHERE recipes.author_id = $1 AND (lower(recipes.name) LIKE $2 OR lower(ingredients.name) LIKE $2) 
+            let text = `
+            SELECT DISTINCT recipes.*, users.profile_image AS author_image 
+            `,
+                values = [];
+
+            if (req.user) {
+                text += `, CASE WHEN in_menu.id IS NULL THEN FALSE ELSE TRUE END AS in_menu `
+                values.push(req.user.id);
+            }
+
+            text += `FROM recipes 
+            INNER JOIN users ON users.id = recipes.author_id `;
+
+            if (req.user) {
+                text += `
+                LEFT JOIN LATERAL (
+                    SELECT id FROM users_recipes_menu
+                    WHERE users_recipes_menu.recipe_id = recipes.id
+                    AND users_recipes_menu.user_id = $1
+                    LIMIT 1
+                ) in_menu ON True
+                `
+            }
+
+            if (req.query.author && req.query.searchTerm) {
+                text += `
+                    INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
+                    WHERE recipes.author_id = $${values.length + 1} AND (lower(recipes.name) LIKE $${values.length + 2} OR lower(recipes_ingredients.name) LIKE $${values.length + 2}) 
                     ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
-            values = [req.query.author, "%" + req.query.searchTerm.toLowerCase() + "%"];
-        } else if (req.query.author) {
-            text += `WHERE recipes.author_id = $1  
-            ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
-            values = [req.query.author];
-        } else if (req.query.searchTerm) {
-            text += `INNER JOIN ingredients ON ingredients.id in (
-                    SELECT ingredient_id FROM recipes_ingredients
-                    where recipes_ingredients.recipe_id = recipes.id
-                    ) WHERE (lower(recipes.name) LIKE $1 OR lower(ingredients.name) LIKE $1) 
+                values.push(req.query.author, "%" + req.query.searchTerm.toLowerCase() + "%");
+            } else if (req.query.author) {
+                text += `
+                    WHERE recipes.author_id = $${values.length + 1}  
                     ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
-            values = ["%" + req.query.searchTerm.toLowerCase() + "%"];
-        } else {
-            text += `ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
-            values = [];
+                values.push(req.query.author);
+            } else if (req.query.searchTerm) {
+                text += `
+                    INNER JOIN ingredients ON ingredients.id in (
+                        SELECT ingredient_id FROM recipes_ingredients
+                        where recipes_ingredients.recipe_id = recipes.id
+                    ) WHERE (lower(recipes.name) LIKE $${values.length + 1} OR lower(ingredients.name) LIKE $${values.length + 1}) 
+                    ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
+                values.push("%" + req.query.searchTerm.toLowerCase() + "%");
+            } else {
+                text += `ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;;
+            }
+
+            const recipes = await db.query({
+                text,
+                values,
+            });
+
+            return res.status(200).send({recipes: recipes.rows});
+        } catch (error) {
+            console.log(error);
+            res.status(404).send({detail: error.message});
         }
-
-        const recipes = await db.query({
-            text,
-            values,
-        });
-
-        return res.status(200).send({recipes: recipes.rows});
     })
     .post(middleware.isLoggedIn, async (req, res) => {
         // create new recipe
@@ -160,14 +190,10 @@ router.route('/recipes')
         if (ingredients && ingredients.length > 0) {
             for (let x = 0; x < ingredients.length; x++) {
                 const ing = ingredients[x];
-                const ingredientRes = await db.query({
-                    text: 'INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING *',
-                    values: [ing.name],
-                });
 
                 await db.query({
-                    text: 'INSERT INTO recipes_ingredients (recipe_id, ingredient_id, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
-                    values: [recipeRes.rows[0].id, ingredientRes.rows[0].id, ing.measurement, ing.quantity]
+                    text: 'INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
+                    values: [recipeRes.rows[0].id, ing.name, ing.measurement, ing.quantity]
                 })
             }
         }
@@ -222,14 +248,10 @@ router.route('/recipes/:recipe_id')
 
                 for (let x = 0; x < ingredients.length; x++) {
                     const ing = ingredients[x];
-                    const ingredientRes = await client.query({
-                        text: 'INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING *',
-                        values: [ing.name],
-                    });
 
                     await client.query({
-                        text: 'INSERT INTO recipes_ingredients (recipe_id, ingredient_id, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4);',
-                        values: [req.params.recipe_id, ingredientRes.rows[0].id, ing.measurement, ing.quantity]
+                        text: 'INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4);',
+                        values: [req.params.recipe_id, ing.name, ing.measurement, ing.quantity]
                     })
                 }
             }
@@ -258,16 +280,12 @@ router.route('/recipes/:recipe_id')
                     and ratings.author_id = $1
                 ) user_ratings ON TRUE
                 LEFT JOIN LATERAL (
-                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, m.short_name measurement, i.name as name
+                    SELECT recipes_ingredients.id, recipes_ingredients.quantity, recipes_ingredients.name, m.short_name measurement
                     FROM recipes_ingredients
                     LEFT JOIN LATERAL (
                         SELECT short_name FROM measurements
                         WHERE measurements.id = recipes_ingredients.measurement_id
                     ) m ON true
-                    LEFT JOIN LATERAL (
-                        SELECT name FROM ingredients
-                        WHERE ingredients.id = recipes_ingredients.ingredient_id
-                    ) i ON true
                     WHERE recipes_ingredients.recipe_id = recipes.id
                 ) ingredients ON true
                 LEFT JOIN LATERAL (
@@ -306,16 +324,11 @@ router.route('/recipes/:recipe_id/ingredients')
     .post(middleware.checkRecipeOwnership, async (req, res) => {
         // add ingredient to recipe
         try {
-            await db.query({
-                text: `INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name`,
-                values: [req.body.name],
-            });
-
             const response = await db.query({
                 text: `
-                INSERT INTO recipes_ingredients (recipe_id, ingredient_id, measurement_id, quantity)
+                INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity)
                 VALUES ($1,
-                    (SELECT id FROM ingredients WHERE name = $2),
+                    $2,
                     (SELECT id FROM measurements WHERE short_name = $3),
                     $4
                 ) RETURNING *`,

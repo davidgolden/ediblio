@@ -26,13 +26,19 @@ const toggleEditClassName = classNames({
 const Recipe_id = observer(props => {
     const [edit, setEdit] = useState(false);
     const [recipe, setRecipe] = useState(props.recipe);
+    const [inMenu, setInMenu] = useState(props.recipe.in_menu);
 
     const context = useContext(ApiStoreContext);
 
     const addToGroceryList = async (ingredients) => {
-        await axios.patch(`/api/users/${context.user.id}/recipes/${props.recipe.id}`, {
-            ingredients,
-        });
+        try {
+            await axios.patch(`/api/users/${context.user.id}/recipes/${props.recipe.id}`, {
+                ingredients,
+            });
+            setInMenu(true);
+        } catch (error) {
+            context.handleError(error);
+        }
     };
 
     const updateRecipe = fullRecipe => {
@@ -75,6 +81,7 @@ const Recipe_id = observer(props => {
                 </div>
                 <div>{context.user && <RecipeButtons
                     recipe={recipe}
+                    inMenu={inMenu}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />}

@@ -36,50 +36,7 @@ const forceSsl = function (req, res, next) {
 
 const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
 
-const usersSelector = `
-SELECT users.*,
-COALESCE(json_agg(m) FILTER (WHERE m IS NOT NULL), '[]') menu,
-COALESCE(json_agg(c) FILTER (WHERE c IS NOT NULL), '[]') collections,
-COALESCE(json_agg(g) FILTER (WHERE g IS NOT NULL), '[]') grocery_list
-FROM users
-LEFT JOIN LATERAL (
-    SELECT * FROM recipes
-    WHERE recipes.id IN (
-        SELECT id FROM users_recipes_menu
-        WHERE users_recipes_menu.user_id = users.id
-    )
-) m ON true
-LEFT JOIN LATERAL (
-    SELECT collections.*, COALESCE(json_agg(cr) FILTER (WHERE cr.id IS NOT NULL), '[]') recipes
-    FROM collections
-    LEFT JOIN LATERAL (
-        SELECT * FROM recipes
-        WHERE recipes.id IN (
-            SELECT recipe_id FROM recipes_collections
-            WHERE recipes_collections.collection_id = collections.id
-        )
-    ) cr ON true
-    WHERE collections.author_id = users.id
-    OR collections.id IN (
-        SELECT collection_id FROM users_collections_followers
-        WHERE users_collections_followers.user_id = users.id
-    )
-    GROUP BY collections.id
-) c ON true
-LEFT JOIN LATERAL (
-    SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, m.short_name, i.name
-    FROM users_ingredients_groceries
-    LEFT JOIN LATERAL (
-        SELECT short_name FROM measurements
-        WHERE measurements.id = users_ingredients_groceries.measurement_id
-    ) m ON true
-    LEFT JOIN LATERAL (
-        SELECT name FROM ingredients
-        WHERE ingredients.id = users_ingredients_groceries.ingredient_id
-    ) i ON true
-    WHERE users_ingredients_groceries.user_id = users.id
-) g ON true
-`;
+const {usersSelector} = require("./utils");
 
 //Configure Passport
 passport.use(new LocalStrategy({

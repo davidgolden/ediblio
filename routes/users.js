@@ -4,6 +4,7 @@ const express = require('express'),
     middleware = require('../middleware');
 
 const cloudinary = require('cloudinary');
+const {usersSelector} = require("../utils");
 
 const db = require("../db/index");
 const {Pool} = require('pg');
@@ -27,7 +28,7 @@ router.route('/users')
     .post(async (req, res) => {
         try {
             const response = await db.query({
-                text: `INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
+                text: `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *`,
                 values: [req.body.username, req.body.email.toLowerCase(), await hashPassword(req.body.password)]
             });
 
@@ -86,16 +87,11 @@ router.route('/users/:user_id/ingredients')
     .post(middleware.isLoggedIn, async (req, res) => {
         // add ingredient to grocery list
         try {
-            await db.query({
-                text: `INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name`,
-                values: [req.body.name],
-            });
-
             const response = await db.query({
                 text: `
-                INSERT INTO users_ingredients_groceries (user_id, ingredient_id, measurement_id, quantity)
+                INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity)
                 VALUES ($1,
-                    (SELECT id FROM ingredients WHERE name = $2),
+                    $2,
                     (SELECT id FROM measurements WHERE short_name = $3),
                     $4
                 ) RETURNING *`,
@@ -112,16 +108,12 @@ router.route('/users/:user_id/ingredients')
         try {
             const response = await db.query({
                 text: `
-                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, m.short_name measurement, i.name
+                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, users_ingredients_groceries.name, m.short_name measurement
                 FROM users_ingredients_groceries
                 LEFT JOIN LATERAL (
                     SELECT short_name FROM measurements
                     WHERE measurements.id = users_ingredients_groceries.measurement_id
                 ) m ON true
-                LEFT JOIN LATERAL (
-                    SELECT name FROM ingredients
-                    WHERE ingredients.id = users_ingredients_groceries.ingredient_id
-                ) i ON true
                 WHERE users_ingredients_groceries.user_id = $1;`,
                 values: [req.user.id],
             });
@@ -158,7 +150,7 @@ router.route('/users/:user_id/ingredients/:ingredient_id')
             const response = await db.query({
                 text: `
             UPDATE users_ingredients_groceries
-            SET ingredient_id = (SELECT id FROM ingredients WHERE name = $1), quantity = $2, measurement_id = (SELECT id FROM measurements WHERE short_name = $3)
+            SET name = $1, quantity = $2, measurement_id = (SELECT id FROM measurements WHERE short_name = $3)
             WHERE id = $4 RETURNING *
             `,
                 values: [req.body.name, req.body.quantity, req.body.measurement, req.params.ingredient_id],
@@ -183,14 +175,19 @@ router.route('/users/:user_id/recipes/:recipe_id')
             // insert all ingredients from recipe into grocery list
             await db.query({
                 text: `
-                INSERT INTO users_ingredients_groceries (user_id, ingredient_id, measurement_id, quantity)
-                SELECT $1, recipes_ingredients.ingredient_id, recipes_ingredients.measurement_id, recipes_ingredients.quantity
+                INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity)
+                SELECT $1, recipes_ingredients.name, recipes_ingredients.measurement_id, recipes_ingredients.quantity
                 FROM recipes_ingredients
                 WHERE recipes_ingredients.recipe_id = $2`,
                 values: [req.user.id, req.params.recipe_id]
             });
 
-            res.sendStatus(200);
+            const response = await db.query({
+                text: usersSelector + 'where users.id = $1 group by users.id',
+                values: [req.user.id]
+            });
+
+            res.status(200).send({user: response.rows[0]});
 
         } catch (error) {
             res.status(404).send({detail: error.message});
@@ -209,19 +206,21 @@ router.route('/users/:user_id/recipes/:recipe_id')
 
             for (let x = 0; x < req.body.ingredients.length; x++) {
                 const ing = req.body.ingredients[x];
-                const ingredientRes = await client.query({
-                    text: 'INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING *',
-                    values: [ing.name],
-                });
 
                 await client.query({
-                    text: 'INSERT INTO users_ingredients_groceries (user_id, ingredient_id, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
-                    values: [req.user.id, ingredientRes.rows[0].id, ing.measurement, ing.quantity]
+                    text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
+                    values: [req.user.id, ing.name, ing.measurement, ing.quantity]
                 })
             }
 
             await client.query("COMMIT");
-            res.sendStatus(200);
+
+            const response = await db.query({
+                text: usersSelector + 'where users.id = $1 group by users.id',
+                values: [req.user.id]
+            });
+
+            res.status(200).send({user: response.rows[0]});
 
         } catch (error) {
             await client.query("ROLLBACK");
@@ -334,21 +333,23 @@ router.get('/users/:user_id/collections', async (req, res) => {
     const query = await db.query({
         text: `
         SELECT collections.*, author.profile_image author_image,
-        COALESCE(json_agg(recipes.image) FILTER (WHERE recipes IS NOT NULL), '[]') recipes
+        COALESCE(json_agg(recipes.*) FILTER (WHERE recipes IS NOT NULL), '[]') recipes
         FROM collections
         LEFT JOIN LATERAL (
-            select recipes.image from recipes
+            select recipes.* from recipes
             where recipes.id in (
                 select recipe_id from recipes_collections
                 where recipes_collections.collection_id = collections.id
             )
-            limit 4
         ) recipes ON TRUE 
         LEFT JOIN LATERAL (
             select profile_image from users
             where users.id = collections.author_id
         ) author ON TRUE
-        WHERE collections.author_id = $1
+        WHERE collections.author_id = $1 OR collections.id IN (
+            SELECT collection_id FROM users_collections_followers
+            WHERE users_collections_followers.user_id = $1
+        )
         group by collections.id, author.profile_image;`,
         values: [req.params.user_id],
     });

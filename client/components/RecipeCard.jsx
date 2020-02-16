@@ -26,9 +26,16 @@ const recipeCardButtonClassName = classNames({
 const RecipeCard = props => {
     const context = useContext(ApiStoreContext);
     const [showButtons, setShowButtons] = useState(false);
+    const [inMenu, setInMenu] = useState(props.recipe.in_menu);
 
     const addToGroceryList = async () => {
-        await axios.post(`/api/users/${context.user.id}/recipes/${props.recipe.id}`);
+        try {
+            const response = await axios.post(`/api/users/${context.user.id}/recipes/${props.recipe.id}`);
+            context.user = response.data.user;
+            setInMenu(true);
+        } catch (error) {
+            context.handleError(error);
+        }
     };
 
     const deleteRecipe = () => {
@@ -53,6 +60,7 @@ const RecipeCard = props => {
             <div className={recipeCardButtonClassName}>
                 {showButtons && <RecipeButtons
                     recipe={props.recipe}
+                    inMenu={inMenu}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />}
