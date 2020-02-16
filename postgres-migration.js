@@ -202,4 +202,3 @@ create()
     .then(() => console.log('created'))
     .then(populate)
     .then(() => console.log('populated'));
-// after running this must run  psql recipecloud -p 5433 < node_modules/connect-pg-simple/table.sql to get sessions working
