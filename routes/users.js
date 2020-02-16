@@ -28,7 +28,7 @@ router.route('/users')
     // create new user (register)
     .post(async (req, res) => {
         try {
-            const response = await db.query({
+            const userRes = await db.query({
                 text: `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *`,
                 values: [req.body.username, req.body.email.toLowerCase(), await hashPassword(req.body.password)]
             });
@@ -36,11 +36,18 @@ router.route('/users')
             // create a favorites collection
             await db.query({
                 text: `INSERT INTO collections (name, author_id, is_primary) VALUES ($1, $2, $3)`,
-                values: ['Favorites', response.rows[0].id, true]
+                values: ['Favorites', userRes.rows[0].id, true]
             });
 
-            req.login(response.rows[0], function () {
-                res.status(200).json({user: req.user});
+            req.login(userRes.rows[0], async function () {
+                const response = await db.query({
+                    text: `${usersSelector}
+                where users.id = $1
+                group by users.id;`,
+                    values: [userRes.rows[0].id]
+                });
+
+                res.status(200).json({user: response.rows[0]});
             });
 
         } catch (error) {
