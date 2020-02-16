@@ -3,8 +3,12 @@ import styles from '../../styles/UserSettings.scss';
 import classNames from 'classnames';
 import Button from "../../../client/components/utilities/buttons/Button";
 import {ApiStoreContext} from "../../../client/stores/api_store";
-import {processFile} from "../../../client/utils/images";
 import axios from "axios";
+import UserWall from "../../../client/components/utilities/UserWall";
+
+const settingsContainerClassName = classNames({
+    [styles.settingsContainer]: true,
+});
 
 const Settings = props => {
     const context = useContext(ApiStoreContext);
@@ -77,50 +81,45 @@ const Settings = props => {
         }
     };
 
-    if (!props.user) {
-        return <p>You do not have permission to view this page!</p>
-    }
-
-    const settingsContainerClassName = classNames({
-        [styles.settingsContainer]: true,
-    });
     const submitButtonClassName = classNames({
         [styles.submitButton]: true,
         [styles.submitButtonDisabled]: current,
     });
 
     return (
-        <div className={settingsContainerClassName}>
-            <h1>Edit Profile</h1>
-            <div>
-                {(profileImage || displayImage) && <img src={displayImage || profileImage}/>}
-                <input onChange={e => handleFileUpload(e.target.files[0])} type={'file'} accept={'image/*'}/>
+        <UserWall>
+            <div className={settingsContainerClassName}>
+                <h1>Edit Profile</h1>
+                <div>
+                    {(profileImage || displayImage) && <img src={displayImage || profileImage}/>}
+                    <input onChange={e => handleFileUpload(e.target.files[0])} type={'file'} accept={'image/*'}/>
+                </div>
+                <div>
+                    <label htmlFor='username'>Username</label>
+                    <input type='text' name='username' value={username}
+                           onChange={e => setUsername(e.target.value)}/>
+                </div>
+                <div>
+                    <label htmlFor='email'>Email</label>
+                    <input type='email' name='email' value={email}
+                           onChange={e => setEmail(e.target.value)}/>
+                </div>
+                <div>
+                    <label htmlFor='password'>Password</label>
+                    <input type='password' name='password' value={password}
+                           onChange={e => setPassword(e.target.value)}/>
+                </div>
+                <div>
+                    <label htmlFor='confirm'>Confirm Password</label>
+                    <input type='password' name='confirm' value={confirm}
+                           onChange={e => setConfirm(e.target.value)}/>
+                </div>
+                <div>
+                    <Button className={submitButtonClassName}
+                            onClick={handleSubmit}>{current ? 'Up to Date' : 'Submit'}</Button>
+                </div>
             </div>
-            <div>
-                <label htmlFor='username'>Username</label>
-                <input type='text' name='username' value={username}
-                       onChange={e => setUsername(e.target.value)}/>
-            </div>
-            <div>
-                <label htmlFor='email'>Email</label>
-                <input type='email' name='email' value={email}
-                       onChange={e => setEmail(e.target.value)}/>
-            </div>
-            <div>
-                <label htmlFor='password'>Password</label>
-                <input type='password' name='password' value={password}
-                       onChange={e => setPassword(e.target.value)}/>
-            </div>
-            <div>
-                <label htmlFor='confirm'>Confirm Password</label>
-                <input type='password' name='confirm' value={confirm}
-                       onChange={e => setConfirm(e.target.value)}/>
-            </div>
-            <div>
-                <Button className={submitButtonClassName}
-                        onClick={handleSubmit}>{current ? 'Up to Date' : 'Submit'}</Button>
-            </div>
-        </div>
+        </UserWall>
     )
 };
 

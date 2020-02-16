@@ -3,12 +3,12 @@ import AddIngredients from '../../../client/components/recipes/AddIngredients';
 import styles from '../../styles/GroceryList.scss';
 import classNames from 'classnames';
 import Button from "../../../client/components/utilities/buttons/Button";
-import RemoveButton from "../../../client/components/utilities/buttons/RemoveButton"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
 import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
 import Checkbox from "../../../client/components/utilities/Checkbox";
+import UserWall from "../../../client/components/utilities/UserWall";
 
 const groceryListContainerClassName = classNames({
     [styles.groceryListContainer]: true,
@@ -102,8 +102,8 @@ const Groceries = props => {
         try {
             const oldIngredient = groceryList.find(ing => ing.id === ingredient.id);
             if (oldIngredient.name !== ingredient.name ||
-            oldIngredient.quantity !== ingredient.quantity ||
-            oldIngredient.measurement !== ingredient.measurement) {
+                oldIngredient.quantity !== ingredient.quantity ||
+                oldIngredient.measurement !== ingredient.measurement) {
                 await axios.patch(`/api/users/${context.user.id}/ingredients/${ingredient.id}`, ingredient);
             }
             setGroceryList(groceryList.map(ing => {
@@ -133,59 +133,67 @@ const Groceries = props => {
     });
 
     return (
-        <div className={groceryListContainerClassName}>
-            <h2>My Menu</h2>
-            <ul className={menuContainerClassName}>
-                {menu && menu.map((item) => {
-                    return <li key={item.id}>
-                        <Checkbox checked={menuIdsToRemove.includes(item.id)} onChange={() => toggleMenuIdToRemove(item.id)}/>
-                        <a target='_blank' href={item.url}>
-                            {item.name}
-                            <FontAwesomeIcon icon={faExternalLinkAlt}/>
-                        </a>
-                    </li>
-                })}
-            </ul>
-            <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
-            <h2>My Grocery List</h2>
-            <AddIngredients
-                canAdd={true}
-                containerClassName={ingredientsContainerClassName}
-                ingredients={groceryList}
-                handleAddIngredient={handleAddIngredient}
-                handleUpdateIngredient={handleUpdateIngredient}
-                selectedIngredientIds={ingredientIdsToRemove}
-                setSelectedIngredientIds={setIngredientIdsToRemove}
-                storeMode={storeMode}
-                dragEnabled={true}
-            />
-            <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
-            <Button className={clearListClassName} onClick={removeAllIngredients}>Remove All Ingredients</Button>
-            <Button onClick={toggleStoreMode}>Toggle Store Mode</Button>
-        </div>
+        <UserWall>
+            <div className={groceryListContainerClassName}>
+                <h2>My Menu</h2>
+                <ul className={menuContainerClassName}>
+                    {menu && menu.map((item) => {
+                        return <li key={item.id}>
+                            <Checkbox checked={menuIdsToRemove.includes(item.id)}
+                                      onChange={() => toggleMenuIdToRemove(item.id)}/>
+                            <a target='_blank' href={item.url}>
+                                {item.name}
+                                <FontAwesomeIcon icon={faExternalLinkAlt}/>
+                            </a>
+                        </li>
+                    })}
+                </ul>
+                <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
+                <h2>My Grocery List</h2>
+                <AddIngredients
+                    canAdd={true}
+                    containerClassName={ingredientsContainerClassName}
+                    ingredients={groceryList}
+                    handleAddIngredient={handleAddIngredient}
+                    handleUpdateIngredient={handleUpdateIngredient}
+                    selectedIngredientIds={ingredientIdsToRemove}
+                    setSelectedIngredientIds={setIngredientIdsToRemove}
+                    storeMode={storeMode}
+                    dragEnabled={true}
+                />
+                <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
+                <Button className={clearListClassName} onClick={removeAllIngredients}>Remove All Ingredients</Button>
+                <Button onClick={toggleStoreMode}>Toggle Store Mode</Button>
+            </div>
+        </UserWall>
     )
 };
 
 Groceries.getInitialProps = async ({req, query}) => {
     const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
 
-    const response = await Promise.all([
-        await axios.get(`${currentFullUrl}/api/users/${query.user_id}/recipes`, {
-            headers: req?.headers?.cookie && {
-                cookie: req.headers.cookie,
-            }
-        }),
-        await axios.get(`${currentFullUrl}/api/users/${query.user_id}/ingredients`, {
-            headers: req?.headers?.cookie && {
-                cookie: req.headers.cookie,
-            }
-        })
-    ]);
+    try {
+        const response = await Promise.all([
+            await axios.get(`${currentFullUrl}/api/users/${query.user_id}/recipes`, {
+                headers: req?.headers?.cookie && {
+                    cookie: req.headers.cookie,
+                }
+            }),
+            await axios.get(`${currentFullUrl}/api/users/${query.user_id}/ingredients`, {
+                headers: req?.headers?.cookie && {
+                    cookie: req.headers.cookie,
+                }
+            })
+        ]);
 
-    return {
-        groceryList: response[1].data.groceryList,
-        menu: response[0].data.menu,
-    };
+        return {
+            groceryList: response[1].data.groceryList,
+            menu: response[0].data.menu,
+        };
+    } catch (error) {
+        return {};
+    }
+
 };
 
 export default Groceries;
