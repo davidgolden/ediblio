@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import styles from './styles/RecipeCard.scss';
 import RecipeButtons from "./recipes/RecipeButtons";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faImage} from '@fortawesome/free-solid-svg-icons';
+import {faImage, faStar} from '@fortawesome/free-solid-svg-icons';
 import Link from "next/link";
 import UserImageSmall from "./utilities/UserImageSmall";
 import axios from "axios";
@@ -66,6 +66,9 @@ const RecipeCard = props => {
                 />}
             </div>
             {showButtons && <UserImageSmall id={props.recipe.author_id} profileImage={props.recipe.author_image}/>}
+            {showButtons && props.recipe.total_ratings > 0 && <div className={styles.recipeRating}>
+                <FontAwesomeIcon icon={faStar} /> {props.recipe.avg_rating ? Math.round(props.recipe.avg_rating*2)/2 : 0} / {props.recipe.total_ratings}
+            </div>}
         </div>
     )
 };

@@ -114,17 +114,21 @@ router.route('/recipes')
         try {
 
             let text = `
-            SELECT DISTINCT recipes.*, users.profile_image AS author_image 
+            SELECT DISTINCT recipes.*, users.profile_image AS author_image, avg(ratings.rating) avg_rating, count(ratings) total_ratings
             `,
                 values = [];
 
             if (req.user) {
-                text += `, CASE WHEN in_menu.id IS NULL THEN FALSE ELSE TRUE END AS in_menu `
+                text += `, CASE WHEN in_menu.id IS NULL THEN FALSE ELSE TRUE END AS in_menu `;
                 values.push(req.user.id);
             }
 
             text += `FROM recipes 
-            INNER JOIN users ON users.id = recipes.author_id `;
+            INNER JOIN users ON users.id = recipes.author_id
+            LEFT JOIN LATERAL (
+                    select rating from ratings
+                    where ratings.recipe_id = recipes.id
+                ) ratings ON TRUE `;
 
             if (req.user) {
                 text += `
@@ -141,22 +145,23 @@ router.route('/recipes')
                 text += `
                     INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
                     WHERE recipes.author_id = $${values.length + 1} AND (lower(recipes.name) LIKE $${values.length + 2} OR lower(recipes_ingredients.name) LIKE $${values.length + 2}) 
-                    ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
+                    GROUP BY recipes.id, users.profile_image ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push(req.query.author, "%" + req.query.searchTerm.toLowerCase() + "%");
             } else if (req.query.author) {
                 text += `
                     WHERE recipes.author_id = $${values.length + 1}  
-                    ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
+                    GROUP BY recipes.id, users.profile_image ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push(req.query.author);
             } else if (req.query.searchTerm) {
                 text += `
                     INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
                     WHERE (lower(recipes.name) LIKE $${values.length + 1} OR lower(recipes_ingredients.name) LIKE $${values.length + 1}) 
-                    ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
+                    GROUP BY recipes.id, users.profile_image ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push("%" + req.query.searchTerm.toLowerCase() + "%");
             } else {
-                text += `ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;;
+                text += ` GROUP BY recipes.id, users.profile_image ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
             }
+
 
             const recipes = await db.query({
                 text,

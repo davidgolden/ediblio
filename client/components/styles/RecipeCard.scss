@@ -130,3 +130,18 @@
     border-radius: 100%;
   }
 }
+
+.recipeRating {
+  position: absolute;
+  top: 270px;
+  right: 20px;
+  font-size: 1.2rem;
+  background-color: rgba($white, .8);
+  padding: 3px;
+  border-radius: 10px;
+
+  svg {
+    width: 20px;
+    vertical-align: sub;
+  }
+}
