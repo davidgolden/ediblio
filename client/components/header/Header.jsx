@@ -62,7 +62,7 @@ const Header = observer((props) => {
                 <button onClick={() => setNavOpen(v => !v)} className={userLinkClassName}>
                     {context.user.profile_image ?
                         <img src={context.user.profile_image}/> :
-                        <FontAwesomeIcon icon={faUser}/>} <span>{context.user.username}</span><FontAwesomeIcon icon={faChevronDown} />
+                        <FontAwesomeIcon icon={faUser}/>} <FontAwesomeIcon icon={faChevronDown} />
                 </button>
              : <button className={userLinkClassName} onClick={() => context.addModal("login")}>
                 Login

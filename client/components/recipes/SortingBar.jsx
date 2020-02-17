@@ -28,7 +28,7 @@ const SortingBar = props => {
         <div className={tagsContainerClassName}>
             <div className={searchContainerClassName}>
                 <FontAwesomeIcon icon={faSearch}/>
-                <input placeholder={'Filter By Name or Ingredient'} value={searchTerm}
+                <input placeholder={'Search By Name or Ingredient'} value={searchTerm}
                        onChange={e => setSearchTerm(e.target.value)}/>
             </div>
         </div>

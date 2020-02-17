@@ -3,23 +3,47 @@
 .tagsContainer {
   text-align: center;
   margin: 10px auto;
-  width: 90%;
+  width: 650px;
+  max-width: calc(100vw - 300px);
+  position: sticky;
+  top: -10px;
+  z-index: 4;
+
+  @media(max-width: 1090px) {
+    margin: 0;
+  }
+
+  @media(max-width: 650px) {
+    position: relative;
+    max-width: 100%;
+    z-index: 1;
+  }
 
   .searchContainer {
     font-size: 1.5rem;
     margin-top: 10px;
     background-color: $white;
-    width: 360px;
     display: inline-block;
-    padding: 5px;
+    padding: 5px 0;
     border-radius: 10px;
-    max-width: 95%;
     vertical-align: middle;
 
+    width: 650px;
+    max-width: 100%;
+
+    @media(max-width: 1090px) {
+      margin: 10px 0 0 205px;
+    }
+
+    @media(max-width: 650px) {
+      margin: 20px 0 10px;
+    }
+
     svg {
-      width: 20px;
+      width: calc(20% - 1rem);
+      max-width: 20px;
       vertical-align: middle;
-      height: calc(3rem + 4px);
+      height: 50px;
       background-color: $green;
       padding: 0 .5rem;
       border-top-left-radius: 10px;
@@ -32,9 +56,9 @@
       padding: .5rem .5rem .5rem 1rem;
       font-size: 1.2rem;
       color: $dark;
-      width: 80%;
+      width: calc(80% - 1.5rem);
+      height: calc(46px - 1rem);
       border: 2px solid $green;
-      height: 2rem;
       border-top-right-radius: 10px;
       border-bottom-right-radius: 10px;
     }
