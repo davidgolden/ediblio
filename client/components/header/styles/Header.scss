@@ -1,8 +1,8 @@
 @import "../../../styles/variables";
 
 .navContainer {
-  background-color: white;
-  color: white;
+  background-color: $white;
+  color: $white;
   min-height: 60px;
   height: 50px;
   position: sticky;
@@ -46,7 +46,7 @@
 
       svg {
         font-size: 2rem;
-        color: white;
+        color: $white;
         width: 45px;
         vertical-align: middle;
       }
@@ -61,7 +61,7 @@
 
     ul {
       list-style: none;
-      background-color: white;
+      background-color: $white;
       width: 200px;
       border-top: 1px solid darken($lightgray, 10%);
     }
@@ -135,7 +135,7 @@
 .loginButton {
   float: right;
   background-color: $green;
-  color: white;
+  color: $white;
   border-radius: 10px;
   font-size: 1.8rem;
   vertical-align: baseline;

@@ -13,19 +13,19 @@
   text-align: center;
   line-height: 50px;
   font-size: 1.5rem;
-  color: white;
+  color: $white;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 20px;
 
   &Success {
-    background-color: $secondary-color;
+    background-color: $altgreen;
     margin-top: 110px;
   }
 
   &Error {
-    background-color: $primary-color;
+    background-color: $red;
     margin-top: 110px;
   }
 }
