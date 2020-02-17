@@ -1,9 +1,9 @@
 import React, {useContext, useState} from 'react';
 import Modal from "./Modal";
 import Button from "../utilities/buttons/Button";
-import Link from "next/link";
 import {ApiStoreContext} from "../../stores/api_store";
 import styles from './styles/LoginModal.scss';
+import Router from "next/router";
 
 function Login(props) {
     const context = useContext(ApiStoreContext);
@@ -12,10 +12,12 @@ function Login(props) {
 
     const handleLoginSubmit = e => {
         e.preventDefault();
+        context.removeTopModal();
         context.userLogin(email, password);
     };
 
     return <div>
+        <h2>Login with Email</h2>
         <form onSubmit={handleLoginSubmit}>
             <div>
                 <input type="email" name="email" placeholder='Email'
@@ -34,7 +36,7 @@ function Login(props) {
         </form>
         <div>
             <button onClick={() => props.setView('forgot')}>Forgot Password?</button>
-            <button onClick={() => props.setView('register')}>Don't have an account? Register</button>
+            <button onClick={() => props.setView('register')}>Register</button>
         </div>
 
     </div>
@@ -48,10 +50,12 @@ function Register(props) {
 
     const context = useContext(ApiStoreContext);
 
-    const handleSubmit = () => {
+    const handleSubmit = e => {
+        e.preventDefault();
         if (password !== confirm) {
             return alert('Passwords do not match!')
         }
+        context.removeTopModal();
         context.registerUser({
             username: username,
             email: email,
@@ -66,28 +70,31 @@ function Register(props) {
     };
 
     return <div>
-        <h1>Create an Account</h1>
-        <h6>It's free and your information will stay private.</h6>
-        <div>
-            <input type='text' value={username} name='username'
-                   onChange={e => setUsername(e.target.value)}
-                   placeholder='Choose a Username'/>
-        </div>
-        <div>
-            <input type='email' value={email} name='email' onChange={e => setEmail(e.target.value)}
-                   placeholder='Email (used for login)'/>
-        </div>
-        <div>
-            <input type='password' id='password' placeholder='Password' onChange={e => setPassword(e.target.value)}
-                   name='password' value={password}/>
-        </div>
-        <div>
-            <input type='password' id='confirm' onChange={e => setConfirm(e.target.value)}
-                   placeholder='Confirm Password' value={confirm}/>
-        </div>
-        <div>
-            <Button onClick={handleSubmit}>Create Account</Button>
-        </div>
+        <h2>Create an Account</h2>
+        <p>It's free and your information will stay private.</p>
+        <form onSubmit={handleSubmit}>
+            <div>
+                <input type='text' value={username} name='username'
+                       onChange={e => setUsername(e.target.value)}
+                       placeholder='Choose a Username'/>
+            </div>
+            <div>
+                <input type='email' value={email} name='email' onChange={e => setEmail(e.target.value)}
+                       placeholder='Email (used for login)'/>
+            </div>
+            <div>
+                <input type='password' id='password' placeholder='Password' onChange={e => setPassword(e.target.value)}
+                       name='password' value={password}/>
+            </div>
+            <div>
+                <input type='password' id='confirm' onChange={e => setConfirm(e.target.value)}
+                       placeholder='Confirm Password' value={confirm}/>
+            </div>
+            <div>
+                <Button role={'submit'}>Create Account</Button>
+            </div>
+        </form>
+
     </div>
 }
 
@@ -98,6 +105,7 @@ function Forgot(props) {
 
     const sendResetEmail = e => {
         e.preventDefault();
+        context.removeTopModal();
         context.forgotPassword(email)
             .then(() => {
                 alert(`An email has been sent to ${email} with further instructions!`);
@@ -105,10 +113,10 @@ function Forgot(props) {
     };
 
     return <div>
-        <h1>Reset Password</h1>
+        <h2>Reset Password</h2>
+        <p>Enter your email, click submit, and we will email you a password reset token. You can use that token
+            to change your password.</p>
         <form onSubmit={sendResetEmail} autoComplete={'off'}>
-            <h6>Enter your email, click submit, and we will email you a password reset token. You can use that token
-                to change your password.</h6>
             <div>
                 <input type='email' value={email}
                        onChange={e => setEmail(e.target.value)} placeholder='Enter Email'/>
@@ -116,12 +124,14 @@ function Forgot(props) {
             <div>
                 <button type='submit'>Send Reset Token</button>
             </div>
-            <div>
-                <button
-                    onClick={() => setView('reset')}>Already Have a Token?
-                </button>
-            </div>
         </form>
+        <div>
+            <button onClick={() => {
+                context.removeTopModal();
+                Router.push("/reset");
+            }}>Already Have a Token?
+            </button>
+        </div>
     </div>
 }
 

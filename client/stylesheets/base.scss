@@ -16,7 +16,6 @@ time, mark, audio, video {
   margin: 0;
   padding: 0;
   border: 0;
-  font-size: 100%;
   //font: inherit;
   vertical-align: baseline;
   font-family: 'Markazi Text', serif;
@@ -33,7 +32,7 @@ footer, header, hgroup, menu, nav, section {
 body {
   line-height: 1;
   background-color: lighten($blue, 35%);
-  color: $dark;
+  color: $black;
 }
 ol, ul {
   list-style: none;
@@ -59,11 +58,11 @@ button {
   border: none;
 }
 h1 {
-  font-size: 2.25rem;
+  font-size: 3rem;
 }
 
 h2 {
-  font-size: 1.75rem;
+  font-size: 2rem;
 }
 
 h3 {
