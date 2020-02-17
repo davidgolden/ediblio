@@ -2,7 +2,7 @@
 
 .checkbox {
   span {
-    border: 3px solid $otherdark;
+    border: 3px solid $gray;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -19,7 +19,7 @@
     top: 7px;
     left: 7px;
     transform: rotate(-10deg);
-    color: $otherdark;
+    color: $gray;
   }
 
   input {

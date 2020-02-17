@@ -60,7 +60,7 @@
   }
 
   &:nth-of-type(even) {
-    background-color: rgba(0,0,0,.02);
+    background-color: lighten($green, 40%);
   }
 
   p {
