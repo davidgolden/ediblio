@@ -112,13 +112,6 @@ router.route('/recipes')
         const skip = page * page_size;
 
         try {
-            // type checking
-            if ((req.query.sortBy !== 'created_at' &&
-                req.query.sortBy !== 'name') &&
-                (req.query.orderBy !== 'asc' &&
-                req.query.orderBy !== 'desc')) {
-                throw Error("Invalid Request");
-            }
 
             let text = `
             SELECT DISTINCT recipes.*, users.profile_image AS author_image 
@@ -148,21 +141,21 @@ router.route('/recipes')
                 text += `
                     INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
                     WHERE recipes.author_id = $${values.length + 1} AND (lower(recipes.name) LIKE $${values.length + 2} OR lower(recipes_ingredients.name) LIKE $${values.length + 2}) 
-                    ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
+                    ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push(req.query.author, "%" + req.query.searchTerm.toLowerCase() + "%");
             } else if (req.query.author) {
                 text += `
                     WHERE recipes.author_id = $${values.length + 1}  
-                    ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
+                    ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push(req.query.author);
             } else if (req.query.searchTerm) {
                 text += `
                     INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
                     WHERE (lower(recipes.name) LIKE $${values.length + 1} OR lower(recipes_ingredients.name) LIKE $${values.length + 1}) 
-                    ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
+                    ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push("%" + req.query.searchTerm.toLowerCase() + "%");
             } else {
-                text += `ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;;
+                text += `ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;;
             }
 
             const recipes = await db.query({
