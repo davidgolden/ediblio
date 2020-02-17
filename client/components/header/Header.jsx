@@ -25,7 +25,7 @@ const userLinkClassName = classNames({
 
 const Header = observer((props) => {
     const [didMount, setDidMount] = React.useState(false);
-    const [navOpen, setNavOpen] = useState(true);
+    const [navOpen, setNavOpen] = useState(false);
     React.useLayoutEffect(() => setDidMount(true), []);
 
     const context = useContext(ApiStoreContext);
@@ -57,9 +57,11 @@ const Header = observer((props) => {
 
             {context.user ?
                 <button onClick={() => setNavOpen(v => !v)} className={userLinkClassName}>
-                    <FontAwesomeIcon icon={faUser}/> <span>{context.user.username}</span><FontAwesomeIcon icon={faChevronDown} />
+                    {context.user.profile_image ?
+                        <img src={context.user.profile_image}/> :
+                        <FontAwesomeIcon icon={faUser}/>} <span>{context.user.username}</span><FontAwesomeIcon icon={faChevronDown} />
                 </button>
-             : <button className={userLinkClassName} onClick={context.addModal("login")}>
+             : <button className={styles.loginButton} onClick={() => context.addModal("login")}>
                 Login
             </button>}
 

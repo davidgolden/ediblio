@@ -1,0 +1,18 @@
+@import "../../../styles/variables";
+
+.container {
+  text-align: center;
+
+  input {
+    font-size: 1.2rem;
+    padding: .5rem;
+    border: 2px solid $blue;
+    background-color: lighten($blue, 40%);
+    border-radius: 10px;
+    outline: none;
+  }
+
+  button {
+    cursor: pointer;
+  }
+}

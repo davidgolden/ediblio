@@ -126,4 +126,20 @@
       margin-left: 5px;
     }
   }
+
+  img {
+    height: 35px;
+  }
+}
+
+.loginButton {
+  float: right;
+  background-color: $green;
+  color: white;
+  border-radius: 10px;
+  font-size: 1.8rem;
+  vertical-align: baseline;
+  cursor: pointer;
+  height: 40px;
+  margin: 10px;
 }
