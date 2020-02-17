@@ -1,9 +1,4 @@
-$other: #2DA2B5;
-$otherdark: #164E57;
-$light: #D8ECF5;
-$dark: #1A2D42;
-$primary-color: #A6373D;
-$secondary-color: #4FA653;
+@import "../styles/_variables.scss";
 
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -33,7 +28,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
   line-height: 1;
-  background-color: $light;
+  background-color: lighten($blue, 35%);
   color: $dark;
 }
 ol, ul {

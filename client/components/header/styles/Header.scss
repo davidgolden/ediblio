@@ -1,14 +1,18 @@
 @import "../../../styles/variables";
 
 .navContainer {
-  background-color: $other;
+  background-color: white;
   color: white;
-  min-height: 50px;
+  min-height: 60px;
   height: 50px;
-  overflow: hidden;
   position: sticky;
   top: 0;
   z-index: 3;
+  vertical-align: middle;
+
+  img {
+    height: 60px;
+  }
 
   .backButton {
     width: 40px;
@@ -33,6 +37,7 @@
     display: inline;
     margin-left: 0.5rem;
     font-size: 2.5rem;
+    cursor: pointer;
 
     a {
       text-decoration: none;
@@ -49,131 +54,76 @@
   }
 
   .linksContainer { // container of everything that's not the navigation links
-    display: none;
     position: absolute;
-    line-height: 50px;
-    top: 0;
-    right: 2rem;
+    top: 60px;
+    right: 0;
     margin-left: 1.5rem;
 
-    &Visible {
-      display: inline-block;
+    ul {
+      list-style: none;
+      background-color: white;
+      width: 200px;
+      border-top: 1px solid darken($lightgray, 10%);
     }
 
-    @media(min-width: 770px) {
-      display: inline-block;
-    }
+    li {
+      height: 40px;
+      padding: .25rem .75rem;
+      vertical-align: middle;
+      line-height: 40px;
+      border-bottom: 1px solid darken($lightgray, 10%);
 
-    @media(max-width: 770px) {
-      position: absolute;
-      line-height: 50px;
-      top: 50px;
-      right: 0;
-      background-color: #2DA2B5;
-      width: calc(100% - 1rem);
-      padding: .5rem;
-    }
+      &:hover {
+        background-color: $lightgray;
+      }
 
-    form {
-      display: inline-block;
+      &:last-of-type {
+        border-bottom: none;
+      }
+
+      button, a {
+        height: 100%;
+        width: 100%;
+        text-align: left;
+        font-size: 1.5rem;
+      }
+
+      a, button, svg {
+        color: $black;
+        font-weight: 500;
+        display: inline-block;
+        cursor: pointer;
+      }
     }
 
     svg {
       width: 20px;
       height: 20px;
+      margin-right: .25rem;
       vertical-align: middle;
-      color: $otherdark;
+      color: $black;
     }
-
-    input {
-      padding: 5px 10px;
-      font-size: 1rem;
-      border-radius: 5px;
-      margin-right: 5px;
-      color: $dark;
-      background-color: $light;
-    }
-
-    button { // login/logout only
-      background-color: $otherdark;
-      color: white;
-      padding: 5px 10px;
-      font-size: 1rem;
-      border-radius: 5px;
-
-      svg {
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    a { // user settings, forgot password, register
-      color: white !important;
-      font-size: 1rem;
-
-      &:last-of-type {
-        svg {
-          color: white;
-        }
-      }
-    }
-
-    a, button {
-      margin-right: 10px;
-    }
-
-    input, button {
-      margin-right: 10px;
-      padding: 5px;
-      height: 30px;
-    }
-
-    button {
-      line-height: 30px;
-      padding: 0 10px;
-      vertical-align: middle;
-      border-radius: 10px;
-    }
-  }
-
-  .headerLink {
-    color: $otherdark;
-    margin-right: 10px;
-    padding: 5px;
-    border-radius: 10px;
   }
 }
 
-.userLink, .logout {
-  a, button, span {
-    color: white;
-    font-size: 1.2rem;
-  }
-}
+.userLink {
+  display: inline-block;
+  float: right;
+  font-size: 2.5rem;
+  vertical-align: middle;
+  cursor: pointer;
+  margin-right: 10px;
 
-.install {
-  display: none;
-  background-color: $orange !important;
-
-  @media all and (display-mode: standalone) {
-    display: none;
-  }
-}
-
-.mobileHam {
-  position: absolute;
-  display: none;
-  right: 10px;
-  top: 2px;
-  font-size: 2rem;
-  padding: 0;
-  width: 30px;
-
-  svg {
+  > * {
+    display: inline-block;
     vertical-align: middle;
   }
+  svg {
+    width: 30px;
 
-  @media(max-width: 770px) {
-    display: inline;
+    &:last-of-type {
+      width: 15px;
+      margin-left: 5px;
+    }
   }
 }

@@ -1,8 +1,16 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext, useEffect, useRef} from 'react';
 import classNames from 'classnames';
 import styles from './styles/Header.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCloud, faSearch, faListUl, faPlus, faBook, faUser, faHamburger, faChevronLeft} from '@fortawesome/free-solid-svg-icons';
+import {
+    faSearch,
+    faListUl,
+    faPlus,
+    faBook,
+    faUser,
+    faChevronLeft,
+    faChevronDown, faSignOutAlt
+} from '@fortawesome/free-solid-svg-icons';
 import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
@@ -11,50 +19,31 @@ import {observer} from "mobx-react";
 const navContainerClassName = classNames({
     [styles.navContainer]: true,
 });
-const headerLinkClassName = classNames({
-    [styles.headerLink]: true,
-});
 const userLinkClassName = classNames({
     [styles.userLink]: true,
 });
-const logoutClassName = classNames({
-    [styles.logout]: true,
-});
-const mobileHamClassName = classNames({
-    [styles.mobileHam]: true,
-});
 
 const Header = observer((props) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showNav, setShowNav] = useState(false);
     const [didMount, setDidMount] = React.useState(false);
+    const [navOpen, setNavOpen] = useState(true);
     React.useLayoutEffect(() => setDidMount(true), []);
 
     const context = useContext(ApiStoreContext);
 
-    const handleEmailChange = e => {
-        setEmail(e.target.value);
-    };
-
-    const handlePasswordChange = e => {
-        setPassword(e.target.value);
-    };
-
-    const handleLoginSubmit = e => {
-        e.preventDefault();
-        context.userLogin(email, password);
-    };
-
-    const toggleNav = () => {
-        setShowNav(!showNav);
-    };
-
     const linksContainerClassName = classNames({
         [styles.linksContainer]: true,
-        [styles.linksContainerVisible]: showNav,
     });
 
+    useEffect(() => {
+        window.addEventListener('click', handleClick);
+        return () => window.removeEventListener('click', handleClick);
+    }, [navOpen]);
+
+    function handleClick(e) {
+        if (navOpen) {
+            setNavOpen(false);
+        }
+    }
 
     return (
         <nav className={navContainerClassName}>
@@ -66,67 +55,56 @@ const Header = observer((props) => {
                 <Link href="/"><img src={"/images/ediblio_logo.png"} /></Link>
             </h1>
 
-            <Button onClick={toggleNav} className={mobileHamClassName}>
-                <FontAwesomeIcon icon={faHamburger}/>
-            </Button>
+            {context.user ?
+                <button onClick={() => setNavOpen(v => !v)} className={userLinkClassName}>
+                    <FontAwesomeIcon icon={faUser}/> <span>{context.user.username}</span><FontAwesomeIcon icon={faChevronDown} />
+                </button>
+             : <button className={userLinkClassName} onClick={context.addModal("login")}>
+                Login
+            </button>}
 
-            <div className={linksContainerClassName}>
-                <Button id={"installAppButton"} className={styles.install}>
-                    Install App
-                </Button>
-                {context.user ? <React.Fragment>
+            {navOpen && context.user && <div className={linksContainerClassName}>
+                <ul>
+                    <li>
                         <Link href={'/'}>
-                            <a className={headerLinkClassName}>
-                                <FontAwesomeIcon icon={faSearch}/>
+                            <a>
+                                <FontAwesomeIcon icon={faSearch}/> Browse Recipes
                             </a>
                         </Link>
+                    </li>
+                    <li>
                         <Link href={"/users/[user_id]/groceries"} as={`/users/${context.user.id}/groceries`}>
-                            <a className={headerLinkClassName}>
-                                <FontAwesomeIcon icon={faListUl}/>
+                            <a>
+                                <FontAwesomeIcon icon={faListUl}/> Grocery List
                             </a>
                         </Link>
+                    </li>
+                    <li>
                         <Link href={'/add'}>
-                            <a className={headerLinkClassName}>
-                                <FontAwesomeIcon icon={faPlus}/>
+                            <a>
+                                <FontAwesomeIcon icon={faPlus}/> Add Recipe
                             </a>
                         </Link>
+                    </li>
+                    <li>
                         <Link href={"/users/[user_id]/recipes"} as={`/users/${context.user.id}/recipes`}>
-                            <a className={headerLinkClassName}>
-                                <FontAwesomeIcon icon={faBook}/>
+                            <a>
+                                <FontAwesomeIcon icon={faBook}/> My Recipes
                             </a>
                         </Link>
+                    </li>
+                    <li>
                         <Link href={"/users/[user_id]/settings"} as={`/users/${context.user.id}/settings`}>
-                            <a className={userLinkClassName}>
-                                <FontAwesomeIcon icon={faUser}/> <span>{context.user.username}</span>
+                            <a>
+                                <FontAwesomeIcon icon={faUser}/> Settings
                             </a>
                         </Link>
-                        <Button className={logoutClassName} onClick={context.userLogout}>Log Out</Button>
-                    </React.Fragment> :
-                    <React.Fragment>
-                        <form onSubmit={handleLoginSubmit}>
-                            <input type="email" name="email" placeholder='Email'
-                                   value={email}
-                                   onChange={handleEmailChange}/>
-                            <input type="password" name="password" placeholder='Password'
-                                   value={password}
-                                   onChange={handlePasswordChange}/>
-                            <Button type='submit' className={logoutClassName}
-                                    value='Login'>Login</Button>
-                        </form>
-
-
-                        <Link href={'/forgot'}>
-                            <a className={userLinkClassName}>
-                                Forgot Password?
-                            </a>
-                        </Link>
-                        <Link href={'/register'}>
-                            <a className={userLinkClassName}>
-                                Register
-                            </a>
-                        </Link>
-                    </React.Fragment>}
-            </div>
+                    </li>
+                    <li>
+                        <button onClick={context.userLogout}><FontAwesomeIcon icon={faSignOutAlt}/> Log Out</button>
+                    </li>
+                </ul>
+            </div>}
         </nav>
     )
 });
