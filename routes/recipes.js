@@ -145,12 +145,12 @@ router.route('/recipes')
                 text += `
                     INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
                     WHERE recipes.author_id = $${values.length + 1} AND (lower(recipes.name) LIKE $${values.length + 2} OR lower(recipes_ingredients.name) LIKE $${values.length + 2}) 
-                    GROUP BY recipes.id, users.profile_image ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
+                    GROUP BY recipes.id, users.profile_image ${req.user ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push(req.query.author, "%" + req.query.searchTerm.toLowerCase() + "%");
             } else if (req.query.author) {
                 text += `
                     WHERE recipes.author_id = $${values.length + 1}  
-                    GROUP BY recipes.id, users.profile_image ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
+                    GROUP BY recipes.id, users.profile_image ${req.user ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push(req.query.author);
             } else if (req.query.searchTerm) {
                 text += `
@@ -159,7 +159,7 @@ router.route('/recipes')
                     GROUP BY recipes.id, users.profile_image ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push("%" + req.query.searchTerm.toLowerCase() + "%");
             } else {
-                text += ` GROUP BY recipes.id, users.profile_image ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
+                text += ` GROUP BY recipes.id, users.profile_image ${req.user ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
             }
 
 
