@@ -29,7 +29,7 @@
   }
 
   .recipeCardText {
-    color: $primary-color;
+    color: $black;
     text-decoration: none;
   }
 
@@ -86,7 +86,7 @@
 
       svg {
         width: 50%;
-        color: white;
+        color: $white;
         height: 100%;
       }
     }
@@ -94,10 +94,10 @@
 
   &Text {
     text-align: center;
-    color: $otherdark;
+    color: $black;
 
     &:hover {
-      color: $primary-color;
+      color: $black;
     }
   }
 
@@ -123,7 +123,7 @@
   svg {
     width: 30px;
     height: 30px;
-    color: white;
+    color: $white;
     background-color: lightgray;
     font-size: 1.8rem;
     padding: 10px;

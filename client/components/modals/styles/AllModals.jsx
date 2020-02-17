@@ -2,9 +2,11 @@ import React, {useContext} from 'react';
 import {observer} from "mobx-react";
 import {ApiStoreContext} from "../../../stores/api_store";
 import InstallPromptModal from "../InstallPromptModal";
+import LoginModal from "../LoginModal";
 
 const AllModalTypes = {
     'installPrompt': InstallPromptModal,
+    'login': LoginModal,
 };
 
 const AllModals = observer(props => {

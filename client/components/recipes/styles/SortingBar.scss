@@ -5,68 +5,63 @@
   margin: 10px auto;
   width: 90%;
 
-  .tag {
-    color: white;
-    background-color: $otherdark;
-    border-radius: 10px;
-    padding: 5px 10px;
-    font-size: 1.2rem;
-    margin: 3px;
-
-    &:hover {
-      background-color: lighten($otherdark, 10%);
-    }
-
-    &Selected {
-      background-color: $other;
-
-      &:hover {
-        background-color: $other;
-      }
-    }
-  }
-
   .searchContainer {
     font-size: 1.5rem;
     margin-top: 10px;
-    background-color: white;
+    background-color: $white;
     width: 360px;
     display: inline-block;
     padding: 5px;
-    border-radius: 5px;
+    border-radius: 10px;
     max-width: 95%;
+    vertical-align: middle;
 
     svg {
-      margin-right: 10px;
       width: 20px;
       vertical-align: middle;
+      height: calc(3rem + 4px);
+      background-color: $green;
+      padding: 0 .5rem;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      color: $white;
     }
 
     input {
       vertical-align: middle;
-      padding: 5px;
-      border-radius: 5px;
+      padding: .5rem .5rem .5rem 1rem;
       font-size: 1.2rem;
       color: $dark;
       width: 80%;
+      border: 2px solid $green;
+      height: 2rem;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
     }
   }
 
   select {
     margin: 10px 10px 0;
-    background-color: white;
+    background-color: $white;
     font-size: 1.2rem;
-    border: 8.5px solid white;
-    color: $dark;
+    border: 2px solid $green;
+    height: calc(3rem + 4px);
+    color: $black;
+    padding: .5rem;
+    vertical-align: middle;
+    border-radius: 10px;
   }
 
   .orderButton {
     font-size: 1.2rem;
-    background-color: $otherdark;
-    color: white;
+    background-color: $green;
+    color: $white;
     padding: 10px 12px;
-    border-radius: 5px;
+    border-radius: 10px;
     margin: 10px 0 0;
+    height: calc(3rem + 4px);
+    width: calc(3rem + 4px);
+    vertical-align: middle;
 
     svg {
       width: 20px;

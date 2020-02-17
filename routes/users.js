@@ -195,11 +195,6 @@ router.route('/users/:user_id/ingredients')
 router.route('/users/:user_id/ingredients/:ingredient_id')
     .patch(middleware.checkIngredientOwnership, async (req, res) => {
         try {
-            await db.query({
-                text: `INSERT INTO ingredients (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name`,
-                values: [req.body.name],
-            });
-
             const response = await db.query({
                 text: `
             UPDATE users_ingredients_groceries

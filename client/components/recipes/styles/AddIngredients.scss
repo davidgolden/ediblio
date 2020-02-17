@@ -13,7 +13,7 @@
 .addIngredientForm {
   display: table;
   width: 95%;
-  border: 1px solid $dark;
+  border: 1px solid $green;
   border-radius: 5px;
   height: 40px;
   padding: .5rem;
@@ -41,8 +41,8 @@
       position: absolute;
       bottom: 35px;
       left: -10px;
-      background-color: white;
-      border: 1px solid $dark;
+      background-color: $white;
+      border: 1px solid $gray;
       border-radius: 5px;
       padding: .5rem;
       font-size: 1.3rem;
@@ -57,23 +57,23 @@
 
   input {
     font-size: 1.2rem;
-    background-color: $light;
+    background-color: $white;
     margin-left: .5rem;
     height: 100%;
     padding: .5rem;
-    color: $dark;
+    color: $black;
     width: calc(100% - 3.5rem - 10px);
   }
 
   button {
     cursor: pointer;
     float: right;
-    background-color: $light;
+    background-color: $green;
     padding: .5rem;
     border-radius: 5px;
 
     svg {
-      color: $dark;
+      color: $white;
       width: 20px;
     }
   }

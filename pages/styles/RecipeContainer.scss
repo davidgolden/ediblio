@@ -1,7 +1,7 @@
 @import "../../client/styles/variables";
 
 .recipeContainer {
-
+  background-color: $white;
 }
 
 .recipeEditButtons {
@@ -33,7 +33,7 @@
 
   .toggleEdit {
     background-color: $dark;
-    color: white;
+    color: $white;
     padding: 5px 10px;
     font-size: 1.2rem;
 

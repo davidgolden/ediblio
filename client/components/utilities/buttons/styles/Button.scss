@@ -24,13 +24,13 @@
 .removeButton {
   composes: stockButtonsBar;
   background-color: $other;
-  color: white;
+  color: $white;
 }
 
 .deleteButton {
   composes: stockButtonsBar;
-  background-color: $primary-color;
-  color: white;
+  background-color: $red;
+  color: $white;
 
   &Disabled {
     pointer-events: none;
@@ -42,7 +42,7 @@
 .addButton {
   composes: stockButtonsBar;
   background-color: $otherdark;
-  color: white;
+  color: $white;
 
   &Disabled {
     pointer-events: none;
@@ -88,7 +88,7 @@
 .inCloudButton {
   composes: stockButtonsBar;
   background-color: $other;
-  color: white;
+  color: $white;
 
   &Disabled {
     pointer-events: none;
@@ -99,8 +99,8 @@
 
 .addToGroceryListButton {
   composes: stockButtonsBar;
-  background-color: $secondary-color;
-  color: white;
+  background-color: $green;
+  color: $white;
 
   &Disabled {
     pointer-events: none;
