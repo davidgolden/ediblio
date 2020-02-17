@@ -15,12 +15,10 @@ import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
 import {observer} from "mobx-react";
+import className from 'classnames';
 
 const navContainerClassName = classNames({
     [styles.navContainer]: true,
-});
-const userLinkClassName = classNames({
-    [styles.userLink]: true,
 });
 
 const Header = observer((props) => {
@@ -45,6 +43,11 @@ const Header = observer((props) => {
         }
     }
 
+    const userLinkClassName = classNames({
+        [styles.userLink]: true,
+        [styles.userLinkLogin]: !context.user,
+    });
+
     return (
         <nav className={navContainerClassName}>
             {didMount && window.history.length > 1 && <Button className={styles.backButton} onClick={() => window.history.back()}>
@@ -61,7 +64,7 @@ const Header = observer((props) => {
                         <img src={context.user.profile_image}/> :
                         <FontAwesomeIcon icon={faUser}/>} <span>{context.user.username}</span><FontAwesomeIcon icon={faChevronDown} />
                 </button>
-             : <button className={styles.loginButton} onClick={() => context.addModal("login")}>
+             : <button className={userLinkClassName} onClick={() => context.addModal("login")}>
                 Login
             </button>}
 
