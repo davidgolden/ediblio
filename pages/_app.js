@@ -17,6 +17,11 @@ class MyDocument extends App {
                 LogRocket.init('gajlpv/recipe-cloud');
             }
 
+            if (typeof window === 'undefined' && pageProps.user) {
+                // if user is returned from getInitialProps, we can set the user on the server and then render the page knowing the user
+                initialStore.setUser(pageProps.user);
+            }
+
             return (
                 <ApiStoreContext.Provider value={initialStore}>
                     <RecipeCloudHead/>

@@ -74,6 +74,7 @@ Collection_id.getInitialProps = async ({req, query}) => {
         recipes: response.data.collection.recipes.map(r => [r.id, r]),
         collection_id: query.collection_id,
         loadedAll: response.data.collection.recipes.length < 12,
+        user: req?.user,
     };
 };
 

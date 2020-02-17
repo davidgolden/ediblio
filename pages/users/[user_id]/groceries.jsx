@@ -189,6 +189,7 @@ Groceries.getInitialProps = async ({req, query}) => {
         return {
             groceryList: response[1].data.groceryList,
             menu: response[0].data.menu,
+            user: req?.user,
         };
     } catch (error) {
         return {};

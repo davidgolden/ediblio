@@ -152,6 +152,7 @@ Index.getInitialProps = async ({req}) => {
     return {
         recipes: response.data.recipes.map(r => [r.id, r]),
         loadedAll: response.data.recipes.length < 12,
+        user: req?.user,
     }
 };
 

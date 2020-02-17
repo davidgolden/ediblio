@@ -27,7 +27,7 @@ const Recipes = observer((props) => {
             axios.get(`/api/users/${props.user_id}/collections`)
                 .then(response => setCollections(response.data.collections))
         }
-    }, [context.user?.collections.length !== props.collections.length]);
+    }, [context.user?.collections?.length !== props.collections.length]);
 
     useEffect(() => {
         if (!loadedAll) {

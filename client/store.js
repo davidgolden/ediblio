@@ -67,6 +67,11 @@ export default class Store {
         }
     }
 
+    @action
+    setUser(user) {
+        this.user = user;
+    }
+
     @observable user = null;
     @observable notificationMessage = '';
     @observable notificationType = '';

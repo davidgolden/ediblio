@@ -127,6 +127,7 @@ Recipe_id.getInitialProps = async ({req, query}) => {
     return {
         recipe: response.data.recipe,
         recipe_id: query.recipe_id,
+        user: req?.user,
     };
 };
 
