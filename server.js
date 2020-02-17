@@ -77,10 +77,14 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async function (id, done) {
-    const userRes = await db.query({text: `${usersSelector}
+    try {
+        const userRes = await db.query({text: `${usersSelector}
 where users.id = $1
 group by users.id;`, values: [id]});
-    done(null, userRes.rows[0]);
+        done(null, userRes.rows[0]);
+    } catch (error) {
+        done(error);
+    }
 });
 
 app.prepare().then(() => {
