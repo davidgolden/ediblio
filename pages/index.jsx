@@ -148,7 +148,7 @@ Index.getInitialProps = async ({req}) => {
             sortBy: 'created_at',
         }
     });
-    console.log(response.data.recipes);
+
     return {
         recipes: response.data.recipes.map(r => [r.id, r]),
         loadedAll: response.data.recipes.length < 12,

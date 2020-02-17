@@ -13,14 +13,32 @@ import axios from "axios";
 import Router from 'next/router';
 import JsonLd from "../../client/components/utilities/JsonLd";
 
+const recipeContainerClassName = classNames({
+    [styles.recipeContainer]: true,
+});
+const recipeEditButtonsClassName = classNames({
+    [styles.recipeEditButtons]: true,
+});
+const toggleEditClassName = classNames({
+    [styles.toggleEdit]: true,
+});
+
 const Recipe_id = observer(props => {
     const [edit, setEdit] = useState(false);
     const [recipe, setRecipe] = useState(props.recipe);
+    const [inMenu, setInMenu] = useState(props.recipe.in_menu);
 
     const context = useContext(ApiStoreContext);
 
-    const addToGroceryList = () => {
-        context.addToGroceryList(recipe._id, recipe.ingredients);
+    const addToGroceryList = async (ingredients) => {
+        try {
+            await axios.patch(`/api/users/${context.user.id}/recipes/${props.recipe.id}`, {
+                ingredients,
+            });
+            setInMenu(true);
+        } catch (error) {
+            context.handleError(error);
+        }
     };
 
     const updateRecipe = fullRecipe => {
@@ -31,11 +49,16 @@ const Recipe_id = observer(props => {
         setEdit(!edit);
     };
 
-    function handleUpdateAllIngredients(ingredients) {
+    function handleUpdateIngredient(ingredient) {
         setRecipe({
             ...recipe,
-            ingredients: ingredients,
-        });
+            ingredients: recipe.ingredients.map(ing => {
+                if (ing.id === ingredient.id) {
+                    return ingredient;
+                }
+                return ing;
+            })
+        })
     }
 
     const deleteRecipe = () => {
@@ -47,28 +70,18 @@ const Recipe_id = observer(props => {
         }
     };
 
-    const recipeContainerClassName = classNames({
-        [styles.recipeContainer]: true,
-    });
-    const recipeEditButtonsClassName = classNames({
-        [styles.recipeEditButtons]: true,
-    });
-    const toggleEditClassName = classNames({
-        [styles.toggleEdit]: true,
-    });
-
     return (
         <div className={recipeContainerClassName}>
             <div className={recipeEditButtonsClassName}>
                 <div>
-                    {context.user && (recipe.author_id._id === context.user._id) && (
+                    {context.user && (recipe.author_id === context.user.id) && (
                         <Button className={toggleEditClassName} onClick={toggleEdit}>
                             <FontAwesomeIcon icon={edit ? faSearch : faEdit}/> {edit ? "View" : "Edit"}
                         </Button>)}
                 </div>
                 <div>{context.user && <RecipeButtons
-                    recipe_id={recipe.id}
-                    author_id={recipe.author_id}
+                    recipe={recipe}
+                    inMenu={inMenu}
                     addToGroceryList={addToGroceryList}
                     deleteRecipe={deleteRecipe}
                 />}
@@ -81,12 +94,13 @@ const Recipe_id = observer(props => {
                     toggleEdit={toggleEdit}
                     editMode={edit}
                     updateRecipe={updateRecipe}
+                    handleUpdateIngredient={handleUpdateIngredient}
                 />
             ) : (
                 <ShowRecipe
                     recipe={recipe}
                     addToGroceryList={addToGroceryList}
-                    handleUpdateAllIngredients={handleUpdateAllIngredients}
+                    handleUpdateIngredient={handleUpdateIngredient}
                 />
             )}
 

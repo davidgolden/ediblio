@@ -19,6 +19,8 @@ const RecipeForm = observer(props => {
     const [updated, setUpdated] = useState(new Set());
     const [submitted, setSubmitted] = useState(false);
 
+    const [ingredientIdsToRemove, setIngredientIdsToRemove] = useState([]);
+
     const context = useContext(ApiStoreContext);
 
     function addToUpdated(update) {
@@ -29,9 +31,37 @@ const RecipeForm = observer(props => {
         })
     }
 
-    function handleUpdateAllIngredients(ingredients) {
-        addToUpdated('ingredients');
-        setIngredients(ingredients);
+    async function handleAddIngredient(ingredient) {
+        try {
+            if (props.editMode) {
+                const response = await axios.post(`/api/recipes/${props.recipe.id}/ingredients`, ingredient);
+                setIngredients([{...ingredient, id: response.data.id}].concat(ingredients))
+            } else {
+                setIngredients([ingredient].concat(ingredients))
+            }
+            addToUpdated('ingredients');
+        } catch (error) {
+            context.handleError(error);
+        }
+    }
+
+    async function removeSelectedIngredients() {
+        try {
+            if (props.editMode) {
+                await axios.delete(`/api/recipes/${props.recipe.id}/ingredients`, {
+                    data: {
+                        ingredient_ids: ingredientIdsToRemove,
+                    }
+                });
+                setIngredients(ingredients.filter(ing => !ingredientIdsToRemove.includes(ing.id)));
+            } else {
+                setIngredients(ingredients.filter((ing, idx) => !ingredientIdsToRemove.includes(idx)));
+            }
+
+            setIngredientIdsToRemove([]);
+        } catch (error) {
+            context.handleError(error)
+        }
     }
 
     function handleRecipeImageChange(data, raw = false) {
@@ -104,6 +134,10 @@ const RecipeForm = observer(props => {
         [styles.submitButton]: true,
         [styles.submitButtonDisabled]: !name || submitted,
     });
+    const saveListClassName = classNames({
+        [styles.saveList]: true,
+        [styles.saveListDisabled]: ingredientIdsToRemove.length === 0,
+    });
 
     return (
         <div className={recipeFormClassName}>
@@ -119,10 +153,15 @@ const RecipeForm = observer(props => {
                 handleRecipeNotesChange={handleNotesChange}
             />
             <AddIngredients
+                canAdd={true}
                 ingredients={ingredients}
-                handleUpdateAllIngredients={handleUpdateAllIngredients}
+                handleAddIngredient={handleAddIngredient}
+                selectedIngredientIds={ingredientIdsToRemove}
+                setSelectedIngredientIds={setIngredientIdsToRemove}
+                handleUpdateIngredient={() => {}}
             />
             <div>
+                <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
                 {context.user ?
                     <Button className={submitButtonClassName} onClick={handleSubmit}>{props.editMode ? "Save" : "Submit!"}</Button> :
                     <p>You must be logged in to add a recipe!</p>}

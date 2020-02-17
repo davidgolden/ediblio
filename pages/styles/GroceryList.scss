@@ -41,6 +41,15 @@
   li {
     font-size: 1rem;
     margin: 2px 0;
+    vertical-align: middle;
+
+    span, a {
+      vertical-align: middle;
+    }
+
+    span {
+      margin-right: 1rem;
+    }
 
     button {
       border-radius: 5px;

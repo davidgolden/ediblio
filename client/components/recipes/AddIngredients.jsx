@@ -13,31 +13,25 @@ const AddIngredients = (props) => {
 
     function getIngredient(e) {
         e.preventDefault();
-        const {quantity, measurement, name} = extractIngredient(value);
+        const ingredient = extractIngredient(value);
         setValue("");
-        handleAddIngredient(quantity, measurement, name);
+        props.handleAddIngredient(ingredient);
     }
 
-    function handleUpdateIngredient (index, ingredient) {
-        let ingredients = props.ingredients;
-        ingredients[index] = {
-            ...props.ingredients[index],
-            ...ingredient,
-        };
-        props.handleUpdateAllIngredients([...ingredients]);
-    };
+    function handleUpdateIngredient (id, update) {
+        props.handleUpdateIngredient({
+            ...props.ingredients.find(ing => ing.id === id),
+            ...update,
+        });
+    }
 
-    function handleAddIngredient (quantity = 0, measurement = '#', name = '') {
-        let ingredients = props.ingredients;
-        ingredients.splice(0, 0, {quantity, measurement, name});
-        props.handleUpdateAllIngredients([...ingredients]);
-    };
-
-    function handleDeleteIngredient(index) {
-        let ingredients = props.ingredients;
-        ingredients.splice(index, 1);
-        props.handleUpdateAllIngredients([...ingredients]);
-    };
+    function addToSelectedIngredientIds(id) {
+        if (props.selectedIngredientIds.includes(id)) {
+            props.setSelectedIngredientIds(props.selectedIngredientIds.filter(ingredientId => ingredientId !== id));
+        } else {
+            props.setSelectedIngredientIds(props.selectedIngredientIds.concat([id]));
+        }
+    }
 
     const ingredientsContainerClassName = classNames({
         [styles.ingredientsContainer]: true,
@@ -51,7 +45,7 @@ const AddIngredients = (props) => {
     return (
         <div className={ingredientsContainerClassName}>
             <h3>Ingredient List</h3>
-            <form onSubmit={getIngredient} className={addIngredientFormClassName}>
+            {props.canAdd && <form onSubmit={getIngredient} className={addIngredientFormClassName}>
                 <div>
                     <FontAwesomeIcon icon={faQuestion}/>
                     <div>
@@ -60,7 +54,7 @@ const AddIngredients = (props) => {
                 </div>
                 <input placeholder={"1.5 cups milk"} value={value} onChange={e => setValue(e.target.value)}/>
                 <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
-            </form>
+            </form>}
             <Sortable
                 options={{
                     draggable: '.draggable',
@@ -68,17 +62,18 @@ const AddIngredients = (props) => {
                 }}
                 tag={"ul"}
                 onChange={(order, sortable, evt) => {
-                    props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));
+                    // TODO
+                    // props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));
                 }}>
                 {props.ingredients.map((item, i) => {
                     return <Ingredient
-                        key={item._id ? `${item._id}${i}` : i}
+                        key={item.id || i}
                         value={item}
-                        id={i}
-                        dataId={JSON.stringify(item)}
-                        handleDeleteIngredient={handleDeleteIngredient}
+                        id={item.id || i}
                         handleUpdateIngredient={handleUpdateIngredient}
                         storeMode={props.storeMode}
+                        selectedIngredientId={props.selectedIngredientIds.includes(item.id || i)}
+                        addToSelectedIngredientIds={addToSelectedIngredientIds}
                     />
                 })}
             </Sortable>
@@ -87,7 +82,12 @@ const AddIngredients = (props) => {
 };
 
 AddIngredients.propTypes = {
-    handleUpdateAllIngredients: PropTypes.func.isRequired,
+    canAdd: PropTypes.bool,
+    storeMode: PropTypes.bool,
+    handleAddIngredient: PropTypes.func,
+    handleUpdateIngredient: PropTypes.func.isRequired,
+    selectedIngredientIds: PropTypes.array.isRequired,
+    setSelectedIngredientIds: PropTypes.func.isRequired,
     ingredients: PropTypes.array.isRequired,
 };
 

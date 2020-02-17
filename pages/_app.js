@@ -13,7 +13,7 @@ class MyDocument extends App {
         try {
             const {Component, pageProps} = this.props;
 
-            if (typeof window !== 'undefined') {
+            if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'development') {
                 LogRocket.init('gajlpv/recipe-cloud');
             }
 

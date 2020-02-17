@@ -9,13 +9,18 @@ import {observer} from "mobx-react";
 import UserBanner from "../../../client/components/UserBanner";
 
 const Recipes = observer((props) => {
-    const [recipes, setRecipes] = useState(new Map(props.recipes || []));
+    const [recipes, setRecipes] = useState(props.recipes);
     const [collections, setCollections] = useState(props.collections || []);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
     const [loadedAll, setLoadedAll] = useState(props.loadedAll);
     const context = useContext(ApiStoreContext);
 
     const isBottom = useScrolledBottom();
+
+    useEffect(() => {
+        // page transition
+        setRecipes(props.recipes);
+    }, [props.recipes]);
 
     useEffect(() => {
         if (props.user_id === context.user?.id) {
@@ -29,9 +34,11 @@ const Recipes = observer((props) => {
             context.getRecipes({
                 page: lastRecipePageLoaded + 1,
                 author: props.user_id,
+                orderBy: 'desc',
+                sortBy: 'created_at',
             })
                 .then(response => {
-                    response.forEach(r => recipes.set(r.id, r));
+                    response.forEach(r => recipes.push(r));
                     if (response.length < 12) {
                         setLoadedAll(true);
                     } else {
@@ -48,31 +55,39 @@ const Recipes = observer((props) => {
             })
     }
 
-    function removeCollection(id) {
-        context.patchUser({
-            collections: context.user.collections.filter(c => c.id !== id).map(c => c.id),
-        })
+    async function unfollowCollection(id) {
+        try {
+            await axios.delete(`/api/users/${context.user.id}/collections/${id}`);
+            context.user.collections = context.user.collections.filter(c => c.id !== id);
+        } catch (error) {
+            context.handleError(error);
+        }
     }
 
-    function addCollection(id) {
-        context.patchUser({
-            collections: context.user.collections.map(c => c.id).concat([id]),
-        })
+    async function followCollection(id) {
+        try {
+            await axios.post(`/api/users/${context.user.id}/collections/${id}`);
+
+            const response = await axios.get(`/api/collections/${id}`);
+            context.user.collections.push(response.data.collection);
+        } catch (error) {
+            context.handleError(error);
+        }
     }
 
     return (
         <div>
             <UserBanner user={props.user}
-                        images={Array.from(recipes.values()).filter(r => r.image).slice(0, 4).map(r => r.image)}/>
+                        images={recipes.filter(r => r.image).slice(0, 4).map(r => r.image)}/>
             <div className={styles.browseRecipesContainer}>
                 {collections.map(c => <CollectionCard
                     key={c.id}
-                    removeCollection={removeCollection}
+                    unfollowCollection={unfollowCollection}
                     deleteCollection={deleteCollection}
-                    addCollection={addCollection}
+                    followCollection={followCollection}
                     collection={c}
                 />)}
-                {Array.from(recipes.values()).map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {
+                {recipes.map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {
                 }}/>)}
             </div>
         </div>
@@ -106,7 +121,7 @@ Recipes.getInitialProps = async ({req, query}) => {
     ]);
     return {
         collections: responses[0].data.collections,
-        recipes: responses[1].data.recipes.map(r => [r.id, r]),
+        recipes: responses[1].data.recipes,
         loadedAll: responses[1].data.recipes.length < 12,
         user: responses[2].data.user,
         user_id: query.user_id,

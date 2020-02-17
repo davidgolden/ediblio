@@ -6,7 +6,7 @@ const express = require('express'),
     urlMetadata = require('url-metadata'),
     URLSafeBase64 = require('urlsafe-base64');
 
-const {saltPassword} = require('../utils');
+const {hashPassword} = require('../utils');
 
 const db = require("../db/index");
 
@@ -103,6 +103,8 @@ router.post('/forgot', function (req, res) {
 
 // reset password
 router.post('/reset', async function (req, res) {
+
+    // TODO this needs to use a client connection
     await db.query('BEGIN');
     const response = await db.query({
         text: `SELECT * FROM users WHERE reset_token = $1 AND token_expires > $2`,
@@ -116,7 +118,7 @@ router.post('/reset', async function (req, res) {
 
     const userRes = await db.query({
         text: `UPDATE users SET password = $1, reset_token = NULL, token_expires = NULL RETURNING *`,
-        values: [saltPassword(req.body.newPassword)],
+        values: [await hashPassword(req.body.newPassword)],
     });
 
     await db.query('COMMIT');
