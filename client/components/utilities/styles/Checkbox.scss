@@ -1,6 +1,7 @@
 @import "../../../styles/variables";
 
 .checkbox {
+  vertical-align: middle;
   span {
     border: 3px solid $gray;
     width: 40px;
