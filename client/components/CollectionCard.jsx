@@ -21,7 +21,11 @@ const CollectionCard = observer((props) => {
 
     let button;
     if (didMount && isCollectionOwner && !props.collection.is_primary) {
-        button = <DeleteButton onClick={() => props.deleteCollection(props.collection.id)}/>
+        button = <DeleteButton onClick={() => {
+            if (confirm('Are you sure you want to do that?')) {
+                props.deleteCollection(props.collection.id)
+            }
+        }}/>
     } else if (didMount && isFollower && !isCollectionOwner) {
         button = <RemoveButton onClick={async () => await props.unfollowCollection(props.collection.id)}/>
     } else if (didMount && context.user && !isCollectionOwner) {
