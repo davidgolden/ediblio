@@ -51,7 +51,7 @@ const ShowRecipe = observer(props => {
         <div className={showRecipeContainerClassName}>
             <div className={showRecipeTitleClassName}>
                 <div>
-                    <h1>{props.recipe.name} <span>{avgRating} <FontAwesomeIcon icon={faStar} /></span></h1>
+                    <h1>{props.recipe.name} {props.recipe.total_ratings > 0 && <span>{avgRating} <FontAwesomeIcon icon={faStar} /></span>}</h1>
                     <h2>Submitted by <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id}/recipes`}>
                         <a>
                             {props.recipe.author_username}

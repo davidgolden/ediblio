@@ -37,9 +37,9 @@ const CollectionCard = observer((props) => {
             <Link href={"/collections/[collection._id]"} as={`/collections/${props.collection.id}`}>
                 <a>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width={250} height={200}>
-                        <path fill="#164e57"
+                        <path fill="#0B4F6C"
                               d="M18 40h289v183.8c0 4.2-1.3 6.8-5.7 7.2h-283.1c-6.7 .7-8.4-2.8-8.2-7.9v-174.6c-0.8-6.2 1.9-9 8-8.5Z"/>
-                        <path fill="#2da2b5"
+                        <path fill="#01BAEF"
                               d="M208 11h93c4.4-0.7 6 2 6 4v25h-115c3-2.5 6.2-3.7 8-9c1.4-3.9 2.2-10.1 3-16c0-1.6 2.7-4.2 5-4Z"/>
                         {props.collection.recipes.map((recipe, i) => {
                             let width, height, x, y;
