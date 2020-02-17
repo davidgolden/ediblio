@@ -26,11 +26,11 @@
     button {
       background-color: $green;
       color: $white;
-      padding: 1rem 2rem;
-      width: 250px;
+      padding: .5rem 1rem;
+      width: calc(254px + 1rem);
       max-width: 90%;
-      margin: 10px;
-      font-size: 1.2rem;
+      margin: 10px 0;
+      font-size: 1.5rem;
       border-radius: 10px;
     }
   }

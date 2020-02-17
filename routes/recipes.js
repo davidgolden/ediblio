@@ -157,10 +157,8 @@ router.route('/recipes')
                 values.push(req.query.author);
             } else if (req.query.searchTerm) {
                 text += `
-                    INNER JOIN ingredients ON ingredients.id in (
-                        SELECT ingredient_id FROM recipes_ingredients
-                        where recipes_ingredients.recipe_id = recipes.id
-                    ) WHERE (lower(recipes.name) LIKE $${values.length + 1} OR lower(ingredients.name) LIKE $${values.length + 1}) 
+                    INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
+                    WHERE (lower(recipes.name) LIKE $${values.length + 1} OR lower(recipes_ingredients.name) LIKE $${values.length + 1}) 
                     ORDER BY ${req.query.sortBy} ${req.query.orderBy} LIMIT ${page_size} OFFSET ${skip};`;
                 values.push("%" + req.query.searchTerm.toLowerCase() + "%");
             } else {
