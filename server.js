@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
 const {Strategy, ExtractJwt} = require('passport-jwt');
 const bcrypt = require('bcrypt-nodejs');
 
@@ -43,14 +44,16 @@ passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
 }, async function (email, password, done) {
-    const userRes = await db.query({text: `${usersSelector}
+    const userRes = await db.query({
+        text: `${usersSelector}
 where users.email = $1
-group by users.id;`, values: [email]});
+group by users.id;`, values: [email]
+    });
     const user = userRes.rows[0];
 
     if (!user) return done(null, false, {message: 'Incorrect email.'});
 
-    bcrypt.compare(password, user.password, function(err, res) {
+    bcrypt.compare(password, user.password, function (err, res) {
         if (res) {
             return done(null, user);
         } else {
@@ -58,6 +61,45 @@ group by users.id;`, values: [email]});
         }
     })
 }));
+
+passport.use(new GoogleStrategy({
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "https://ediblio.com/auth/google/callback"
+    },
+    async function (accessToken, refreshToken, profile, done) {
+        try {
+            const userRes = await db.query({
+                text: `${usersSelector}
+where users.email = $1 AND third_party_id = $2,
+group by users.id;`, values: [profile.email, profile.id]
+            });
+            const user = userRes.rows[0];
+
+            if (user) {
+                done(null, user);
+            } else {
+                const userRes = await db.query({
+                    text: `INSERT INTO users (username, email, third_party_id, third_party_domain) VALUES ($1, $2, $3, 'google') RETURNING *`,
+                    values: [profile.fname, profile.email.toLowerCase(), profile.id]
+                });
+
+                // create a favorites collection
+                await db.query({
+                    text: `INSERT INTO collections (name, author_id, is_primary) VALUES ($1, $2, $3)`,
+                    values: ['Favorites', userRes.rows[0].id, true]
+                });
+
+                const user = userRes.rows[0];
+
+                return done(null, user);
+            }
+
+        } catch (error) {
+            done(error);
+        }
+    }
+));
 
 passport.use('JWT', new Strategy({
     secretOrKey: process.env.SESSION_SECRET,
@@ -78,9 +120,11 @@ passport.serializeUser(function (user, done) {
 
 passport.deserializeUser(async function (id, done) {
     try {
-        const userRes = await db.query({text: `${usersSelector}
+        const userRes = await db.query({
+            text: `${usersSelector}
 where users.id = $1
-group by users.id;`, values: [id]});
+group by users.id;`, values: [id]
+        });
         done(null, userRes.rows[0]);
     } catch (error) {
         done(error);

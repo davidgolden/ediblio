@@ -122,7 +122,9 @@ async function create() {
         username TEXT NOT NULL UNIQUE,
         email TEXT NOT NULL UNIQUE,
         profile_image TEXT,
-        password TEXT NOT NULL,
+        third_party_id TEXT UNIQUE,
+        third_party_domain TEXT,
+        password TEXT,
         reset_token TEXT,
         token_expires TIMESTAMP
     );
