@@ -15,16 +15,6 @@ router.post('/login', emailToLowerCase, passport.authenticate('local'), function
     res.status(200).json({user: req.user});
 });
 
-router.get('/auth/google',
-    passport.authenticate('google', { scope: ['profile'] }));
-
-router.get('/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
-    function(req, res) {
-        // Successful authentication, redirect home.
-        res.redirect('/');
-    });
-
 function emailToLowerCase(req, res, next) {
     req.body.email = req.body.email.toLowerCase();
     next();

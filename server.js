@@ -65,14 +65,14 @@ group by users.id;`, values: [email]
 passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "https://ediblio.com/auth/google/callback"
+        callbackURL: (process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://ediblio.com") + "/auth/google/callback",
     },
     async function (accessToken, refreshToken, profile, done) {
         try {
             const userRes = await db.query({
                 text: `${usersSelector}
-where users.email = $1 AND third_party_id = $2,
-group by users.id;`, values: [profile.email, profile.id]
+where users.email = $1
+group by users.id`, values: [profile._json.email]
             });
             const user = userRes.rows[0];
 
@@ -80,8 +80,8 @@ group by users.id;`, values: [profile.email, profile.id]
                 done(null, user);
             } else {
                 const userRes = await db.query({
-                    text: `INSERT INTO users (username, email, third_party_id, third_party_domain) VALUES ($1, $2, $3, 'google') RETURNING *`,
-                    values: [profile.fname, profile.email.toLowerCase(), profile.id]
+                    text: `INSERT INTO users (username, email, third_party_id, third_party_domain, profile_image) VALUES ($1, $2, $3, 'google', $4) RETURNING *`,
+                    values: [profile._json.name, profile._json.email.toLowerCase(), profile.id, profile._json.picture]
                 });
 
                 // create a favorites collection
@@ -164,6 +164,17 @@ app.prepare().then(() => {
     server.use('/api/', collectionRoutes);
     server.use('/api/', ratingRoutes);
     server.use('/api/', measurementRoutes);
+
+    server.get('/auth/google',
+        passport.authenticate('google', {scope: ['profile', 'email']}));
+
+    server.get('/auth/google/callback',
+        passport.authenticate('google', {failureRedirect: '/'}),
+        function (req, res) {
+            console.log(req.user)
+            // res.status(200).json({user: req.user});
+            res.redirect('/', {user: req.user})
+        });
 
     server.get('/service-worker.js', (req, res) => {
         const filePath = path.join(__dirname, '.next/service-worker.js');

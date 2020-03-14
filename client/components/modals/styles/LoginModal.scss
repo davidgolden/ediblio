@@ -35,3 +35,38 @@
     }
   }
 }
+
+.googleWrapper {
+  border: 1px solid transparent;
+  background-color: #4285f4;
+  color: #fff;
+  height: 50px;
+  width: 240px;
+  display: inline-block;
+
+  .googleIcon {
+    background-color: #fff;
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    padding: 15px;
+    float: left;
+    margin-top: 1px;
+  }
+
+  .googleContents {
+    font-size: 1.2rem;
+    line-height: 48px;
+    font-family: Roboto,arial,sans-serif;
+    font-weight: 500;
+    letter-spacing: .21px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: top;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+}
