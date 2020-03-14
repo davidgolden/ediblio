@@ -58,7 +58,6 @@
 
 .userLink {
   display: inline-block;
-  float: right;
   font-size: 2.5rem;
   vertical-align: middle;
   cursor: pointer;
@@ -143,5 +142,103 @@
     margin-right: .25rem;
     vertical-align: middle;
     color: $black;
+  }
+}
+
+.rightNav {
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  .search {
+    display: inline-block;
+
+    button {
+      background-color: $green;
+      color: $white;
+      height: 35px;
+      width: 35px;
+      vertical-align: middle;
+      border-radius: 10px;
+
+      svg {
+        height: 25px;
+        vertical-align: middle;
+        transition: transform .5s ease;
+      }
+    }
+
+    input {
+      width: 0;
+      height: 31px;
+      transition: all .5s ease;
+      border: 2px solid $green;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      vertical-align: middle;
+      font-size: 1.1rem;
+      padding: 0 .25rem;
+      color: $dark;
+      visibility: hidden;
+    }
+
+    &Open {
+      button {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      input {
+        width: 200px;
+        visibility: visible;
+      }
+    }
+  }
+}
+
+.recipeSearch {
+  position: absolute;
+  top: 60px;
+  right: 80px;
+  width: 300px;
+  padding: .25rem;
+  box-shadow: 2px 4px 1px rgba($black, .2);
+  margin-left: 1.5rem;
+  z-index: 5;
+  background-color: $white;
+  color: $dark;
+  max-height: 350px;
+  overflow-y: scroll;
+
+  ul {
+    margin: 0;
+    list-style: none;
+
+    li {
+      height: 60px;
+      vertical-align: middle;
+
+      &:hover {
+        background-color: $lightgray;
+      }
+
+      a {
+        display: inline-block;
+        width: 100%;
+        font-size: 1.2rem;
+        color: $dark;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      img {
+        height: 50px;
+        width: 50px;
+        border-radius: 100%;
+        object-fit: cover;
+        vertical-align: middle;
+        padding-right: 10px;
+      }
+    }
   }
 }

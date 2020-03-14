@@ -33,9 +33,6 @@ const Index = props => {
         if (filterAuthor) {
             query.author = filterAuthor;
         }
-        if (typeof searchTerm === 'string') {
-            query.searchTerm = searchTerm;
-        }
         if (!loadedAll) {
             context.getRecipes(query)
                 .then(response => {
@@ -82,10 +79,6 @@ const Index = props => {
 
     return (
         <div>
-            <SortingBar
-                searchTerm={searchTerm}
-                setSearchTerm={searchByTerm}
-            />
             <div className={browseRecipesContainerClassName}>
                 {Array.from(recipes.values()).map(recipe => {
                     return <RecipeCard deleteRecipe={removeRecipe} key={recipe.id} recipe={recipe}/>
