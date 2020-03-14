@@ -38,6 +38,8 @@
     margin-left: 0.5rem;
     font-size: 2.5rem;
     cursor: pointer;
+    float: left;
+    height: 60px;
 
     a {
       text-decoration: none;
@@ -91,7 +93,7 @@
   }
 }
 
-.linksContainer { // container of everything that's not the navigation links
+.linksContainer {
   position: absolute;
   top: 60px;
   right: 0;
@@ -105,7 +107,13 @@
     border: 1px solid darken($lightgray, 10%);
     border-top: none;
   }
+}
 
+.linksContainer, .mobileMenu { // container of everything that's not the navigation links
+  ul {
+    border: 1px solid darken($lightgray, 10%);
+    border-top: none;
+  }
   li {
     height: 40px;
     padding: .25rem .75rem;
@@ -150,56 +158,89 @@
   right: 0;
   top: 0;
 
-  .search {
-    display: inline-block;
+  @media(max-width: 600px) {
+    display: none;
+  }
+}
 
-    button {
-      background-color: $green;
+.search {
+  display: inline-block;
+  position: relative;
+
+  button {
+    background-color: $green;
+    color: $white;
+    height: 35px;
+    width: 35px;
+    vertical-align: middle;
+    border-radius: 10px;
+
+    svg {
       color: $white;
-      height: 35px;
-      width: 35px;
+      height: 25px;
       vertical-align: middle;
-      border-radius: 10px;
-
-      svg {
-        height: 25px;
-        vertical-align: middle;
-        transition: transform .5s ease;
-      }
+      transition: transform .5s ease;
     }
+  }
 
+  input {
+    width: 0;
+    height: 31px;
+    transition: all .5s ease;
+    border: 2px solid $green;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    vertical-align: middle;
+    font-size: 1.1rem;
+    padding: 0 .25rem;
+    color: $dark;
+    visibility: hidden;
+  }
+
+  &Open {
+    button {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
     input {
-      width: 0;
-      height: 31px;
-      transition: all .5s ease;
-      border: 2px solid $green;
-      border-top-right-radius: 10px;
-      border-bottom-right-radius: 10px;
-      vertical-align: middle;
-      font-size: 1.1rem;
-      padding: 0 .25rem;
-      color: $dark;
-      visibility: hidden;
-    }
-
-    &Open {
-      button {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-      }
-      input {
-        width: 200px;
-        visibility: visible;
-      }
+      width: 200px;
+      visibility: visible;
     }
   }
 }
 
+.mobileButton {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 10px;
+  width: 50px;
+  height: 50px;
+
+  svg {
+    width: 35px;
+    height: 35px;
+    color: #7575754d;
+  }
+
+  @media(max-width: 600px) {
+    display: inline-block;
+  }
+}
+
+.mobileMenu {
+  background-color: $white;
+  text-align: center;
+  padding-top: 70px;
+  padding-bottom: 10px;
+}
+
 .recipeSearch {
   position: absolute;
-  top: 60px;
-  right: 80px;
+  top: 40px;
+  right: 0;
   width: 300px;
+  max-width: 100%;
   padding: .25rem;
   box-shadow: 2px 4px 1px rgba($black, .2);
   margin-left: 1.5rem;
@@ -229,6 +270,24 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+
+        div { // no recipe image
+          width: 50px;
+          height: 50px;
+          background-color: lightgray;
+          border-radius: 100%;
+          display: inline-block;
+          text-align: center;
+          margin-right: 10px;
+          vertical-align: middle;
+
+          svg {
+            color: $white;
+            width: 40px;
+            height: 30px;
+            margin: 8px 0 0 0;
+          }
+        }
       }
 
       img {
@@ -237,7 +296,7 @@
         border-radius: 100%;
         object-fit: cover;
         vertical-align: middle;
-        padding-right: 10px;
+        margin-right: 10px;
       }
     }
   }

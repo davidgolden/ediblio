@@ -9,7 +9,7 @@ import {
     faBook,
     faUser,
     faChevronLeft,
-    faChevronDown, faSignOutAlt
+    faChevronDown, faSignOutAlt, faBars, faImage, faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
@@ -20,6 +20,83 @@ import useDebounce from "../utilities/useDebounce";
 const navContainerClassName = classNames({
     [styles.navContainer]: true,
 });
+const linksContainerClassName = classNames({
+    [styles.linksContainer]: true,
+});
+
+function NavLinks(props) {
+    const context = useContext(ApiStoreContext);
+
+    return <ul>
+        <li>
+            <Link href={'/'}>
+                <a>
+                    <FontAwesomeIcon icon={faSearch}/> Browse Recipes
+                </a>
+            </Link>
+        </li>
+        <li>
+            <Link href={"/users/[user_id]/groceries"} as={`/users/${context.user.id}/groceries`}>
+                <a>
+                    <FontAwesomeIcon icon={faListUl}/> Grocery List
+                </a>
+            </Link>
+        </li>
+        <li>
+            <Link href={'/add'}>
+                <a>
+                    <FontAwesomeIcon icon={faPlus}/> Add Recipe
+                </a>
+            </Link>
+        </li>
+        <li>
+            <Link href={"/users/[user_id]/recipes"} as={`/users/${context.user.id}/recipes`}>
+                <a>
+                    <FontAwesomeIcon icon={faBook}/> My Recipes
+                </a>
+            </Link>
+        </li>
+        <li>
+            <Link href={"/users/[user_id]/settings"} as={`/users/${context.user.id}/settings`}>
+                <a>
+                    <FontAwesomeIcon icon={faUser}/> Settings
+                </a>
+            </Link>
+        </li>
+        <li>
+            <button onClick={context.userLogout}><FontAwesomeIcon icon={faSignOutAlt}/> Log Out</button>
+        </li>
+    </ul>
+}
+
+const SearchBar = React.forwardRef((props, ref) => {
+    const searchClassName = classNames({
+        [styles.search]: true,
+        [styles.searchOpen]: props.searchOpen,
+    });
+
+    return <div className={searchClassName} ref={ref}>
+        <Button onClick={() => props.setSearchOpen(v => !v)}>
+            <FontAwesomeIcon icon={faSearch}/>
+        </Button>
+        <input placeholder={"Search"} value={props.searchTerm} onChange={e => props.setSearchTerm(e.target.value)}/>
+        {props.searchOpen && props.foundRecipes.length > 0 && <div className={styles.recipeSearch}>
+            <ul>
+                {props.foundRecipes.map(recipe => {
+                    return <li>
+                        <Link href={`/recipes/[recipe_id]`} as={`/recipes/${recipe.id}`}>
+                            <a>
+                                {recipe.image ? <img src={recipe.image} alt={"Recipe Image"}/> :
+                                    <div><FontAwesomeIcon icon={faImage}/></div>}
+                                {recipe.name}
+                            </a>
+                        </Link>
+                    </li>
+                })}
+            </ul>
+        </div>}
+    </div>
+});
 
 const Header = observer((props) => {
     const [didMount, setDidMount] = React.useState(false);
@@ -27,6 +104,7 @@ const Header = observer((props) => {
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [foundRecipes, setFoundRecipes] = useState([]);
+    const [mobileOpen, setMobileOpen] = useState(false);
     React.useLayoutEffect(() => setDidMount(true), []);
 
     const searchRef = useRef(null);
@@ -47,20 +125,20 @@ const Header = observer((props) => {
 
     const context = useContext(ApiStoreContext);
 
-    const linksContainerClassName = classNames({
-        [styles.linksContainer]: true,
-    });
-
     useEffect(() => {
         window.addEventListener('click', handleClick);
         return () => window.removeEventListener('click', handleClick);
-    }, [navOpen, searchOpen]);
+    }, [navOpen, searchOpen, mobileOpen]);
 
     function handleClick(e) {
         if (navOpen) {
             setNavOpen(false);
         }
-        if (searchOpen && !searchRef.current.contains(e.target)) {
+
+        if (mobileOpen && !searchRef.current?.contains(e.target)) {
+            setSearchOpen(false);
+            setFoundRecipes([]);
+        } else if (searchOpen && !searchRef.current?.contains(e.target)) {
             setSearchOpen(false);
             setFoundRecipes([]);
             setSearchTerm("");
@@ -71,10 +149,7 @@ const Header = observer((props) => {
         [styles.userLink]: true,
         [styles.userLinkLogin]: !context.user,
     });
-    const searchClassName = classNames({
-        [styles.search]: true,
-        [styles.searchOpen]: searchOpen,
-    });
+
 
     return (
         <nav className={navContainerClassName}>
@@ -88,13 +163,9 @@ const Header = observer((props) => {
             </h1>
 
             <div className={styles.rightNav}>
-
-                <div className={searchClassName} ref={searchRef}>
-                    <Button onClick={() => setSearchOpen(v => !v)}>
-                        <FontAwesomeIcon icon={faSearch}/>
-                    </Button>
-                    <input placeholder={"Search"} value={searchTerm} onChange={e => setSearchTerm(e.target.value)}/>
-                </div>
+                <SearchBar ref={searchRef} searchOpen={searchOpen || mobileOpen} setSearchOpen={setSearchOpen}
+                           searchTerm={searchTerm}
+                           setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
 
                 {context.user ?
                     <button onClick={() => setNavOpen(v => !v)} className={userLinkClassName}>
@@ -107,62 +178,24 @@ const Header = observer((props) => {
                     </button>}
             </div>
 
-            {searchOpen && foundRecipes.length > 0 && <div className={styles.recipeSearch}>
-                <ul>
-                    {foundRecipes.map(recipe => {
-                        return <li>
-                            <Link href={`/recipes/[recipe_id]`} as={`/recipes/${recipe.id}`}>
-                                <a>
-                                    <img src={recipe.image} alt={"Recipe Image"}/>
-                                    {recipe.name}
-                                </a>
-                            </Link>
-                        </li>
-                    })}
-                </ul>
-            </div>}
+            <div className={styles.mobileButton}>
+                <Button onClick={() => setMobileOpen(v => !v)}>
+                    <FontAwesomeIcon icon={mobileOpen ? faTimes : faBars}/>
+                </Button>
+            </div>
 
             {navOpen && context.user && <div className={linksContainerClassName}>
-                <ul>
-                    <li>
-                        <Link href={'/'}>
-                            <a>
-                                <FontAwesomeIcon icon={faSearch}/> Browse Recipes
-                            </a>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href={"/users/[user_id]/groceries"} as={`/users/${context.user.id}/groceries`}>
-                            <a>
-                                <FontAwesomeIcon icon={faListUl}/> Grocery List
-                            </a>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href={'/add'}>
-                            <a>
-                                <FontAwesomeIcon icon={faPlus}/> Add Recipe
-                            </a>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href={"/users/[user_id]/recipes"} as={`/users/${context.user.id}/recipes`}>
-                            <a>
-                                <FontAwesomeIcon icon={faBook}/> My Recipes
-                            </a>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href={"/users/[user_id]/settings"} as={`/users/${context.user.id}/settings`}>
-                            <a>
-                                <FontAwesomeIcon icon={faUser}/> Settings
-                            </a>
-                        </Link>
-                    </li>
-                    <li>
-                        <button onClick={context.userLogout}><FontAwesomeIcon icon={faSignOutAlt}/> Log Out</button>
-                    </li>
-                </ul>
+                <NavLinks/>
+            </div>}
+
+            {mobileOpen && <div className={styles.mobileMenu}>
+                <SearchBar ref={searchRef} searchOpen={true} setSearchOpen={setSearchOpen} searchTerm={searchTerm}
+                           setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
+                {context.user ? <NavLinks/> : <div>
+                    <button className={userLinkClassName} onClick={() => context.addModal("login")}>
+                        Login
+                    </button>
+                </div>}
             </div>}
         </nav>
     )
