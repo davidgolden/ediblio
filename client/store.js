@@ -1,6 +1,5 @@
 import React from "react";
 import axios from "axios";
-import './stylesheets/base.scss';
 import {observable, action, autorun, toJS} from "mobx";
 import Router from 'next/router';
 

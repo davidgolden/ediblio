@@ -1,11 +1,8 @@
-const withSass = require('@zeit/next-sass');
-const withCSS = require('@zeit/next-css');
 const withOffline = require('next-offline');
 
 const CACHE_NAME = "1.0.0";
 
-module.exports = withCSS(withSass(withOffline({
-    cssModules: true,
+module.exports = withOffline({
     cssLoaderOptions: {
         localIdentName: '[local]_[hash:base64:5]',
     },
@@ -67,4 +64,4 @@ module.exports = withCSS(withSass(withOffline({
             },
         }]
     }
-})));
+});

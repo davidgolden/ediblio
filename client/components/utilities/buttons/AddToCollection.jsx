@@ -1,7 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import classNames from 'classnames';
 import Button from './Button';
-import styles from './styles/Button.scss';
+import styles from './styles/Button.module.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlus} from '@fortawesome/free-solid-svg-icons'
 import {ApiStoreContext} from "../../../stores/api_store";

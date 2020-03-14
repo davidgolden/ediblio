@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import styles from './styles/RecipeInformation.scss';
+import styles from './styles/RecipeInformation.module.scss';
 import classNames from 'classnames';
 import ImageLoader from "../utilities/ImageLoader";
 

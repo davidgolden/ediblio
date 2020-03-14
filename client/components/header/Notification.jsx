@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import classNames from 'classnames';
-import styles from './styles/Notification.scss';
+import styles from './styles/Notification.module.scss';
 import PropTypes from 'prop-types';
 import {ApiStoreContext} from "../../stores/api_store";
 import {observer} from "mobx-react";

@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import styles from './styles/Modal.scss';
+import styles from './styles/Modal.module.scss';
 import Button from "../utilities/buttons/Button";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

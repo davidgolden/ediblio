@@ -7,6 +7,7 @@ import Notification from "../client/components/header/Notification";
 import AllModals from "../client/components/modals/styles/AllModals";
 import {ApiStoreContext, initialStore} from "../client/stores/api_store";
 import LogRocket from 'logrocket';
+import "../client/stylesheets/base.scss";
 
 class MyDocument extends App {
     render() {

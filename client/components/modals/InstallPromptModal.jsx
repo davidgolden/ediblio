@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from "./Modal";
-import styles from './styles/InitialPromptModal.scss';
+import styles from './styles/InitialPromptModal.module.scss';
 
 export default function InstallPromptModal(props) {
     return <Modal className={styles.container}>

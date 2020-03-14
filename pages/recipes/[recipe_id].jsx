@@ -1,7 +1,7 @@
 import React, {useState, useContext, useEffect} from 'react';
 import RecipeForm from '../add';
 import ShowRecipe from '../../client/components/recipes/ShowRecipe';
-import styles from '../styles/RecipeContainer.scss';
+import styles from '../styles/RecipeContainer.module.scss';
 import classNames from 'classnames';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSearch, faEdit} from '@fortawesome/free-solid-svg-icons'

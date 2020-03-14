@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 import RecipeCard from "../client/components/RecipeCard";
 import classNames from 'classnames';
-import styles from './styles/BrowseRecipes.scss';
+import styles from './styles/BrowseRecipes.module.scss';
 import SortingBar from "../client/components/recipes/SortingBar";
 import LoadingNextPage from '../client/components/utilities/LoadingNextPage';
 import useScrolledBottom from "../client/components/utilities/useScrolledBottom";

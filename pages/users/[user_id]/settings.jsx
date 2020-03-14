@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from 'react';
-import styles from '../../styles/UserSettings.scss';
+import styles from '../../styles/UserSettings.module.scss';
 import classNames from 'classnames';
 import Button from "../../../client/components/utilities/buttons/Button";
 import {ApiStoreContext} from "../../../client/stores/api_store";

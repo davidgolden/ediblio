@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect, useRef} from 'react';
 import classNames from 'classnames';
-import styles from './styles/Header.scss';
+import styles from './styles/Header.module.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
     faSearch,
@@ -50,23 +50,24 @@ const Header = observer((props) => {
 
     return (
         <nav className={navContainerClassName}>
-            {didMount && window.history.length > 1 && <Button className={styles.backButton} onClick={() => window.history.back()}>
-                <FontAwesomeIcon icon={faChevronLeft} />
+            {didMount && window.history.length > 1 &&
+            <Button className={styles.backButton} onClick={() => window.history.back()}>
+                <FontAwesomeIcon icon={faChevronLeft}/>
             </Button>}
 
             <h1>
-                <Link href="/"><img src={"/images/ediblio_logo.png"} /></Link>
+                <Link href="/"><img src={"/images/ediblio_logo.png"}/></Link>
             </h1>
 
             {context.user ?
                 <button onClick={() => setNavOpen(v => !v)} className={userLinkClassName}>
                     {context.user.profile_image ?
                         <img src={context.user.profile_image}/> :
-                        <FontAwesomeIcon icon={faUser}/>} <FontAwesomeIcon icon={faChevronDown} />
+                        <FontAwesomeIcon icon={faUser}/>} <FontAwesomeIcon icon={faChevronDown}/>
                 </button>
-             : <button className={userLinkClassName} onClick={() => context.addModal("login")}>
-                Login
-            </button>}
+                : <button className={userLinkClassName} onClick={() => context.addModal("login")}>
+                    Login
+                </button>}
 
             {navOpen && context.user && <div className={linksContainerClassName}>
                 <ul>

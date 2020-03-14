@@ -1,7 +1,7 @@
 import React, {useState, useContext} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import styles from './styles/RecipeCard.scss';
+import styles from './styles/RecipeCard.module.scss';
 import RecipeButtons from "./recipes/RecipeButtons";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faImage, faStar} from '@fortawesome/free-solid-svg-icons';
