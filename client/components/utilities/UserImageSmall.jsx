@@ -4,7 +4,7 @@ import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons";
 import classNames from "classnames";
-import styles from "../styles/RecipeCard.scss";
+import styles from "../styles/RecipeCard.module.scss";
 
 export default function UserImageSmall(props) {
     const userImageClassName = classNames({

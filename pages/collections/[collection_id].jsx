@@ -2,7 +2,7 @@ import React, {useEffect, useState, useContext} from 'react';
 import {ApiStoreContext} from "../../client/stores/api_store";
 import useScrolledBottom from "../../client/components/utilities/useScrolledBottom";
 import classNames from "classnames";
-import styles from "../styles/BrowseRecipes.scss";
+import styles from "../styles/BrowseRecipes.module.scss";
 import RecipeCard from "../../client/components/RecipeCard";
 import LoadingNextPage from "../../client/components/utilities/LoadingNextPage";
 import axios from "axios";

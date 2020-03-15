@@ -1,7 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import axios from 'axios';
 import CollectionCard from "../../../client/components/CollectionCard";
-import styles from '../../styles/BrowseRecipes.scss';
+import styles from '../../styles/BrowseRecipes.module.scss';
 import {ApiStoreContext} from "../../../client/stores/api_store";
 import RecipeCard from "../../../client/components/RecipeCard";
 import useScrolledBottom from "../../../client/components/utilities/useScrolledBottom";

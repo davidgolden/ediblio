@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import Ingredient from './IngredientListItem'
 import classNames from 'classnames';
-import styles from './styles/AddIngredients.scss';
+import styles from './styles/AddIngredients.module.scss';
 import {faQuestion, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Sortable from "react-sortablejs";

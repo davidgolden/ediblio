@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import Button from './Button';
-import styles from './styles/Button.scss';
+import styles from './styles/Button.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 

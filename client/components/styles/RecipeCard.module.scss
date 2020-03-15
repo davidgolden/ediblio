@@ -19,9 +19,9 @@
     flex: 100%;
   }
 
-  a {
-    text-decoration: none;
+  button {
     cursor: pointer;
+    width: 100%;
 
     > div:first-of-type {
       padding: 5px 10px;
@@ -56,10 +56,6 @@
       border-radius: 0;
       margin-left: 3px;
     }
-  }
-
-  a {
-    text-decoration: none;
   }
 
   @media(max-width: 1200px) {

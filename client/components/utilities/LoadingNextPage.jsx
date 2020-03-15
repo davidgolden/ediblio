@@ -2,7 +2,7 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import classNames from 'classnames';
-import styles from './styles/LoadingNextPage.scss';
+import styles from './styles/LoadingNextPage.module.scss';
 
 const LoadingNextPage = props => {
     const loadingContainerClassName = classNames({

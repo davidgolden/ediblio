@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import Link from "next/link";
 import DeleteButton from "./utilities/buttons/DeleteButton";
-import styles from './styles/CollectionCard.scss';
+import styles from './styles/CollectionCard.module.scss';
 import {observer} from "mobx-react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";

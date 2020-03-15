@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import Modal from "./Modal";
 import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
-import styles from './styles/LoginModal.scss';
+import styles from './styles/LoginModal.module.scss';
 import Router from "next/router";
 
 function Login(props) {

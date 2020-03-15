@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect} from 'react';
 import AddIngredients from '../../../client/components/recipes/AddIngredients';
-import styles from '../../styles/GroceryList.scss';
+import styles from '../../styles/GroceryList.module.scss';
 import classNames from 'classnames';
 import Button from "../../../client/components/utilities/buttons/Button";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
