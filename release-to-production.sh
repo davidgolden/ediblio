@@ -6,4 +6,4 @@ echo "building next"
 npm run build
 
 echo "restarting process"
-pm2 server restart
+pm2 restart server
