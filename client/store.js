@@ -95,16 +95,19 @@ export default class Store {
         this.modalStack.pop();
     };
 
+    @observable baseURL = "";
 
+    @action
     openRecipeModal = async (id) => {
-        await Router.push(`${window.location.pathname}?recipe_id=${id}`, `/recipes/${id}`, {shallow: true});
+        this.baseURL = window.location.href;
+        window.history.pushState({}, document.title, `/recipes/${id}`);
         this.addModal('recipe');
         document.getElementsByTagName('body')[0].style.overflow = 'hidden';
     };
 
     closeRecipeModal = async () => {
         document.getElementsByTagName('body')[0].style.overflow = 'auto';
-        window.history.back();
+        window.history.pushState({}, document.title, this.baseURL);
     };
 
     handleError = error => {
