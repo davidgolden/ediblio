@@ -15,9 +15,9 @@
   }
 
   .backButton {
-    width: 40px;
-    height: 50px;
-    vertical-align: top;
+    width: 30px;
+    height: 60px;
+    float: left;
     display: none;
 
     svg {
@@ -66,11 +66,25 @@
   margin: 5px 10px;
   background-color: $white;
 
+  div {
+    background-color: lightgray;
+    height: 35px;
+    width: 35px;
+    border-radius: 100%;
+    line-height: 35px;
+
+    svg {
+      color: $white;
+      width: 20px;
+      margin: 0
+    }
+  }
+
   > * {
     display: inline-block;
     vertical-align: middle;
   }
-  svg {
+  > svg {
     width: 30px;
 
     &:last-of-type {
@@ -111,6 +125,7 @@
 }
 
 .linksContainer, .mobileMenu { // container of everything that's not the navigation links
+
   ul {
     border: 1px solid darken($lightgray, 10%);
     border-top: none;
@@ -233,13 +248,23 @@
 .mobileMenu {
   background-color: $white;
   text-align: center;
-  padding-top: 70px;
-  padding-bottom: 10px;
+  padding: 10px 0;
+  transition: all .5s ease;
+  position: absolute;
+  top: -409px;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  display: none;
+
+  @media(max-width: 600px) {
+    display: block;
+  }
 }
 
 .recipeSearch {
   position: absolute;
-  top: 40px;
+  top: 50px;
   right: 0;
   width: 300px;
   max-width: 100%;
@@ -269,12 +294,9 @@
         width: 100%;
         font-size: 1.2rem;
         color: $dark;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
         text-align: left;
 
-        div { // no recipe image
+        .noImage { // no recipe image
           width: 50px;
           height: 50px;
           background-color: lightgray;
@@ -291,6 +313,19 @@
             margin: 8px 0 0 0;
           }
         }
+
+        div {
+          display: inline-block;
+          vertical-align: middle;
+          width: 160px;
+
+          span {
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+        }
       }
 
       img {
@@ -303,4 +338,23 @@
       }
     }
   }
+}
+
+.transitionEnter {
+  transform: translateY(469px);
+}
+.transitionEnterActive {
+  transform: translateY(469px);
+}
+.transitionEnterDone {
+  transform: translateY(469px);
+}
+.transitionExit {
+  transform: translateY(0);
+}
+.transitionExitActive {
+  transform: translateY(0);
+}
+.transitionExitDone {
+  transform: translateY(0);
 }
