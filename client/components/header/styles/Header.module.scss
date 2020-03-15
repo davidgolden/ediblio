@@ -66,11 +66,25 @@
   margin: 5px 10px;
   background-color: $white;
 
+  div {
+    background-color: lightgray;
+    height: 35px;
+    width: 35px;
+    border-radius: 100%;
+    line-height: 35px;
+
+    svg {
+      color: $white;
+      width: 20px;
+      margin: 0
+    }
+  }
+
   > * {
     display: inline-block;
     vertical-align: middle;
   }
-  svg {
+  > svg {
     width: 30px;
 
     &:last-of-type {
