@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import Modal from "./Modal";
 import RecipePage from "../recipes/RecipePage";
 import axios from "axios";
 import {faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import PropTypes from 'prop-types';
 import styles from './styles/RecipeModal.module.scss';
+import {ApiStoreContext} from "../../stores/api_store";
 
 export default function RecipeModal(props) {
+    const context = useContext(ApiStoreContext);
     const [recipe, setRecipe] = useState(null);
 
     useEffect(() =>{
@@ -24,14 +25,10 @@ export default function RecipeModal(props) {
 
     }, []);
 
-    return <Modal className={styles.modal} onClose={() => {
-        document.getElementsByTagName('body')[0].style.overflow = 'auto';
-        window.history.back()
-    }}>
-        {recipe ? <RecipePage recipe={recipe}/> : <FontAwesomeIcon icon={faSpinner} spin/>}
+    return <Modal className={styles.modal} onClose={context.closeRecipeModal}>
+        {recipe ? <RecipePage recipe={recipe}/> : <div className={styles.loading}>
+            <h3>Loading Recipe...</h3>
+            <FontAwesomeIcon icon={faSpinner} spin/>
+        </div>}
     </Modal>
 }
-
-RecipeModal.propTypes = {
-    recipe_id: PropTypes.string.isRequired,
-};

@@ -7,3 +7,13 @@
     max-height: unset !important;
   }
 }
+
+.loading {
+  text-align: center;
+
+  svg {
+    margin-top: 1rem;
+    height: 50px;
+    width: 50px;
+  }
+}
