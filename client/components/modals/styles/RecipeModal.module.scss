@@ -1,0 +1,9 @@
+.modal {
+  overflow-y: auto !important;
+
+  > div {
+    width: 95vw !important;
+    margin: 2.5vh 2.5vw !important;
+    max-height: unset !important;
+  }
+}

@@ -70,6 +70,8 @@ function NavLinks(props) {
 }
 
 const SearchBar = React.forwardRef((props, ref) => {
+    const context = useContext(ApiStoreContext);
+
     const searchClassName = classNames({
         [styles.search]: true,
         [styles.searchOpen]: props.searchOpen,
@@ -84,13 +86,11 @@ const SearchBar = React.forwardRef((props, ref) => {
             <ul>
                 {props.foundRecipes.map(recipe => {
                     return <li>
-                        <Link href={`/recipes/[recipe_id]`} as={`/recipes/${recipe.id}`}>
-                            <a>
-                                {recipe.image ? <img src={recipe.image} alt={"Recipe Image"}/> :
-                                    <div><FontAwesomeIcon icon={faImage}/></div>}
-                                {recipe.name}
-                            </a>
-                        </Link>
+                        <Button onClick={async () => await context.openRecipeModal(recipe.id)}>
+                            {recipe.image ? <img src={recipe.image} alt={"Recipe Image"}/> :
+                                <div><FontAwesomeIcon icon={faImage}/></div>}
+                            {recipe.name}
+                        </Button>
                     </li>
                 })}
             </ul>

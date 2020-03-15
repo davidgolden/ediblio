@@ -1,16 +1,18 @@
 .container {
-  text-align: center;
-  font-size: 1.2rem;
-  height: auto !important;
+  > div {
+    text-align: center;
+    font-size: 1.2rem;
+    height: auto !important;
 
-  .exampleIcons {
-    padding-bottom: 1rem;
-    svg, img {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      box-shadow: 2px 2px 3px lightgray;
-      margin: 0 5px;
+    .exampleIcons {
+      padding-bottom: 1rem;
+      svg, img {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        box-shadow: 2px 2px 3px lightgray;
+        margin: 0 5px;
+      }
     }
   }
 }

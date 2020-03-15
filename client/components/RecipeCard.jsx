@@ -5,10 +5,10 @@ import styles from './styles/RecipeCard.module.scss';
 import RecipeButtons from "./recipes/RecipeButtons";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faImage, faStar} from '@fortawesome/free-solid-svg-icons';
-import Link from "next/link";
 import UserImageSmall from "./utilities/UserImageSmall";
 import axios from "axios";
 import {ApiStoreContext} from "../stores/api_store";
+import Button from "./utilities/buttons/Button";
 
 const recipeCardClassName = classNames({
     [styles.recipeCard]: true,
@@ -47,16 +47,16 @@ const RecipeCard = props => {
     return (
         <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)}
              onMouseLeave={() => setShowButtons(false)}>
-            <Link href={`/recipes/[recipe_id]`} as={`/recipes/${props.recipe.id}`}>
-                <a>
-                    <div className={recipeCardImageClassName}>
-                        {props.recipe.image ? <img src={props.recipe.image} /> : <div><FontAwesomeIcon icon={faImage} /></div>}
-                    </div>
-                    <div className={recipeCardTextClassName}>
-                        <h3>{props.recipe.name}</h3>
-                    </div>
-                </a>
-            </Link>
+            <Button onClick={async () => {
+                await context.openRecipeModal(props.recipe.id);
+            }}>
+                <div className={recipeCardImageClassName}>
+                    {props.recipe.image ? <img src={props.recipe.image} /> : <div><FontAwesomeIcon icon={faImage} /></div>}
+                </div>
+                <div className={recipeCardTextClassName}>
+                    <h3>{props.recipe.name}</h3>
+                </div>
+            </Button>
             <div className={recipeCardButtonClassName}>
                 {showButtons && <RecipeButtons
                     recipe={props.recipe}

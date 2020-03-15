@@ -167,7 +167,7 @@
   display: inline-block;
   position: relative;
 
-  button {
+  > button {
     background-color: $green;
     color: $white;
     height: 35px;
@@ -198,7 +198,7 @@
   }
 
   &Open {
-    button {
+    > button {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
     }
@@ -262,7 +262,7 @@
         background-color: $lightgray;
       }
 
-      a {
+      button {
         display: inline-block;
         width: 100%;
         font-size: 1.2rem;
@@ -270,6 +270,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        text-align: left;
 
         div { // no recipe image
           width: 50px;
