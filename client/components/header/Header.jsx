@@ -17,6 +17,7 @@ import Link from "next/link";
 import {observer} from "mobx-react";
 import useDebounce from "../utilities/useDebounce";
 import {CSSTransition} from "react-transition-group";
+import Rating from "react-rating";
 
 const navContainerClassName = classNames({
     [styles.navContainer]: true,
@@ -98,8 +99,18 @@ const SearchBar = React.forwardRef((props, ref) => {
                     return <li>
                         <Button onClick={async () => await context.openRecipeModal(recipe.id)}>
                             {recipe.image ? <img src={recipe.image} alt={"Recipe Image"}/> :
-                                <div><FontAwesomeIcon icon={faImage}/></div>}
-                            {recipe.name}
+                                <div className={styles.noImage}><FontAwesomeIcon icon={faImage}/></div>}
+                            <div>
+                                <span>{recipe.name}</span>
+                                {recipe.total_ratings > 0 && <Rating
+                                    readonly={true}
+                                    quiet={true}
+                                    initialRating={recipe.avg_rating}
+                                    fractions={2}
+                                    emptySymbol={"far fa-star"}
+                                    fullSymbol="fas fa-star"
+                                />}
+                            </div>
                         </Button>
                     </li>
                 })}
