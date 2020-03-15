@@ -241,11 +241,16 @@
   left: 0;
   right: 0;
   z-index: -1;
+  display: none;
+
+  @media(max-width: 600px) {
+    display: block;
+  }
 }
 
 .recipeSearch {
   position: absolute;
-  top: 40px;
+  top: 50px;
   right: 0;
   width: 300px;
   max-width: 100%;
