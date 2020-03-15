@@ -55,16 +55,15 @@ const AddIngredients = (props) => {
                 <input placeholder={"1.5 cups milk"} value={value} onChange={e => setValue(e.target.value)}/>
                 <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
             </form>}
-            <Sortable
-                options={{
-                    draggable: '.draggable',
-                    disabled: !props.dragEnabled,
-                }}
-                tag={"ul"}
-                onChange={(order, sortable, evt) => {
-                    // TODO
-                    // props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));
-                }}>
+            {/*<Sortable*/}
+            {/*    options={{*/}
+            {/*        draggable: '.draggable',*/}
+            {/*        disabled: !props.dragEnabled,*/}
+            {/*    }}*/}
+            {/*    tag={"ul"}*/}
+            {/*    onChange={(order, sortable, evt) => {*/}
+                    {/*// props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));*/}
+                {/*}}>*/}
                 {props.ingredients.map((item, i) => {
                     return <Ingredient
                         key={item.id || i}
@@ -76,7 +75,7 @@ const AddIngredients = (props) => {
                         addToSelectedIngredientIds={addToSelectedIngredientIds}
                     />
                 })}
-            </Sortable>
+            {/*</Sortable>*/}
         </div>
     )
 };
