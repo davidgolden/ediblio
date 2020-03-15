@@ -111,6 +111,7 @@
 }
 
 .linksContainer, .mobileMenu { // container of everything that's not the navigation links
+
   ul {
     border: 1px solid darken($lightgray, 10%);
     border-top: none;
@@ -233,8 +234,13 @@
 .mobileMenu {
   background-color: $white;
   text-align: center;
-  padding-top: 70px;
-  padding-bottom: 10px;
+  padding: 10px 0;
+  transition: all .5s ease;
+  position: absolute;
+  top: -409px;
+  left: 0;
+  right: 0;
+  z-index: -1;
 }
 
 .recipeSearch {
@@ -303,4 +309,23 @@
       }
     }
   }
+}
+
+.transitionEnter {
+  transform: translateY(469px);
+}
+.transitionEnterActive {
+  transform: translateY(469px);
+}
+.transitionEnterDone {
+  transform: translateY(469px);
+}
+.transitionExit {
+  transform: translateY(0);
+}
+.transitionExitActive {
+  transform: translateY(0);
+}
+.transitionExitDone {
+  transform: translateY(0);
 }

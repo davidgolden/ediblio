@@ -16,6 +16,7 @@ import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
 import {observer} from "mobx-react";
 import useDebounce from "../utilities/useDebounce";
+import {CSSTransition} from "react-transition-group";
 
 const navContainerClassName = classNames({
     [styles.navContainer]: true,
@@ -23,6 +24,15 @@ const navContainerClassName = classNames({
 const linksContainerClassName = classNames({
     [styles.linksContainer]: true,
 });
+
+const mobileTransition = {
+    enter: styles.transitionEnter,
+    enterActive: styles.transitionEnterActive,
+    enterDone: styles.transitionEnterDone,
+    exit: styles.transitionExit,
+    exitActive: styles.transitionExitActive,
+    exitDone: styles.transitionExitDone,
+};
 
 function NavLinks(props) {
     const context = useContext(ApiStoreContext);
@@ -150,9 +160,20 @@ const Header = observer((props) => {
         [styles.userLinkLogin]: !context.user,
     });
 
-
     return (
         <nav className={navContainerClassName}>
+            <CSSTransition in={mobileOpen} classNames={mobileTransition} timeout={500}>
+                <div className={styles.mobileMenu}>
+                    <SearchBar ref={searchRef} searchOpen={true} setSearchOpen={setSearchOpen} searchTerm={searchTerm}
+                               setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
+                    {context.user ? <NavLinks/> : <div>
+                        <button className={userLinkClassName} onClick={() => context.addModal("login")}>
+                            Login
+                        </button>
+                    </div>}
+                </div>
+            </CSSTransition>
+
             {didMount && window.history.length > 1 &&
             <Button className={styles.backButton} onClick={() => window.history.back()}>
                 <FontAwesomeIcon icon={faChevronLeft}/>
@@ -186,16 +207,6 @@ const Header = observer((props) => {
 
             {navOpen && context.user && <div className={linksContainerClassName}>
                 <NavLinks/>
-            </div>}
-
-            {mobileOpen && <div className={styles.mobileMenu}>
-                <SearchBar ref={searchRef} searchOpen={true} setSearchOpen={setSearchOpen} searchTerm={searchTerm}
-                           setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
-                {context.user ? <NavLinks/> : <div>
-                    <button className={userLinkClassName} onClick={() => context.addModal("login")}>
-                        Login
-                    </button>
-                </div>}
             </div>}
         </nav>
     )
