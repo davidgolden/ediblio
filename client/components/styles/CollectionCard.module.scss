@@ -6,6 +6,11 @@
   text-align: center;
   position: relative;
   align-self: flex-start;
+  padding-bottom: 28px;
+
+  a svg {
+    padding-top: 80px;
+  }
 
   @media(max-width: 650px) {
     flex: 45%;
@@ -16,6 +21,7 @@
   }
 
   h3 {
+    color: $black;
     font-size: 2rem;
   }
 

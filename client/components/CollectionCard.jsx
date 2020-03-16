@@ -36,7 +36,6 @@ const CollectionCard = observer((props) => {
 
     return (
         <div className={styles.collectionCard}>
-            <h3>{props.collection.name}</h3>
             {button}
             <Link href={"/collections/[collection._id]"} as={`/collections/${props.collection.id}`}>
                 <a>
@@ -72,6 +71,7 @@ const CollectionCard = observer((props) => {
                                           height={height} x={x} y={y}/>
                         })}
                     </svg>
+                    <h3>{props.collection.name}</h3>
                 </a>
             </Link>
             <UserImageSmall id={props.collection.author_id} profileImage={props.collection.author_image}/>
