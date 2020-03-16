@@ -200,11 +200,14 @@ const Header = observer((props) => {
                            setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
 
                 {context.user ?
-                    <button onClick={() => setNavOpen(v => !v)} className={userLinkClassName}>
+                    <div onMouseEnter={() => setNavOpen(true)} onMouseLeave={() => setNavOpen(false)} className={userLinkClassName}>
                         {context.user.profile_image ?
                             <img src={context.user.profile_image}/> :
                             <div><FontAwesomeIcon icon={faUser}/></div>} <FontAwesomeIcon icon={faChevronDown}/>
-                    </button>
+                        {navOpen && context.user && <div className={linksContainerClassName}>
+                            <NavLinks/>
+                        </div>}
+                    </div>
                     : <button className={userLinkClassName} onClick={() => context.addModal("login")}>
                         Login
                     </button>}
@@ -216,9 +219,9 @@ const Header = observer((props) => {
                 </Button>
             </div>
 
-            {navOpen && context.user && <div className={linksContainerClassName}>
-                <NavLinks/>
-            </div>}
+            {/*{navOpen && context.user && <div className={linksContainerClassName}>*/}
+            {/*    <NavLinks/>*/}
+            {/*</div>}*/}
         </nav>
     )
 });

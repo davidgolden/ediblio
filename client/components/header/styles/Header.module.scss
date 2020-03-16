@@ -61,10 +61,11 @@
 .userLink {
   display: inline-block;
   font-size: 2.5rem;
-  vertical-align: middle;
   cursor: pointer;
-  margin: 5px 10px;
+  margin-left: 10px;
+  padding-right: 10px;
   background-color: $white;
+  position: relative;
 
   div {
     background-color: lightgray;
@@ -72,6 +73,7 @@
     width: 35px;
     border-radius: 100%;
     line-height: 35px;
+    text-align: center;
 
     svg {
       color: $white;
@@ -80,14 +82,22 @@
     }
   }
 
+  ul {
+    position: absolute;
+    right: 0;
+    top:0;
+  }
+
   > * {
     display: inline-block;
     vertical-align: middle;
   }
+
   > svg {
     width: 30px;
 
     &:last-of-type {
+      color: $dark;
       width: 15px;
       margin-left: 5px;
     }
@@ -105,6 +115,8 @@
     padding: 0 .5rem;
     border-radius: 10px;
     font-size: 1.5rem;
+    margin: 12.5px 10px 0 0;
+    vertical-align: top;
   }
 }
 
@@ -183,6 +195,7 @@
 .search {
   display: inline-block;
   position: relative;
+  vertical-align: top;
 
   > button {
     background-color: $green;
