@@ -9,6 +9,7 @@ import UserImageSmall from "./utilities/UserImageSmall";
 import axios from "axios";
 import {ApiStoreContext} from "../stores/api_store";
 import Button from "./utilities/buttons/Button";
+import Link from "next/link";
 
 const recipeCardClassName = classNames({
     [styles.recipeCard]: true,
@@ -51,7 +52,8 @@ const RecipeCard = props => {
                 await context.openRecipeModal(props.recipe.id);
             }}>
                 <div className={recipeCardImageClassName}>
-                    {props.recipe.image ? <img src={props.recipe.image} /> : <div><FontAwesomeIcon icon={faImage} /></div>}
+                    {props.recipe.image ? <img src={props.recipe.image}/> :
+                        <div><FontAwesomeIcon icon={faImage}/></div>}
                 </div>
                 <div className={recipeCardTextClassName}>
                     <h3>{props.recipe.name}</h3>
@@ -65,9 +67,14 @@ const RecipeCard = props => {
                     deleteRecipe={deleteRecipe}
                 />}
             </div>
-            {showButtons && <UserImageSmall id={props.recipe.author_id} profileImage={props.recipe.author_image}/>}
+            {showButtons && <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id}/recipes`}>
+                <a>
+                    <UserImageSmall profileImage={props.recipe.author_image} size={50} className={styles.userImage}/>
+                </a>
+            </Link>}
             {showButtons && props.recipe.total_ratings > 0 && <div className={styles.recipeRating}>
-                <FontAwesomeIcon icon={faStar} /> {props.recipe.avg_rating ? Math.round(props.recipe.avg_rating*2)/2 : 0} / {props.recipe.total_ratings}
+                <FontAwesomeIcon
+                    icon={faStar}/> {props.recipe.avg_rating ? Math.round(props.recipe.avg_rating * 2) / 2 : 0} / {props.recipe.total_ratings}
             </div>}
         </div>
     )

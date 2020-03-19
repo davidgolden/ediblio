@@ -18,6 +18,7 @@ import {observer} from "mobx-react";
 import useDebounce from "../utilities/useDebounce";
 import {CSSTransition} from "react-transition-group";
 import Rating from "react-rating";
+import UserImageSmall from "../utilities/UserImageSmall";
 
 const navContainerClassName = classNames({
     [styles.navContainer]: true,
@@ -201,9 +202,8 @@ const Header = observer((props) => {
 
                 {context.user ?
                     <div onMouseEnter={() => setNavOpen(true)} onMouseLeave={() => setNavOpen(false)} className={userLinkClassName}>
-                        {context.user.profile_image ?
-                            <img src={context.user.profile_image}/> :
-                            <div><FontAwesomeIcon icon={faUser}/></div>} <FontAwesomeIcon icon={faChevronDown}/>
+                        <UserImageSmall size={35} profileImage={context.user.profile_image}/>
+                        <FontAwesomeIcon icon={faChevronDown}/>
                         {navOpen && context.user && <div className={linksContainerClassName}>
                             <NavLinks/>
                         </div>}
@@ -218,10 +218,6 @@ const Header = observer((props) => {
                     <FontAwesomeIcon icon={mobileOpen ? faTimes : faBars}/>
                 </Button>
             </div>
-
-            {/*{navOpen && context.user && <div className={linksContainerClassName}>*/}
-            {/*    <NavLinks/>*/}
-            {/*</div>}*/}
         </nav>
     )
 });

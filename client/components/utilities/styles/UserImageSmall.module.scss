@@ -1,0 +1,17 @@
+@import "../../../styles/variables";
+
+.container {
+  display: inline-block;
+  text-align: center;
+
+  img {
+    border-radius: 100%;
+  }
+
+  svg {
+    color: $white;
+    background-color: lightgray;
+    font-size: 1.8rem;
+    border-radius: 100%;
+  }
+}

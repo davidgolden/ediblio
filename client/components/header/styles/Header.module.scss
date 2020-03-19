@@ -68,18 +68,7 @@
   position: relative;
 
   div {
-    background-color: lightgray;
-    height: 35px;
-    width: 35px;
-    border-radius: 100%;
     line-height: 35px;
-    text-align: center;
-
-    svg {
-      color: $white;
-      width: 20px;
-      margin: 0
-    }
   }
 
   ul {
@@ -101,11 +90,6 @@
       width: 15px;
       margin-left: 5px;
     }
-  }
-
-  img {
-    height: 35px;
-    border-radius: 100%;
   }
 
   &Login {

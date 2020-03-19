@@ -74,7 +74,11 @@ const CollectionCard = observer((props) => {
                     <h3>{props.collection.name}</h3>
                 </a>
             </Link>
-            <UserImageSmall id={props.collection.author_id} profileImage={props.collection.author_image}/>
+            <Link href={"/users/[user_id]/recipes"} as={`/users/${props.collection.author_id}/recipes`}>
+                <a>
+                    <UserImageSmall profileImage={props.collection.author_image} size={50} className={styles.userImage}/>
+                </a>
+            </Link>
         </div>
     )
 });
