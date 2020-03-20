@@ -6,6 +6,25 @@
   text-align: center;
   position: relative;
   align-self: flex-start;
+  padding-bottom: 28px;
+
+  .userImage {
+    position: absolute;
+    top: 13px;
+    right: 15px;
+    z-index: 1;
+    display: none;
+  }
+
+  &:hover {
+    .userImage {
+      display: block;
+    }
+  }
+
+  a > svg {
+    padding-top: 80px;
+  }
 
   @media(max-width: 650px) {
     flex: 45%;
@@ -16,6 +35,7 @@
   }
 
   h3 {
+    color: $black;
     font-size: 2rem;
   }
 
@@ -26,15 +46,5 @@
     left: 15px;
     width: 40px;
     height: 40px;
-  }
-
-  > div {
-    display: none;
-  }
-
-  &:hover {
-    > button, > div {
-      display: block;
-    }
   }
 }

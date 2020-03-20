@@ -19,9 +19,9 @@
     flex: 100%;
   }
 
-  a {
-    text-decoration: none;
+  button {
     cursor: pointer;
+    width: 100%;
 
     > div:first-of-type {
       padding: 5px 10px;
@@ -56,10 +56,6 @@
       border-radius: 0;
       margin-left: 3px;
     }
-  }
-
-  a {
-    text-decoration: none;
   }
 
   @media(max-width: 1200px) {
@@ -113,22 +109,6 @@
   top: 13px;
   right: 15px;
   z-index: 1;
-
-  img {
-    width: 50px;
-    height: 50px;
-    border-radius: 100%;
-  }
-
-  svg {
-    width: 30px;
-    height: 30px;
-    color: $white;
-    background-color: lightgray;
-    font-size: 1.8rem;
-    padding: 10px;
-    border-radius: 100%;
-  }
 }
 
 .recipeRating {

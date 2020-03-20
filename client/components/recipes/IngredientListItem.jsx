@@ -1,7 +1,7 @@
 import React, {useContext, useState, useRef, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import styles from './styles/IngredientListItem.scss';
+import styles from './styles/IngredientListItem.module.scss';
 import {ApiStoreContext} from "../../stores/api_store";
 import {observer} from "mobx-react";
 import Checkbox from "../utilities/Checkbox";

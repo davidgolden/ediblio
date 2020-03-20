@@ -11,6 +11,10 @@
     transform: translateX(-10vw);
     display: flex;
 
+    @media(max-width: 600px) {
+      display: none;
+    }
+
     div {
       display: inline-block;
       position: absolute;
@@ -43,36 +47,33 @@
 
   > div:nth-of-type(2) {
     position: absolute;
-    display: inline-block;
     z-index: 2;
     bottom: 0;
     left: 10%;
 
-    img, svg {
-      width: 200px;
-      border-radius: 50%;
-      border: .3rem solid $dark;
-    }
-
-    svg {
-      color: $white;
-      background-color: lightgray;
-      padding: 1rem;
-      height: calc(200px - 2rem);
-      width: calc(200px - 2rem);
-    }
-
-    @media(max-width: 300px) {
-      img, svg {
-        display: none;
+    @media(max-width: 600px) {
+      bottom: 70px;
+      img {
+        width: 100px !important;
+        height: 100px !important;
+      }
+      svg {
+        width: calc(100px - 1.6rem) !important;
+        height: calc(100px - 1.6rem) !important;
+        padding: 1rem !important;
       }
       h2 {
-        left: 0 !important;
+        left: 110px !important;
         padding: .5rem 1rem !important;
         margin: 0 !important;
         font-size: 2.5rem !important;
         white-space: normal !important;
+        bottom: 4vh !important
       }
+    }
+
+    img, svg {
+      border: .3rem solid $dark;
     }
 
     h2 {

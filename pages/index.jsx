@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 import RecipeCard from "../client/components/RecipeCard";
 import classNames from 'classnames';
-import styles from './styles/BrowseRecipes.scss';
+import styles from './styles/BrowseRecipes.module.scss';
 import SortingBar from "../client/components/recipes/SortingBar";
 import LoadingNextPage from '../client/components/utilities/LoadingNextPage';
 import useScrolledBottom from "../client/components/utilities/useScrolledBottom";
@@ -32,9 +32,6 @@ const Index = props => {
         };
         if (filterAuthor) {
             query.author = filterAuthor;
-        }
-        if (typeof searchTerm === 'string') {
-            query.searchTerm = searchTerm;
         }
         if (!loadedAll) {
             context.getRecipes(query)
@@ -82,10 +79,6 @@ const Index = props => {
 
     return (
         <div>
-            <SortingBar
-                searchTerm={searchTerm}
-                setSearchTerm={searchByTerm}
-            />
             <div className={browseRecipesContainerClassName}>
                 {Array.from(recipes.values()).map(recipe => {
                     return <RecipeCard deleteRecipe={removeRecipe} key={recipe.id} recipe={recipe}/>

@@ -1,6 +1,6 @@
 import React, {useState, useContext} from 'react';
 import classNames from 'classnames';
-import styles from './styles/Forgot.scss';
+import styles from './styles/Forgot.module.scss';
 import {ApiStoreContext} from "../client/stores/api_store";
 
 const ForgotPassword = props => {

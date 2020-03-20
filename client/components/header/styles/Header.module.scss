@@ -1,0 +1,357 @@
+@import "../../../styles/variables";
+
+.navContainer {
+  background-color: $white;
+  color: $white;
+  min-height: 60px;
+  height: 50px;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  vertical-align: middle;
+
+  img {
+    height: 60px;
+  }
+
+  .backButton {
+    width: 30px;
+    height: 60px;
+    float: left;
+    display: none;
+
+    svg {
+      height: 40px;
+    }
+
+    @media all and (display-mode: standalone) {
+      display: inline-block;
+    }
+  }
+
+  @media(max-width: 770px) {
+    overflow: visible;
+  }
+
+  h1 {
+    display: inline;
+    margin-left: 0.5rem;
+    font-size: 2.5rem;
+    cursor: pointer;
+    float: left;
+    height: 60px;
+
+    a {
+      text-decoration: none;
+      line-height: 50px;
+      color: $otherdark;
+
+      svg {
+        font-size: 2rem;
+        color: $white;
+        width: 45px;
+        vertical-align: middle;
+      }
+    }
+  }
+
+
+}
+
+.userLink {
+  display: inline-block;
+  font-size: 2.5rem;
+  cursor: pointer;
+  margin-left: 10px;
+  padding-right: 10px;
+  background-color: $white;
+  position: relative;
+
+  div {
+    line-height: 35px;
+  }
+
+  ul {
+    position: absolute;
+    right: 0;
+    top:0;
+  }
+
+  > * {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  > svg {
+    width: 30px;
+
+    &:last-of-type {
+      color: $dark;
+      width: 15px;
+      margin-left: 5px;
+    }
+  }
+
+  &Login {
+    background-color: $green;
+    color: $white;
+    height: 35px;
+    padding: 0 .5rem;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    margin: 12.5px 10px 0 0;
+    vertical-align: top;
+  }
+}
+
+.linksContainer {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  margin-left: 1.5rem;
+  z-index: 5;
+
+  ul {
+    list-style: none;
+    background-color: $white;
+    width: 200px;
+    border: 1px solid darken($lightgray, 10%);
+    border-top: none;
+  }
+}
+
+.linksContainer, .mobileMenu { // container of everything that's not the navigation links
+
+  ul {
+    border: 1px solid darken($lightgray, 10%);
+    border-top: none;
+  }
+  li {
+    height: 40px;
+    padding: .25rem .75rem;
+    vertical-align: middle;
+    line-height: 40px;
+    border-bottom: 1px solid darken($lightgray, 10%);
+
+    &:hover {
+      background-color: $lightgray;
+    }
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+
+    button, a {
+      height: 100%;
+      width: 100%;
+      text-align: left;
+      font-size: 1.5rem;
+    }
+
+    a, button, svg {
+      color: $black;
+      font-weight: 500;
+      display: inline-block;
+      cursor: pointer;
+    }
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    margin-right: .25rem;
+    vertical-align: middle;
+    color: $black;
+  }
+}
+
+.rightNav {
+  position: absolute;
+  right: 0;
+  top: 0;
+  line-height: 60px;
+
+  @media(max-width: 600px) {
+    display: none;
+  }
+}
+
+.search {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+
+  > button {
+    background-color: $green;
+    color: $white;
+    height: 35px;
+    width: 35px;
+    vertical-align: middle;
+    border-radius: 10px;
+
+    svg {
+      color: $white;
+      height: 20px;
+      vertical-align: middle;
+      transition: transform .5s ease;
+    }
+  }
+
+  input {
+    width: 0;
+    height: 31px;
+    transition: all .5s ease;
+    border: 2px solid $green;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    vertical-align: middle;
+    font-size: 1.1rem;
+    padding: 0 .25rem;
+    color: $dark;
+    visibility: hidden;
+  }
+
+  &Open {
+    > button {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    input {
+      width: 200px;
+      visibility: visible;
+    }
+  }
+}
+
+.mobileButton {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 10px;
+  width: 50px;
+  height: 50px;
+
+  svg {
+    width: 35px;
+    height: 35px;
+    color: #7575754d;
+  }
+
+  @media(max-width: 600px) {
+    display: inline-block;
+  }
+}
+
+.mobileMenu {
+  background-color: $white;
+  text-align: center;
+  padding: 10px 0;
+  transition: all .5s ease;
+  position: absolute;
+  top: -409px;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  display: none;
+
+  @media(max-width: 600px) {
+    display: block;
+  }
+}
+
+.recipeSearch {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 300px;
+  max-width: 100%;
+  padding: .25rem;
+  box-shadow: 2px 4px 1px rgba($black, .2);
+  margin-left: 1.5rem;
+  z-index: 5;
+  background-color: $white;
+  color: $dark;
+  max-height: 350px;
+  overflow-y: scroll;
+
+  ul {
+    margin: 0;
+    list-style: none;
+
+    li {
+      height: 60px;
+      vertical-align: middle;
+
+      &:hover {
+        background-color: $lightgray;
+      }
+
+      button {
+        display: inline-block;
+        width: 100%;
+        font-size: 1.2rem;
+        color: $dark;
+        text-align: left;
+
+        .noImage { // no recipe image
+          width: 50px;
+          height: 50px;
+          background-color: lightgray;
+          border-radius: 100%;
+          display: inline-block;
+          text-align: center;
+          margin-right: 10px;
+          vertical-align: middle;
+
+          svg {
+            color: $white;
+            width: 40px;
+            height: 30px;
+            margin: 8px 0 0 0;
+          }
+        }
+
+        div {
+          display: inline-block;
+          vertical-align: middle;
+          width: 160px;
+
+          span {
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+
+      img {
+        height: 50px;
+        width: 50px;
+        border-radius: 100%;
+        object-fit: cover;
+        vertical-align: middle;
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+.transitionEnter {
+  transform: translateY(469px);
+}
+.transitionEnterActive {
+  transform: translateY(469px);
+}
+.transitionEnterDone {
+  transform: translateY(469px);
+}
+.transitionExit {
+  transform: translateY(0);
+}
+.transitionExitActive {
+  transform: translateY(0);
+}
+.transitionExitDone {
+  transform: translateY(0);
+}

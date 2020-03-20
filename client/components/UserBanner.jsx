@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from './styles/UserBanner.scss';
+import styles from './styles/UserBanner.module.scss';
 import {faUser} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import UserImageSmall from "./utilities/UserImageSmall";
 
 export default function UserBanner(props) {
     return <div className={styles.userBanner}>
@@ -11,8 +12,10 @@ export default function UserBanner(props) {
                 return <div key={i} style={{backgroundImage: `url(${image})`}}/>
             })}
         </div>
+
         <div>
-            {props.user.profile_image ? <img src={props.user.profile_image}/> : <FontAwesomeIcon icon={faUser} />}
+            <UserImageSmall size={200} profileImage={props.user.profile_image}/>
+            {/*{props.user.profile_image ? <img src={props.user.profile_image}/> : <FontAwesomeIcon icon={faUser} />}*/}
             <h2>{props.user.username}</h2>
         </div>
     </div>

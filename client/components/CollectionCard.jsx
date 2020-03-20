@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import Link from "next/link";
 import DeleteButton from "./utilities/buttons/DeleteButton";
-import styles from './styles/CollectionCard.scss';
+import styles from './styles/CollectionCard.module.scss';
 import {observer} from "mobx-react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
@@ -36,7 +36,6 @@ const CollectionCard = observer((props) => {
 
     return (
         <div className={styles.collectionCard}>
-            <h3>{props.collection.name}</h3>
             {button}
             <Link href={"/collections/[collection._id]"} as={`/collections/${props.collection.id}`}>
                 <a>
@@ -72,9 +71,14 @@ const CollectionCard = observer((props) => {
                                           height={height} x={x} y={y}/>
                         })}
                     </svg>
+                    <h3>{props.collection.name}</h3>
                 </a>
             </Link>
-            <UserImageSmall id={props.collection.author_id} profileImage={props.collection.author_image}/>
+            <Link href={"/users/[user_id]/recipes"} as={`/users/${props.collection.author_id}/recipes`}>
+                <a>
+                    <UserImageSmall profileImage={props.collection.author_image} size={50} className={styles.userImage}/>
+                </a>
+            </Link>
         </div>
     )
 });

@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import {ApiStoreContext} from "../../stores/api_store";
-import styles from "./styles/UserWall.scss";
+import styles from "./styles/UserWall.module.scss";
 
 export default function UserWall(props) {
     const context = useContext(ApiStoreContext);

@@ -1,0 +1,19 @@
+.modal {
+  overflow-y: auto !important;
+
+  > div {
+    width: 95vw !important;
+    margin: 2.5vh 2.5vw !important;
+    max-height: unset !important;
+  }
+}
+
+.loading {
+  text-align: center;
+
+  svg {
+    margin-top: 1rem;
+    height: 50px;
+    width: 50px;
+  }
+}

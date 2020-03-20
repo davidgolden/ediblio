@@ -1,6 +1,5 @@
 import React from "react";
 import axios from "axios";
-import './stylesheets/base.scss';
 import {observable, action, autorun, toJS} from "mobx";
 import Router from 'next/router';
 
@@ -94,6 +93,21 @@ export default class Store {
     @action
     removeTopModal = () => {
         this.modalStack.pop();
+    };
+
+    @observable baseURL = "";
+
+    @action
+    openRecipeModal = async (id) => {
+        this.baseURL = window.location.href;
+        window.history.pushState({}, document.title, `/recipes/${id}`);
+        this.addModal('recipe');
+        document.getElementsByTagName('body')[0].style.overflow = 'hidden';
+    };
+
+    closeRecipeModal = async () => {
+        document.getElementsByTagName('body')[0].style.overflow = 'auto';
+        window.history.pushState({}, document.title, this.baseURL);
     };
 
     handleError = error => {

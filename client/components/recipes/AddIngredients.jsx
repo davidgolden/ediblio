@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import Ingredient from './IngredientListItem'
 import classNames from 'classnames';
-import styles from './styles/AddIngredients.scss';
+import styles from './styles/AddIngredients.module.scss';
 import {faQuestion, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Sortable from "react-sortablejs";
@@ -55,16 +55,15 @@ const AddIngredients = (props) => {
                 <input placeholder={"1.5 cups milk"} value={value} onChange={e => setValue(e.target.value)}/>
                 <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
             </form>}
-            <Sortable
-                options={{
-                    draggable: '.draggable',
-                    disabled: !props.dragEnabled,
-                }}
-                tag={"ul"}
-                onChange={(order, sortable, evt) => {
-                    // TODO
-                    // props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));
-                }}>
+            {/*<Sortable*/}
+            {/*    options={{*/}
+            {/*        draggable: '.draggable',*/}
+            {/*        disabled: !props.dragEnabled,*/}
+            {/*    }}*/}
+            {/*    tag={"ul"}*/}
+            {/*    onChange={(order, sortable, evt) => {*/}
+                    {/*// props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));*/}
+                {/*}}>*/}
                 {props.ingredients.map((item, i) => {
                     return <Ingredient
                         key={item.id || i}
@@ -76,7 +75,7 @@ const AddIngredients = (props) => {
                         addToSelectedIngredientIds={addToSelectedIngredientIds}
                     />
                 })}
-            </Sortable>
+            {/*</Sortable>*/}
         </div>
     )
 };

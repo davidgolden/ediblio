@@ -2,7 +2,7 @@ import React, {useState, useContext} from 'react';
 import PropTypes from 'prop-types';
 import AddIngredients from './AddIngredients';
 import classNames from 'classnames';
-import styles from './styles/ShowRecipe.scss';
+import styles from './styles/ShowRecipe.module.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faShoppingBag, faStar} from '@fortawesome/free-solid-svg-icons';
 import Button from "../utilities/buttons/Button";
