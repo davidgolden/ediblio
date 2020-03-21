@@ -34,7 +34,7 @@ const RecipeButtons = observer(props => {
         }
     };
 
-    if (!context.user) {
+    if (!context.loggedIn) {
         return <div/>;
     }
 

@@ -1,6 +1,7 @@
+const bcrypt = require('bcryptjs');
+
 const express = require('express'),
     router = express.Router(),
-    passport = require('passport'),
     nodemailer = require('nodemailer'),
     mg = require('nodemailer-mailgun-transport'),
     urlMetadata = require('url-metadata'),
@@ -9,10 +10,32 @@ const express = require('express'),
 const {hashPassword} = require('../utils');
 
 const db = require("../db/index");
+const {usersSelector, encodeJWT, decodeJWT} = require("../utils");
 
 // handle login logic
-router.post('/login', emailToLowerCase, passport.authenticate('local'), function(req, res) {
-    res.status(200).json({user: req.user});
+router.post('/login', async function(req, res) {
+    try {
+        const {email, password} = decodeJWT(req.query.jwt);
+
+        const userRes = await db.query({
+            text: `${usersSelector}
+where users.email = $1
+group by users.id;`, values: [email]
+        });
+        const user = userRes.rows[0];
+
+        if (!user) res.status(404).send({detail: "No user found with that email!"});
+
+        const isCorrectPassword = bcrypt.compareSync(password, user.password);
+
+        if (!isCorrectPassword) res.status(404).send({detail: "Incorrect password!"});
+
+        const jwt = encodeJWT({id: user.id});
+
+        res.status(200).send({jwt, user});
+    } catch (error) {
+        res.status(400).send({detail: error});
+    }
 });
 
 function emailToLowerCase(req, res, next) {
@@ -21,15 +44,11 @@ function emailToLowerCase(req, res, next) {
 }
 
 //logout
-router.get('/logout', function (req, res) {
+router.post('/logout', function (req, res) {
     try {
-        req.logout();
-        res.clearCookie('recipecloudsession');
-        req.session.destroy(err => {
-            if (err) throw (err);
-
-            return res.sendStatus(200);
-        });
+        req.user = null;
+        res.headers['x-access-token'] = null;
+        return res.redirect('back');
     } catch (err) {
         res.status(422).send({message: err});
     }

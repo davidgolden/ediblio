@@ -9,6 +9,7 @@ import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
 import Checkbox from "../../../client/components/utilities/Checkbox";
 import UserWall from "../../../client/components/utilities/UserWall";
+import {getCookieFromServer} from "../../../client/utils/cookies";
 
 const groceryListContainerClassName = classNames({
     [styles.groceryListContainer]: true,
@@ -169,32 +170,34 @@ const Groceries = props => {
     )
 };
 
-Groceries.getInitialProps = async ({req, query}) => {
-    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+
+
+export async function getServerSideProps ({req, query}) {
+    const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
 
     try {
         const response = await Promise.all([
             await axios.get(`${currentFullUrl}/api/users/${query.user_id}/recipes`, {
-                headers: req?.headers?.cookie && {
-                    cookie: req.headers.cookie,
-                }
+                headers: {
+                    'x-access-token': getCookieFromServer('jwt', req),
+                },
             }),
             await axios.get(`${currentFullUrl}/api/users/${query.user_id}/ingredients`, {
-                headers: req?.headers?.cookie && {
-                    cookie: req.headers.cookie,
-                }
+                headers: {
+                    'x-access-token': getCookieFromServer('jwt', req),
+                },
             })
         ]);
 
         return {
-            groceryList: response[1].data.groceryList,
-            menu: response[0].data.menu,
-            user: req?.user,
+            props: {
+                groceryList: response[1].data.groceryList,
+                menu: response[0].data.menu,
+            }
         };
     } catch (error) {
-        return {};
+        return {props: {}};
     }
-
 };
 
 export default Groceries;

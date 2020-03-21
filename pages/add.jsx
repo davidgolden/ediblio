@@ -174,10 +174,4 @@ RecipeForm.defaultProps = {
     editMode: false,
 };
 
-RecipeForm.getInitialProps = ({req}) => {
-    return {
-        user: req?.user,
-    }
-};
-
 export default RecipeForm;

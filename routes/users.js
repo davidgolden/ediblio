@@ -449,9 +449,9 @@ router.route('/users/:user_id')
             res.status(404).send({detail: error.message});
         }
     })
-    .get(async (req, res) => {
+    .get(middleware.authenticate, async (req, res) => {
         let response;
-        if (req.isAuthenticated() && req.user.id.toString() === req.params.user_id) {
+        if (req.user && req.user.id && req.user.id.toString() === req.params.user_id) {
             response = await db.query({
                 text: `SELECT * FROM users
                 WHERE users.id = $1`,

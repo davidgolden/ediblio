@@ -1,7 +1,18 @@
 import React from "react";
 import axios from "axios";
-import {observable, action, autorun, toJS} from "mobx";
+import {observable, action, autorun, toJS, computed} from "mobx";
 import Router from 'next/router';
+import cookie from 'js-cookie';
+const jwt = require('jsonwebtoken');
+
+class JsonWebToken {
+    encode(payload) {
+        return jwt.sign(payload, 'my-password');
+    }
+    decode(jwt) {
+        return jwt.verify(jwt);
+    }
+}
 
 export default class Store {
 
@@ -62,16 +73,30 @@ export default class Store {
     loadUserFromLocalStorage() {
         const userJson = localStorage.getItem("user");
         if (userJson) {
-            this.user = JSON.parse(userJson);
+            const user = JSON.parse(userJson);
+            for (let k in user) {
+                if (user.hasOwnProperty(k)) {
+                    this.user[k] = user[k];
+                }
+            }
         }
     }
 
     @action
     setUser(user) {
-        this.user = user;
+        for (let k in user) {
+            if (user.hasOwnProperty(k)) {
+                this.user[k] = user[k];
+            }
+        }
     }
 
-    @observable user = null;
+    @computed
+    get loggedIn() {
+        return !!this.user.id;
+    }
+
+    @observable user = {};
     @observable notificationMessage = '';
     @observable notificationType = '';
 
@@ -121,14 +146,11 @@ export default class Store {
 
     @action
     userLogin = (email, password) => {
-        axios.post('/api/login', {
-            email: email,
-            password: password,
-        }, {
-            withCredentials: true,
-        })
+        const jwt = new JsonWebToken();
+        axios.post('/api/login?jwt='+jwt.encode({email, password}))
             .then(response => {
-                this.user = response.data.user;
+                cookie.set('jwt', response.data.jwt);
+                this.setUser(response.data.user)
             })
             .catch(err => {
                 this.handleError(err.response.data.detail);
@@ -136,12 +158,10 @@ export default class Store {
     };
 
     @action
-    userLogout = () => {
-        axios.get('/api/logout')
-            .then(() => {
-                this.user = null;
-                // localStorage.setItem('jwt', null);
-            });
+    userLogout = async () => {
+        this.user = {};
+        cookie.remove('jwt');
+        await axios.post('/api/logout');
     };
 
     getCollectionRecipes = async (collectionId, query) => {

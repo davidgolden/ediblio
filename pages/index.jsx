@@ -94,9 +94,7 @@ Index.getInitialProps = async ({req}) => {
     const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
 
     const response = await axios.get(`${currentFullUrl}/api/recipes`, {
-        headers: req?.headers?.cookie && {
-            cookie: req.headers.cookie,
-        },
+        headers: req ? req.headers['x-access-token'] : {'x-access-token': localStorage.getItem('jwt')},
         params: {
             page: 0,
         }
@@ -105,7 +103,6 @@ Index.getInitialProps = async ({req}) => {
     return {
         recipes: response.data.recipes.map(r => [r.id, r]),
         loadedAll: response.data.recipes.length < 12,
-        user: req?.user,
     }
 };
 

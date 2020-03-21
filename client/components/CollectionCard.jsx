@@ -28,7 +28,7 @@ const CollectionCard = observer((props) => {
         }}/>
     } else if (didMount && isFollower && !isCollectionOwner) {
         button = <RemoveButton onClick={async () => await props.unfollowCollection(props.collection.id)}/>
-    } else if (didMount && context.user && !isCollectionOwner) {
+    } else if (didMount && context.loggedIn && !isCollectionOwner) {
         button = <Button onClick={async () => await props.followCollection(props.collection.id)}>
             <FontAwesomeIcon icon={faPlus}/>
         </Button>

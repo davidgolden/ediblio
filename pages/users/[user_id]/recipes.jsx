@@ -7,6 +7,7 @@ import RecipeCard from "../../../client/components/RecipeCard";
 import useScrolledBottom from "../../../client/components/utilities/useScrolledBottom";
 import {observer} from "mobx-react";
 import UserBanner from "../../../client/components/UserBanner";
+import {getCookieFromServer} from "../../../client/utils/cookies";
 
 const Recipes = observer((props) => {
     const [recipes, setRecipes] = useState(props.recipes);
@@ -94,18 +95,18 @@ const Recipes = observer((props) => {
     )
 });
 
-Recipes.getInitialProps = async ({req, query}) => {
-    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+export async function getServerSideProps ({req, query}) {
+    const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
 
     const responses = await Promise.all([
         await axios.get(`${currentFullUrl}/api/users/${query.user_id}/collections`, {
-            headers: req?.headers?.cookie && {
-                cookie: req.headers.cookie,
+            headers: {
+                'x-access-token': getCookieFromServer('jwt', req),
             },
         }),
         await axios.get(`${currentFullUrl}/api/recipes`, {
-            headers: req?.headers?.cookie && {
-                cookie: req.headers.cookie,
+            headers: {
+                'x-access-token': getCookieFromServer('jwt', req),
             },
             params: {
                 orderBy: 'desc',
@@ -114,17 +115,19 @@ Recipes.getInitialProps = async ({req, query}) => {
             }
         }),
         await axios.get(`${currentFullUrl}/api/users/${query.user_id}`, {
-            headers: req?.headers?.cookie && {
-                cookie: req.headers.cookie,
+            headers: {
+                'x-access-token': getCookieFromServer('jwt', req),
             },
         }),
     ]);
     return {
-        collections: responses[0].data.collections,
-        recipes: responses[1].data.recipes,
-        loadedAll: responses[1].data.recipes.length < 12,
-        user: responses[2].data.user,
-        user_id: query.user_id,
+        props: {
+            collections: responses[0].data.collections,
+            recipes: responses[1].data.recipes,
+            loadedAll: responses[1].data.recipes.length < 12,
+            user: responses[2].data.user,
+            user_id: query.user_id,
+        }
     }
 };
 
