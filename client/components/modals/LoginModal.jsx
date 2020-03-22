@@ -4,6 +4,7 @@ import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
 import styles from './styles/LoginModal.module.scss';
 import Router from "next/router";
+import classNames from 'classnames';
 
 function Login(props) {
     const context = useContext(ApiStoreContext);
@@ -41,8 +42,14 @@ function Login(props) {
             </div>
         </form>
         <div>
-            <button onClick={() => props.setView('forgot')}>Forgot Password?</button>
-            <button onClick={() => props.setView('register')}>Register</button>
+            <button onClick={e => {
+                e.stopPropagation();
+                props.setView('forgot')
+            }}>Forgot Password?</button>
+            <button onClick={e => {
+                e.stopPropagation();
+                props.setView('register')
+            }}>Register</button>
         </div>
 
     </div>
@@ -55,6 +62,11 @@ function Register(props) {
     const [confirm, setConfirm] = useState('');
 
     const context = useContext(ApiStoreContext);
+
+    const registerButtonClassName = classNames({
+        [styles.registerButton]: true,
+        [styles.registerButtonDisabled]: password.length < 8 || confirm.length < 8 || (password !== confirm) || !email || !username,
+    });
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -91,13 +103,14 @@ function Register(props) {
             <div>
                 <input type='password' id='password' placeholder='Password' onChange={e => setPassword(e.target.value)}
                        name='password' value={password}/>
+                       <small>Must be at least 8 characters.</small>
             </div>
             <div>
                 <input type='password' id='confirm' onChange={e => setConfirm(e.target.value)}
                        placeholder='Confirm Password' value={confirm}/>
             </div>
             <div>
-                <Button role={'submit'}>Create Account</Button>
+                <Button className={registerButtonClassName} role={'submit'}>Create Account</Button>
             </div>
         </form>
 

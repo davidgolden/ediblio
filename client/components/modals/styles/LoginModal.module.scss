@@ -17,6 +17,11 @@
       margin: 10px;
     }
 
+    small {
+      display: block;
+      margin-top: -8px;
+    }
+
     button, a {
       cursor: pointer;
       font-size: 1rem;
@@ -30,7 +35,7 @@
         padding: .5rem 1rem;
         width: calc(254px + 1rem);
         max-width: 90%;
-        margin: 10px 0;
+        margin: 10px auto;
         font-size: 1.5rem;
         border-radius: 10px;
       }
@@ -44,4 +49,13 @@
     max-width: 95%;
   }
   margin: 0 auto;
+}
+
+.registerButton {
+  display: block;
+
+  &Disabled {
+    opacity: .5;
+    pointer-events: none;
+  }
 }
