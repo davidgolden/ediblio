@@ -11,7 +11,7 @@ import {handleJWT} from "../../hooks/handleJWT";
 
 const Collection_id  = props => {
     handleJWT();
-    const [recipes, setRecipes] = useState(new Map(props.recipes || []));
+    const [recipes, setRecipes] = useState(new Map(props.collection.recipes.map(r => [r.id, r]) || []));
     const [title, setTitle] = useState(props.collection.name);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
     const [loadedAll, setLoadedAll] = useState(props.loadedAll);
@@ -74,7 +74,6 @@ export async function getServerSideProps({req, query}) {
     return {
         props: {
             collection: response.data.collection,
-            recipes: response.data.collection.recipes.map(r => [r.id, r]),
             collection_id: query.collection_id,
             loadedAll: response.data.collection.recipes.length < 12,
         }
