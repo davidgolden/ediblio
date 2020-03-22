@@ -147,14 +147,7 @@ export default class Store {
     @action
     userLogin = (email, password) => {
         const jwt = new JsonWebToken();
-        axios.post('/api/login?jwt='+jwt.encode({email, password}))
-            .then(response => {
-                cookie.set('jwt', response.data.jwt);
-                this.setUser(response.data.user)
-            })
-            .catch(err => {
-                this.handleError(err.response.data.detail);
-            })
+        window.location.href = '/api/login?jwt='+jwt.encode({email, password, redirect_url: window.location.pathname});
     };
 
     @action

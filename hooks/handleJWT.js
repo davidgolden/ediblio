@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import {ApiStoreContext} from "../client/stores/api_store";
 import URI from 'urijs';
 import Router from 'next/router';
-
+import cookie from 'js-cookie';
 export async function handleJWT(currentFullUrl) {
 
     const isServer = typeof window === 'undefined';
@@ -20,6 +20,7 @@ export async function handleJWT(currentFullUrl) {
         const response = await axios.get(`/api/users/${decodedJWT.id}`, {
             headers: {'x-access-token': query.jwt},
         });
+        cookie.set('jwt', query.jwt);
         context.setUser(response.data.user);
         currentFullUrl = currentFullUrlParts.removeQuery('jwt').path();
         await Router.replace(currentFullUrl);

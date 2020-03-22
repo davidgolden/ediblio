@@ -13,9 +13,9 @@ const db = require("../db/index");
 const {usersSelector, encodeJWT, decodeJWT} = require("../utils");
 
 // handle login logic
-router.post('/login', async function(req, res) {
+router.get('/login', async function(req, res) {
     try {
-        const {email, password} = decodeJWT(req.query.jwt);
+        const {email, password, redirect_url} = decodeJWT(req.query.jwt);
 
         const userRes = await db.query({
             text: `${usersSelector}
@@ -32,7 +32,9 @@ group by users.id;`, values: [email]
 
         const jwt = encodeJWT({id: user.id});
 
-        res.status(200).send({jwt, user});
+        res.redirect(redirect_url+'?jwt='+jwt);
+
+        // res.status(200).send({jwt, user});
     } catch (error) {
         res.status(400).send({detail: error});
     }
