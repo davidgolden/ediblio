@@ -15,10 +15,11 @@ export function getCookieFromServer (key, req) {
 }
 
 export const clientFetch = {
-    async get(url) {
+    async get(url, data = {}) {
         const jwt = cookie.get('jwt');
         return axios.get(url, {
             headers: jwt ? {'x-access-token': jwt} : {},
+            ...data,
         })
     },
     async post(url, body = {}) {
