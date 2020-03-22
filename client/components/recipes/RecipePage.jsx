@@ -4,7 +4,6 @@ import {observer} from "mobx-react";
 import React, {useContext, useState} from "react";
 import PropTypes from 'prop-types';
 import {ApiStoreContext} from "../../stores/api_store";
-import axios from "axios";
 import Router from "next/router";
 import Button from "../utilities/buttons/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -13,6 +12,7 @@ import RecipeButtons from "./RecipeButtons";
 import RecipeForm from "../../../pages/add";
 import ShowRecipe from "./ShowRecipe";
 import JsonLd from "../utilities/JsonLd";
+import {clientFetch} from "../../utils/cookies";
 
 const recipeContainerClassName = classNames({
     [styles.recipeContainer]: true,
@@ -33,7 +33,7 @@ const RecipePage = observer(props => {
 
     const addToGroceryList = async (ingredients) => {
         try {
-            await axios.patch(`/api/users/${context.user.id}/recipes/${props.recipe.id}`, {
+            await clientFetch.patch(`/api/users/${context.user.id}/recipes/${props.recipe.id}`, {
                 ingredients,
             });
             setInMenu(true);
@@ -75,12 +75,12 @@ const RecipePage = observer(props => {
         <div className={recipeContainerClassName}>
             <div className={recipeEditButtonsClassName}>
                 <div>
-                    {context.user && (recipe.author_id === context.user.id) && (
+                    {context.loggedIn && (recipe.author_id === context.user.id) && (
                         <Button className={toggleEditClassName} onClick={toggleEdit}>
                             <FontAwesomeIcon icon={edit ? faSearch : faEdit}/> {edit ? "View" : "Edit"}
                         </Button>)}
                 </div>
-                <div>{context.user && <RecipeButtons
+                <div>{context.loggedIn && <RecipeButtons
                     recipe={recipe}
                     inMenu={inMenu}
                     addToGroceryList={addToGroceryList}

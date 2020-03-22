@@ -12,23 +12,21 @@ import {ApiStoreContext} from "../stores/api_store";
 import RemoveButton from "./utilities/buttons/RemoveButton";
 
 const CollectionCard = observer((props) => {
-    const [didMount, setDidMount] = React.useState(false);
-    React.useLayoutEffect(() => setDidMount(true), []);
     const context = useContext(ApiStoreContext);
 
-    const isCollectionOwner = props.collection.author_id === context.user?.id;
-    const isFollower = !!context.user?.collections?.find(c => c.id === props.collection.id);
+    const isCollectionOwner = context.loggedIn && props.collection.author_id === context.user.id;
+    const isFollower = context.loggedIn && !!context.user.collections?.find(c => c.id === props.collection.id);
 
     let button;
-    if (didMount && isCollectionOwner && !props.collection.is_primary) {
+    if (isCollectionOwner && !props.collection.is_primary) {
         button = <DeleteButton onClick={() => {
             if (confirm('Are you sure you want to do that?')) {
                 props.deleteCollection(props.collection.id)
             }
         }}/>
-    } else if (didMount && isFollower && !isCollectionOwner) {
+    } else if (isFollower && !isCollectionOwner) {
         button = <RemoveButton onClick={async () => await props.unfollowCollection(props.collection.id)}/>
-    } else if (didMount && context.user && !isCollectionOwner) {
+    } else if (context.loggedIn && !isCollectionOwner) {
         button = <Button onClick={async () => await props.followCollection(props.collection.id)}>
             <FontAwesomeIcon icon={faPlus}/>
         </Button>

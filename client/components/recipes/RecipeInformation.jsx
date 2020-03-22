@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import styles from './styles/RecipeInformation.module.scss';
 import classNames from 'classnames';
 import ImageLoader from "../utilities/ImageLoader";
+import {clientFetch} from "../../utils/cookies";
 
 const RecipeInformation = props => {
     const [foundImage, setFoundImage] = useState(false);
@@ -12,7 +12,7 @@ const RecipeInformation = props => {
     const scrapeImage = link => {
         setLoading(true);
 
-        axios.post('/api/scrape', {
+        clientFetch.post('/api/scrape', {
             imageUrl: link,
         })
             .then(response => {

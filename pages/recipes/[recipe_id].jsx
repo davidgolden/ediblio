@@ -1,23 +1,26 @@
 import React from 'react';
 import axios from "axios";
 import RecipePage from "../../client/components/recipes/RecipePage";
+import {getCookieFromServer} from "../../client/utils/cookies";
+import {handleJWT} from "../../hooks/handleJWT";
 
 function Recipe_id(props) {
+    handleJWT();
     return <RecipePage recipe={props.recipe} />
 }
 
-Recipe_id.getInitialProps = async ({req, query}) => {
-    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+export async function getServerSideProps ({req, query}) {
+    const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+    const jwt = getCookieFromServer('jwt', req);
 
     const response = await axios.get(`${currentFullUrl}/api/recipes/${query.recipe_id}`, {
-        headers: req?.headers?.cookie && {
-            cookie: req.headers.cookie,
-        },
+        headers: jwt ? {'x-access-token': jwt} : {},
     });
     return {
-        recipe: response.data.recipe,
-        user: req?.user,
+        props: {
+            recipe: response.data.recipe,
+        }
     };
-};
+}
 
 export default Recipe_id;

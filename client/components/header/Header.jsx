@@ -169,7 +169,7 @@ const Header = observer((props) => {
 
     const userLinkClassName = classNames({
         [styles.userLink]: true,
-        [styles.userLinkLogin]: !context.user,
+        [styles.userLinkLogin]: !context.loggedIn,
     });
 
     return (
@@ -178,7 +178,7 @@ const Header = observer((props) => {
                 <div className={styles.mobileMenu}>
                     <SearchBar ref={searchRef} searchOpen={true} setSearchOpen={setSearchOpen} searchTerm={searchTerm}
                                setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
-                    {context.user ? <NavLinks/> : <div>
+                    {context.loggedIn ? <NavLinks/> : <div>
                         <button className={userLinkClassName} onClick={() => context.addModal("login")}>
                             Login
                         </button>
@@ -200,11 +200,11 @@ const Header = observer((props) => {
                            searchTerm={searchTerm}
                            setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
 
-                {context.user ?
+                {context.loggedIn ?
                     <div onMouseEnter={() => setNavOpen(true)} onMouseLeave={() => setNavOpen(false)} className={userLinkClassName}>
                         <UserImageSmall size={35} profileImage={context.user.profile_image}/>
                         <FontAwesomeIcon icon={faChevronDown}/>
-                        {navOpen && context.user && <div className={linksContainerClassName}>
+                        {navOpen && context.loggedIn && <div className={linksContainerClassName}>
                             <NavLinks/>
                         </div>}
                     </div>

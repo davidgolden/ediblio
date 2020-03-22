@@ -1,4 +1,5 @@
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcryptjs');
+const {verify, decode, sign} = require("jsonwebtoken");
 
 function hashPassword(password) {
     var SALT_FACTOR = 5;
@@ -37,7 +38,22 @@ LEFT JOIN LATERAL (
 ) c ON true
 `;
 
+function encodeJWT(payload) {
+    return sign(payload, process.env.JWT_SECRET);
+}
+
+function decodeJWT(jwt) {
+    return decode(jwt);
+}
+
+function verifyJWT(jwt) {
+    return verify(jwt, process.env.JWT_SECRET);
+}
+
 module.exports = {
     usersSelector,
     hashPassword,
+    encodeJWT,
+    decodeJWT,
+    verifyJWT,
 };

@@ -10,7 +10,7 @@ import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
 import {observer} from "mobx-react";
 import Rating from 'react-rating';
-import axios from 'axios';
+import {clientFetch} from "../../utils/cookies";
 
 const showRecipeContainerClassName = classNames({
     [styles.showRecipeContainer]: true,
@@ -59,16 +59,16 @@ const ShowRecipe = observer(props => {
                     </Link>. {props.recipe.url &&
                     <a href={props.recipe.url} target='_blank'>View Original Recipe</a>}</h2>
                     <div className={styles.ratingContainer}>
-                        {(userRating || context.user) && <>
+                        {(userRating || context.loggedIn) && <>
                             <Rating
                             fractions={2}
                             emptySymbol={"far fa-star"}
                             fullSymbol="fas fa-star"
-                            readonly={!context.user}
+                            readonly={!context.loggedIn}
                             initialRating={userRating} // needs to be actual rating
                             onClick={async v => {
-                                if (context.user) {
-                                    const response = await axios.post('/api/rating', {
+                                if (context.loggedIn) {
+                                    const response = await clientFetch.post('/api/rating', {
                                         recipe_id: props.recipe.id,
                                         rating: v,
                                     });
@@ -95,7 +95,7 @@ const ShowRecipe = observer(props => {
                     handleUpdateIngredient={props.handleUpdateIngredient}
                 />
                 <div className={showRecipeButtonsClassName}>
-                    {context.user ? <Button onClick={handleAddToList}>
+                    {context.loggedIn ? <Button onClick={handleAddToList}>
                         <FontAwesomeIcon icon={faShoppingBag}/> {added ? 'Added To' : 'Add To'} Grocery List
                     </Button> : <p>Login or Register to Add to Grocery List</p>}
                 </div>

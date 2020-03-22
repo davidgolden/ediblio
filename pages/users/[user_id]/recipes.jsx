@@ -7,8 +7,11 @@ import RecipeCard from "../../../client/components/RecipeCard";
 import useScrolledBottom from "../../../client/components/utilities/useScrolledBottom";
 import {observer} from "mobx-react";
 import UserBanner from "../../../client/components/UserBanner";
+import {clientFetch, fetch, getCookieFromServer} from "../../../client/utils/cookies";
+import {handleJWT} from "../../../hooks/handleJWT";
 
 const Recipes = observer((props) => {
+    handleJWT();
     const [recipes, setRecipes] = useState(props.recipes);
     const [collections, setCollections] = useState(props.collections || []);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
@@ -24,7 +27,7 @@ const Recipes = observer((props) => {
 
     useEffect(() => {
         if (props.user_id === context.user?.id) {
-            axios.get(`/api/users/${props.user_id}/collections`)
+            clientFetch.get(`/api/users/${props.user_id}/collections`)
                 .then(response => setCollections(response.data.collections))
         }
     }, [context.user?.collections?.length !== props.collections.length]);
@@ -57,7 +60,7 @@ const Recipes = observer((props) => {
 
     async function unfollowCollection(id) {
         try {
-            await axios.delete(`/api/users/${context.user.id}/collections/${id}`);
+            await clientFetch.delete(`/api/users/${context.user.id}/collections/${id}`);
             context.user.collections = context.user.collections.filter(c => c.id !== id);
         } catch (error) {
             context.handleError(error);
@@ -66,9 +69,9 @@ const Recipes = observer((props) => {
 
     async function followCollection(id) {
         try {
-            await axios.post(`/api/users/${context.user.id}/collections/${id}`);
+            await clientFetch.post(`/api/users/${context.user.id}/collections/${id}`);
 
-            const response = await axios.get(`/api/collections/${id}`);
+            const response = await clientFetch.get(`/api/collections/${id}`);
             context.user.collections.push(response.data.collection);
         } catch (error) {
             context.handleError(error);
@@ -94,19 +97,16 @@ const Recipes = observer((props) => {
     )
 });
 
-Recipes.getInitialProps = async ({req, query}) => {
-    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+export async function getServerSideProps ({req, query}) {
+    const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+    const jwt = getCookieFromServer('jwt', req);
 
     const responses = await Promise.all([
         await axios.get(`${currentFullUrl}/api/users/${query.user_id}/collections`, {
-            headers: req?.headers?.cookie && {
-                cookie: req.headers.cookie,
-            },
+            headers: jwt ? {'x-access-token': jwt} : {},
         }),
         await axios.get(`${currentFullUrl}/api/recipes`, {
-            headers: req?.headers?.cookie && {
-                cookie: req.headers.cookie,
-            },
+            headers: jwt ? {'x-access-token': jwt} : {},
             params: {
                 orderBy: 'desc',
                 sortBy: 'created_at',
@@ -114,18 +114,18 @@ Recipes.getInitialProps = async ({req, query}) => {
             }
         }),
         await axios.get(`${currentFullUrl}/api/users/${query.user_id}`, {
-            headers: req?.headers?.cookie && {
-                cookie: req.headers.cookie,
-            },
+            headers: jwt ? {'x-access-token': jwt} : {},
         }),
     ]);
     return {
-        collections: responses[0].data.collections,
-        recipes: responses[1].data.recipes,
-        loadedAll: responses[1].data.recipes.length < 12,
-        user: responses[2].data.user,
-        user_id: query.user_id,
+        props: {
+            collections: responses[0].data.collections,
+            recipes: responses[1].data.recipes,
+            loadedAll: responses[1].data.recipes.length < 12,
+            user: responses[2].data.user,
+            user_id: query.user_id,
+        }
     }
-};
+}
 
 export default Recipes;

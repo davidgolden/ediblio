@@ -17,6 +17,11 @@ function Login(props) {
     };
 
     return <div>
+        <h2>Sign in with Google</h2>
+        <a href={`/auth/google?state=${window.location.pathname}`}
+           className={styles.googleWrapper}>
+            <img src={"/images/google-signin.png"} alt={"Sign in with Google"}/>
+        </a>
         <h2>Login with Email</h2>
         <form onSubmit={handleLoginSubmit}>
             <div>
@@ -31,7 +36,8 @@ function Login(props) {
             </div>
             <div>
                 <button type='submit'
-                        value='Login'>Login</button>
+                        value='Login'>Login
+                </button>
             </div>
         </form>
         <div>

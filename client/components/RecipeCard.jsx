@@ -6,10 +6,10 @@ import RecipeButtons from "./recipes/RecipeButtons";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faImage, faStar} from '@fortawesome/free-solid-svg-icons';
 import UserImageSmall from "./utilities/UserImageSmall";
-import axios from "axios";
 import {ApiStoreContext} from "../stores/api_store";
 import Button from "./utilities/buttons/Button";
 import Link from "next/link";
+import {clientFetch} from "../utils/cookies";
 
 const recipeCardClassName = classNames({
     [styles.recipeCard]: true,
@@ -31,7 +31,7 @@ const RecipeCard = props => {
 
     const addToGroceryList = async () => {
         try {
-            const response = await axios.post(`/api/users/${context.user.id}/recipes/${props.recipe.id}`);
+            const response = await clientFetch.post(`/api/users/${context.user.id}/recipes/${props.recipe.id}`);
             context.user = response.data.user;
             setInMenu(true);
         } catch (error) {

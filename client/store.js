@@ -1,7 +1,18 @@
 import React from "react";
-import axios from "axios";
-import {observable, action, autorun, toJS} from "mobx";
+import {observable, action, autorun, toJS, computed} from "mobx";
 import Router from 'next/router';
+import cookie from 'js-cookie';
+import {clientFetch} from "./utils/cookies";
+const jwt = require('jsonwebtoken');
+
+class JsonWebToken {
+    encode(payload) {
+        return jwt.sign(payload, 'my-password');
+    }
+    decode(jwt) {
+        return jwt.verify(jwt);
+    }
+}
 
 export default class Store {
 
@@ -62,16 +73,30 @@ export default class Store {
     loadUserFromLocalStorage() {
         const userJson = localStorage.getItem("user");
         if (userJson) {
-            this.user = JSON.parse(userJson);
+            const user = JSON.parse(userJson);
+            for (let k in user) {
+                if (user.hasOwnProperty(k)) {
+                    this.user[k] = user[k];
+                }
+            }
         }
     }
 
     @action
     setUser(user) {
-        this.user = user;
+        for (let k in user) {
+            if (user.hasOwnProperty(k)) {
+                this.user[k] = user[k];
+            }
+        }
     }
 
-    @observable user = null;
+    @computed
+    get loggedIn() {
+        return !!this.user.id;
+    }
+
+    @observable user = {};
     @observable notificationMessage = '';
     @observable notificationType = '';
 
@@ -81,7 +106,7 @@ export default class Store {
 
     @action
     fetchMeasurements = async () => {
-        const response = await axios.get('/api/measurements');
+        const response = await clientFetch.get('/api/measurements');
         this.measurements = response.data.measurements;
     };
 
@@ -121,31 +146,20 @@ export default class Store {
 
     @action
     userLogin = (email, password) => {
-        axios.post('/api/login', {
-            email: email,
-            password: password,
-        }, {
-            withCredentials: true,
-        })
-            .then(response => {
-                this.user = response.data.user;
-            })
-            .catch(err => {
-                this.handleError(err.response.data.detail);
-            })
+        const jwt = new JsonWebToken();
+        window.location.href = '/api/login?jwt='+jwt.encode({email, password, redirect_url: window.location.pathname});
     };
 
     @action
-    userLogout = () => {
-        axios.get('/api/logout')
-            .then(() => {
-                this.user = null;
-                // localStorage.setItem('jwt', null);
-            });
+    userLogout = async () => {
+        this.user = {};
+        localStorage.setItem('jwt', null);
+        cookie.remove('jwt');
+        await clientFetch.post('/api/logout');
     };
 
     getCollectionRecipes = async (collectionId, query) => {
-        const response = await axios.get(`/api/collections/${collectionId}`, query);
+        const response = await clientFetch.get(`/api/collections/${collectionId}`, query);
         return response.data.collection;
     };
 
@@ -153,7 +167,7 @@ export default class Store {
         // accepted params: author, tags, page, page_size
         const requestParams = params;
         return new Promise((res, rej) => {
-            axios.get('/api/recipes', {
+            clientFetch.get('/api/recipes', {
                 params: requestParams,
             })
                 .then(response => {
@@ -169,7 +183,7 @@ export default class Store {
     @action
     createCollection = name => {
         return new Promise((res, rej) => {
-            axios.post(`/api/collections`, {name})
+            clientFetch.post(`/api/collections`, {name})
                 .then(response => {
                     this.user = response.data.user;
                     res();
@@ -184,7 +198,7 @@ export default class Store {
     @action
     deleteCollection = async id => {
         return new Promise((res, rej) => {
-            axios.delete(`/api/collections/${id}`)
+            clientFetch.delete(`/api/collections/${id}`)
                 .then(response => {
                     this.user = response.data.user;
                     res();
@@ -195,7 +209,7 @@ export default class Store {
 
     createRecipe = recipe => {
         return new Promise((res, rej) => {
-            axios.post('/api/recipes', {
+            clientFetch.post('/api/recipes', {
                 recipe: recipe,
             })
                 .then(response => {
@@ -210,7 +224,7 @@ export default class Store {
 
     deleteRecipe = id => {
         return new Promise((res, rej) => {
-            axios.delete(`/api/recipes/${id}`)
+            clientFetch.delete(`/api/recipes/${id}`)
                 .then(() => {
                     res();
                 })
@@ -223,7 +237,7 @@ export default class Store {
     @action
     registerUser = user => {
         return new Promise((res, rej) => {
-            axios.post('/api/users', {...user})
+            clientFetch.post('/api/users', {...user})
                 .then(response => {
                     this.user = response.data.user;
                     Router.push("/");
@@ -238,7 +252,7 @@ export default class Store {
 
     patchRecipe = (id, partialRecipeObj) => {
         return new Promise((res, rej) => {
-            axios.patch(`/api/recipes/${id}`, {
+            clientFetch.patch(`/api/recipes/${id}`, {
                 ...partialRecipeObj
             })
                 .then(response => {
@@ -253,7 +267,7 @@ export default class Store {
 
     resetPassword = (token, newPassword) => {
         return new Promise((res, rej) => {
-            axios.post('/api/reset', {
+            clientFetch.post('/api/reset', {
                 token: token,
                 newPassword: newPassword,
             })
@@ -268,7 +282,7 @@ export default class Store {
 
     forgotPassword = email => {
         return new Promise((res, rej) => {
-            axios.post('/api/forgot', {
+            clientFetch.post('/api/forgot', {
                 email: email,
             })
                 .then(response => {

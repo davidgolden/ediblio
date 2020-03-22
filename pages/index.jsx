@@ -7,6 +7,8 @@ import LoadingNextPage from '../client/components/utilities/LoadingNextPage';
 import useScrolledBottom from "../client/components/utilities/useScrolledBottom";
 import {ApiStoreContext} from "../client/stores/api_store";
 import axios from 'axios';
+import {getCookieFromServer} from "../client/utils/cookies";
+import {handleJWT} from "../hooks/handleJWT";
 
 function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
@@ -14,6 +16,7 @@ function useForceUpdate(){
 }
 
 const Index = props => {
+    handleJWT();
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
     const [loadedAll, setLoadedAll] = useState(props.loadedAll);
     const [filterAuthor, setFilterAuthor] = useState('');
@@ -90,22 +93,24 @@ const Index = props => {
     )
 };
 
-Index.getInitialProps = async ({req}) => {
-    const currentFullUrl = typeof window !== 'undefined' ? window.location.origin : req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+
+
+export async function getServerSideProps ({req, query}) {
+    const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+    const jwt = getCookieFromServer('jwt', req);
 
     const response = await axios.get(`${currentFullUrl}/api/recipes`, {
-        headers: req?.headers?.cookie && {
-            cookie: req.headers.cookie,
-        },
+        headers: jwt ? {'x-access-token': jwt} : {},
         params: {
             page: 0,
         }
     });
 
     return {
-        recipes: response.data.recipes.map(r => [r.id, r]),
-        loadedAll: response.data.recipes.length < 12,
-        user: req?.user,
+        props: {
+            recipes: response.data.recipes.map(r => [r.id, r]),
+            loadedAll: response.data.recipes.length < 12,
+        }
     }
 };
 
