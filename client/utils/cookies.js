@@ -33,10 +33,11 @@ export const clientFetch = {
             headers: jwt ? {'x-access-token': jwt} : {},
         })
     },
-    async delete(url) {
+    async delete(url, body) {
         const jwt = cookie.get('jwt');
         return axios.delete(url, {
             headers: jwt ? {'x-access-token': jwt} : {},
+            ...body,
         })
     }
 };
