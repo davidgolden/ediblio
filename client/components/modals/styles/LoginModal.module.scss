@@ -44,11 +44,25 @@
 }
 
 .googleWrapper {
-  img {
-    width: 270px;
-    max-width: 95%;
+  display: block;
+  width: 270px;
+  max-width: 95%;
+  margin: 15px auto !important;
+  box-shadow: 2px 2px 4px rgba($black, .3), -1px 0 2px rgba($black, .3);
+  padding: 16px 0;
+
+  .googleIcon {
+    display: inline-block;
+    vertical-align: middle;
+    width: 32px;
   }
-  margin: 0 auto;
+
+  .googleContents {
+    vertical-align: middle;
+    font-size: 1.6rem;
+    color: lighten($black, 20%);
+    padding-left: 8px;
+  }
 }
 
 .registerButton {
