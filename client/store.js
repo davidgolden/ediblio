@@ -153,6 +153,7 @@ export default class Store {
     @action
     userLogout = async () => {
         this.user = {};
+        localStorage.setItem('jwt', null);
         cookie.remove('jwt');
         await clientFetch.post('/api/logout');
     };
