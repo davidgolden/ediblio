@@ -7,12 +7,14 @@ import axios from "axios";
 import UserWall from "../../../client/components/utilities/UserWall";
 import {observer} from "mobx-react";
 import {getCookieFromServer} from "../../../client/utils/cookies";
+import {handleJWT} from "../../../hooks/handleJWT";
 
 const settingsContainerClassName = classNames({
     [styles.settingsContainer]: true,
 });
 
 const Settings = observer(props => {
+    handleJWT();
     const context = useContext(ApiStoreContext);
 
     const [profileImage, setProfileImage] = useState(props.user ? props.user.profile_image : '');
@@ -128,11 +130,10 @@ const Settings = observer(props => {
 export async function getServerSideProps ({query, req}) {
     try {
         const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+        const jwt = getCookieFromServer('jwt', req);
 
         const response = await axios.get(`${currentFullUrl}/api/users/${query.user_id}`, {
-            headers: {
-                'x-access-token': getCookieFromServer('jwt', req),
-            },
+            headers: jwt ? {'x-access-token': jwt} : {},
         });
         return {
             props: {

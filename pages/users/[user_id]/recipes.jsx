@@ -7,9 +7,11 @@ import RecipeCard from "../../../client/components/RecipeCard";
 import useScrolledBottom from "../../../client/components/utilities/useScrolledBottom";
 import {observer} from "mobx-react";
 import UserBanner from "../../../client/components/UserBanner";
-import {getCookieFromServer} from "../../../client/utils/cookies";
+import {fetch, getCookieFromServer} from "../../../client/utils/cookies";
+import {handleJWT} from "../../../hooks/handleJWT";
 
 const Recipes = observer((props) => {
+    handleJWT();
     const [recipes, setRecipes] = useState(props.recipes);
     const [collections, setCollections] = useState(props.collections || []);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
@@ -97,17 +99,14 @@ const Recipes = observer((props) => {
 
 export async function getServerSideProps ({req, query}) {
     const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+    const jwt = getCookieFromServer('jwt', req);
 
     const responses = await Promise.all([
         await axios.get(`${currentFullUrl}/api/users/${query.user_id}/collections`, {
-            headers: {
-                'x-access-token': getCookieFromServer('jwt', req),
-            },
+            headers: jwt ? {'x-access-token': jwt} : {},
         }),
         await axios.get(`${currentFullUrl}/api/recipes`, {
-            headers: {
-                'x-access-token': getCookieFromServer('jwt', req),
-            },
+            headers: jwt ? {'x-access-token': jwt} : {},
             params: {
                 orderBy: 'desc',
                 sortBy: 'created_at',
@@ -115,9 +114,7 @@ export async function getServerSideProps ({req, query}) {
             }
         }),
         await axios.get(`${currentFullUrl}/api/users/${query.user_id}`, {
-            headers: {
-                'x-access-token': getCookieFromServer('jwt', req),
-            },
+            headers: jwt ? {'x-access-token': jwt} : {},
         }),
     ]);
     return {
@@ -129,6 +126,6 @@ export async function getServerSideProps ({req, query}) {
             user_id: query.user_id,
         }
     }
-};
+}
 
 export default Recipes;

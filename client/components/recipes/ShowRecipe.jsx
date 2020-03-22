@@ -59,15 +59,15 @@ const ShowRecipe = observer(props => {
                     </Link>. {props.recipe.url &&
                     <a href={props.recipe.url} target='_blank'>View Original Recipe</a>}</h2>
                     <div className={styles.ratingContainer}>
-                        {(userRating || context.user) && <>
+                        {(userRating || context.loggedIn) && <>
                             <Rating
                             fractions={2}
                             emptySymbol={"far fa-star"}
                             fullSymbol="fas fa-star"
-                            readonly={!context.user}
+                            readonly={!context.loggedIn}
                             initialRating={userRating} // needs to be actual rating
                             onClick={async v => {
-                                if (context.user) {
+                                if (context.loggedIn) {
                                     const response = await axios.post('/api/rating', {
                                         recipe_id: props.recipe.id,
                                         rating: v,
@@ -95,7 +95,7 @@ const ShowRecipe = observer(props => {
                     handleUpdateIngredient={props.handleUpdateIngredient}
                 />
                 <div className={showRecipeButtonsClassName}>
-                    {context.user ? <Button onClick={handleAddToList}>
+                    {context.loggedIn ? <Button onClick={handleAddToList}>
                         <FontAwesomeIcon icon={faShoppingBag}/> {added ? 'Added To' : 'Add To'} Grocery List
                     </Button> : <p>Login or Register to Add to Grocery List</p>}
                 </div>

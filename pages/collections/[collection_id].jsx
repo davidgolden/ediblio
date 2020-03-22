@@ -7,8 +7,10 @@ import RecipeCard from "../../client/components/RecipeCard";
 import LoadingNextPage from "../../client/components/utilities/LoadingNextPage";
 import axios from "axios";
 import {getCookieFromServer} from "../../client/utils/cookies";
+import {handleJWT} from "../../hooks/handleJWT";
 
 const Collection_id  = props => {
+    handleJWT();
     const [recipes, setRecipes] = useState(new Map(props.recipes || []));
     const [title, setTitle] = useState(props.collection.name);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
@@ -64,11 +66,10 @@ const Collection_id  = props => {
 
 export async function getServerSideProps({req, query}) {
     const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+    const jwt = getCookieFromServer('jwt', req);
 
     const response = await axios.get(`${currentFullUrl}/api/collections/${query.collection_id}`, {
-        headers: {
-            'x-access-token': getCookieFromServer('jwt', req),
-        },
+        headers: jwt ? {'x-access-token': jwt} : {},
     });
     return {
         props: {

@@ -452,11 +452,13 @@ router.route('/users/:user_id')
     .get(middleware.authenticate, async (req, res) => {
         let response;
         if (req.user && req.user.id && req.user.id.toString() === req.params.user_id) {
+
             response = await db.query({
-                text: `SELECT * FROM users
-                WHERE users.id = $1`,
+                text: `${usersSelector}
+where users.id = $1
+group by users.id;`,
                 values: [req.params.user_id]
-            })
+            });
         } else {
             response = await db.query({
                 text: `SELECT username, profile_image FROM users

@@ -10,6 +10,7 @@ import axios from "axios";
 import Checkbox from "../../../client/components/utilities/Checkbox";
 import UserWall from "../../../client/components/utilities/UserWall";
 import {getCookieFromServer} from "../../../client/utils/cookies";
+import {handleJWT} from "../../../hooks/handleJWT";
 
 const groceryListContainerClassName = classNames({
     [styles.groceryListContainer]: true,
@@ -22,6 +23,7 @@ const menuContainerClassName = classNames({
 });
 
 const Groceries = props => {
+    handleJWT();
     const context = useContext(ApiStoreContext);
 
     const [storeMode, setStoreMode] = useState(false);
@@ -174,18 +176,15 @@ const Groceries = props => {
 
 export async function getServerSideProps ({req, query}) {
     const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+    const jwt = getCookieFromServer('jwt', req);
 
     try {
         const response = await Promise.all([
             await axios.get(`${currentFullUrl}/api/users/${query.user_id}/recipes`, {
-                headers: {
-                    'x-access-token': getCookieFromServer('jwt', req),
-                },
+                headers: jwt ? {'x-access-token': jwt} : {},
             }),
             await axios.get(`${currentFullUrl}/api/users/${query.user_id}/ingredients`, {
-                headers: {
-                    'x-access-token': getCookieFromServer('jwt', req),
-                },
+                headers: jwt ? {'x-access-token': jwt} : {},
             })
         ]);
 

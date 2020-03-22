@@ -75,12 +75,12 @@ const RecipePage = observer(props => {
         <div className={recipeContainerClassName}>
             <div className={recipeEditButtonsClassName}>
                 <div>
-                    {context.user && (recipe.author_id === context.user.id) && (
+                    {context.loggedIn && (recipe.author_id === context.user.id) && (
                         <Button className={toggleEditClassName} onClick={toggleEdit}>
                             <FontAwesomeIcon icon={edit ? faSearch : faEdit}/> {edit ? "View" : "Edit"}
                         </Button>)}
                 </div>
-                <div>{context.user && <RecipeButtons
+                <div>{context.loggedIn && <RecipeButtons
                     recipe={recipe}
                     inMenu={inMenu}
                     addToGroceryList={addToGroceryList}

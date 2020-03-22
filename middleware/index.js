@@ -18,7 +18,7 @@ middlewareObj.authenticate = (req, res, next) => {
 
 middlewareObj.isLoggedIn = (req, res, next) => {
   middlewareObj.authenticate(req, res, next);
-  if (req.user.id) {
+  if (req.user && req.user.id) {
     next();
   } else {
     return res.status(404).send({ detail: 'You need to be logged in to do that!' })

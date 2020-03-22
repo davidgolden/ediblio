@@ -8,8 +8,10 @@ import {ApiStoreContext} from "../client/stores/api_store";
 import {observer} from "mobx-react";
 import Router from 'next/router';
 import axios from 'axios';
+import {handleJWT} from "../hooks/handleJWT";
 
 const RecipeForm = observer(props => {
+    handleJWT();
     const [name, setName] = useState(props.editMode ? props.recipe.name : '');
     const [url, setUrl] = useState(props.editMode ? props.recipe.url : '');
     const [image, setImage] = useState(props.editMode ? props.recipe.image : '');
@@ -162,7 +164,7 @@ const RecipeForm = observer(props => {
             />
             <div>
                 <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
-                {context.user ?
+                {context.loggedIn ?
                     <Button className={submitButtonClassName} onClick={handleSubmit}>{props.editMode ? "Save" : "Submit!"}</Button> :
                     <p>You must be logged in to add a recipe!</p>}
             </div>

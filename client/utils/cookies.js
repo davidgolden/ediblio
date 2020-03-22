@@ -10,4 +10,3 @@ export function getCookieFromServer (key, req) {
     }
     return rawCookie.split('=')[1];
 }
-

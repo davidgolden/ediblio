@@ -18,8 +18,9 @@ function Login(props) {
 
     return <div>
         <h2>Sign in with Google</h2>
-        <a href={"/auth/google"} className={styles.googleWrapper}>
-            <img src={"/images/google-signin.png"} alt={"Sign in with Google"} />
+        <a href={`/auth/google?state=${window.location.pathname}`}
+           className={styles.googleWrapper}>
+            <img src={"/images/google-signin.png"} alt={"Sign in with Google"}/>
         </a>
         <h2>Login with Email</h2>
         <form onSubmit={handleLoginSubmit}>
