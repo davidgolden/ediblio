@@ -5,7 +5,7 @@ import AddToGroceryListButton from "../utilities/buttons/AddToGroceryListButton"
 import DeleteButton from "../utilities/buttons/DeleteButton";
 import {ApiStoreContext} from "../../stores/api_store";
 import {observer} from "mobx-react";
-import axios from "axios";
+import {clientFetch} from "../../utils/cookies";
 
 const RecipeButtons = observer(props => {
     const context = useContext(ApiStoreContext);
@@ -14,7 +14,7 @@ const RecipeButtons = observer(props => {
         const collection = context.user.collections.find(c => c.name === collectionName);
         if (collection) {
             try {
-                await axios.post(`/api/collections/${collection.id}/recipes/${props.recipe.id}`);
+                await clientFetch.post(`/api/collections/${collection.id}/recipes/${props.recipe.id}`);
                 collection.recipes.push(props.recipe);
             } catch (error) {
                 context.handleError(error);
@@ -26,7 +26,7 @@ const RecipeButtons = observer(props => {
         const collection = context.user.collections.find(c => c.id === collectionId);
         if (collection) {
             try {
-                await axios.delete(`/api/collections/${collection.id}/recipes/${props.recipe.id}`);
+                await clientFetch.delete(`/api/collections/${collection.id}/recipes/${props.recipe.id}`);
                 collection.recipes = collection.recipes.filter(r => r.id !== recipeId);
             } catch (error) {
                 context.handleError(error);

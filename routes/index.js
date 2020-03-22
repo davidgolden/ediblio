@@ -57,7 +57,7 @@ router.post('/logout', function (req, res) {
 // reset password route
 router.post('/forgot', function (req, res) {
     let email = req.body.email;
-    if (req.isAuthenticated()) {
+    if (req.user) {
         return res.status(404).send({ detail: 'User is already logged in!'})
     }
 

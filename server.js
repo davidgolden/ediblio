@@ -38,24 +38,7 @@ const oauth2Client = new google.auth.OAuth2(
 
 // const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
 
-const {usersSelector, encodeJWT} = require("./utils");
-
-// passport.serializeUser(function (user, done) {
-//     done(null, user.id);
-// });
-//
-// passport.deserializeUser(async function (id, done) {
-//     try {
-//         const userRes = await db.query({
-//             text: `${usersSelector}
-// where users.id = $1
-// group by users.id;`, values: [id]
-//         });
-//         done(null, userRes.rows[0]);
-//     } catch (error) {
-//         done(error);
-//     }
-// });
+const {usersSelector, encodeJWT, verifyJWT} = require("./utils");
 
 app.prepare().then(() => {
     const server = express();
@@ -68,6 +51,19 @@ app.prepare().then(() => {
     server.use(bodyParser.urlencoded({extended: false}));
     server.use(bodyParser.json());
     server.use(cookieParser());
+
+    server.use(function(req, res, next) {
+        let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
+
+        if (token) {
+            const verified = verifyJWT(token);
+            if (verified) {
+                req.user = {id: verified.id};
+            }
+        }
+
+        next();
+    });
 
     server.use('/api/', indexRoutes);
     server.use('/api/', userRoutes);

@@ -1,11 +1,11 @@
 import React, {useEffect, useState, useContext} from 'react';
 import Modal from "./Modal";
 import RecipePage from "../recipes/RecipePage";
-import axios from "axios";
 import {faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from './styles/RecipeModal.module.scss';
 import {ApiStoreContext} from "../../stores/api_store";
+import {clientFetch} from "../../utils/cookies";
 
 export default function RecipeModal(props) {
     const context = useContext(ApiStoreContext);
@@ -13,7 +13,7 @@ export default function RecipeModal(props) {
 
     useEffect(() =>{
         async function fetchData(recipe_id) {
-            const response = await axios.get(`${window.location.origin}/api/recipes/${recipe_id}`);
+            const response = await clientFetch.get(`${window.location.origin}/api/recipes/${recipe_id}`);
             setRecipe(response.data.recipe);
         }
 

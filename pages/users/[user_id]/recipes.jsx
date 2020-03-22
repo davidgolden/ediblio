@@ -7,7 +7,7 @@ import RecipeCard from "../../../client/components/RecipeCard";
 import useScrolledBottom from "../../../client/components/utilities/useScrolledBottom";
 import {observer} from "mobx-react";
 import UserBanner from "../../../client/components/UserBanner";
-import {fetch, getCookieFromServer} from "../../../client/utils/cookies";
+import {clientFetch, fetch, getCookieFromServer} from "../../../client/utils/cookies";
 import {handleJWT} from "../../../hooks/handleJWT";
 
 const Recipes = observer((props) => {
@@ -27,7 +27,7 @@ const Recipes = observer((props) => {
 
     useEffect(() => {
         if (props.user_id === context.user?.id) {
-            axios.get(`/api/users/${props.user_id}/collections`)
+            clientFetch.get(`/api/users/${props.user_id}/collections`)
                 .then(response => setCollections(response.data.collections))
         }
     }, [context.user?.collections?.length !== props.collections.length]);
@@ -60,7 +60,7 @@ const Recipes = observer((props) => {
 
     async function unfollowCollection(id) {
         try {
-            await axios.delete(`/api/users/${context.user.id}/collections/${id}`);
+            await clientFetch.delete(`/api/users/${context.user.id}/collections/${id}`);
             context.user.collections = context.user.collections.filter(c => c.id !== id);
         } catch (error) {
             context.handleError(error);
@@ -69,9 +69,9 @@ const Recipes = observer((props) => {
 
     async function followCollection(id) {
         try {
-            await axios.post(`/api/users/${context.user.id}/collections/${id}`);
+            await clientFetch.post(`/api/users/${context.user.id}/collections/${id}`);
 
-            const response = await axios.get(`/api/collections/${id}`);
+            const response = await clientFetch.get(`/api/collections/${id}`);
             context.user.collections.push(response.data.collection);
         } catch (error) {
             context.handleError(error);

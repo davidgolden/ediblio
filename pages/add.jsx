@@ -7,8 +7,8 @@ import classNames from 'classnames';
 import {ApiStoreContext} from "../client/stores/api_store";
 import {observer} from "mobx-react";
 import Router from 'next/router';
-import axios from 'axios';
 import {handleJWT} from "../hooks/handleJWT";
+import {clientFetch} from "../client/utils/cookies";
 
 const RecipeForm = observer(props => {
     handleJWT();
@@ -36,7 +36,7 @@ const RecipeForm = observer(props => {
     async function handleAddIngredient(ingredient) {
         try {
             if (props.editMode) {
-                const response = await axios.post(`/api/recipes/${props.recipe.id}/ingredients`, ingredient);
+                const response = await clientFetch.post(`/api/recipes/${props.recipe.id}/ingredients`, ingredient);
                 setIngredients([{...ingredient, id: response.data.id}].concat(ingredients))
             } else {
                 setIngredients([ingredient].concat(ingredients))
@@ -50,7 +50,7 @@ const RecipeForm = observer(props => {
     async function removeSelectedIngredients() {
         try {
             if (props.editMode) {
-                await axios.delete(`/api/recipes/${props.recipe.id}/ingredients`, {
+                await clientFetch.delete(`/api/recipes/${props.recipe.id}/ingredients`, {
                     data: {
                         ingredient_ids: ingredientIdsToRemove,
                     }
@@ -106,7 +106,7 @@ const RecipeForm = observer(props => {
             fd.append('file', rawImage ? rawImage : image);
             fd.append('upload_preset', 'l9apptfs');
             fd.append('resource_type', 'image');
-            const response = await axios.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
+            const response = await clientFetch.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
             uploadObject.image = response.data.secure_url;
         }
         if (updated.has('notes')) {

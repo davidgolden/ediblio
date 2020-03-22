@@ -6,7 +6,7 @@ import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
 import UserWall from "../../../client/components/utilities/UserWall";
 import {observer} from "mobx-react";
-import {getCookieFromServer} from "../../../client/utils/cookies";
+import {clientFetch, getCookieFromServer} from "../../../client/utils/cookies";
 import {handleJWT} from "../../../hooks/handleJWT";
 
 const settingsContainerClassName = classNames({
@@ -47,11 +47,11 @@ const Settings = observer(props => {
                     fd.append('upload_preset', 'profile_image');
                     fd.append('resource_type', 'image');
                     fd.append('folder', props.user.id);
-                    const response = await axios.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
+                    const response = await clientFetch.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
                     query.profileImage = response.data.secure_url;
                 }
 
-                const response = await axios.patch(`/api/users/${context.user.id}`, query);
+                const response = await clientFetch.patch(`/api/users/${context.user.id}`, query);
 
                 context.user = {
                     ...context.user,

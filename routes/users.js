@@ -449,7 +449,7 @@ router.route('/users/:user_id')
             res.status(404).send({detail: error.message});
         }
     })
-    .get(middleware.authenticate, async (req, res) => {
+    .get(async (req, res) => {
         let response;
         if (req.user && req.user.id && req.user.id.toString() === req.params.user_id) {
 

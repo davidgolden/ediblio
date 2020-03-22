@@ -1,8 +1,8 @@
 import React from "react";
-import axios from "axios";
 import {observable, action, autorun, toJS, computed} from "mobx";
 import Router from 'next/router';
 import cookie from 'js-cookie';
+import {clientFetch} from "./utils/cookies";
 const jwt = require('jsonwebtoken');
 
 class JsonWebToken {
@@ -106,7 +106,7 @@ export default class Store {
 
     @action
     fetchMeasurements = async () => {
-        const response = await axios.get('/api/measurements');
+        const response = await clientFetch.get('/api/measurements');
         this.measurements = response.data.measurements;
     };
 
@@ -154,11 +154,11 @@ export default class Store {
     userLogout = async () => {
         this.user = {};
         cookie.remove('jwt');
-        await axios.post('/api/logout');
+        await clientFetch.post('/api/logout');
     };
 
     getCollectionRecipes = async (collectionId, query) => {
-        const response = await axios.get(`/api/collections/${collectionId}`, query);
+        const response = await clientFetch.get(`/api/collections/${collectionId}`, query);
         return response.data.collection;
     };
 
@@ -166,7 +166,7 @@ export default class Store {
         // accepted params: author, tags, page, page_size
         const requestParams = params;
         return new Promise((res, rej) => {
-            axios.get('/api/recipes', {
+            clientFetch.get('/api/recipes', {
                 params: requestParams,
             })
                 .then(response => {
@@ -182,7 +182,7 @@ export default class Store {
     @action
     createCollection = name => {
         return new Promise((res, rej) => {
-            axios.post(`/api/collections`, {name})
+            clientFetch.post(`/api/collections`, {name})
                 .then(response => {
                     this.user = response.data.user;
                     res();
@@ -197,7 +197,7 @@ export default class Store {
     @action
     deleteCollection = async id => {
         return new Promise((res, rej) => {
-            axios.delete(`/api/collections/${id}`)
+            clientFetch.delete(`/api/collections/${id}`)
                 .then(response => {
                     this.user = response.data.user;
                     res();
@@ -208,7 +208,7 @@ export default class Store {
 
     createRecipe = recipe => {
         return new Promise((res, rej) => {
-            axios.post('/api/recipes', {
+            clientFetch.post('/api/recipes', {
                 recipe: recipe,
             })
                 .then(response => {
@@ -223,7 +223,7 @@ export default class Store {
 
     deleteRecipe = id => {
         return new Promise((res, rej) => {
-            axios.delete(`/api/recipes/${id}`)
+            clientFetch.delete(`/api/recipes/${id}`)
                 .then(() => {
                     res();
                 })
@@ -236,7 +236,7 @@ export default class Store {
     @action
     registerUser = user => {
         return new Promise((res, rej) => {
-            axios.post('/api/users', {...user})
+            clientFetch.post('/api/users', {...user})
                 .then(response => {
                     this.user = response.data.user;
                     Router.push("/");
@@ -251,7 +251,7 @@ export default class Store {
 
     patchRecipe = (id, partialRecipeObj) => {
         return new Promise((res, rej) => {
-            axios.patch(`/api/recipes/${id}`, {
+            clientFetch.patch(`/api/recipes/${id}`, {
                 ...partialRecipeObj
             })
                 .then(response => {
@@ -266,7 +266,7 @@ export default class Store {
 
     resetPassword = (token, newPassword) => {
         return new Promise((res, rej) => {
-            axios.post('/api/reset', {
+            clientFetch.post('/api/reset', {
                 token: token,
                 newPassword: newPassword,
             })
@@ -281,7 +281,7 @@ export default class Store {
 
     forgotPassword = email => {
         return new Promise((res, rej) => {
-            axios.post('/api/forgot', {
+            clientFetch.post('/api/forgot', {
                 email: email,
             })
                 .then(response => {

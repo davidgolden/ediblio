@@ -10,7 +10,7 @@ import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
 import {observer} from "mobx-react";
 import Rating from 'react-rating';
-import axios from 'axios';
+import {clientFetch} from "../../utils/cookies";
 
 const showRecipeContainerClassName = classNames({
     [styles.showRecipeContainer]: true,
@@ -68,7 +68,7 @@ const ShowRecipe = observer(props => {
                             initialRating={userRating} // needs to be actual rating
                             onClick={async v => {
                                 if (context.loggedIn) {
-                                    const response = await axios.post('/api/rating', {
+                                    const response = await clientFetch.post('/api/rating', {
                                         recipe_id: props.recipe.id,
                                         rating: v,
                                     });

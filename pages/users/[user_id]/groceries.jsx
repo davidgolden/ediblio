@@ -9,7 +9,7 @@ import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
 import Checkbox from "../../../client/components/utilities/Checkbox";
 import UserWall from "../../../client/components/utilities/UserWall";
-import {getCookieFromServer} from "../../../client/utils/cookies";
+import {clientFetch, getCookieFromServer} from "../../../client/utils/cookies";
 import {handleJWT} from "../../../hooks/handleJWT";
 
 const groceryListContainerClassName = classNames({
@@ -42,7 +42,7 @@ const Groceries = props => {
 
     async function handleDeleteMenuItems() {
         try {
-            await axios.delete(`/api/users/${context.user.id}/recipes`, {
+            await clientFetch.delete(`/api/users/${context.user.id}/recipes`, {
                 data: {
                     recipe_ids: menuIdsToRemove,
                 }
@@ -61,7 +61,7 @@ const Groceries = props => {
 
     async function removeSelectedIngredients() {
         try {
-            await axios.delete(`/api/users/${context.user.id}/ingredients`, {
+            await clientFetch.delete(`/api/users/${context.user.id}/ingredients`, {
                 data: {
                     ingredient_ids: ingredientIdsToRemove,
                 }
@@ -77,7 +77,7 @@ const Groceries = props => {
     async function removeAllIngredients() {
         try {
             if (confirm("Are you sure you want to do that?")) {
-                await axios.delete(`/api/users/${context.user.id}/ingredients`, {
+                await clientFetch.delete(`/api/users/${context.user.id}/ingredients`, {
                     data: {
                         ingredient_ids: props.groceryList.map(ing => ing.id),
                     }
@@ -94,7 +94,7 @@ const Groceries = props => {
 
     async function handleAddIngredient(ingredient) {
         try {
-            const response = await axios.post(`/api/users/${context.user.id}/ingredients`, ingredient);
+            const response = await clientFetch.post(`/api/users/${context.user.id}/ingredients`, ingredient);
             setGroceryList([{...ingredient, id: response.data.id}].concat(groceryList))
         } catch (error) {
             context.handleError(error)
@@ -107,7 +107,7 @@ const Groceries = props => {
             if (oldIngredient.name !== ingredient.name ||
                 oldIngredient.quantity !== ingredient.quantity ||
                 oldIngredient.measurement !== ingredient.measurement) {
-                await axios.patch(`/api/users/${context.user.id}/ingredients/${ingredient.id}`, ingredient);
+                await clientFetch.patch(`/api/users/${context.user.id}/ingredients/${ingredient.id}`, ingredient);
             }
             setGroceryList(groceryList.map(ing => {
                 if (ing.id === ingredient.id) {
