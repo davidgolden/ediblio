@@ -35,7 +35,8 @@ group by users.id;`, values: [email]
         res.redirect(redirect_url + '?jwt=' + jwt);
 
     } catch (error) {
-        res.status(400).send({detail: error});
+        // TODO need to handle error
+        res.redirect('back');
     }
 });
 
@@ -59,6 +60,7 @@ router.get('/register', async function (req, res) {
         res.redirect(redirect_url + '?jwt=' + jwt);
 
     } catch (error) {
+        // TODO need to handle error
         res.redirect('back');
     }
 });
