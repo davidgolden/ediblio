@@ -13,7 +13,7 @@ const db = require("../db/index");
 const {usersSelector, encodeJWT, decodeJWT} = require("../utils");
 
 // handle login logic
-router.get('/login', async function(req, res) {
+router.get('/login', async function (req, res) {
     try {
         const {email, password, redirect_url} = decodeJWT(req.query.jwt);
 
@@ -32,17 +32,36 @@ group by users.id;`, values: [email]
 
         const jwt = encodeJWT({id: user.id});
 
-        res.redirect(redirect_url+'?jwt='+jwt);
+        res.redirect(redirect_url + '?jwt=' + jwt);
 
     } catch (error) {
         res.status(400).send({detail: error});
     }
 });
 
-function emailToLowerCase(req, res, next) {
-    req.body.email = req.body.email.toLowerCase();
-    next();
-}
+router.get('/register', async function (req, res) {
+    try {
+        const {email, password, username, redirect_url} = decodeJWT(req.query.jwt);
+
+        const userRes = await db.query({
+            text: `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *`,
+            values: [username, email.toLowerCase(), await hashPassword(password)]
+        });
+
+        // create a favorites collection
+        await db.query({
+            text: `INSERT INTO collections (name, author_id, is_primary) VALUES ($1, $2, $3)`,
+            values: ['Favorites', userRes.rows[0].id, true]
+        });
+
+        const jwt = encodeJWT({id: userRes.rows[0].id});
+
+        res.redirect(redirect_url + '?jwt=' + jwt);
+
+    } catch (error) {
+        res.redirect('back');
+    }
+});
 
 //logout
 router.post('/logout', function (req, res) {
@@ -58,7 +77,7 @@ router.post('/logout', function (req, res) {
 router.post('/forgot', function (req, res) {
     let email = req.body.email;
     if (req.user) {
-        return res.status(404).send({ detail: 'User is already logged in!'})
+        return res.status(404).send({detail: 'User is already logged in!'})
     }
 
     (function generateToken() {
@@ -70,7 +89,7 @@ router.post('/forgot', function (req, res) {
 
         (async function assignToken(err) {
             if (err) {
-                return res.status(404).send({ detail: 'There was a problem assigning a token!' })
+                return res.status(404).send({detail: 'There was a problem assigning a token!'})
             }
 
             await db.query('BEGIN');
@@ -81,7 +100,7 @@ router.post('/forgot', function (req, res) {
 
             if (response.rows.length === 0) {
                 await db.query('ROLLBACK');
-                return res.status(404).send({ detail: 'No user found!' })
+                return res.status(404).send({detail: 'No user found!'})
             }
 
             await db.query({
@@ -111,7 +130,7 @@ router.post('/forgot', function (req, res) {
 
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
-                    return res.status(404).send({ detail: 'There was a problem sending reset email.' })
+                    return res.status(404).send({detail: 'There was a problem sending reset email.'})
                 } else {
                     return res.status(200).send('Success!')
                 }
@@ -143,7 +162,7 @@ router.post('/reset', async function (req, res) {
     await db.query('COMMIT');
 
     req.logIn(userRes.rows[0], function (err) {
-        if (err) return res.status(404).send({ detail: err });
+        if (err) return res.status(404).send({detail: err});
         return res.status(200);
     });
 });

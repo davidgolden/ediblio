@@ -77,14 +77,8 @@ function Register(props) {
         context.registerUser({
             username: username,
             email: email,
-            password: password
+            password: password,
         })
-            .then(() => {
-                props.navigate("/")
-            })
-            .catch(err => {
-                console.log(err);
-            })
     };
 
     return <div>

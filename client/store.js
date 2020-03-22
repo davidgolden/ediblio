@@ -93,7 +93,7 @@ export default class Store {
 
     @computed
     get loggedIn() {
-        return !!this.user.id;
+        return !!this.user?.id;
     }
 
     @observable user = {};
@@ -236,18 +236,8 @@ export default class Store {
 
     @action
     registerUser = user => {
-        return new Promise((res, rej) => {
-            clientFetch.post('/api/users', {...user})
-                .then(response => {
-                    this.user = response.data.user;
-                    Router.push("/");
-                    res();
-                })
-                .catch(err => {
-                    this.handleError(err.response.data.detail);
-                    rej();
-                })
-        })
+        const jwt = new JsonWebToken();
+        window.location.href = '/api/register?jwt='+jwt.encode({email: user.email, username: user.username, password: user.password, redirect_url: window.location.pathname});
     };
 
     patchRecipe = (id, partialRecipeObj) => {
