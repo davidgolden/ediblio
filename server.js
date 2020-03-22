@@ -3,7 +3,6 @@ const express = require('express');
 const compression = require('compression');
 const next = require('next');
 const path = require('path');
-const axios = require('axios');
 
 const dev = process.env.NODE_ENV === 'development';
 const app = next({dev});
@@ -12,12 +11,6 @@ const {google} = require('googleapis');
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-// const session = require('express-session');
-// const passport = require('passport');
-// const LocalStrategy = require('passport-local').Strategy;
-// var GoogleStrategy = require('passport-google-oauth20').Strategy;
-// const {Strategy, ExtractJwt} = require('passport-jwt');
-// const bcrypt = require('bcrypt-nodejs');
 
 const db = require("./db/index");
 
@@ -83,49 +76,61 @@ app.prepare().then(() => {
     server.use('/api/', ratingRoutes);
     server.use('/api/', measurementRoutes);
 
-    server.get('/auth/google', (req, res) => {
+    server.get('/auth/google', async (req, res) => {
         const url = oauth2Client.generateAuthUrl({
+            access_type: 'online',
             scope: ['profile', 'email'],
             state: JSON.stringify({
                 request_url: req.query.state
             }),
         });
+
         res.redirect(url);
     });
 
     server.get('/auth/google/callback', async function (req, res) {
-        const {tokens} = await oauth2Client.getToken(req.query.code);
-        const response = await axios.get(`https://openidconnect.googleapis.com/v1/userinfo?access_token=${tokens.access_token}`);
-        const {email, picture, name, sub} = response.data;
-        const state = JSON.parse(req.query.state);
+        try {
+            const {tokens} = await oauth2Client.getToken(req.query.code);
+            oauth2Client.setCredentials(tokens);
+            const oauth2 = google.oauth2({
+                auth: oauth2Client,
+                version: 'v2',
+            });
+            const response = await oauth2.userinfo.v2.me.get();
 
-        const userRes = await db.query({
-            text: `${usersSelector}
+            const {email, picture, name, id} = response.data;
+            const state = JSON.parse(req.query.state);
+
+            const userRes = await db.query({
+                text: `${usersSelector}
 where users.email = $1
 group by users.id`, values: [email]
-        });
-        const user = userRes.rows[0];
-
-        if (user) {
-            const jwt = encodeJWT({id: user.id});
-            res.redirect(state.request_url+'?jwt='+jwt);
-        } else {
-            const userRes = await db.query({
-                text: `INSERT INTO users (username, email, third_party_id, third_party_domain, profile_image) VALUES ($1, $2, $3, 'google', $4) RETURNING *`,
-                values: [name, email.toLowerCase(), sub, picture]
             });
 
-            // create a favorites collection
-            await db.query({
-                text: `INSERT INTO collections (name, author_id, is_primary) VALUES ($1, $2, $3)`,
-                values: ['Favorites', userRes.rows[0].id, true]
-            });
+            if (userRes.rows.length > 0) {
+                const userId = userRes.rows[0].id;
+                const jwt = encodeJWT({id: userId});
+                res.redirect(state.request_url+'?jwt='+jwt);
+            } else {
 
-            const user = userRes.rows[0];
+                const userRes = await db.query({
+                    text: `INSERT INTO users (username, email, third_party_id, third_party_domain, profile_image) VALUES ($1, $2, $3, 'google', $4) RETURNING *`,
+                    values: [name, email.toLowerCase(), id, picture]
+                });
+                // create a favorites collection
+                const userId = userRes.rows[0].id;
+                await db.query({
+                    text: `INSERT INTO collections (name, author_id, is_primary) VALUES ($1, $2, $3)`,
+                    values: ['Favorites', userId, true]
+                });
 
-            const jwt = encodeJWT({id: user.id});
-            res.redirect(state.request_url+'/?jwt='+jwt);
+                const jwt = encodeJWT({id: userId});
+                res.redirect(state.request_url+'/?jwt='+jwt);
+            }
+        } catch (error) {
+            res.status(400).send({detail: error.message});
         }
+
     });
 
     server.get('/service-worker.js', (req, res) => {

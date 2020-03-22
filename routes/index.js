@@ -34,7 +34,6 @@ group by users.id;`, values: [email]
 
         res.redirect(redirect_url+'?jwt='+jwt);
 
-        // res.status(200).send({jwt, user});
     } catch (error) {
         res.status(400).send({detail: error});
     }
@@ -48,8 +47,7 @@ function emailToLowerCase(req, res, next) {
 //logout
 router.post('/logout', function (req, res) {
     try {
-        req.user = null;
-        res.headers['x-access-token'] = null;
+        res.append('x-access-token', null);
         return res.redirect('back');
     } catch (err) {
         res.status(422).send({message: err});
