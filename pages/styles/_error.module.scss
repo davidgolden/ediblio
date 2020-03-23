@@ -1,0 +1,43 @@
+@import "../../client/styles/variables";
+
+.container {
+  text-align: center;
+  margin-top: 2rem;
+
+  .statusCode {
+    color: $white;
+    background-color: $green;
+    padding: 5px;
+    border-radius: 20px;
+    font-size: 4rem;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 2rem;
+    width: 100px;
+  }
+
+  .errorMessage {
+    display: inline-block;
+    max-width: 400px;
+    vertical-align: middle;
+
+    h1 {
+
+
+      @media(max-width: 541px) {
+        border: none;
+        margin-top: 1rem;
+      }
+    }
+
+    &StatusCode {
+      h1 {
+        border-left: 1px solid $black;
+      }
+    }
+  }
+
+  h2 {
+    margin-top: 1rem;
+  }
+}

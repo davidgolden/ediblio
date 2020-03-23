@@ -124,7 +124,7 @@ group by users.id`, values: [email]
                 res.redirect(state.request_url+'/?jwt='+jwt);
             }
         } catch (error) {
-            res.status(400).send({detail: error.message});
+            res.redirect(`/_error?err=${error.message}`);
         }
 
     });

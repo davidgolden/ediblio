@@ -36,7 +36,7 @@ group by users.id;`, values: [email]
 
     } catch (error) {
         // TODO need to handle error
-        res.redirect('back');
+        res.redirect(500, `/_error?err=${error.message}`);
     }
 });
 
@@ -61,7 +61,7 @@ router.get('/register', async function (req, res) {
 
     } catch (error) {
         // TODO need to handle error
-        res.redirect('back');
+        res.redirect(500, `/_error?err=${error.message}`);
     }
 });
 
