@@ -3,11 +3,13 @@ const express = require('express');
 const compression = require('compression');
 const next = require('next');
 const path = require('path');
+const axios = require('axios');
+const qs = require('qs');
 
 const dev = process.env.NODE_ENV === 'development';
 const app = next({dev});
 const handle = app.getRequestHandler();
-const {google} = require('googleapis');
+const jwt = require('jsonwebtoken');
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -30,11 +32,7 @@ const forceSsl = function (req, res, next) {
     return next();
 };
 
-const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    (process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://ediblio.com") + "/auth/google/callback",
-);
+const googleRedirectUrl = (process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://ediblio.com") + "/auth/google/callback";
 
 // const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
 
@@ -52,7 +50,7 @@ app.prepare().then(() => {
     server.use(bodyParser.json());
     server.use(cookieParser());
 
-    server.use(function(req, res, next) {
+    server.use(function (req, res, next) {
         let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
 
         if (token) {
@@ -73,28 +71,38 @@ app.prepare().then(() => {
     server.use('/api/', measurementRoutes);
 
     server.get('/auth/google', async (req, res) => {
-        const url = oauth2Client.generateAuthUrl({
-            access_type: 'online',
-            scope: ['profile', 'email'],
-            state: JSON.stringify({
+        let googleOauthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?';
+        const params = [
+            ['client_id', process.env.GOOGLE_CLIENT_ID],
+            ['redirect_uri', googleRedirectUrl],
+            ['response_type', 'code'],
+            ['access_type', 'online'],
+            ['state', JSON.stringify({
                 request_url: req.query.state
-            }),
-        });
+            })],
+            ['scope', 'profile email'],
+        ];
+        params.forEach(param => googleOauthUrl += encodeURIComponent(param[0]) + "=" + encodeURIComponent(param[1]) + "&");
 
-        res.redirect(url);
+        res.redirect(googleOauthUrl);
     });
 
     server.get('/auth/google/callback', async function (req, res) {
         try {
-            const {tokens} = await oauth2Client.getToken(req.query.code);
-            oauth2Client.setCredentials(tokens);
-            const oauth2 = google.oauth2({
-                auth: oauth2Client,
-                version: 'v2',
+            const response = await axios.post('https://oauth2.googleapis.com/token', qs.stringify({
+                client_id: process.env.GOOGLE_CLIENT_ID,
+                client_secret: process.env.GOOGLE_CLIENT_SECRET,
+                code: req.query.code,
+                grant_type: "authorization_code",
+                redirect_uri: googleRedirectUrl,
+            }), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
             });
-            const response = await oauth2.userinfo.v2.me.get();
 
-            const {email, picture, name, id} = response.data;
+            const decodedIdToken = jwt.decode(response.data.id_token);
+            const {email, picture, name, sub} = decodedIdToken;
             const state = JSON.parse(req.query.state);
 
             const userRes = await db.query({
@@ -106,12 +114,12 @@ group by users.id`, values: [email]
             if (userRes.rows.length > 0) {
                 const userId = userRes.rows[0].id;
                 const jwt = encodeJWT({id: userId});
-                res.redirect(state.request_url+'?jwt='+jwt);
+                res.redirect(state.request_url + '?jwt=' + jwt);
             } else {
 
                 const userRes = await db.query({
                     text: `INSERT INTO users (username, email, third_party_id, third_party_domain, profile_image) VALUES ($1, $2, $3, 'google', $4) RETURNING *`,
-                    values: [name, email.toLowerCase(), id, picture]
+                    values: [name, email.toLowerCase(), sub, picture]
                 });
                 // create a favorites collection
                 const userId = userRes.rows[0].id;
@@ -121,7 +129,7 @@ group by users.id`, values: [email]
                 });
 
                 const jwt = encodeJWT({id: userId});
-                res.redirect(state.request_url+'/?jwt='+jwt);
+                res.redirect(state.request_url + '/?jwt=' + jwt);
             }
         } catch (error) {
             res.redirect(`/_error?err=${error.message}`);
