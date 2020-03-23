@@ -17,9 +17,22 @@ function Login(props) {
         context.userLogin(email, password);
     };
 
+    let googleOauthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?';
+    const params = [
+        ['client_id', '278565269976-hfuc613c5825ucsf9k5bbr20k5fkm6cc.apps.googleusercontent.com'],
+        ['redirect_uri', window.location.origin + "/auth/google/callback"],
+        ['response_type', 'code'],
+        ['access_type', 'online'],
+        ['state', JSON.stringify({
+            request_url: window.location.pathname,
+        })],
+        ['scope', 'profile email'],
+    ];
+    params.forEach(param => googleOauthUrl += encodeURIComponent(param[0]) + "=" + encodeURIComponent(param[1]) + "&");
+
     return <div>
         <h2>Sign in with Google</h2>
-        <a href={`/auth/google?state=${window.location.pathname}`}
+        <a href={googleOauthUrl}
            className={styles.googleWrapper}>
             <div className={styles.googleIcon}>
                 <div>

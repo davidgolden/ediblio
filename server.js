@@ -34,8 +34,6 @@ const forceSsl = function (req, res, next) {
 
 const googleRedirectUrl = (process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://ediblio.com") + "/auth/google/callback";
 
-// const SESS_LIFETIME = 1000 * 60 * 60 * 24 * 30;
-
 const {usersSelector, encodeJWT, verifyJWT} = require("./utils");
 
 app.prepare().then(() => {
@@ -69,23 +67,6 @@ app.prepare().then(() => {
     server.use('/api/', collectionRoutes);
     server.use('/api/', ratingRoutes);
     server.use('/api/', measurementRoutes);
-
-    server.get('/auth/google', async (req, res) => {
-        let googleOauthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?';
-        const params = [
-            ['client_id', process.env.GOOGLE_CLIENT_ID],
-            ['redirect_uri', googleRedirectUrl],
-            ['response_type', 'code'],
-            ['access_type', 'online'],
-            ['state', JSON.stringify({
-                request_url: req.query.state
-            })],
-            ['scope', 'profile email'],
-        ];
-        params.forEach(param => googleOauthUrl += encodeURIComponent(param[0]) + "=" + encodeURIComponent(param[1]) + "&");
-
-        res.redirect(googleOauthUrl);
-    });
 
     server.get('/auth/google/callback', async function (req, res) {
         try {
