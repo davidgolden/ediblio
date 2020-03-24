@@ -1,0 +1,48 @@
+@import "../../styles/variables";
+
+.staple {
+  display: inline-block;
+  background-color: $green;
+  border-radius: 10px;
+  color: $white;
+  padding: .5rem 1rem;
+  font-size: 1.5rem;
+  margin: 5px;
+  transition: opacity .5s ease;
+
+  button {
+    background-color: $white;
+    color: $green;
+    margin-left: .5rem;
+    border-radius: 10px;
+    vertical-align: middle;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      padding: 5px;
+    }
+  }
+}
+
+.transitionEnter {
+  opacity: 1;
+}
+.transitionEnterActive {
+  opacity: 1;
+}
+.transitionEnterDone {
+  opacity: 1;
+}
+.transitionExit {
+  opacity: 0;
+}
+.transitionExitActive {
+  opacity: 0;
+}
+.transitionExitDone {
+  opacity: 0;
+}

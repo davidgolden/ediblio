@@ -11,6 +11,7 @@ import Checkbox from "../../../client/components/utilities/Checkbox";
 import UserWall from "../../../client/components/utilities/UserWall";
 import {clientFetch, getCookieFromServer} from "../../../client/utils/cookies";
 import {handleJWT} from "../../../hooks/handleJWT";
+import StaplesMenu from "../../../client/components/StaplesMenu";
 
 const groceryListContainerClassName = classNames({
     [styles.groceryListContainer]: true,
@@ -79,7 +80,7 @@ const Groceries = props => {
             if (confirm("Are you sure you want to do that?")) {
                 await clientFetch.delete(`/api/users/${context.user.id}/ingredients`, {
                     data: {
-                        ingredient_ids: props.groceryList.map(ing => ing.id),
+                        ingredient_ids: groceryList.map(ing => ing.id),
                     }
                 });
 
@@ -153,6 +154,7 @@ const Groceries = props => {
                 </ul>
                 <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
                 <h2>My Grocery List</h2>
+                {!storeMode && <StaplesMenu handleAddIngredient={handleAddIngredient} />}
                 <AddIngredients
                     canAdd={true}
                     containerClassName={ingredientsContainerClassName}

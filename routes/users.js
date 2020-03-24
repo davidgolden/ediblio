@@ -168,19 +168,23 @@ router.route('/users/:user_id/ingredients')
 router.route('/users/:user_id/staples')
     .get(middleware.isLoggedIn, async (req, res) => {
         try {
+            const offset = req.query.offset || 0;
+            const limit = req.query.limit || 10;
+
             const suggestedStaples = await db.query({
                 text: `
-                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, users_ingredients_groceries.name, m.short_name measurement
-                FROM users_ingredients_groceries
-                LEFT JOIN LATERAL (
-                    SELECT short_name FROM measurements
-                    WHERE measurements.id = users_ingredients_groceries.measurement_id
-                ) m ON true
-                WHERE users_ingredients_groceries.user_id = $1 AND users_ingredients_groceries.deleted = false;`,
-                values: [req.user.id],
+                SELECT g.name, count(g.name) c
+                FROM users_ingredients_groceries g
+                WHERE g.user_id = $1
+                GROUP BY g.name
+                HAVING count(g.name) >= 1
+                ORDER BY c
+                LIMIT $2
+                OFFSET $3;`,
+                values: [req.user.id, limit, offset],
             });
 
-            res.status(200).send({groceryList: response.rows});
+            res.status(200).send({suggestedStaples: suggestedStaples.rows});
         } catch (error) {
             res.status(404).send({detail: error.message});
         }
