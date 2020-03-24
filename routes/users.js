@@ -177,7 +177,7 @@ router.route('/users/:user_id/staples')
                 FROM users_ingredients_groceries g
                 WHERE g.user_id = $1
                 GROUP BY g.name
-                HAVING count(g.name) >= 1
+                HAVING count(g.name) >= 3
                 ORDER BY c
                 LIMIT $2
                 OFFSET $3;`,
