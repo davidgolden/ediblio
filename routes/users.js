@@ -80,6 +80,7 @@ router.route('/users/:user_id/ingredients')
                     OR users_ingredients_groceries.name ILIKE $4
                     OR users_ingredients_groceries.name ILIKE $5)
                     AND users_ingredients_groceries.user_id = $6
+                    AND users_ingredients_groceries.deleted = false
                     LIMIT 1
                     `,
                 values: [req.body.name, req.body.name + "s", req.body.name + "es", req.body.name.slice(0, -1), req.body.name.slice(0, -2), req.user.id],
@@ -159,6 +160,27 @@ router.route('/users/:user_id/ingredients')
             });
 
             res.sendStatus(200);
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    });
+
+router.route('/users/:user_id/staples')
+    .get(middleware.isLoggedIn, async (req, res) => {
+        try {
+            const suggestedStaples = await db.query({
+                text: `
+                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, users_ingredients_groceries.name, m.short_name measurement
+                FROM users_ingredients_groceries
+                LEFT JOIN LATERAL (
+                    SELECT short_name FROM measurements
+                    WHERE measurements.id = users_ingredients_groceries.measurement_id
+                ) m ON true
+                WHERE users_ingredients_groceries.user_id = $1 AND users_ingredients_groceries.deleted = false;`,
+                values: [req.user.id],
+            });
+
+            res.status(200).send({groceryList: response.rows});
         } catch (error) {
             res.status(404).send({detail: error.message});
         }
