@@ -138,7 +138,7 @@ router.route('/users/:user_id/ingredients')
                     SELECT short_name FROM measurements
                     WHERE measurements.id = users_ingredients_groceries.measurement_id
                 ) m ON true
-                WHERE users_ingredients_groceries.user_id = $1;`,
+                WHERE users_ingredients_groceries.user_id = $1 AND users_ingredients_groceries.deleted = false;`,
                 values: [req.user.id],
             });
 
@@ -152,7 +152,8 @@ router.route('/users/:user_id/ingredients')
         try {
             await db.query({
                 text: `
-                DELETE FROM users_ingredients_groceries
+                UPDATE users_ingredients_groceries
+                SET deleted = true
                 WHERE id IN (${req.body.ingredient_ids.map(id => "'" + id + "'").join(", ")})
                 `,
             });
