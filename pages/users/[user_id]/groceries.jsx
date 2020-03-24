@@ -145,16 +145,16 @@ const Groceries = props => {
                         return <li key={item.id}>
                             <Checkbox checked={menuIdsToRemove.includes(item.id)}
                                       onChange={() => toggleMenuIdToRemove(item.id)}/>
-                            <a target='_blank' href={item.url}>
-                                {item.name}
+                            <button onClick={() => context.openRecipeModal(item.id)}>{item.name}</button>
+                            {item.url && <a target='_blank' href={item.url}>
                                 <FontAwesomeIcon icon={faExternalLinkAlt}/>
-                            </a>
+                            </a>}
                         </li>
                     })}
                 </ul>
                 <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
                 <h2>My Grocery List</h2>
-                {!storeMode && <StaplesMenu handleAddIngredient={handleAddIngredient} />}
+                {!storeMode && <StaplesMenu handleAddIngredient={handleAddIngredient}/>}
                 <AddIngredients
                     canAdd={true}
                     containerClassName={ingredientsContainerClassName}
@@ -175,8 +175,7 @@ const Groceries = props => {
 };
 
 
-
-export async function getServerSideProps ({req, query}) {
+export async function getServerSideProps({req, query}) {
     const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
     const jwt = getCookieFromServer('jwt', req);
 
