@@ -25,7 +25,7 @@ const toggleEditClassName = classNames({
 });
 
 const RecipePage = observer(props => {
-    const [edit, setEdit] = useState(false);
+    const [edit, setEdit] = useState(true);
     const [recipe, setRecipe] = useState(props.recipe);
     const [inMenu, setInMenu] = useState(props.recipe.in_menu);
 
