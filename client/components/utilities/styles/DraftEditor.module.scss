@@ -1,27 +1,44 @@
 @import "../../../styles/variables";
 
 .controlBar {
-  button {
-    width: 30px;
-    height: 30px;
-    border-radius: 5px;
-    margin: 2px 4px;
+  user-select: none;
+}
+
+.styleButton {
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  margin: 0 4px;
+  background-color: $lightgray;
+  transition: all .25s ease;
+
+  &:hover {
     background-color: $green;
 
     svg {
-      width: 20px;
-      height: 20px;
       color: $white;
     }
   }
 
-  border-bottom: 1px solid $green;
+  svg {
+    width: 20px;
+    height: 20px;
+    color: $green;
+  }
+
+  &Active {
+    background-color: $green;
+    svg {
+      color: $white;
+    }
+  }
 }
 
 .editor {
   font-size: 1.5rem;
   background-color: lighten($green, 40%);
   padding: 1rem;
+  cursor: text;
 
   ul {
     list-style: initial;
