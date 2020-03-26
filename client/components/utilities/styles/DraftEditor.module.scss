@@ -39,18 +39,4 @@
   background-color: lighten($green, 40%);
   padding: 1rem;
   cursor: text;
-
-  ul {
-    list-style: initial;
-  }
-
-  ol {
-    list-style: decimal;
-  }
-
-  blockquote {
-    border-left: 3px solid lightgray;
-    padding-left: 20px;
-    font-style: italic;
-  }
 }

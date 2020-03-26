@@ -1,11 +1,11 @@
-import React, {useState, useRef} from 'react';
-import {Editor, EditorState, ContentState, RichUtils} from 'draft-js';
+import React, {useState, useRef, useCallback} from 'react';
+import {Editor, EditorState, ContentState, RichUtils, convertToRaw, convertFromRaw} from 'draft-js';
 import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Button from "./buttons/Button";
 import {faBold, faItalic, faListOl, faListUl, faQuoteLeft, faUnderline} from "@fortawesome/free-solid-svg-icons";
 import styles from './styles/DraftEditor.module.scss';
 import classNames from 'classnames';
+import {draftToMarkdown, markdownToDraft} from "markdown-draft-js";
 
 function StyleButton(props) {
     const styleButtonClassName = classNames({
@@ -48,7 +48,7 @@ const blockTypes = [['unordered-list-item', faListUl], ['ordered-list-item', faL
 
 export default function DraftEditor(props) {
     const editorRef = useRef(null);
-    const [editorState, setEditorState] = useState(EditorState.createWithContent(ContentState.createFromText(props.value || "Hello World")));
+    const [editorState, setEditorState] = useState(EditorState.createWithContent(convertFromRaw(markdownToDraft(props.value))));
 
     function setFocus(e) {
         if (editorRef.current) {
@@ -64,13 +64,18 @@ export default function DraftEditor(props) {
         setEditorState(RichUtils.toggleInlineStyle(editorState, style))
     }
 
+    function handleChange(state) {
+        setEditorState(state);
+        // console.log(draftToMarkdown(convertToRaw(state.getCurrentContent())));
+    }
+
     return <div>
         <div className={styles.controlBar}>
             {inlineStyleTypes.map(t => <InlineStyleButton editorState={editorState} handleToggle={toggleInlineStyle} type={t[0]} icon={t[1]} />)}
             {blockTypes.map(t => <BlockStyleButton editorState={editorState} handleToggle={toggleBlockType} type={t[0]} icon={t[1]} />)}
         </div>
         <div className={styles.editor} onClick={setFocus}>
-        <Editor editorState={editorState} onChange={s => setEditorState(s)} ref={editorRef} />
+        <Editor editorState={editorState} onChange={handleChange} ref={editorRef} />
         </div>
     </div>
 }

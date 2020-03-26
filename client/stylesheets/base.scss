@@ -39,3 +39,8 @@ input, select {
   outline: 0;
   border: 0;
 }
+blockquote {
+  border-left: 3px solid lightgray;
+  padding-left: 20px;
+  font-style: italic;
+}

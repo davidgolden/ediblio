@@ -78,7 +78,7 @@ const RecipeInformation = props => {
                    accept={'image/*'}
             />
             <label htmlFor='notes'>Notes</label>
-            <DraftEditor value={props.notes || ""}/>
+            <DraftEditor value={props.notes || "Hello World"}/>
             {/*<textarea name='notes' value={props.notes}*/}
             {/*          onChange={props.handleRecipeNotesChange}/>*/}
         </div>
