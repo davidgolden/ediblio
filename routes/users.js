@@ -17,6 +17,34 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_SECRET
 });
 
+async function selectUserGroceries(user_id) {
+    const groceries = await db.query({
+        text: `
+                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, users_ingredients_groceries.name, m.short_name measurement
+                FROM users_ingredients_groceries
+                LEFT JOIN LATERAL (
+                    SELECT short_name FROM measurements
+                    WHERE measurements.id = users_ingredients_groceries.measurement_id
+                ) m ON true
+                WHERE users_ingredients_groceries.user_id = $1 AND users_ingredients_groceries.deleted = false;`,
+        values: [user_id],
+    });
+    return groceries.rows;
+}
+
+async function selectUserMenu(user_id) {
+    const menu = await db.query({
+        text: `
+                SELECT * FROM recipes
+                WHERE recipes.id IN (
+                    SELECT recipe_id FROM users_recipes_menu
+                    WHERE users_recipes_menu.user_id = $1
+                );`,
+        values: [user_id],
+    });
+    return menu.rows;
+}
+
 router.route('/users')
     // get all users
     .get(async (req, res) => {
@@ -30,17 +58,9 @@ router.route('/users/:user_id/recipes')
     .get(middleware.isLoggedIn, async (req, res) => {
         // get menu
         try {
-            const response = await db.query({
-                text: `
-                SELECT * FROM recipes
-                WHERE recipes.id IN (
-                    SELECT recipe_id FROM users_recipes_menu
-                    WHERE users_recipes_menu.user_id = $1
-                );`,
-                values: [req.user.id]
-            });
+            const menu = await selectUserMenu(req.user.id);
 
-            res.status(200).send({menu: response.rows});
+            res.status(200).send({menu});
 
         } catch (error) {
             res.status(404).send({detail: error.message});
@@ -120,7 +140,9 @@ router.route('/users/:user_id/ingredients')
 
             await client.query("COMMIT");
 
-            return res.status(200).send(response.rows[0]);
+            const groceryList = await selectUserGroceries(req.user.id);
+
+            return res.status(200).send({groceryList});
         } catch (error) {
             await client.query("ROLLBACK");
             res.status(404).send({detail: error.message});
@@ -131,19 +153,9 @@ router.route('/users/:user_id/ingredients')
     .get(middleware.isLoggedIn, async (req, res) => {
         // get grocery list
         try {
-            const response = await db.query({
-                text: `
-                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, users_ingredients_groceries.name, m.short_name measurement
-                FROM users_ingredients_groceries
-                LEFT JOIN LATERAL (
-                    SELECT short_name FROM measurements
-                    WHERE measurements.id = users_ingredients_groceries.measurement_id
-                ) m ON true
-                WHERE users_ingredients_groceries.user_id = $1 AND users_ingredients_groceries.deleted = false;`,
-                values: [req.user.id],
-            });
+            const groceryList = await selectUserGroceries(req.user.id);
 
-            res.status(200).send({groceryList: response.rows});
+            res.status(200).send({groceryList});
         } catch (error) {
             res.status(404).send({detail: error.message});
         }
@@ -159,7 +171,9 @@ router.route('/users/:user_id/ingredients')
                 `,
             });
 
-            res.sendStatus(200);
+            const groceryList = await selectUserGroceries(req.user.id);
+
+            res.status(200).send({groceryList});
         } catch (error) {
             res.status(404).send({detail: error.message});
         }
@@ -280,29 +294,10 @@ router.route('/users/:user_id/recipes/:recipe_id')
 
             await client.query("COMMIT");
 
-            const groceries = await db.query({
-                text: `
-                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, users_ingredients_groceries.name, m.short_name measurement
-                FROM users_ingredients_groceries
-                LEFT JOIN LATERAL (
-                    SELECT short_name FROM measurements
-                    WHERE measurements.id = users_ingredients_groceries.measurement_id
-                ) m ON true
-                WHERE users_ingredients_groceries.user_id = $1 AND users_ingredients_groceries.deleted = false;`,
-                values: [req.user.id]
-            });
+            const groceryList = await selectUserGroceries(req.user.id);
+            const menu = await selectUserMenu(req.user.id);
 
-            const menu = await db.query({
-                text: `
-                SELECT * FROM recipes
-                WHERE recipes.id IN (
-                    SELECT recipe_id FROM users_recipes_menu
-                    WHERE users_recipes_menu.user_id = $1
-                );`,
-                values: [req.user.id]
-            });
-
-            res.status(200).send({groceryList: groceries.rows, menu: menu.rows});
+            res.status(200).send({groceryList, menu});
 
         } catch (error) {
             await client.query("ROLLBACK");
@@ -377,29 +372,10 @@ router.route('/users/:user_id/recipes/:recipe_id')
 
             await client.query("COMMIT");
 
-            const groceries = await db.query({
-                text: `
-                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, users_ingredients_groceries.name, m.short_name measurement
-                FROM users_ingredients_groceries
-                LEFT JOIN LATERAL (
-                    SELECT short_name FROM measurements
-                    WHERE measurements.id = users_ingredients_groceries.measurement_id
-                ) m ON true
-                WHERE users_ingredients_groceries.user_id = $1 AND users_ingredients_groceries.deleted = false;`,
-                values: [req.user.id]
-            });
+            const groceryList = await selectUserGroceries(req.user.id);
+            const menu = await selectUserMenu(req.user.id);
 
-            const menu = await db.query({
-                text: `
-                SELECT * FROM recipes
-                WHERE recipes.id IN (
-                    SELECT recipe_id FROM users_recipes_menu
-                    WHERE users_recipes_menu.user_id = $1
-                );`,
-                values: [req.user.id]
-            });
-
-            res.status(200).send({groceryList: groceries.rows, menu: menu.rows});
+            res.status(200).send({groceryList, menu});
 
         } catch (error) {
             await client.query("ROLLBACK");

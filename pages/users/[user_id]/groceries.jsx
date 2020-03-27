@@ -66,13 +66,13 @@ const Groceries = observer(props => {
 
     async function removeSelectedIngredients() {
         try {
-            await clientFetch.delete(`/api/users/${context.user.id}/ingredients`, {
+            const response = await clientFetch.delete(`/api/users/${context.user.id}/ingredients`, {
                 data: {
                     ingredient_ids: ingredientIdsToRemove,
                 }
             });
 
-            context.setGroceryList(context.groceryList.filter(ing => !ingredientIdsToRemove.includes(ing.id)));
+            context.setGroceryList(response.data.groceryList);
             setIngredientIdsToRemove([]);
         } catch (error) {
             context.handleError(error)
@@ -82,13 +82,13 @@ const Groceries = observer(props => {
     async function removeAllIngredients() {
         try {
             if (confirm("Are you sure you want to do that?")) {
-                await clientFetch.delete(`/api/users/${context.user.id}/ingredients`, {
+                const response = await clientFetch.delete(`/api/users/${context.user.id}/ingredients`, {
                     data: {
                         ingredient_ids: context.groceryList.map(ing => ing.id),
                     }
                 });
 
-                context.setGroceryList([]);
+                context.setGroceryList(response.data.groceryList);
                 setIngredientIdsToRemove([]);
             }
 
@@ -100,7 +100,7 @@ const Groceries = observer(props => {
     async function handleAddIngredient(ingredient) {
         try {
             const response = await clientFetch.post(`/api/users/${context.user.id}/ingredients`, ingredient);
-            context.setGroceryList([{...ingredient, id: response.data.id}].concat(context.groceryList))
+            context.setGroceryList(response.data.groceryList);
         } catch (error) {
             context.handleError(error)
         }
