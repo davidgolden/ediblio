@@ -3,6 +3,7 @@ import styles from './styles/RecipeInformation.module.scss';
 import classNames from 'classnames';
 import ImageLoader from "../utilities/ImageLoader";
 import {clientFetch} from "../../utils/cookies";
+import DraftEditor from "../utilities/DraftEditor";
 
 const RecipeInformation = props => {
     const [foundImage, setFoundImage] = useState(false);
@@ -77,8 +78,7 @@ const RecipeInformation = props => {
                    accept={'image/*'}
             />
             <label htmlFor='notes'>Notes</label>
-            <textarea name='notes' value={props.notes}
-                      onChange={props.handleRecipeNotesChange}/>
+            <DraftEditor value={props.notes || ""} handleChange={props.handleRecipeNotesChange}/>
         </div>
     )
 };

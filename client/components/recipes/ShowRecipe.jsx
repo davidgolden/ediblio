@@ -11,6 +11,7 @@ import Link from "next/link";
 import {observer} from "mobx-react";
 import Rating from 'react-rating';
 import {clientFetch} from "../../utils/cookies";
+import Markdown from 'react-markdown';
 
 const showRecipeContainerClassName = classNames({
     [styles.showRecipeContainer]: true,
@@ -24,7 +25,7 @@ const showRecipeImageClassName = classNames({
 
 const ShowRecipe = observer(props => {
     const [added, setAdded] = useState(false);
-    const [avgRating, setAvgRating] = useState(props.recipe.avg_rating ? Math.round(props.recipe.avg_rating*2)/2 : 0);
+    const [avgRating, setAvgRating] = useState(props.recipe.avg_rating ? Math.round(props.recipe.avg_rating * 2) / 2 : 0);
     const [userRating, setUserRating] = useState(props.recipe.user_rating);
     const [ingredientIdsToAdd, setIngredientIdsToAdd] = useState(props.recipe.ingredients.map(ing => ing.id));
     const context = useContext(ApiStoreContext);
@@ -51,8 +52,10 @@ const ShowRecipe = observer(props => {
         <div className={showRecipeContainerClassName}>
             <div className={showRecipeTitleClassName}>
                 <div>
-                    <h1>{props.recipe.name} {props.recipe.total_ratings > 0 && <span>{avgRating} <FontAwesomeIcon icon={faStar} /></span>}</h1>
-                    <h2>Submitted by <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id}/recipes`}>
+                    <h1>{props.recipe.name} {props.recipe.total_ratings > 0 &&
+                    <span>{avgRating} <FontAwesomeIcon icon={faStar}/></span>}</h1>
+                    <h2>Submitted by <Link href={"/users/[user_id]/recipes"}
+                                           as={`/users/${props.recipe.author_id}/recipes`}>
                         <a>
                             {props.recipe.author_username}
                         </a>
@@ -61,22 +64,22 @@ const ShowRecipe = observer(props => {
                     <div className={styles.ratingContainer}>
                         {(userRating || context.loggedIn) && <>
                             <Rating
-                            fractions={2}
-                            emptySymbol={"far fa-star"}
-                            fullSymbol="fas fa-star"
-                            readonly={!context.loggedIn}
-                            initialRating={userRating} // needs to be actual rating
-                            onClick={async v => {
-                                if (context.loggedIn) {
-                                    const response = await clientFetch.post('/api/rating', {
-                                        recipe_id: props.recipe.id,
-                                        rating: v,
-                                    });
-                                    setAvgRating(Math.round(response.data.avg_rating*2)/2);
-                                    setUserRating(v);
-                                }
-                            }}
-                        />
+                                fractions={2}
+                                emptySymbol={"far fa-star"}
+                                fullSymbol="fas fa-star"
+                                readonly={!context.loggedIn}
+                                initialRating={userRating} // needs to be actual rating
+                                onClick={async v => {
+                                    if (context.loggedIn) {
+                                        const response = await clientFetch.post('/api/rating', {
+                                            recipe_id: props.recipe.id,
+                                            rating: v,
+                                        });
+                                        setAvgRating(Math.round(response.data.avg_rating * 2) / 2);
+                                        setUserRating(v);
+                                    }
+                                }}
+                            />
                         </>}
                     </div>
                 </div>
@@ -86,7 +89,9 @@ const ShowRecipe = observer(props => {
             </div>
             <div className={showRecipeIngredientsClassName}>
                 <h3>Recipe Notes</h3>
-                <p>{props.recipe.notes}</p>
+                <div className={styles.recipeNotes}>
+                    <Markdown source={props.recipe.notes}/>
+                </div>
                 <AddIngredients
                     canAdd={false}
                     ingredients={props.recipe.ingredients}

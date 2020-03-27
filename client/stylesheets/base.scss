@@ -16,38 +16,17 @@ time, mark, audio, video {
   margin: 0;
   padding: 0;
   border: 0;
-  //font: inherit;
-  vertical-align: baseline;
   font-family: 'Markazi Text', serif;
 }
-
 body {
   font-size: 12px;
+  background-color: $white;
+  color: $black;
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
   display: block;
-}
-body {
-  line-height: 1;
-  background-color: $white;
-  color: $black;
-}
-ol, ul {
-  list-style: none;
-}
-blockquote, q {
-  quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
 }
 a {
   text-decoration: none;
@@ -56,6 +35,7 @@ button {
   background-color: inherit;
   outline: 0;
   border: none;
+  cursor: pointer;
 }
 h1 {
   font-size: 3rem;
@@ -75,4 +55,9 @@ h4 {
 input, select {
   outline: 0;
   border: 0;
+}
+blockquote {
+  border-left: 3px solid lightgray;
+  padding-left: 20px;
+  font-style: italic;
 }

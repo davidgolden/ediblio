@@ -87,9 +87,9 @@ const RecipeForm = observer(props => {
         setName(e.target.value);
     }
 
-    function handleNotesChange(e) {
+    function handleNotesChange(value) {
         addToUpdated('notes');
-        setNotes(e.target.value);
+        setNotes(value);
     }
 
     const handleSubmit = async () => {

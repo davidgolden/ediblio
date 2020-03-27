@@ -16,5 +16,6 @@ export default function RecipeCloudHead(props) {
         <link rel={"stylesheet"} href={"https://use.fontawesome.com/releases/v5.2.0/css/all.css"}/>
         <link rel={"manifest"} href={"/manifest.webmanifest"}/>
         <script src={"/installPrompt.js"} />
+        <meta charSet="utf-8"/>
     </Head>
 }
