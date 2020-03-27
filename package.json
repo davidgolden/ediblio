@@ -59,6 +59,7 @@
     "qs": "^6.9.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-markdown": "^4.3.1",
     "react-rating": "^2.0.4",
     "react-sortablejs": "^1.5.1",
     "react-transition-group": "^4.3.0",
