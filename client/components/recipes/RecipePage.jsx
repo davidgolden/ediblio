@@ -33,9 +33,11 @@ const RecipePage = observer(props => {
 
     const addToGroceryList = async (ingredients) => {
         try {
-            await clientFetch.patch(`/api/users/${context.user.id}/recipes/${props.recipe.id}`, {
+            const response = await clientFetch.patch(`/api/users/${context.user.id}/recipes/${props.recipe.id}`, {
                 ingredients,
             });
+            context.setMenu(response.data.menu);
+            context.setGroceryList(response.data.groceryList);
             setInMenu(true);
         } catch (error) {
             context.handleError(error);

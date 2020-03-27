@@ -91,11 +91,23 @@ export default class Store {
         }
     }
 
+    @action
+    setMenu(menu) {
+        this.menu = menu;
+    }
+
+    @action
+    setGroceryList(groceryList) {
+        this.groceryList = groceryList;
+    }
+
     @computed
     get loggedIn() {
         return !!this.user?.id;
     }
 
+    @observable menu = [];
+    @observable groceryList = [];
     @observable user = {};
     @observable notificationMessage = '';
     @observable notificationType = '';

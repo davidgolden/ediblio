@@ -240,6 +240,7 @@ router.route('/users/:user_id/recipes/:recipe_id')
                     OR users_ingredients_groceries.name ILIKE $4
                     OR users_ingredients_groceries.name ILIKE $5)
                     AND users_ingredients_groceries.user_id = $6
+                    AND deleted = false
                     LIMIT 1
                     `,
                     values: [ing.name, ing.name + "s", ing.name + "es", ing.name.slice(0, -1), ing.name.slice(0, -2), req.user.id],
@@ -279,12 +280,29 @@ router.route('/users/:user_id/recipes/:recipe_id')
 
             await client.query("COMMIT");
 
-            const response = await db.query({
-                text: usersSelector + 'where users.id = $1 group by users.id',
+            const groceries = await db.query({
+                text: `
+                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, users_ingredients_groceries.name, m.short_name measurement
+                FROM users_ingredients_groceries
+                LEFT JOIN LATERAL (
+                    SELECT short_name FROM measurements
+                    WHERE measurements.id = users_ingredients_groceries.measurement_id
+                ) m ON true
+                WHERE users_ingredients_groceries.user_id = $1 AND users_ingredients_groceries.deleted = false;`,
                 values: [req.user.id]
             });
 
-            res.status(200).send({user: response.rows[0]});
+            const menu = await db.query({
+                text: `
+                SELECT * FROM recipes
+                WHERE recipes.id IN (
+                    SELECT recipe_id FROM users_recipes_menu
+                    WHERE users_recipes_menu.user_id = $1
+                );`,
+                values: [req.user.id]
+            });
+
+            res.status(200).send({groceryList: groceries.rows, menu: menu.rows});
 
         } catch (error) {
             await client.query("ROLLBACK");
@@ -319,6 +337,7 @@ router.route('/users/:user_id/recipes/:recipe_id')
                     OR users_ingredients_groceries.name ILIKE $4
                     OR users_ingredients_groceries.name ILIKE $5)
                     AND users_ingredients_groceries.user_id = $6
+                    AND deleted = false
                     LIMIT 1
                     `,
                     values: [ing.name, ing.name + "s", ing.name + "es", ing.name.slice(0, -1), ing.name.slice(0, -2), req.user.id],
@@ -358,12 +377,29 @@ router.route('/users/:user_id/recipes/:recipe_id')
 
             await client.query("COMMIT");
 
-            const response = await db.query({
-                text: usersSelector + 'where users.id = $1 group by users.id',
+            const groceries = await db.query({
+                text: `
+                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, users_ingredients_groceries.name, m.short_name measurement
+                FROM users_ingredients_groceries
+                LEFT JOIN LATERAL (
+                    SELECT short_name FROM measurements
+                    WHERE measurements.id = users_ingredients_groceries.measurement_id
+                ) m ON true
+                WHERE users_ingredients_groceries.user_id = $1 AND users_ingredients_groceries.deleted = false;`,
                 values: [req.user.id]
             });
 
-            res.status(200).send({user: response.rows[0]});
+            const menu = await db.query({
+                text: `
+                SELECT * FROM recipes
+                WHERE recipes.id IN (
+                    SELECT recipe_id FROM users_recipes_menu
+                    WHERE users_recipes_menu.user_id = $1
+                );`,
+                values: [req.user.id]
+            });
+
+            res.status(200).send({groceryList: groceries.rows, menu: menu.rows});
 
         } catch (error) {
             await client.query("ROLLBACK");

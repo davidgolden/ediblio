@@ -12,6 +12,7 @@ import UserWall from "../../../client/components/utilities/UserWall";
 import {clientFetch, getCookieFromServer} from "../../../client/utils/cookies";
 import {handleJWT} from "../../../hooks/handleJWT";
 import StaplesMenu from "../../../client/components/StaplesMenu";
+import {observer} from "mobx-react";
 
 const groceryListContainerClassName = classNames({
     [styles.groceryListContainer]: true,
@@ -23,15 +24,18 @@ const menuContainerClassName = classNames({
     [styles.menuContainer]: true,
 });
 
-const Groceries = props => {
+const Groceries = observer(props => {
     handleJWT();
     const context = useContext(ApiStoreContext);
 
     const [storeMode, setStoreMode] = useState(false);
-    const [groceryList, setGroceryList] = useState(props.groceryList || []);
-    const [menu, setMenu] = useState(props.menu || []);
     const [ingredientIdsToRemove, setIngredientIdsToRemove] = useState([]);
     const [menuIdsToRemove, setMenuIdsToRemove] = useState([]);
+
+    useEffect(() => {
+        context.setGroceryList(props.groceryList || []);
+        context.setMenu(props.menu || []);
+    }, []);
 
     function toggleMenuIdToRemove(id) {
         if (menuIdsToRemove.includes(id)) {
@@ -49,7 +53,7 @@ const Groceries = props => {
                 }
             });
 
-            setMenu(menu.filter(item => !menuIdsToRemove.includes(item.id)));
+            context.setMenu(context.menu.filter(item => !menuIdsToRemove.includes(item.id)));
             setMenuIdsToRemove([]);
         } catch (error) {
             context.handleError(error)
@@ -68,7 +72,7 @@ const Groceries = props => {
                 }
             });
 
-            setGroceryList(groceryList.filter(ing => !ingredientIdsToRemove.includes(ing.id)));
+            context.setGroceryList(context.groceryList.filter(ing => !ingredientIdsToRemove.includes(ing.id)));
             setIngredientIdsToRemove([]);
         } catch (error) {
             context.handleError(error)
@@ -80,11 +84,11 @@ const Groceries = props => {
             if (confirm("Are you sure you want to do that?")) {
                 await clientFetch.delete(`/api/users/${context.user.id}/ingredients`, {
                     data: {
-                        ingredient_ids: groceryList.map(ing => ing.id),
+                        ingredient_ids: context.groceryList.map(ing => ing.id),
                     }
                 });
 
-                setGroceryList([]);
+                context.setGroceryList([]);
                 setIngredientIdsToRemove([]);
             }
 
@@ -96,7 +100,7 @@ const Groceries = props => {
     async function handleAddIngredient(ingredient) {
         try {
             const response = await clientFetch.post(`/api/users/${context.user.id}/ingredients`, ingredient);
-            setGroceryList([{...ingredient, id: response.data.id}].concat(groceryList))
+            context.setGroceryList([{...ingredient, id: response.data.id}].concat(context.groceryList))
         } catch (error) {
             context.handleError(error)
         }
@@ -104,13 +108,13 @@ const Groceries = props => {
 
     async function handleUpdateIngredient(ingredient) {
         try {
-            const oldIngredient = groceryList.find(ing => ing.id === ingredient.id);
+            const oldIngredient = context.groceryList.find(ing => ing.id === ingredient.id);
             if (oldIngredient.name !== ingredient.name ||
                 oldIngredient.quantity !== ingredient.quantity ||
                 oldIngredient.measurement !== ingredient.measurement) {
                 await clientFetch.patch(`/api/users/${context.user.id}/ingredients/${ingredient.id}`, ingredient);
             }
-            setGroceryList(groceryList.map(ing => {
+            context.setGroceryList(context.groceryList.map(ing => {
                 if (ing.id === ingredient.id) {
                     return ingredient;
                 }
@@ -128,7 +132,7 @@ const Groceries = props => {
 
     const clearListClassName = classNames({
         [styles.saveListButton]: true,
-        [styles.saveListButtonDisabled]: groceryList.length === 0,
+        [styles.saveListButtonDisabled]: context.groceryList.length === 0,
     });
 
     const saveMenuClassName = classNames({
@@ -141,7 +145,7 @@ const Groceries = props => {
             <div className={groceryListContainerClassName}>
                 <h2>My Menu</h2>
                 <ul className={menuContainerClassName}>
-                    {menu && menu.map((item) => {
+                    {context.menu.map((item) => {
                         return <li key={item.id}>
                             <Checkbox checked={menuIdsToRemove.includes(item.id)}
                                       onChange={() => toggleMenuIdToRemove(item.id)}/>
@@ -158,7 +162,7 @@ const Groceries = props => {
                 <AddIngredients
                     canAdd={true}
                     containerClassName={ingredientsContainerClassName}
-                    ingredients={groceryList}
+                    ingredients={context.groceryList}
                     handleAddIngredient={handleAddIngredient}
                     handleUpdateIngredient={handleUpdateIngredient}
                     selectedIngredientIds={ingredientIdsToRemove}
@@ -172,7 +176,7 @@ const Groceries = props => {
             </div>
         </UserWall>
     )
-};
+});
 
 
 export async function getServerSideProps({req, query}) {

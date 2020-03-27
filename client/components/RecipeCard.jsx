@@ -32,7 +32,8 @@ const RecipeCard = props => {
     const addToGroceryList = async () => {
         try {
             const response = await clientFetch.post(`/api/users/${context.user.id}/recipes/${props.recipe.id}`);
-            context.user = response.data.user;
+            context.setMenu(response.data.menu);
+            context.setGroceryList(response.data.groceryList);
             setInMenu(true);
         } catch (error) {
             context.handleError(error);
