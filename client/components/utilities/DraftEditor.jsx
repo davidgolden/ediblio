@@ -18,8 +18,10 @@ function StyleButton(props) {
         props.handleToggle(props.type)
     }
 
-    return <button className={styleButtonClassName} onMouseDown={handleToggle}><FontAwesomeIcon icon={props.icon} /></button>
+    return <button className={styleButtonClassName} onMouseDown={handleToggle}><FontAwesomeIcon icon={props.icon}/>
+    </button>
 }
+
 StyleButton.propTypes = {
     handleToggle: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
@@ -34,13 +36,13 @@ function BlockStyleButton(props) {
         .getBlockForKey(selection.getStartKey())
         .getType();
 
-    return <StyleButton {...props} active={props.type === blockType} />
+    return <StyleButton {...props} active={props.type === blockType}/>
 }
 
 function InlineStyleButton(props) {
     const currentStyle = props.editorState.getCurrentInlineStyle();
 
-    return <StyleButton {...props} active={currentStyle.has(props.type)} />
+    return <StyleButton {...props} active={currentStyle.has(props.type)}/>
 }
 
 const inlineStyleTypes = [['BOLD', faBold], ['ITALIC', faItalic], ['UNDERLINE', faUnderline]];
@@ -48,7 +50,10 @@ const blockTypes = [['unordered-list-item', faListUl], ['ordered-list-item', faL
 
 export default function DraftEditor(props) {
     const editorRef = useRef(null);
-    const [editorState, setEditorState] = useState(EditorState.createWithContent(convertFromRaw(markdownToDraft(props.value))));
+
+    const markdown = useRef(markdownToDraft(props.value));
+    markdown.current.blocks = markdown.current.blocks.map((b, i) => ({...b, key: `foo-${i}`}));
+    const [editorState, setEditorState] = useState(EditorState.createWithContent(convertFromRaw(markdown.current)));
 
     function setFocus(e) {
         if (editorRef.current) {
@@ -57,25 +62,27 @@ export default function DraftEditor(props) {
     }
 
     function toggleBlockType(blockType) {
-        setEditorState(RichUtils.toggleBlockType(editorState, blockType))
+        handleChange(RichUtils.toggleBlockType(editorState, blockType))
     }
 
     function toggleInlineStyle(style) {
-        setEditorState(RichUtils.toggleInlineStyle(editorState, style))
+        handleChange(RichUtils.toggleInlineStyle(editorState, style));
     }
 
     function handleChange(state) {
         setEditorState(state);
-        // console.log(draftToMarkdown(convertToRaw(state.getCurrentContent())));
+        props.handleChange(draftToMarkdown(convertToRaw(state.getCurrentContent())));
     }
 
     return <div>
         <div className={styles.controlBar}>
-            {inlineStyleTypes.map(t => <InlineStyleButton editorState={editorState} handleToggle={toggleInlineStyle} type={t[0]} icon={t[1]} />)}
-            {blockTypes.map(t => <BlockStyleButton editorState={editorState} handleToggle={toggleBlockType} type={t[0]} icon={t[1]} />)}
+            {inlineStyleTypes.map(t => <InlineStyleButton editorState={editorState} handleToggle={toggleInlineStyle}
+                                                          type={t[0]} icon={t[1]}/>)}
+            {blockTypes.map(t => <BlockStyleButton editorState={editorState} handleToggle={toggleBlockType} type={t[0]}
+                                                   icon={t[1]}/>)}
         </div>
         <div className={styles.editor} onClick={setFocus}>
-        <Editor editorState={editorState} onChange={handleChange} ref={editorRef} />
+            <Editor editorKey={"foobar"} editorState={editorState} onChange={handleChange} ref={editorRef}/>
         </div>
     </div>
 }
