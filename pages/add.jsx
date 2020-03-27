@@ -9,6 +9,7 @@ import {observer} from "mobx-react";
 import Router from 'next/router';
 import {handleJWT} from "../hooks/handleJWT";
 import {clientFetch} from "../client/utils/cookies";
+import axios from 'axios';
 
 const RecipeForm = observer(props => {
     handleJWT();
@@ -106,7 +107,7 @@ const RecipeForm = observer(props => {
             fd.append('file', rawImage ? rawImage : image);
             fd.append('upload_preset', 'l9apptfs');
             fd.append('resource_type', 'image');
-            const response = await clientFetch.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
+            const response = await axios.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
             uploadObject.image = response.data.secure_url;
         }
         if (updated.has('notes')) {
