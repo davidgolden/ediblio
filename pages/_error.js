@@ -21,7 +21,7 @@ export default function ErrorPage(props) {
 
 export async function getServerSideProps(ctx) {
     let errorMessage = '';
-    if (ctx.req.query.err) {
+    if (ctx.req.query?.err) {
         errorMessage = ctx.req.query.err;
     }
     return {props: {errorMessage, statusCode: ctx.req.statusCode}}
