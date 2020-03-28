@@ -111,6 +111,9 @@ export default class Store {
     @observable user = {};
     @observable notificationMessage = '';
     @observable notificationType = '';
+    @observable touring = false;
+
+    @action setTouring = t => this.touring = t;
 
     @observable modalStack = [];
 

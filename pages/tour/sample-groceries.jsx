@@ -7,6 +7,7 @@ import AddIngredients from "../../client/components/recipes/AddIngredients";
 import classNames from "classnames";
 import styles from "../styles/GroceryList.module.scss";
 import Staple from "../../client/components/Staple";
+import {sampleRecipes, sampleGroceries} from "../../client/components/tour/sampleData";
 
 const groceryListContainerClassName = classNames({
     [styles.groceryListContainer]: true,
@@ -18,23 +19,6 @@ const menuContainerClassName = classNames({
     [styles.menuContainer]: true,
 });
 
-const sampleMenu = [{
-    id: 1,
-    name: "Spaghetti",
-}, {
-    id: 2,
-    name: "Hamburgers"
-}];
-
-const sampleGroceries = [{
-    name: 'Milk',
-    quantity: .5,
-    measurement: 'gal',
-}, {
-    name: "Coffee",
-    quantity: 1,
-    measurement: '#',
-}];
 
 export default function SampleGroceries(props) {
 
@@ -53,7 +37,7 @@ export default function SampleGroceries(props) {
     return <div className={groceryListContainerClassName}>
         <h2 className={'tour-menu'}>My Menu</h2>
         <ul className={menuContainerClassName}>
-            {sampleMenu.map((item) => {
+            {sampleRecipes.map((item) => {
                 return <li key={item.id}>
                     <Checkbox checked={false}
                               onChange={() => {}}/>
