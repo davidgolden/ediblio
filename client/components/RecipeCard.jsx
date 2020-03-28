@@ -13,6 +13,7 @@ import {clientFetch} from "../utils/cookies";
 
 const recipeCardClassName = classNames({
     [styles.recipeCard]: true,
+    ['recipe-card']: true,
 });
 const recipeCardImageClassName = classNames({
     [styles.recipeCardImage]: true,

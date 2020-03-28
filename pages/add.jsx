@@ -144,7 +144,7 @@ const RecipeForm = observer(props => {
 
     return (
         <div className={recipeFormClassName}>
-            <h2>Submit a Recipe<span className={"welcome"} data-msg={"Create recipes from your favorite recipe blogs, or submit your own."}/></h2>
+            <h2 className={'tour-submit'}>Submit a Recipe</h2>
             <RecipeInformation
                 name={name}
                 url={url}
@@ -155,7 +155,6 @@ const RecipeForm = observer(props => {
                 handleRecipeImageChange={handleRecipeImageChange}
                 handleRecipeNotesChange={handleNotesChange}
             />
-            <span className={"welcome"} data-msg={"Add your ingredients, similar ingredients will be totaled together."}/>
             <AddIngredients
                 canAdd={true}
                 ingredients={ingredients}

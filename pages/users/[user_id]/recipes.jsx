@@ -90,7 +90,7 @@ const Recipes = observer((props) => {
                     followCollection={followCollection}
                     collection={c}
                 />)}
-                {recipes.map(r => <RecipeCard recipe={r} key={r._id} deleteRecipe={() => {
+                {recipes.map(r => <RecipeCard recipe={r} key={r.id} deleteRecipe={() => {
                 }}/>)}
             </div>
         </div>

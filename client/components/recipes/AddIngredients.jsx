@@ -45,7 +45,7 @@ const AddIngredients = (props) => {
 
     return (
         <div className={ingredientsContainerClassName}>
-            <h3>Ingredient List</h3>
+            <h3 className={'tour-ingredients'}>Ingredient List</h3>
             {props.canAdd && <form onSubmit={getIngredient} className={addIngredientFormClassName}>
                 <div>
                     <FontAwesomeIcon icon={faQuestion}/>
