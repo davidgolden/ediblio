@@ -11,56 +11,50 @@
     margin-right: 10px;
   }
 
-
   &Editing {
     div {
       cursor: default;
     }
   }
 
-  div {
-    cursor: pointer;
-    display: inline-block;
-    width: 90%;
+  > * {
+    display: table-cell;
+  }
 
-    > * {
-      display: table-cell;
-    }
+  > input, > select, > button, > span {
+    margin: 0 1px;
+    height: 100%
+  }
 
-    > input, > select, > button, > span {
-      margin: 0 1px;
-      height: 100%
-    }
+  > input, > select, > span {
+    background-color: inherit;
+    font-size: 1.2rem;
+    padding: .5rem;
+  }
 
-    > input, > select, > span {
-      background-color: inherit;
-      font-size: 1.2rem;
-      padding: .5rem;
-    }
+  span {
+    font-size: 1.4rem;
+    vertical-align: middle;
+  }
 
-    span {
-      font-size: 1.4rem;
-    }
+  > input:first-of-type, select, > span:first-of-type, > span:nth-of-type(2) {
+    width: 10%;
+    min-width: 50px;
+  }
 
-    > input:first-of-type, select, > span:first-of-type, > span:nth-of-type(2) {
-      width: 10%;
-      min-width: 50px;
-    }
+  > select {
+    min-width: 70px;
+  }
 
-    > select {
-      min-width: 70px;
-    }
+  > input:nth-of-type(2), > span:nth-of-type(3) {
+    width: 60%;
+  }
 
-    > input:nth-of-type(2), > span:nth-of-type(3) {
-      width: 60%;
-    }
-
-    > button {
-      border-radius: 10px;
-      height: 35px;
-      float: right;
-      width: 40px;
-    }
+  > button {
+    border-radius: 10px;
+    height: 35px;
+    float: right;
+    width: 40px;
   }
 
   &:nth-of-type(even) {
@@ -70,5 +64,28 @@
   p {
     display: inline-block;
     font-size: 1.4rem;
+  }
+}
+
+.toolBar {
+  vertical-align: middle;
+  > span {
+    // drag handler
+    cursor: move;
+  }
+
+  > * {
+    vertical-align: middle;
+    padding-left: 10px;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: $gray;
+
+    &:hover {
+      color: $black;
+    }
   }
 }

@@ -57,22 +57,22 @@ const AddIngredients = (props) => {
                 <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
             </form>}
             <ReactSortable
-                options={{
-                    draggable: '.draggable',
-                    disabled: !props.dragEnabled,
-                }}
                 tag={"ul"}
+                handle={'.drag-handler'}
+                draggable={'.draggable'}
+                disabled={!props.dragEnabled}
                 list={toJS(props.ingredients)}
                 setList={list => props.handleReorderIngredients(list.map(l => l.id))}
             >
                 {props.ingredients.map((item, i) => {
                     return <Ingredient
-                        key={item.id || i}
+                        key={item.id}
                         value={item}
-                        id={item.id || i}
+                        id={item.id}
+                        dragEnabled={props.dragEnabled}
                         handleUpdateIngredient={handleUpdateIngredient}
                         storeMode={props.storeMode}
-                        selectedIngredientId={props.selectedIngredientIds.includes(item.id || i)}
+                        selectedIngredientId={props.selectedIngredientIds.includes(item.id)}
                         addToSelectedIngredientIds={addToSelectedIngredientIds}
                     />
                 })}
