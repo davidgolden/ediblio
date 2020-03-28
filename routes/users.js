@@ -20,13 +20,14 @@ cloudinary.config({
 async function selectUserGroceries(user_id) {
     const groceries = await db.query({
         text: `
-                SELECT users_ingredients_groceries.id, users_ingredients_groceries.quantity, users_ingredients_groceries.name, m.short_name measurement
-                FROM users_ingredients_groceries
+                SELECT g.id, g.quantity, g.name, m.short_name measurement, g.item_index
+                FROM users_ingredients_groceries g
                 LEFT JOIN LATERAL (
                     SELECT short_name FROM measurements
-                    WHERE measurements.id = users_ingredients_groceries.measurement_id
+                    WHERE measurements.id = g.measurement_id
                 ) m ON true
-                WHERE users_ingredients_groceries.user_id = $1 AND users_ingredients_groceries.deleted = false;`,
+                WHERE g.user_id = $1 AND g.deleted = false
+                ORDER BY g.item_index;`,
         values: [user_id],
     });
     return groceries.rows;
@@ -43,6 +44,92 @@ async function selectUserMenu(user_id) {
         values: [user_id],
     });
     return menu.rows;
+}
+
+async function insertUserGroceries(user_id, ingredients) {
+    const client = await pool.connect();
+
+    try {
+        await client.query("BEGIN");
+
+        for (let x = 0; x < ingredients.length; x++) {
+            const ing = ingredients[x];
+
+            // find a similar ingredient on user's grocery list
+            const similarIngredient = await client.query({
+                text: `
+                    SELECT users_ingredients_groceries.*, measurements.short_name AS measurement
+                    FROM users_ingredients_groceries
+                    INNER JOIN measurements ON measurements.id = users_ingredients_groceries.measurement_id
+                    WHERE (users_ingredients_groceries.name ILIKE $1
+                    OR users_ingredients_groceries.name ILIKE $2
+                    OR users_ingredients_groceries.name ILIKE $3
+                    OR users_ingredients_groceries.name ILIKE $4
+                    OR users_ingredients_groceries.name ILIKE $5)
+                    AND users_ingredients_groceries.user_id = $6
+                    AND deleted = false
+                    LIMIT 1
+                    `,
+                values: [ing.name, ing.name + "s", ing.name + "es", ing.name.slice(0, -1), ing.name.slice(0, -2), user_id],
+            });
+
+            if (similarIngredient.rows.length > 0) {
+                // if there's a similar ingredient
+                // check if it can be added
+                let m = similarIngredient.rows[0].measurement;
+                let q = similarIngredient.rows[0].quantity;
+                // check if item can be added
+                if (canBeAdded(m, ing.measurement)) {
+                    // if it can be added, add it
+                    let newQM = addIngredient(Number(q), m, Number(ing.quantity), ing.measurement);
+
+                    await client.query({
+                        text: `UPDATE users_ingredients_groceries SET quantity = $1, measurement_id = (SELECT id FROM measurements WHERE short_name = $2) WHERE id = $3`,
+                        values: [newQM.quantity, newQM.measurement, similarIngredient.rows[0].id],
+                    });
+
+                } else {
+                    // if it can't be added, push it to grocery list
+                    await client.query({
+                        text: `
+                            INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity, item_index) 
+                            VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4, (
+                                SELECT count(*)
+                                FROM users_ingredients_groceries ug
+                                WHERE ug.user_id = $1 AND ug.deleted = false
+                                )
+                            )`,
+                        values: [user_id, ing.name, ing.measurement, ing.quantity]
+                    })
+                }
+
+            } else {
+                // if there aren't any matching ingredients
+                await client.query({
+                    text: `
+                            INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity, item_index) 
+                            VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4, (
+                                SELECT count(*)
+                                FROM users_ingredients_groceries ug
+                                WHERE ug.user_id = $1 AND ug.deleted = false
+                                )
+                            )`,
+                    values: [user_id, ing.name, ing.measurement, ing.quantity]
+                })
+            }
+        }
+
+        await client.query("COMMIT");
+
+        return await selectUserGroceries(user_id);
+
+    } catch (error) {
+        await client.query("ROLLBACK");
+
+        return error;
+    } finally {
+        client.release();
+    }
 }
 
 router.route('/users')
@@ -85,69 +172,13 @@ router.route('/users/:user_id/recipes')
 router.route('/users/:user_id/ingredients')
     .post(middleware.isLoggedIn, async (req, res) => {
         // add ingredient to grocery list
-        const client = await pool.connect();
         try {
-            await client.query("BEGIN");
+            const {name, measurement, quantity} = req.body;
+            const newGroceryList = await insertUserGroceries(req.user.id, [{name, measurement, quantity}]);
 
-            const similarIngredient = await client.query({
-                text: `
-                    SELECT users_ingredients_groceries.*, measurements.short_name AS measurement
-                    FROM users_ingredients_groceries
-                    INNER JOIN measurements ON measurements.id = users_ingredients_groceries.measurement_id
-                    WHERE (users_ingredients_groceries.name ILIKE $1
-                    OR users_ingredients_groceries.name ILIKE $2
-                    OR users_ingredients_groceries.name ILIKE $3
-                    OR users_ingredients_groceries.name ILIKE $4
-                    OR users_ingredients_groceries.name ILIKE $5)
-                    AND users_ingredients_groceries.user_id = $6
-                    AND users_ingredients_groceries.deleted = false
-                    LIMIT 1
-                    `,
-                values: [req.body.name, req.body.name + "s", req.body.name + "es", req.body.name.slice(0, -1), req.body.name.slice(0, -2), req.user.id],
-            });
-
-            let response;
-            if (similarIngredient.rows.length > 0) {
-                // if there's a similar ingredient
-                // check if it can be added
-                let m = similarIngredient.rows[0].measurement;
-                let q = similarIngredient.rows[0].quantity;
-                // check if item can be added
-                if (canBeAdded(m, req.body.measurement)) {
-                    // if it can be added, add it
-                    let newQM = addIngredient(Number(q), m, Number(req.body.quantity), req.body.measurement);
-
-                    response = await client.query({
-                        text: `UPDATE users_ingredients_groceries SET quantity = $1, measurement_id = (SELECT id FROM measurements WHERE short_name = $2) WHERE id = $3 RETURNING *`,
-                        values: [newQM.quantity, newQM.measurement, similarIngredient.rows[0].id],
-                    });
-
-                } else {
-                    // if it can't be added, push it to grocery list
-                    response = await client.query({
-                        text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4) RETURNING *',
-                        values: [req.user.id, req.body.name, req.body.measurement, req.body.quantity]
-                    })
-                }
-
-            } else {
-                // if there aren't any matching ingredients
-                response = await client.query({
-                    text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4) RETURNING *',
-                    values: [req.user.id, req.body.name, req.body.measurement, req.body.quantity]
-                })
-            }
-
-            await client.query("COMMIT");
-
-            const groceryList = await selectUserGroceries(req.user.id);
-
-            return res.status(200).send({groceryList});
+            return res.status(200).send({groceryList: newGroceryList});
         } catch (error) {
-            await client.query("ROLLBACK");
             res.status(404).send({detail: error.message});
-        } finally {
-            client.release();
         }
     })
     .get(middleware.isLoggedIn, async (req, res) => {
@@ -176,6 +207,40 @@ router.route('/users/:user_id/ingredients')
             res.status(200).send({groceryList});
         } catch (error) {
             res.status(404).send({detail: error.message});
+        }
+    });
+
+router.route('/users/:user_id/ingredients/order')
+    .post(middleware.isLoggedIn, async (req, res) => {
+        // expects req.body.ingredients to be an ordered list of all grocery IDs
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+
+            let groceryList = await selectUserGroceries(req.user.id);
+            for (let i = 0; i < req.body.ingredients.length; i++) {
+                const groceryIndex = groceryList.findIndex(g => g.id === req.body.ingredients[i]);
+                const updatedItem = await client.query({
+                    text: `
+                    UPDATE users_ingredients_groceries
+                    SET item_index = $1
+                    WHERE id = $2`,
+                    values: [i, groceryList[groceryIndex].id],
+                });
+                groceryList[groceryIndex] = updatedItem;
+            }
+
+            await client.query('COMMIT');
+
+            groceryList = await selectUserGroceries(req.user.id);
+
+            return res.status(200).send({groceryList});
+
+        } catch (error) {
+            await client.query("ROLLBACK");
+            res.status(404).send({detail: error.message});
+        } finally {
+            client.release();
         }
     });
 
@@ -225,163 +290,43 @@ router.route('/users/:user_id/ingredients/:ingredient_id')
 router.route('/users/:user_id/recipes/:recipe_id')
     .post(middleware.isLoggedIn, async (req, res) => {
         // add full recipe to grocery list
-        const client = await pool.connect();
         try {
-            await client.query('BEGIN');
             // insert recipe into menu
-            await client.query({
+            await db.query({
                 text: `INSERT INTO users_recipes_menu (user_id, recipe_id) VALUES ($1, $2)`,
                 values: [req.user.id, req.params.recipe_id]
             });
 
-            const recipeIngredients = await client.query({
+            const recipeIngredients = await db.query({
                 text: `SELECT * FROM recipes_ingredients WHERE recipes_ingredients.recipe_id = $1`,
                 values: [req.params.recipe_id],
             });
 
-            for (let x = 0; x < recipeIngredients.rows.length; x++) {
-                const ing = recipeIngredients.rows[x];
-
-                // find a similar ingredient on user's grocery list
-                const similarIngredient = await client.query({
-                    text: `
-                    SELECT users_ingredients_groceries.*, measurements.short_name AS measurement
-                    FROM users_ingredients_groceries
-                    INNER JOIN measurements ON measurements.id = users_ingredients_groceries.measurement_id
-                    WHERE (users_ingredients_groceries.name ILIKE $1
-                    OR users_ingredients_groceries.name ILIKE $2
-                    OR users_ingredients_groceries.name ILIKE $3
-                    OR users_ingredients_groceries.name ILIKE $4
-                    OR users_ingredients_groceries.name ILIKE $5)
-                    AND users_ingredients_groceries.user_id = $6
-                    AND deleted = false
-                    LIMIT 1
-                    `,
-                    values: [ing.name, ing.name + "s", ing.name + "es", ing.name.slice(0, -1), ing.name.slice(0, -2), req.user.id],
-                });
-
-                if (similarIngredient.rows.length > 0) {
-                    // if there's a similar ingredient
-                    // check if it can be added
-                    let m = similarIngredient.rows[0].measurement;
-                    let q = similarIngredient.rows[0].quantity;
-                    // check if item can be added
-                    if (canBeAdded(m, ing.measurement)) {
-                        // if it can be added, add it
-                        let newQM = addIngredient(Number(q), m, Number(ing.quantity), ing.measurement);
-
-                        await client.query({
-                            text: `UPDATE users_ingredients_groceries SET quantity = $1, measurement_id = (SELECT id FROM measurements WHERE short_name = $2) WHERE id = $3`,
-                            values: [newQM.quantity, newQM.measurement, similarIngredient.rows[0].id],
-                        });
-
-                    } else {
-                        // if it can't be added, push it to grocery list
-                        await client.query({
-                            text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, $3, $4)',
-                            values: [req.user.id, ing.name, ing.measurement_id, ing.quantity]
-                        })
-                    }
-
-                } else {
-                    // if there aren't any matching ingredients
-                    await client.query({
-                        text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, $3, $4)',
-                        values: [req.user.id, ing.name, ing.measurement_id, ing.quantity]
-                    })
-                }
-            }
-
-            await client.query("COMMIT");
-
-            const groceryList = await selectUserGroceries(req.user.id);
+            const newGroceryList = await insertUserGroceries(req.user.id, recipeIngredients.rows);
             const menu = await selectUserMenu(req.user.id);
 
-            res.status(200).send({groceryList, menu});
+            res.status(200).send({groceryList: newGroceryList, menu});
 
         } catch (error) {
-            await client.query("ROLLBACK");
             res.status(404).send({detail: error.message});
-        } finally {
-            client.release();
         }
     })
     .patch(middleware.isLoggedIn, async (req, res) => {
         // add partial recipe to grocery list
-        const client = await pool.connect();
         try {
-            await client.query("BEGIN");
             // insert recipe into menu
-            await client.query({
+            await db.query({
                 text: `INSERT INTO users_recipes_menu (user_id, recipe_id) VALUES ($1, $2)`,
                 values: [req.user.id, req.params.recipe_id]
             });
 
-            for (let x = 0; x < req.body.ingredients.length; x++) {
-                const ing = req.body.ingredients[x];
-
-                // find a similar ingredient on user's grocery list
-                const similarIngredient = await client.query({
-                    text: `
-                    SELECT users_ingredients_groceries.*, measurements.short_name AS measurement
-                    FROM users_ingredients_groceries
-                    INNER JOIN measurements ON measurements.id = users_ingredients_groceries.measurement_id
-                    WHERE (users_ingredients_groceries.name ILIKE $1
-                    OR users_ingredients_groceries.name ILIKE $2
-                    OR users_ingredients_groceries.name ILIKE $3
-                    OR users_ingredients_groceries.name ILIKE $4
-                    OR users_ingredients_groceries.name ILIKE $5)
-                    AND users_ingredients_groceries.user_id = $6
-                    AND deleted = false
-                    LIMIT 1
-                    `,
-                    values: [ing.name, ing.name + "s", ing.name + "es", ing.name.slice(0, -1), ing.name.slice(0, -2), req.user.id],
-                });
-
-                if (similarIngredient.rows.length > 0) {
-                    // if there's a similar ingredient
-                    // check if it can be added
-                    let m = similarIngredient.rows[0].measurement;
-                    let q = similarIngredient.rows[0].quantity;
-                    // check if item can be added
-                    if (canBeAdded(m, ing.measurement)) {
-                        // if it can be added, add it
-                        let newQM = addIngredient(Number(q), m, Number(ing.quantity), ing.measurement);
-
-                        await client.query({
-                            text: `UPDATE users_ingredients_groceries SET quantity = $1, measurement_id = (SELECT id FROM measurements WHERE short_name = $2) WHERE id = $3`,
-                            values: [newQM.quantity, newQM.measurement, similarIngredient.rows[0].id],
-                        });
-
-                    } else {
-                        // if it can't be added, push it to grocery list
-                        await client.query({
-                            text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, $3, $4)',
-                            values: [req.user.id, ing.name, ing.measurement_id, ing.quantity]
-                        })
-                    }
-
-                } else {
-                    // if there aren't any matching ingredients
-                    await client.query({
-                        text: 'INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity) VALUES ($1, $2, $3, $4)',
-                        values: [req.user.id, ing.name, ing.measurement_id, ing.quantity]
-                    })
-                }
-            }
-
-            await client.query("COMMIT");
-
-            const groceryList = await selectUserGroceries(req.user.id);
+            const newGroceryList = await insertUserGroceries(req.user.id, req.body.ingredients);
             const menu = await selectUserMenu(req.user.id);
 
-            res.status(200).send({groceryList, menu});
+            res.status(200).send({groceryList: newGroceryList, menu});
 
         } catch (error) {
-            await client.query("ROLLBACK");
             res.status(404).send({detail: error.message});
-        } finally {
-            client.release();
         }
     });
 

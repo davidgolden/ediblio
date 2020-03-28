@@ -125,6 +125,17 @@ const Groceries = observer(props => {
         }
     }
 
+    async function handleReorderIngredients(ingredients) {
+        try {
+            const response = await clientFetch.post(`/api/users/${context.user.id}/ingredients/order`, {
+                ingredients,
+            });
+            context.setGroceryList(response.data.groceryList);
+        } catch (error) {
+            context.handleError(error);
+        }
+    }
+
     const saveListClassName = classNames({
         [styles.saveListButton]: true,
         [styles.saveListButtonDisabled]: ingredientIdsToRemove.length === 0,
@@ -165,6 +176,7 @@ const Groceries = observer(props => {
                     ingredients={context.groceryList}
                     handleAddIngredient={handleAddIngredient}
                     handleUpdateIngredient={handleUpdateIngredient}
+                    handleReorderIngredients={handleReorderIngredients}
                     selectedIngredientIds={ingredientIdsToRemove}
                     setSelectedIngredientIds={setIngredientIdsToRemove}
                     storeMode={storeMode}

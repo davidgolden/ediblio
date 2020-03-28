@@ -113,6 +113,8 @@ async function populate() {
     }
 }
 
+// ALTER TABLE users_ingredients_groceries ADD COLUMN item_index INT DEFAULT 0;
+
 async function create() {
     await db.query(`
     CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -181,6 +183,7 @@ async function create() {
         name TEXT NOT NULL,
         measurement_id UUID REFERENCES measurements(id) ON DELETE CASCADE NOT NULL,
         quantity NUMERIC NOT NULL
+        item_index INT DEFAULT 0
     );
     CREATE TABLE users_collections_followers (
         id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),

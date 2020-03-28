@@ -5,8 +5,9 @@ import classNames from 'classnames';
 import styles from './styles/AddIngredients.module.scss';
 import {faQuestion, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Sortable from "react-sortablejs";
+import {ReactSortable} from "react-sortablejs";
 import {extractIngredient} from "../../utils/ingredients";
+import {toJS} from "mobx";
 
 const AddIngredients = (props) => {
     const [value, setValue] = useState("");
@@ -18,7 +19,7 @@ const AddIngredients = (props) => {
         props.handleAddIngredient(ingredient);
     }
 
-    function handleUpdateIngredient (id, update) {
+    function handleUpdateIngredient(id, update) {
         props.handleUpdateIngredient({
             ...props.ingredients.find(ing => ing.id === id),
             ...update,
@@ -55,15 +56,15 @@ const AddIngredients = (props) => {
                 <input placeholder={"1.5 cups milk"} value={value} onChange={e => setValue(e.target.value)}/>
                 <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
             </form>}
-            {/*<Sortable*/}
-            {/*    options={{*/}
-            {/*        draggable: '.draggable',*/}
-            {/*        disabled: !props.dragEnabled,*/}
-            {/*    }}*/}
-            {/*    tag={"ul"}*/}
-            {/*    onChange={(order, sortable, evt) => {*/}
-                    {/*// props.handleUpdateAllIngredients(order.map(m => JSON.parse(m)));*/}
-                {/*}}>*/}
+            <ReactSortable
+                options={{
+                    draggable: '.draggable',
+                    disabled: !props.dragEnabled,
+                }}
+                tag={"ul"}
+                list={toJS(props.ingredients)}
+                setList={list => props.handleReorderIngredients(list.map(l => l.id))}
+            >
                 {props.ingredients.map((item, i) => {
                     return <Ingredient
                         key={item.id || i}
@@ -75,7 +76,7 @@ const AddIngredients = (props) => {
                         addToSelectedIngredientIds={addToSelectedIngredientIds}
                     />
                 })}
-            {/*</Sortable>*/}
+            </ReactSortable>
         </div>
     )
 };
