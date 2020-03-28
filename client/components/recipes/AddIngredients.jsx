@@ -91,4 +91,8 @@ AddIngredients.propTypes = {
     ingredients: PropTypes.array.isRequired,
 };
 
+AddIngredients.defaultProps = {
+    handleReorderIngredients: () => {},
+};
+
 export default AddIngredients;
