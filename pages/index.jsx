@@ -83,6 +83,7 @@ const Index = props => {
     return (
         <div>
             <div className={browseRecipesContainerClassName}>
+                <span className={'welcome'} data-msg={"Here you'll find a list of recipes..."} />
                 {Array.from(recipes.values()).map(recipe => {
                     return <RecipeCard deleteRecipe={removeRecipe} key={recipe.id} recipe={recipe}/>
                 })}
