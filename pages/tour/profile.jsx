@@ -5,7 +5,7 @@ import CollectionCard from "../../client/components/CollectionCard";
 import RecipeCard from "../../client/components/RecipeCard";
 import {sampleRecipes, sampleCollections} from "../../client/components/tour/sampleData";
 
-export default function SampleProfile(props) {
+export default function Profile(props) {
     return (
         <div>
             <UserBanner user={{username: "Johny"}}

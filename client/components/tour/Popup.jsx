@@ -8,6 +8,7 @@ import {ApiStoreContext} from "../../stores/api_store";
 import {tour} from "./tourData";
 import TourPopup from "./TourPoint";
 import Backdrop from "./Backdrop";
+import {sampleUser} from "./sampleData";
 
 
 function getElementAttributes(anchor) {
@@ -17,15 +18,33 @@ function getElementAttributes(anchor) {
     const elements = document.getElementsByClassName(anchor.elementClass);
     const elementPos = elements[anchor.elementIndex || 0].getBoundingClientRect();
 
-    highlightElement(elements[anchor.elementIndex || 0]);
+    if (anchor.highlightClass) {
+        const highlights = document.getElementsByClassName(anchor.highlightClass);
+        highlightElement(highlights[anchor.highlightIndex || 0]);
+    }
 
-    return {top: elementPos.top + marginTop, x: elementPos.x + marginLeft};
+    const top = elementPos.top + marginTop;
+    const left = elementPos.x + marginLeft;
+
+    scrollToElement(top, left);
+
+    return {top, x: left};
+}
+
+function removeHighlights() {
+    const elements = document.getElementsByClassName('tour-highlight');
+    Array.from(elements).forEach(e => e.classList.remove('tour-highlight'));
 }
 
 function highlightElement(ele) {
-    const elements = document.getElementsByClassName('tour-highlight')
-    Array.from(elements).forEach(e => e.classList.remove('tour-highlight'));
+    removeHighlights();
     ele.classList.add('tour-highlight');
+}
+
+function scrollToElement(top, left) {
+    window.scrollTo({
+        top, left, behavior: 'smooth',
+    })
 }
 
 export default function Popup(props) {
@@ -35,8 +54,13 @@ export default function Popup(props) {
     const backdropRef = useRef(null);
 
     function handleClose() {
+        removeHighlights();
         popupRef.current.close();
         backdropRef.current.close();
+        context.setTouring(false);
+        if (context.user.id === 'touring') {
+            context.user = {}
+        }
     }
 
     async function goToNextPage(pageIndex) {
@@ -85,13 +109,18 @@ export default function Popup(props) {
     }
 
     function startTour() {
+        // create backdrop
         const container = document.createElement('div');
         document.body.insertBefore(container, document.body.firstChild);
         ReactDOM.render(<Backdrop ref={backdropRef} />, container);
-
-
         document.body.style.overflow = 'hidden';
+
+        // set context values
+        if (!context.loggedIn) {
+            context.setUser(sampleUser)
+        }
         context.setTouring(true);
+
         goToNextPage(0);
         setOnTour(true);
     }

@@ -22,6 +22,10 @@ const showRecipeTitleClassName = classNames({
 const showRecipeImageClassName = classNames({
     [styles.showRecipeImage]: true,
 });
+const recipeNotesClassName = classNames({
+    [styles.recipeNotes]: true,
+    ['tour-recipe-highlight']: true,
+});
 
 const ShowRecipe = observer(props => {
     const [added, setAdded] = useState(false);
@@ -89,7 +93,7 @@ const ShowRecipe = observer(props => {
             </div>
             <div className={showRecipeIngredientsClassName}>
                 <h3>Recipe Notes</h3>
-                <div className={styles.recipeNotes}>
+                <div className={recipeNotesClassName}>
                     <Markdown source={props.recipe.notes}/>
                 </div>
                 <AddIngredients

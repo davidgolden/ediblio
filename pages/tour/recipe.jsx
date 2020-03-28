@@ -1,7 +1,7 @@
 import React from 'react';
 import RecipePage from "../../client/components/recipes/RecipePage";
 
-export default function SampleRecipe(props) {
+export default function Recipe(props) {
     return <RecipePage recipe={{
         name: "Caesar Salad",
         ingredients: [{

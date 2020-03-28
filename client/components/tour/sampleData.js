@@ -23,6 +23,7 @@ export const sampleRecipes = [
 export const sampleCollections = [
     {
         name: "Favorites",
+        author_id: "touring",
         recipes: [
             {
                 name: "Black Bean Soup",
@@ -37,7 +38,8 @@ export const sampleCollections = [
         ]
     },
     {
-        name: "Quick and Esay",
+        name: "Quick and Easy",
+        author_id: "touring",
         recipes: [
             {
                 name: "Mac n Cheese",
@@ -59,3 +61,9 @@ export const sampleGroceries = [{
     quantity: 1,
     measurement: '#',
 }];
+
+export const sampleUser = {
+    username: "Johny",
+    id: "touring",
+    collections: sampleCollections,
+};

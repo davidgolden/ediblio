@@ -57,6 +57,7 @@ const AddIngredients = (props) => {
                 <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
             </form>}
             <ReactSortable
+                className={"tour-ingredients-highlight"}
                 tag={"ul"}
                 handle={'.drag-handler'}
                 draggable={'.draggable'}

@@ -20,7 +20,7 @@ const menuContainerClassName = classNames({
 });
 
 
-export default function SampleGroceries(props) {
+export default function Groceries(props) {
 
     const saveListClassName = classNames({
         [styles.saveListButton]: true,

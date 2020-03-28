@@ -12,7 +12,7 @@ const RecipeButtons = observer(props => {
 
     const addToCollection = async (collectionName = "Favorites") => {
         const collection = context.user.collections.find(c => c.name === collectionName);
-        if (collection) {
+        if (collection && !context.touring) {
             try {
                 await clientFetch.post(`/api/collections/${collection.id}/recipes/${props.recipe.id}`);
                 collection.recipes.push(props.recipe);
@@ -24,7 +24,7 @@ const RecipeButtons = observer(props => {
 
     const removeFromCollection = async (collectionId, recipeId) => {
         const collection = context.user.collections.find(c => c.id === collectionId);
-        if (collection) {
+        if (collection && !context.touring) {
             try {
                 await clientFetch.delete(`/api/collections/${collection.id}/recipes/${props.recipe.id}`);
                 collection.recipes = collection.recipes.filter(r => r.id !== recipeId);
@@ -34,7 +34,7 @@ const RecipeButtons = observer(props => {
         }
     };
 
-    if (!context.loggedIn) {
+    if (!context.loggedIn && !context.touring) {
         return <div/>;
     }
 

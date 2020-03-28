@@ -21,7 +21,9 @@ export default class Store {
             this.fetchMeasurements();
             this.loadUserFromLocalStorage();
             autorun(() => {
-                localStorage.setItem("user", JSON.stringify(toJS(this.user)));
+                if (this.user && this.user.id !== 'touring') {
+                    localStorage.setItem("user", JSON.stringify(toJS(this.user)));
+                }
             });
 
             // open prompt if never visited or not visited in past 24 hours
