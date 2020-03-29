@@ -16,6 +16,7 @@ import {clientFetch} from "../../utils/cookies";
 
 const recipeContainerClassName = classNames({
     [styles.recipeContainer]: true,
+    ['tour-recipe']: true,
 });
 const recipeEditButtonsClassName = classNames({
     [styles.recipeEditButtons]: true,

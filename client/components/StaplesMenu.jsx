@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import styles from './styles/StaplesMenu.module.scss';
 import {CSSTransition, TransitionGroup} from "react-transition-group";
+import Staple from "./Staple";
 
 const stapleTransition = {
     enter: styles.transitionEnter,
@@ -50,10 +51,7 @@ export default function StaplesMenu(props) {
     return <div>
         <TransitionGroup>
             {suggestedStaples.map(s => <CSSTransition classNames={stapleTransition} in={suggestedStaples.includes(s)} timeout={500}>
-                <div className={styles.staple}>
-                    <span>{s}</span>
-                    <button onClick={() => handleAddIngredient(s)}><FontAwesomeIcon icon={faPlus}/></button>
-                </div>
+                <Staple staple={s} handleAddIngredient={handleAddIngredient}/>
             </CSSTransition>)}
         </TransitionGroup>
     </div>

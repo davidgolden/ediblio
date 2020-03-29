@@ -22,6 +22,7 @@ import UserImageSmall from "../utilities/UserImageSmall";
 
 const navContainerClassName = classNames({
     [styles.navContainer]: true,
+    ['tour-nav-highlight']: true,
 });
 const linksContainerClassName = classNames({
     [styles.linksContainer]: true,
@@ -36,50 +37,50 @@ const mobileTransition = {
     exitDone: styles.transitionExitDone,
 };
 
-function NavLinks(props) {
+const NavLinks = observer((props) => {
     const context = useContext(ApiStoreContext);
 
     return <ul>
         <li>
-            <Link href={'/'}>
+            <Link href={context.touring ? '#' : "/"}>
                 <a>
                     <FontAwesomeIcon icon={faSearch}/> Browse Recipes
                 </a>
             </Link>
         </li>
         <li>
-            <Link href={"/users/[user_id]/groceries"} as={`/users/${context.user.id}/groceries`}>
+            <Link href={"/users/[user_id]/groceries"} as={context.touring ? "#" : `/users/${context.user.id}/groceries`}>
                 <a>
                     <FontAwesomeIcon icon={faListUl}/> Grocery List
                 </a>
             </Link>
         </li>
         <li>
-            <Link href={'/add'}>
+            <Link href={context.touring ? "#" : '/add'}>
                 <a>
                     <FontAwesomeIcon icon={faPlus}/> Add Recipe
                 </a>
             </Link>
         </li>
         <li>
-            <Link href={"/users/[user_id]/recipes"} as={`/users/${context.user.id}/recipes`}>
+            <Link href={"/users/[user_id]/recipes"} as={context.touring ? "#" : `/users/${context.user.id}/recipes`}>
                 <a>
                     <FontAwesomeIcon icon={faBook}/> My Recipes
                 </a>
             </Link>
         </li>
         <li>
-            <Link href={"/users/[user_id]/settings"} as={`/users/${context.user.id}/settings`}>
+            <Link href={"/users/[user_id]/settings"} as={context.touring ? "#" : `/users/${context.user.id}/settings`}>
                 <a>
                     <FontAwesomeIcon icon={faUser}/> Settings
                 </a>
             </Link>
         </li>
         <li>
-            <button onClick={context.userLogout}><FontAwesomeIcon icon={faSignOutAlt}/> Log Out</button>
+            <button onClick={() => !context.touring && context.userLogout()}><FontAwesomeIcon icon={faSignOutAlt}/> Log Out</button>
         </li>
     </ul>
-}
+})
 
 const SearchBar = React.forwardRef((props, ref) => {
     const context = useContext(ApiStoreContext);
@@ -169,6 +170,7 @@ const Header = observer((props) => {
 
     const userLinkClassName = classNames({
         [styles.userLink]: true,
+        ['tour-nav']: true,
         [styles.userLinkLogin]: !context.loggedIn,
     });
 
@@ -192,7 +194,7 @@ const Header = observer((props) => {
             </Button>}
 
             <h1>
-                <Link href="/"><img src={"/images/ediblio_logo.png"}/></Link>
+                <Link href={context.touring ? "#" : "/"}><img src={"/images/ediblio_logo.png"}/></Link>
             </h1>
 
             <div className={styles.rightNav}>

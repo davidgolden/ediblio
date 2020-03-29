@@ -10,7 +10,7 @@ import axios from 'axios';
 import {getCookieFromServer} from "../client/utils/cookies";
 import {handleJWT} from "../hooks/handleJWT";
 
-function useForceUpdate(){
+function useForceUpdate() {
     const [value, setValue] = useState(0); // integer state
     return () => setValue(value => ++value); // update the state to force render
 }
@@ -94,8 +94,7 @@ const Index = props => {
 };
 
 
-
-export async function getServerSideProps ({req, query}) {
+export async function getServerSideProps({req, query}) {
     const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
     const jwt = getCookieFromServer('jwt', req);
 

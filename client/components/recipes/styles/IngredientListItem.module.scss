@@ -7,6 +7,12 @@
   display: table;
   width: 100%;
 
+  &StoreMode {
+    > * {
+      display: inline-block !important;
+    }
+  }
+
   label {
     margin-right: 10px;
   }

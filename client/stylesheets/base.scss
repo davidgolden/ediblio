@@ -61,3 +61,12 @@ blockquote {
   padding-left: 20px;
   font-style: italic;
 }
+.tour-highlight {
+  z-index: 1020;
+  background-color: $white;
+  position: relative;
+}
+.tour-highlight.tour-noedit {
+  cursor: pointer;
+  pointer-events: none;
+}

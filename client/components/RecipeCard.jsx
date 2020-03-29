@@ -10,9 +10,12 @@ import {ApiStoreContext} from "../stores/api_store";
 import Button from "./utilities/buttons/Button";
 import Link from "next/link";
 import {clientFetch} from "../utils/cookies";
+import {observer} from "mobx-react";
 
 const recipeCardClassName = classNames({
     [styles.recipeCard]: true,
+    ['tour-card']: true,
+    ['tour-card-highlight']: true,
 });
 const recipeCardImageClassName = classNames({
     [styles.recipeCardImage]: true,
@@ -24,7 +27,7 @@ const recipeCardButtonClassName = classNames({
     [styles.recipeCardButtons]: true,
 });
 
-const RecipeCard = props => {
+const RecipeCard = observer(props => {
     const context = useContext(ApiStoreContext);
     const [showButtons, setShowButtons] = useState(false);
     const [inMenu, setInMenu] = useState(props.recipe.in_menu);
@@ -50,7 +53,7 @@ const RecipeCard = props => {
         <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)}
              onMouseLeave={() => setShowButtons(false)}>
             <Button onClick={async () => {
-                await context.openRecipeModal(props.recipe.id);
+                !context.touring && await context.openRecipeModal(props.recipe.id);
             }}>
                 <div className={recipeCardImageClassName}>
                     {props.recipe.image ? <img src={props.recipe.image}/> :
@@ -64,11 +67,11 @@ const RecipeCard = props => {
                 {showButtons && <RecipeButtons
                     recipe={props.recipe}
                     inMenu={inMenu}
-                    addToGroceryList={addToGroceryList}
-                    deleteRecipe={deleteRecipe}
+                    addToGroceryList={() => !context.touring && addToGroceryList()}
+                    deleteRecipe={() => !context.touring && deleteRecipe()}
                 />}
             </div>
-            {showButtons && <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id}/recipes`}>
+            {showButtons && <Link href={context.touring ? "#" : "/users/[user_id]/recipes"} as={context.touring ? "#" : `/users/${props.recipe.author_id}/recipes`}>
                 <a>
                     <UserImageSmall profileImage={props.recipe.author_image} size={50} className={styles.userImage}/>
                 </a>
@@ -79,7 +82,7 @@ const RecipeCard = props => {
             </div>}
         </div>
     )
-};
+});
 
 RecipeCard.propTypes = {
     recipe: PropTypes.object.isRequired,
