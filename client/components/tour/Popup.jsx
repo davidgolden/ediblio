@@ -9,8 +9,13 @@ import TourPopup from "./TourPoint";
 import Backdrop from "./Backdrop";
 import {sampleUser} from "./sampleData";
 
+const popupClassName = classNames({
+    [styles.container]: true,
+});
+
 export default function Popup(props) {
     const [onTour, setOnTour] = useState(false);
+    const [tourFinished, setTourFinished] = useState(false);
 
     const [anchorIndex, setAnchorIndex] = useState(0);
     const [pageIndex, setPageIndex] = useState(0);
@@ -19,8 +24,14 @@ export default function Popup(props) {
 
     const context = useContext(ApiStoreContext);
 
+    useEffect(() => {
+        if (onTour) {
+            setCurrentPopup(tour[pageIndex].popups[anchorIndex]);
+        }
+    }, [anchorIndex, pageIndex, onTour]);
+
     async function nextPage() {
-        const currentPage = tour[pageIndex];
+        const currentPage = tour[pageIndex + 1];
         await Router.push(currentPage.url);
         setPageIndex(v => v+1);
     }
@@ -31,9 +42,10 @@ export default function Popup(props) {
             context.setUser(sampleUser)
         }
         context.setTouring(true);
-        setOnTour(true);
 
-        await handleNext();
+        // go to first page and set first popup
+        await Router.push(tour[0].url);
+        setOnTour(true);
     }
 
     function endTour() {
@@ -41,37 +53,26 @@ export default function Popup(props) {
         if (context.user.id === 'touring') {
             context.user = {}
         }
-
-        setOnTour(false);
+        setTourFinished(true);
     }
 
     async function handleNext() {
         const currentPage = tour[pageIndex];
 
-        if (pageIndex === 0 && anchorIndex === 0) {
-            // starting
-            await Router.push(currentPage.url);
-            setAnchorIndex(v => v+1);
-            setCurrentPopup(tour[pageIndex].popups[anchorIndex]);
-        } else if (anchorIndex === currentPage.popups.length - 1 && pageIndex < tour.length - 1) {
+        if (anchorIndex + 1 >= currentPage.popups.length && pageIndex < tour.length - 1) {
             // last anchor, more pages to go
+            console.log('last anchor');
             await nextPage();
             setAnchorIndex(0);
-            setCurrentPopup(tour[pageIndex].popups[anchorIndex]);
-        } else if (anchorIndex < currentPage.popups.length) {
+        } else if (anchorIndex + 1 < currentPage.popups.length) {
             // more anchors on current page
+            console.log('more anchors');
             setAnchorIndex(v => v+1);
-            setCurrentPopup(tour[pageIndex].popups[anchorIndex]);
         } else {
             // last anchor, no more pages
             endTour();
         }
     }
-
-    const popupClassName = classNames({
-        [styles.container]: true,
-        [styles.containerHidden]: onTour,
-    });
 
     const [mounted, setMounted] = useState(false);
     const {x} = useSpring({
@@ -83,7 +84,11 @@ export default function Popup(props) {
     useEffect(() => setMounted(true), []);
 
     return <div className={popupClassName}>
-        <animated.div
+        {onTour && !tourFinished && <>
+            <TourPopup currentAnchor={currentPopup} endTour={endTour} handleNext={handleNext} />
+            <Backdrop/>
+        </>}
+        {!onTour && !tourFinished && <animated.div
             style={{
                 opacity: x.interpolate({range: [0, 1], output: [0.3, 1]}),
                 transform: x
@@ -95,9 +100,7 @@ export default function Popup(props) {
             }}>
             New to Ediblio?
             <button onClick={startTour}>Take the Tour!</button>
-            {onTour && <TourPopup currentAnchor={currentPopup} endTour={endTour} handleNext={handleNext} />}
-            {onTour && <Backdrop/>}
-        </animated.div>
+        </animated.div>}
     </div>
 
 }

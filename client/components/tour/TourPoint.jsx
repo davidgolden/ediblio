@@ -19,7 +19,6 @@ function removeHighlights() {
 }
 
 function highlightElement(ele) {
-    removeHighlights();
     ele.classList.add('tour-highlight');
 }
 
@@ -59,19 +58,25 @@ export default function TourPopup(props) {
         props.endTour();
     }
 
+    function handleNext() {
+        removeHighlights();
+        props.handleNext();
+    }
+
     return createPortal(<div className={contentClassName}
                              style={{transform: translate}}>
 
         <button onClick={endTour}><FontAwesomeIcon icon={faTimes}/></button>
         <p id={'tour-popup'}>{props.currentAnchor.message}</p>
-        <button onClick={props.handleNext}>Next</button>
+        <button onClick={handleNext}>Next</button>
 
     </div>, document.body);
 }
 
 TourPopup.propTypes = {
-    text: PropTypes.string.isRequired,
-    onNext: PropTypes.func.isRequired,
-    top: PropTypes.number.isRequired,
-    left: PropTypes.number.isRequired,
+    currentAnchor: PropTypes.shape({
+        message: PropTypes.string.isRequired,
+    }),
+    handleNext: PropTypes.func.isRequired,
+    endTour: PropTypes.func.isRequired,
 };
