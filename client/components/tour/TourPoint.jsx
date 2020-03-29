@@ -6,20 +6,24 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
 
-
-function scrollToElement(top, left) {
+function scrollToElement(left, top) {
     window.scrollTo({
-        top, left, behavior: 'smooth',
+        top, left: 0, behavior: 'smooth',
     })
 }
 
 function removeHighlights() {
     const elements = document.getElementsByClassName('tour-highlight');
     Array.from(elements).forEach(e => e.classList.remove('tour-highlight'));
+    const noedits = document.getElementsByClassName('tour-noedit');
+    Array.from(noedits).forEach(e => e.classList.remove('tour-noedit'));
 }
 
-function highlightElement(ele) {
+function highlightElement(ele, noEdit) {
     ele.classList.add('tour-highlight');
+    if (noEdit) {
+        ele.classList.add('tour-noedit');
+    }
 }
 
 const contentClassName = classNames({
@@ -57,13 +61,14 @@ export default function TourPopup(props) {
             findBestPosition(x - amountOffScreenRight(x), y);
         } else if (offScreenLeft && !offScreenRight) {
             findBestPosition(x + amountOffScreenLeft(x), y);
-        } else if (offScreenLeft && offScreenRight) {
-
         }
     }
 
     function moveToPoint(x, y) {
-        scrollToElement(y, x);
+        if (y < 100) {
+            y = 0;
+        }
+        scrollToElement(x, y);
         setTranslate(`translateY(${y}px) translateX(${x}px)`);
     }
 
@@ -74,7 +79,7 @@ export default function TourPopup(props) {
 
             if (props.currentAnchor.highlightClass) {
                 const highlights = document.getElementsByClassName(props.currentAnchor.highlightClass);
-                highlightElement(highlights[props.currentAnchor.highlightIndex || 0]);
+                highlightElement(highlights[props.currentAnchor.highlightIndex || 0], props.currentAnchor.noEdit);
             }
 
             const marginLeft = props.currentAnchor.marginLeft || 0;
@@ -99,13 +104,13 @@ export default function TourPopup(props) {
         props.handleNext();
     }
 
+
     return createPortal(<div className={contentClassName}
                              style={{transform: translate}}>
 
         <button onClick={endTour}><FontAwesomeIcon icon={faTimes}/></button>
         <p id={'tour-popup'}>{props.currentAnchor.message}</p>
-        <button onClick={handleNext}>Next</button>
-
+        <button onClick={handleNext}>{props.currentAnchor.finish ? "Done" : "Next"}</button>
     </div>, document.body);
 }
 

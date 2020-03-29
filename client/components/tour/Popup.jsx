@@ -42,6 +42,7 @@ export default function Popup(props) {
             context.setUser(sampleUser)
         }
         context.setTouring(true);
+        document.body.style.overflow = 'hidden';
 
         // go to first page and set first popup
         await Router.push(tour[0].url);
@@ -50,6 +51,8 @@ export default function Popup(props) {
 
     function endTour() {
         context.setTouring(false);
+        document.body.style.overflow = 'auto';
+
         if (context.user.id === 'touring') {
             context.user = {}
         }
@@ -84,7 +87,7 @@ export default function Popup(props) {
     return <div className={popupClassName}>
         {onTour && !tourFinished && <>
             <TourPopup currentAnchor={currentPopup} endTour={endTour} handleNext={handleNext} />
-            <Backdrop/>
+            <Backdrop />
         </>}
         {!onTour && !tourFinished && <animated.div
             style={{

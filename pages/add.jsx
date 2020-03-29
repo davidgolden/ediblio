@@ -132,6 +132,7 @@ const RecipeForm = observer(props => {
 
     const recipeFormClassName = classNames({
         [styles.recipeForm]: true,
+        ['tour-submit-highlight']: true,
     });
     const submitButtonClassName = classNames({
         [styles.submitButton]: true,
@@ -166,7 +167,7 @@ const RecipeForm = observer(props => {
             <div>
                 <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
                 {context.loggedIn ?
-                    <Button className={submitButtonClassName} onClick={handleSubmit}>{props.editMode ? "Save" : "Submit!"}</Button> :
+                    <Button className={submitButtonClassName} onClick={() => !context.touring && handleSubmit()}>{props.editMode ? "Save" : "Submit!"}</Button> :
                     <p>You must be logged in to add a recipe!</p>}
             </div>
         </div>

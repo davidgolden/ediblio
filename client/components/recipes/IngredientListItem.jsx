@@ -17,6 +17,7 @@ const Ingredient = observer((props) => {
 
     const ingredientRowClassName = classNames({
         [styles.ingredientRow]: true,
+        [styles.ingredientRowStoreMode]: props.storeMode,
         "draggable": !props.storeMode,
         [styles.ingredientRowEditing]: editing,
     });

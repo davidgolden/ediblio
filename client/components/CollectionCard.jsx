@@ -10,6 +10,13 @@ import Button from "./utilities/buttons/Button";
 import UserImageSmall from "./utilities/UserImageSmall";
 import {ApiStoreContext} from "../stores/api_store";
 import RemoveButton from "./utilities/buttons/RemoveButton";
+import classNames from 'classnames';
+
+const collectionCardClassName = classNames({
+    [styles.collectionCard]: true,
+    ['tour-collection']: true,
+    ['tour-collection-highlight']: true,
+});
 
 const CollectionCard = observer((props) => {
     const context = useContext(ApiStoreContext);
@@ -20,6 +27,7 @@ const CollectionCard = observer((props) => {
     let button;
     if (isCollectionOwner && !props.collection.is_primary) {
         button = <DeleteButton onClick={() => {
+            if (context.touring) return;
             if (confirm('Are you sure you want to do that?')) {
                 props.deleteCollection(props.collection.id)
             }
@@ -33,10 +41,10 @@ const CollectionCard = observer((props) => {
     }
 
     return (
-        <div className={styles.collectionCard}>
+        <div className={collectionCardClassName}>
             {button}
-            <Link href={"/collections/[collection._id]"} as={`/collections/${props.collection.id}`}>
-                <a className={'tour-collection'}>
+            <Link href={context.touring ? "#" : "/collections/[collection._id]"} as={context.touring ? "#" : `/collections/${props.collection.id}`}>
+                <a>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width={250} height={200}>
                         <path fill="#0B4F6C"
                               d="M18 40h289v183.8c0 4.2-1.3 6.8-5.7 7.2h-283.1c-6.7 .7-8.4-2.8-8.2-7.9v-174.6c-0.8-6.2 1.9-9 8-8.5Z"/>
@@ -72,7 +80,7 @@ const CollectionCard = observer((props) => {
                     <h3>{props.collection.name}</h3>
                 </a>
             </Link>
-            <Link href={"/users/[user_id]/recipes"} as={`/users/${props.collection.author_id}/recipes`}>
+            <Link href={context.touring ? "#" : "/users/[user_id]/recipes"} as={context.touring ? "#" : `/users/${props.collection.author_id}/recipes`}>
                 <a>
                     <UserImageSmall profileImage={props.collection.author_image} size={50} className={styles.userImage}/>
                 </a>

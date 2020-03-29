@@ -66,3 +66,7 @@ blockquote {
   background-color: $white;
   position: relative;
 }
+.tour-highlight.tour-noedit {
+  cursor: pointer;
+  pointer-events: none;
+}

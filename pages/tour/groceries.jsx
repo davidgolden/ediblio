@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Checkbox from "../../client/components/utilities/Checkbox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
@@ -17,10 +17,13 @@ const ingredientsContainerClassName = classNames({
 });
 const menuContainerClassName = classNames({
     [styles.menuContainer]: true,
+    ['tour-menu']: true,
+    ['tour-menu-highlight']: true,
 });
 
 
 export default function Groceries(props) {
+    const [storeMode, setStoreMode] = useState(false);
 
     const saveListClassName = classNames({
         [styles.saveListButton]: true,
@@ -35,9 +38,9 @@ export default function Groceries(props) {
     });
 
     return <div className={groceryListContainerClassName}>
-        <h2 className={'tour-menu'}>My Menu</h2>
+        <h2>My Menu</h2>
         <ul className={menuContainerClassName}>
-            {sampleRecipes.map((item) => {
+            {sampleRecipes.splice(0, 2).map((item) => {
                 return <li key={item.id}>
                     <Checkbox checked={false}
                               onChange={() => {}}/>
@@ -50,7 +53,7 @@ export default function Groceries(props) {
         </ul>
         <Button className={saveMenuClassName} onClick={() => {}}>Remove Selected</Button>
         <h2>My Grocery List</h2>
-        <div className={'tour-staples'}>
+        <div className={'tour-staples tour-staples-highlight'}>
             <Staple staple={'milk'} handleAddIngredient={() => {}}/>
             <Staple staple={'eggs'} handleAddIngredient={() => {}}/>
         </div>
@@ -63,11 +66,11 @@ export default function Groceries(props) {
             handleReorderIngredients={() => {}}
             selectedIngredientIds={[]}
             setSelectedIngredientIds={() => {}}
-            storeMode={false}
+            storeMode={storeMode}
             dragEnabled={true}
         />
         <Button className={saveListClassName} onClick={() => {}}>Remove Selected</Button>
         <Button className={clearListClassName} onClick={() => {}}>Remove All Ingredients</Button>
-        <Button onClick={() => {}} className={'tour-storemode'}>Toggle Store Mode</Button>
+        <Button onClick={() => setStoreMode(v => !v)} className={'tour-storemode tour-storemode-highlight'}>Toggle Store Mode</Button>
     </div>
 }

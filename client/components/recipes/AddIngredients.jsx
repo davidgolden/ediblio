@@ -36,6 +36,7 @@ const AddIngredients = (props) => {
 
     const ingredientsContainerClassName = classNames({
         [styles.ingredientsContainer]: true,
+        ["tour-ingredients-highlight"]: true,
         [props.containerClassName]: props.containerClassName,
     });
     const addIngredientFormClassName = classNames({
@@ -57,7 +58,6 @@ const AddIngredients = (props) => {
                 <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
             </form>}
             <ReactSortable
-                className={"tour-ingredients-highlight"}
                 tag={"ul"}
                 handle={'.drag-handler'}
                 draggable={'.draggable'}

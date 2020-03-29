@@ -53,10 +53,12 @@ export const sampleCollections = [
 ];
 
 export const sampleGroceries = [{
+    id: 1,
     name: 'Milk',
     quantity: .5,
     measurement: 'gal',
 }, {
+    id: 2,
     name: "Coffee",
     quantity: 1,
     measurement: '#',
