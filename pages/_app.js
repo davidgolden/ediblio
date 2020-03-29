@@ -10,7 +10,7 @@ import LogRocket from 'logrocket';
 import "../client/stylesheets/base.scss";
 import "draft-js/dist/Draft.css";
 import {useStaticRendering} from "mobx-react";
-import Popup from "../client/components/tour/Popup";
+import TourContainer from "../client/components/tour/TourContainer";
 
 class MyDocument extends App {
 
@@ -40,7 +40,7 @@ class MyDocument extends App {
                     <Header {...pageProps} />
                     <Notification {...pageProps} />
                     <Component {...pageProps} />
-                    <Popup/>
+                    <TourContainer/>
                 </ApiStoreContext.Provider>
             )
         } catch (error) {

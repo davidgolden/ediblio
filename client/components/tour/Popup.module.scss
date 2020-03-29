@@ -23,7 +23,18 @@
     box-shadow: 2px 4px 2px $gray;
   }
 
-  button {
+  button:first-of-type {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+
+    svg {
+      width: 15px;
+      height: 15px;
+    }
+  }
+
+  button:last-of-type {
     font-weight: 700;
     display: block;
     color: darken($green, 30%);

@@ -8,6 +8,8 @@ import {tour} from "./tourData";
 import TourPopup from "./TourPoint";
 import Backdrop from "./Backdrop";
 import {sampleUser} from "./sampleData";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTimes} from "@fortawesome/free-solid-svg-icons";
 
 const popupClassName = classNames({
     [styles.container]: true,
@@ -99,6 +101,7 @@ export default function Popup(props) {
                     })
                     .interpolate(x => `scale(${x})`)
             }}>
+            <button onClick={() => setTourFinished(true)}><FontAwesomeIcon icon={faTimes} /></button>
             New to Ediblio?
             <button onClick={startTour}>Take the Tour!</button>
         </animated.div>}
