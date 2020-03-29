@@ -9,67 +9,15 @@ import TourPopup from "./TourPoint";
 import Backdrop from "./Backdrop";
 import {sampleUser} from "./sampleData";
 
-
-function getElementAttributes(anchor) {
-    const marginLeft = anchor.marginLeft || 0;
-    const marginTop = anchor.marginTop || 0;
-
-    const elements = document.getElementsByClassName(anchor.elementClass);
-
-    const elementPos = elements[anchor.elementIndex || 0].getBoundingClientRect();
-
-    if (anchor.highlightClass) {
-        const highlights = document.getElementsByClassName(anchor.highlightClass);
-        highlightElement(highlights[anchor.highlightIndex || 0]);
-    }
-
-    const top = elementPos.top + marginTop;
-    const left = elementPos.x + marginLeft;
-
-    scrollToElement(top, left);
-
-    return {top, x: left};
-}
-
-function removeHighlights() {
-    const elements = document.getElementsByClassName('tour-highlight');
-    Array.from(elements).forEach(e => e.classList.remove('tour-highlight'));
-}
-
-function highlightElement(ele) {
-    removeHighlights();
-    ele.classList.add('tour-highlight');
-}
-
-function scrollToElement(top, left) {
-    window.scrollTo({
-        top, left, behavior: 'smooth',
-    })
-}
-
 export default function Popup(props) {
     const [onTour, setOnTour] = useState(false);
-    const [text, setText] = useState("");
-    const [top, setTop] = useState(0);
-    const [left, setLeft] = useState(0);
 
     const [anchorIndex, setAnchorIndex] = useState(0);
     const [pageIndex, setPageIndex] = useState(0);
 
+    const [currentPopup, setCurrentPopup] = useState(null);
+
     const context = useContext(ApiStoreContext);
-
-    function nextAnchor() {
-        const currentPage = tour[pageIndex];
-        console.log('acchor ', currentPage, anchorIndex);
-
-        const attr = getElementAttributes(currentPage.popups[anchorIndex]);
-
-        setTop(attr?.top - top);
-        setLeft(attr?.x - left);
-        setText(currentPage.popups[anchorIndex].message);
-
-        setAnchorIndex(anchorIndex + 1);
-    }
 
     async function nextPage() {
         const currentPage = tour[pageIndex];
@@ -89,8 +37,7 @@ export default function Popup(props) {
     }
 
     function endTour() {
-        removeHighlights();
-
+        context.setTouring(false);
         if (context.user.id === 'touring') {
             context.user = {}
         }
@@ -104,23 +51,17 @@ export default function Popup(props) {
         if (pageIndex === 0 && anchorIndex === 0) {
             // starting
             await Router.push(currentPage.url);
-            nextAnchor();
-
+            setAnchorIndex(v => v+1);
+            setCurrentPopup(tour[pageIndex].popups[anchorIndex]);
         } else if (anchorIndex === currentPage.popups.length - 1 && pageIndex < tour.length - 1) {
             // last anchor, more pages to go
-            console.log('here');
             await nextPage();
-
             setAnchorIndex(0);
-            nextAnchor();
-
-            setTop(0);
-            setLeft(0);
+            setCurrentPopup(tour[pageIndex].popups[anchorIndex]);
         } else if (anchorIndex < currentPage.popups.length) {
             // more anchors on current page
-
             setAnchorIndex(v => v+1);
-            nextAnchor();
+            setCurrentPopup(tour[pageIndex].popups[anchorIndex]);
         } else {
             // last anchor, no more pages
             endTour();
@@ -154,7 +95,7 @@ export default function Popup(props) {
             }}>
             New to Ediblio?
             <button onClick={startTour}>Take the Tour!</button>
-            {onTour && <TourPopup text={text} endTour={endTour} handleNext={handleNext} left={left} top={top}/>}
+            {onTour && <TourPopup currentAnchor={currentPopup} endTour={endTour} handleNext={handleNext} />}
             {onTour && <Backdrop/>}
         </animated.div>
     </div>

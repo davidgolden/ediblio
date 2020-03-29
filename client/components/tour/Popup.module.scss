@@ -1,7 +1,7 @@
 @import "../../styles/variables";
 
 .container {
-  position: absolute;
+  position: fixed;
   right: 50px;
   bottom: 50px;
   font-size: 1.5rem;
@@ -46,6 +46,8 @@
 
 .content {
   position: absolute;
+  top: 0;
+  left: 0;
   z-index: 1040;
   background-color: $green;
   color: $white;
