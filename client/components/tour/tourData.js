@@ -7,7 +7,7 @@ export const tour = [
                 elementIndex: 1,
                 highlightClass: 'tour-card-highlight',
                 highlightIndex: 1,
-                marginLeft: 150,
+                marginLeft: 250,
                 marginTop: 50,
                 message: "On the home page you can browse all of the recipes on Ediblio. Once you've created an account, hovering your mouse over a recipe will open a toolbar for saving it and adding it to your grocery list."
             }

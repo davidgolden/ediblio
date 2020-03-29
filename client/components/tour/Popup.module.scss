@@ -1,6 +1,13 @@
 @import "../../styles/variables";
 
+.hideOnSmallScreen {
+  @media(max-width: 1000px) {
+    display: none;
+  }
+}
+
 .container {
+  composes: hideOnSmallScreen;
   position: fixed;
   right: 50px;
   bottom: 50px;
@@ -29,6 +36,7 @@
 }
 
 .backdrop {
+  composes: hideOnSmallScreen;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -45,14 +53,15 @@
 }
 
 .content {
+  composes: hideOnSmallScreen;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1040;
   background-color: $green;
   color: $white;
-  max-width: 400px;
-  padding: 2rem 1rem 1rem;
+  width: 400px;
+  padding: 20px 10px 10px;
   border-radius: 20px;
   box-shadow: 2px 4px 2px $gray;
   transition: transform .5s ease;

@@ -26,8 +26,46 @@ const contentClassName = classNames({
     [styles.content]: true,
 });
 
+const width = 420;
+
+function checkIfOffScreenRight(x) {
+    return x + width > window.innerWidth;
+}
+
+function checkIfOffScreenLeft(x) {
+    return x < 0;
+}
+
+function amountOffScreenRight(x) {
+    return width - (window.innerWidth - x);
+}
+
+function amountOffScreenLeft(x) {
+    return x - width;
+}
+
 export default function TourPopup(props) {
     const [translate, setTranslate] = useState("");
+
+    function findBestPosition(x, y) {
+        const offScreenRight = checkIfOffScreenRight(x);
+        const offScreenLeft = checkIfOffScreenLeft(x);
+
+        if (!offScreenRight && !offScreenLeft) {
+            moveToPoint(x, y);
+        } else if (offScreenRight && !offScreenLeft) {
+            findBestPosition(x - amountOffScreenRight(x), y);
+        } else if (offScreenLeft && !offScreenRight) {
+            findBestPosition(x + amountOffScreenLeft(x), y);
+        } else if (offScreenLeft && offScreenRight) {
+
+        }
+    }
+
+    function moveToPoint(x, y) {
+        scrollToElement(y, x);
+        setTranslate(`translateY(${y}px) translateX(${x}px)`);
+    }
 
     useLayoutEffect(() => {
         if (props.currentAnchor) {
@@ -45,9 +83,7 @@ export default function TourPopup(props) {
             const top = elementPos.top + marginTop;
             const left = elementPos.x + marginLeft;
 
-            scrollToElement(top, left);
-
-            setTranslate(`translateY(${top}px) translateX(${left}px)`);
+            findBestPosition(left, top);
         }
     }, [props.currentAnchor]);
 

@@ -61,12 +61,10 @@ export default function Popup(props) {
 
         if (anchorIndex + 1 >= currentPage.popups.length && pageIndex < tour.length - 1) {
             // last anchor, more pages to go
-            console.log('last anchor');
             await nextPage();
             setAnchorIndex(0);
         } else if (anchorIndex + 1 < currentPage.popups.length) {
             // more anchors on current page
-            console.log('more anchors');
             setAnchorIndex(v => v+1);
         } else {
             // last anchor, no more pages
