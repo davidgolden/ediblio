@@ -37,11 +37,6 @@
   background-color: rgba(0, 0, 0, .5);
   z-index: 1000;
   overflow: hidden;
-  display: none;
-
-  &Visible {
-    display: block;
-  }
 }
 
 .noclick {
@@ -60,11 +55,6 @@
   box-shadow: 2px 4px 2px $gray;
   transition: transform .5s ease;
   margin: 1rem;
-  display: none;
-
-  &Visible {
-    display: block;
-  }
 
   p {
     font-size: 1.4rem !important;

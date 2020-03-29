@@ -1,28 +1,12 @@
 import React from 'react';
+import {createPortal} from 'react-dom';
 import styles from './Popup.module.scss';
 import classNames from 'classnames';
 
-export default class Backdrop extends React.Component {
-    constructor(props) {
-        super(props);
+export default function Backdrop(props) {
+    const backdropClassName = classNames({
+        [styles.backdrop]: true,
+    });
 
-        this.state = {
-            visible: true,
-        }
-    }
-
-    close = () => {
-        this.setState({
-            visible: false,
-        })
-    };
-
-    render() {
-        const backdropClassName = classNames({
-            [styles.backdrop]: true,
-            [styles.backdropVisible]: this.state.visible,
-        });
-
-        return <div className={backdropClassName} />
-    }
+    return createPortal(<div className={backdropClassName} />, document.body);
 }
