@@ -11,6 +11,7 @@ import "../client/styles/base.scss";
 import "draft-js/dist/Draft.css";
 import {useStaticRendering} from "mobx-react";
 import TourContainer from "../client/components/tour/TourContainer";
+import CookiePolicyPopup from "../client/components/utilities/CookiePolicyPopup";
 
 class MyDocument extends App {
 
@@ -35,6 +36,7 @@ class MyDocument extends App {
 
             return (
                 <ApiStoreContext.Provider value={MobxStore}>
+                    <CookiePolicyPopup/>
                     <RecipeCloudHead/>
                     <AllModals />
                     <Header {...pageProps} />
