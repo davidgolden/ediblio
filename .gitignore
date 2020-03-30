@@ -4,3 +4,4 @@ client/dist/*
 .idea
 migration
 .next
+push-to-production.sh
