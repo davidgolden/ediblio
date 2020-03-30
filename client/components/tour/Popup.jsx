@@ -91,14 +91,18 @@ export default function Popup(props) {
     function handleExitPopup() {
         setTourFinished(true);
 
-        const dismissedCount = cookie.get('tour-dismissed-count');
+        let dismissedCount = cookie.get('tdc');
+        dismissedCount = dismissedCount ? parseInt(dismissedCount)+1 : 1;
+        cookie.set('tdc', dismissedCount, {expires: 365});
 
-        if (!dismissedCount) {
-            cookie.set('tour-dismissed-count', 1);
-            cookie.set('tour-dismissed', dateToUnix(new Date()));
+        if (dismissedCount === 1) {
+            cookie.set('td', 1, {expires:1});
+        } else if (dismissedCount === 2) {
+            cookie.set('td', 1, {expires:3});
+        } else if (dismissedCount <= 4) {
+            cookie.set('td', 1, {expires:7});
         } else {
-            cookie.set('tour-dismissed-count', parseInt(dismissedCount)+1);
-            cookie.set('tour-dismissed', dateToUnix(new Date()));
+            cookie.set('td', 1, {expires:14});
         }
     }
 
