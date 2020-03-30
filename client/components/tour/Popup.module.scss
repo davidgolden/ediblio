@@ -21,7 +21,7 @@
     color: $white;
     padding: 1rem;
     border-radius: 20px;
-    box-shadow: 2px 4px 2px $gray;
+    box-shadow: $box-shadow;
   }
 
   button:first-of-type {
@@ -78,7 +78,7 @@
   width: 400px;
   padding: 25px 10px 10px;
   border-radius: 20px;
-  box-shadow: 2px 4px 2px $gray;
+  box-shadow: $box-shadow;
   transition: transform .5s ease;
   margin: 1rem;
 

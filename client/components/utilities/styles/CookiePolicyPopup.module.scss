@@ -1,9 +1,9 @@
 @import "../../../styles/variables";
 
 .container {
-  transition: transform .25s ease;
+  transition: transform .25s ease-in-out;
   position: fixed;
-  top: -122px;
+  top: -150px;
   width: 100%;
   z-index: 1000;
   text-align: center;
@@ -19,6 +19,7 @@
     padding: .5rem;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    box-shadow: $box-shadow;
   }
 
   button:first-of-type {
@@ -45,13 +46,13 @@
 }
 
 .transitionEnter {
-  transform: translateY(122px);
+  transform: translateY(150px);
 }
 .transitionEnterActive {
-  transform: translateY(122px);
+  transform: translateY(150px);
 }
 .transitionEnterDone {
-  transform: translateY(122px);
+  transform: translateY(150px);
 }
 .transitionExit {
   transform: translateY(0);
