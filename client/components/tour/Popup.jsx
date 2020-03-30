@@ -70,6 +70,7 @@ export default function Popup(props) {
     }
 
     function endTour() {
+        cookie.set('td', 1, {expires:365});
         context.setTouring(false);
         document.body.style.overflow = 'auto';
 
