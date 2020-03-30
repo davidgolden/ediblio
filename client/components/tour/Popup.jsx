@@ -11,7 +11,22 @@ import {sampleUser} from "./sampleData";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 import cookie from 'js-cookie';
-import {dateToUnix} from "../../utils/cookies";
+
+function handleTourCookie() {
+    let dismissedCount = cookie.get('tdc');
+    dismissedCount = dismissedCount ? parseInt(dismissedCount)+1 : 1;
+    cookie.set('tdc', dismissedCount, {expires: 365});
+
+    if (dismissedCount === 1) {
+        cookie.set('td', 1, {expires:1});
+    } else if (dismissedCount === 2) {
+        cookie.set('td', 1, {expires:3});
+    } else if (dismissedCount <= 4) {
+        cookie.set('td', 1, {expires:7});
+    } else {
+        cookie.set('td', 1, {expires:14});
+    }
+}
 
 const popupClassName = classNames({
     [styles.container]: true,
@@ -42,6 +57,7 @@ export default function Popup(props) {
 
     async function startTour() {
         // set context values
+        handleTourCookie();
         if (!context.loggedIn) {
             context.setUser(sampleUser)
         }
@@ -90,20 +106,7 @@ export default function Popup(props) {
 
     function handleExitPopup() {
         setTourFinished(true);
-
-        let dismissedCount = cookie.get('tdc');
-        dismissedCount = dismissedCount ? parseInt(dismissedCount)+1 : 1;
-        cookie.set('tdc', dismissedCount, {expires: 365});
-
-        if (dismissedCount === 1) {
-            cookie.set('td', 1, {expires:1});
-        } else if (dismissedCount === 2) {
-            cookie.set('td', 1, {expires:3});
-        } else if (dismissedCount <= 4) {
-            cookie.set('td', 1, {expires:7});
-        } else {
-            cookie.set('td', 1, {expires:14});
-        }
+        handleTourCookie();
     }
 
     return <div className={popupClassName}>
