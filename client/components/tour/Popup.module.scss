@@ -14,6 +14,7 @@
   font-size: 1.5rem;
   text-align: center;
   will-change: opacity;
+  z-index: 1000;
 
   > div {
     background-color: $green;

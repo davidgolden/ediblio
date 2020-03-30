@@ -10,6 +10,8 @@ import Backdrop from "./Backdrop";
 import {sampleUser} from "./sampleData";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
+import cookie from 'js-cookie';
+import {dateToUnix} from "../../utils/cookies";
 
 const popupClassName = classNames({
     [styles.container]: true,
@@ -86,6 +88,20 @@ export default function Popup(props) {
 
     useEffect(() => setMounted(true), []);
 
+    function handleExitPopup() {
+        setTourFinished(true);
+
+        const dismissedCount = cookie.get('tour-dismissed-count');
+
+        if (!dismissedCount) {
+            cookie.set('tour-dismissed-count', 1);
+            cookie.set('tour-dismissed', dateToUnix(new Date()));
+        } else {
+            cookie.set('tour-dismissed-count', parseInt(dismissedCount)+1);
+            cookie.set('tour-dismissed', dateToUnix(new Date()));
+        }
+    }
+
     return <div className={popupClassName}>
         {onTour && !tourFinished && <>
             <TourPopup currentAnchor={currentPopup} endTour={endTour} handleNext={handleNext} />
@@ -101,7 +117,7 @@ export default function Popup(props) {
                     })
                     .interpolate(x => `scale(${x})`)
             }}>
-            <button onClick={() => setTourFinished(true)}><FontAwesomeIcon icon={faTimes} /></button>
+            <button onClick={handleExitPopup}><FontAwesomeIcon icon={faTimes} /></button>
             New to Ediblio?
             <button onClick={startTour}>Take the Tour!</button>
         </animated.div>}

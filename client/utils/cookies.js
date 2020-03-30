@@ -42,3 +42,14 @@ export const clientFetch = {
         })
     }
 };
+
+export function dateToUnix(date) {
+    return Math.round((new Date()).getTime() / 1000);
+}
+
+export function getDaysSince(date, unix = false) {
+    if (unix) {
+        date = date * 1000;
+    }
+    return Math.round((new Date() - date)/(1000*60*60*24));
+}
