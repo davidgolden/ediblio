@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import axios from "axios";
 import jwt from 'jsonwebtoken';
-import {ApiStoreContext} from "../client/stores/api_store";
+import {ApiStoreContext} from "../stores/api_store";
 import URI from 'urijs';
 import Router from 'next/router';
 import cookie from 'js-cookie';

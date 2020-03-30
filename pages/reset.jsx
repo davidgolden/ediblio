@@ -2,7 +2,7 @@ import React, {useState, useContext} from 'react';
 import classNames from 'classnames';
 import styles from './styles/Forgot.module.scss';
 import {ApiStoreContext} from "../client/stores/api_store";
-import {handleJWT} from "../hooks/handleJWT";
+import {handleJWT} from "../client/hooks/handleJWT";
 
 const ForgotPassword = props => {
     handleJWT();

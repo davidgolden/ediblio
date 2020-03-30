@@ -2,7 +2,7 @@ import React from "react";
 import {observable, action, autorun, toJS, computed} from "mobx";
 import Router from 'next/router';
 import cookie from 'js-cookie';
-import {clientFetch} from "./utils/cookies";
+import {clientFetch} from "../utils/cookies";
 const jwt = require('jsonwebtoken');
 
 class JsonWebToken {

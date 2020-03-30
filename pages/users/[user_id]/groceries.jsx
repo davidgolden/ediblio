@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import AddIngredients from '../../../client/components/recipes/AddIngredients';
+import AddIngredients from '../../../client/components/ingredients/AddIngredients';
 import styles from '../../styles/GroceryList.module.scss';
 import classNames from 'classnames';
 import Button from "../../../client/components/utilities/buttons/Button";
@@ -8,10 +8,10 @@ import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
 import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
 import Checkbox from "../../../client/components/utilities/Checkbox";
-import UserWall from "../../../client/components/utilities/UserWall";
+import UserWall from "../../../client/components/users/UserWall";
 import {clientFetch, getCookieFromServer} from "../../../client/utils/cookies";
-import {handleJWT} from "../../../hooks/handleJWT";
-import StaplesMenu from "../../../client/components/StaplesMenu";
+import {handleJWT} from "../../../client/hooks/handleJWT";
+import StaplesMenu from "../../../client/components/ingredients/StaplesMenu";
 import {observer} from "mobx-react";
 
 const groceryListContainerClassName = classNames({

@@ -15,10 +15,10 @@ import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
 import {observer} from "mobx-react";
-import useDebounce from "../utilities/useDebounce";
+import useDebounce from "../../hooks/useDebounce";
 import {CSSTransition} from "react-transition-group";
 import Rating from "react-rating";
-import UserImageSmall from "../utilities/UserImageSmall";
+import UserImageSmall from "../users/UserImageSmall";
 
 const navContainerClassName = classNames({
     [styles.navContainer]: true,

@@ -1,15 +1,15 @@
 import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import Link from "next/link";
-import DeleteButton from "./utilities/buttons/DeleteButton";
+import DeleteButton from "../utilities/buttons/DeleteButton";
 import styles from './styles/CollectionCard.module.scss';
 import {observer} from "mobx-react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import Button from "./utilities/buttons/Button";
-import UserImageSmall from "./utilities/UserImageSmall";
-import {ApiStoreContext} from "../stores/api_store";
-import RemoveButton from "./utilities/buttons/RemoveButton";
+import Button from "../utilities/buttons/Button";
+import UserImageSmall from "../users/UserImageSmall";
+import {ApiStoreContext} from "../../stores/api_store";
+import RemoveButton from "../utilities/buttons/RemoveButton";
 import classNames from 'classnames';
 
 const collectionCardClassName = classNames({

@@ -2,7 +2,7 @@ import React from 'react';
 import axios from "axios";
 import RecipePage from "../../client/components/recipes/RecipePage";
 import {getCookieFromServer} from "../../client/utils/cookies";
-import {handleJWT} from "../../hooks/handleJWT";
+import {handleJWT} from "../../client/hooks/handleJWT";
 
 function Recipe_id(props) {
     handleJWT();

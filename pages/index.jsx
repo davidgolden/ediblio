@@ -1,14 +1,14 @@
 import React, {useState, useEffect, useContext} from 'react';
-import RecipeCard from "../client/components/RecipeCard";
+import RecipeCard from "../client/components/recipes/RecipeCard";
 import classNames from 'classnames';
 import styles from './styles/BrowseRecipes.module.scss';
 import SortingBar from "../client/components/recipes/SortingBar";
 import LoadingNextPage from '../client/components/utilities/LoadingNextPage';
-import useScrolledBottom from "../client/components/utilities/useScrolledBottom";
+import useScrolledBottom from "../client/hooks/useScrolledBottom";
 import {ApiStoreContext} from "../client/stores/api_store";
 import axios from 'axios';
 import {getCookieFromServer} from "../client/utils/cookies";
-import {handleJWT} from "../hooks/handleJWT";
+import {handleJWT} from "../client/hooks/handleJWT";
 
 function useForceUpdate() {
     const [value, setValue] = useState(0); // integer state

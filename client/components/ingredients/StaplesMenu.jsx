@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState, useCallback} from 'react';
-import {clientFetch} from "../utils/cookies";
-import {ApiStoreContext} from "../stores/api_store";
+import {clientFetch} from "../../utils/cookies";
+import {ApiStoreContext} from "../../stores/api_store";
 import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";

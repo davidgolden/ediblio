@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from "classnames";
 import styles from "../styles/BrowseRecipes.module.scss";
-import RecipeCard from "../../client/components/RecipeCard";
+import RecipeCard from "../../client/components/recipes/RecipeCard";
 import {sampleRecipes} from "../../client/components/tour/sampleData";
 
 export default function Index() {

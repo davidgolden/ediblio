@@ -1,14 +1,14 @@
 import React, {useContext, useState, useEffect} from 'react';
 import axios from 'axios';
-import CollectionCard from "../../../client/components/CollectionCard";
+import CollectionCard from "../../../client/components/collections/CollectionCard";
 import styles from '../../styles/BrowseRecipes.module.scss';
 import {ApiStoreContext} from "../../../client/stores/api_store";
-import RecipeCard from "../../../client/components/RecipeCard";
-import useScrolledBottom from "../../../client/components/utilities/useScrolledBottom";
+import RecipeCard from "../../../client/components/recipes/RecipeCard";
+import useScrolledBottom from "../../../client/hooks/useScrolledBottom";
 import {observer} from "mobx-react";
-import UserBanner from "../../../client/components/UserBanner";
+import UserBanner from "../../../client/components/users/UserBanner";
 import {clientFetch, fetch, getCookieFromServer} from "../../../client/utils/cookies";
-import {handleJWT} from "../../../hooks/handleJWT";
+import {handleJWT} from "../../../client/hooks/handleJWT";
 
 const Recipes = observer((props) => {
     handleJWT();

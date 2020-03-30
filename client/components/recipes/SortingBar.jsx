@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSearch} from '@fortawesome/free-solid-svg-icons';
 import styles from './styles/SortingBar.module.scss';
 import classNames from 'classnames';
-import useDebounce from "../utilities/useDebounce";
+import useDebounce from "../../hooks/useDebounce";
 
 const tagsContainerClassName = classNames({
     [styles.tagsContainer]: true,

@@ -7,7 +7,7 @@ import Notification from "../client/components/header/Notification";
 import AllModals from "../client/components/modals/styles/AllModals";
 import {ApiStoreContext, loadStore, storeSingleton} from "../client/stores/api_store";
 import LogRocket from 'logrocket';
-import "../client/stylesheets/base.scss";
+import "../client/styles/base.scss";
 import "draft-js/dist/Draft.css";
 import {useStaticRendering} from "mobx-react";
 import TourContainer from "../client/components/tour/TourContainer";

@@ -3,10 +3,10 @@ import Checkbox from "../../client/components/utilities/Checkbox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import Button from "../../client/components/utilities/buttons/Button";
-import AddIngredients from "../../client/components/recipes/AddIngredients";
+import AddIngredients from "../../client/components/ingredients/AddIngredients";
 import classNames from "classnames";
 import styles from "../styles/GroceryList.module.scss";
-import Staple from "../../client/components/Staple";
+import Staple from "../../client/components/ingredients/Staple";
 import {sampleRecipes, sampleGroceries} from "../../client/components/tour/sampleData";
 
 const groceryListContainerClassName = classNames({
@@ -21,21 +21,20 @@ const menuContainerClassName = classNames({
     ['tour-menu-highlight']: true,
 });
 
+const saveListClassName = classNames({
+    [styles.saveListButton]: true,
+});
+
+const clearListClassName = classNames({
+    [styles.saveListButton]: true,
+});
+
+const saveMenuClassName = classNames({
+    [styles.saveListButton]: true,
+});
 
 export default function Groceries(props) {
     const [storeMode, setStoreMode] = useState(false);
-
-    const saveListClassName = classNames({
-        [styles.saveListButton]: true,
-    });
-
-    const clearListClassName = classNames({
-        [styles.saveListButton]: true,
-    });
-
-    const saveMenuClassName = classNames({
-        [styles.saveListButton]: true,
-    });
 
     return <div className={groceryListContainerClassName}>
         <h2>My Menu</h2>

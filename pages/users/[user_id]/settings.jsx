@@ -4,10 +4,10 @@ import classNames from 'classnames';
 import Button from "../../../client/components/utilities/buttons/Button";
 import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
-import UserWall from "../../../client/components/utilities/UserWall";
+import UserWall from "../../../client/components/users/UserWall";
 import {observer} from "mobx-react";
 import {clientFetch, getCookieFromServer} from "../../../client/utils/cookies";
-import {handleJWT} from "../../../hooks/handleJWT";
+import {handleJWT} from "../../../client/hooks/handleJWT";
 
 const settingsContainerClassName = classNames({
     [styles.settingsContainer]: true,

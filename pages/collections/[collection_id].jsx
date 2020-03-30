@@ -1,13 +1,13 @@
 import React, {useEffect, useState, useContext} from 'react';
 import {ApiStoreContext} from "../../client/stores/api_store";
-import useScrolledBottom from "../../client/components/utilities/useScrolledBottom";
+import useScrolledBottom from "../../client/hooks/useScrolledBottom";
 import classNames from "classnames";
 import styles from "../styles/BrowseRecipes.module.scss";
-import RecipeCard from "../../client/components/RecipeCard";
+import RecipeCard from "../../client/components/recipes/RecipeCard";
 import LoadingNextPage from "../../client/components/utilities/LoadingNextPage";
 import axios from "axios";
 import {getCookieFromServer} from "../../client/utils/cookies";
-import {handleJWT} from "../../hooks/handleJWT";
+import {handleJWT} from "../../client/hooks/handleJWT";
 
 const Collection_id  = props => {
     handleJWT();

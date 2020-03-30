@@ -2,14 +2,14 @@ import React, {useState, useContext} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import styles from './styles/RecipeCard.module.scss';
-import RecipeButtons from "./recipes/RecipeButtons";
+import RecipeButtons from "./RecipeButtons";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faImage, faStar} from '@fortawesome/free-solid-svg-icons';
-import UserImageSmall from "./utilities/UserImageSmall";
-import {ApiStoreContext} from "../stores/api_store";
-import Button from "./utilities/buttons/Button";
+import UserImageSmall from "../users/UserImageSmall";
+import {ApiStoreContext} from "../../stores/api_store";
+import Button from "../utilities/buttons/Button";
 import Link from "next/link";
-import {clientFetch} from "../utils/cookies";
+import {clientFetch} from "../../utils/cookies";
 import {observer} from "mobx-react";
 
 const recipeCardClassName = classNames({

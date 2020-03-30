@@ -1,6 +1,6 @@
 import React, {useState, useContext} from 'react';
 import PropTypes from 'prop-types';
-import AddIngredients from './AddIngredients';
+import AddIngredients from '../ingredients/AddIngredients';
 import classNames from 'classnames';
 import styles from './styles/ShowRecipe.module.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';

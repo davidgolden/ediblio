@@ -1,8 +1,8 @@
 import React from 'react';
-import UserBanner from "../../client/components/UserBanner";
+import UserBanner from "../../client/components/users/UserBanner";
 import styles from "../styles/BrowseRecipes.module.scss";
-import CollectionCard from "../../client/components/CollectionCard";
-import RecipeCard from "../../client/components/RecipeCard";
+import CollectionCard from "../../client/components/collections/CollectionCard";
+import RecipeCard from "../../client/components/recipes/RecipeCard";
 import {sampleRecipes, sampleCollections} from "../../client/components/tour/sampleData";
 
 export default function Profile(props) {

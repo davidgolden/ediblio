@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styles from './styles/UserBanner.module.scss';
 import {faUser} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import UserImageSmall from "./utilities/UserImageSmall";
+import UserImageSmall from "./UserImageSmall";
 
 export default function UserBanner(props) {
     return <div className={styles.userBanner}>
