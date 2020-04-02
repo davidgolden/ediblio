@@ -19,6 +19,7 @@ import useDebounce from "../../hooks/useDebounce";
 import {CSSTransition} from "react-transition-group";
 import Rating from "react-rating";
 import UserImageSmall from "../users/UserImageSmall";
+import CookiePolicyPopup from "../utilities/CookiePolicyPopup";
 
 const navContainerClassName = classNames({
     [styles.navContainer]: true,
@@ -49,7 +50,8 @@ const NavLinks = observer((props) => {
             </Link>
         </li>
         <li>
-            <Link href={"/users/[user_id]/groceries"} as={context.touring ? "#" : `/users/${context.user.id}/groceries`}>
+            <Link href={"/users/[user_id]/groceries"}
+                  as={context.touring ? "#" : `/users/${context.user.id}/groceries`}>
                 <a>
                     <FontAwesomeIcon icon={faListUl}/> Grocery List
                 </a>
@@ -77,7 +79,9 @@ const NavLinks = observer((props) => {
             </Link>
         </li>
         <li>
-            <button onClick={() => !context.touring && context.userLogout()}><FontAwesomeIcon icon={faSignOutAlt}/> Log Out</button>
+            <button onClick={() => !context.touring && context.userLogout()}><FontAwesomeIcon icon={faSignOutAlt}/> Log
+                Out
+            </button>
         </li>
     </ul>
 })
@@ -175,52 +179,57 @@ const Header = observer((props) => {
     });
 
     return (
-        <nav className={navContainerClassName}>
-            <CSSTransition in={mobileOpen} classNames={mobileTransition} timeout={500}>
-                <div className={styles.mobileMenu}>
-                    <SearchBar ref={searchRef} searchOpen={true} setSearchOpen={setSearchOpen} searchTerm={searchTerm}
-                               setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
-                    {context.loggedIn ? <NavLinks/> : <div>
-                        <button className={userLinkClassName} onClick={() => context.addModal("login")}>
-                            Login
-                        </button>
-                    </div>}
-                </div>
-            </CSSTransition>
-
-            {didMount && window.history.length > 1 &&
-            <Button className={styles.backButton} onClick={() => window.history.back()}>
-                <FontAwesomeIcon icon={faChevronLeft}/>
-            </Button>}
-
-            <h1>
-                <Link href={context.touring ? "#" : "/"}><img src={"/images/ediblio_logo.png"}/></Link>
-            </h1>
-
-            <div className={styles.rightNav}>
-                <SearchBar ref={searchRef} searchOpen={searchOpen || mobileOpen} setSearchOpen={setSearchOpen}
-                           searchTerm={searchTerm}
-                           setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
-
-                {context.loggedIn ?
-                    <div onMouseEnter={() => setNavOpen(true)} onMouseLeave={() => setNavOpen(false)} className={userLinkClassName}>
-                        <UserImageSmall size={35} profileImage={context.user.profile_image}/>
-                        <FontAwesomeIcon icon={faChevronDown}/>
-                        {navOpen && context.loggedIn && <div className={linksContainerClassName}>
-                            <NavLinks/>
+        <>
+            <nav className={navContainerClassName}>
+                <CSSTransition in={mobileOpen} classNames={mobileTransition} timeout={500}>
+                    <div className={styles.mobileMenu}>
+                        <SearchBar ref={searchRef} searchOpen={true} setSearchOpen={setSearchOpen}
+                                   searchTerm={searchTerm}
+                                   setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
+                        {context.loggedIn ? <NavLinks/> : <div>
+                            <button className={userLinkClassName} onClick={() => context.addModal("login")}>
+                                Login
+                            </button>
                         </div>}
                     </div>
-                    : <button className={userLinkClassName} onClick={() => context.addModal("login")}>
-                        Login
-                    </button>}
-            </div>
+                </CSSTransition>
 
-            <div className={styles.mobileButton}>
-                <Button onClick={() => setMobileOpen(v => !v)}>
-                    <FontAwesomeIcon icon={mobileOpen ? faTimes : faBars}/>
-                </Button>
-            </div>
-        </nav>
+                {didMount && window.history.length > 1 &&
+                <Button className={styles.backButton} onClick={() => window.history.back()}>
+                    <FontAwesomeIcon icon={faChevronLeft}/>
+                </Button>}
+
+                <h1>
+                    <Link href={context.touring ? "#" : "/"}><img src={"/images/ediblio_logo.png"}/></Link>
+                </h1>
+
+                <div className={styles.rightNav}>
+                    <SearchBar ref={searchRef} searchOpen={searchOpen || mobileOpen} setSearchOpen={setSearchOpen}
+                               searchTerm={searchTerm}
+                               setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
+
+                    {context.loggedIn ?
+                        <div onMouseEnter={() => setNavOpen(true)} onMouseLeave={() => setNavOpen(false)}
+                             className={userLinkClassName}>
+                            <UserImageSmall size={35} profileImage={context.user.profile_image}/>
+                            <FontAwesomeIcon icon={faChevronDown}/>
+                            {navOpen && context.loggedIn && <div className={linksContainerClassName}>
+                                <NavLinks/>
+                            </div>}
+                        </div>
+                        : <button className={userLinkClassName} onClick={() => context.addModal("login")}>
+                            Login
+                        </button>}
+                </div>
+
+                <div className={styles.mobileButton}>
+                    <Button onClick={() => setMobileOpen(v => !v)}>
+                        <FontAwesomeIcon icon={mobileOpen ? faTimes : faBars}/>
+                    </Button>
+                </div>
+            </nav>
+            <CookiePolicyPopup/>
+        </>
     )
 });
 

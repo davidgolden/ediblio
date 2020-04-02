@@ -36,7 +36,6 @@ class MyDocument extends App {
 
             return (
                 <ApiStoreContext.Provider value={MobxStore}>
-                    <CookiePolicyPopup/>
                     <RecipeCloudHead/>
                     <AllModals />
                     <Header {...pageProps} />

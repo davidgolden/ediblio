@@ -69,8 +69,13 @@ export default function Popup(props) {
         setOnTour(true);
     }
 
-    function endTour() {
+    async function finishTour() { // user reached the end
         cookie.set('td', 1, {expires:365});
+        await stopTour();
+    }
+
+    async function stopTour() { // user closed out
+        await Router.push("/");
         context.setTouring(false);
         document.body.style.overflow = 'auto';
 
@@ -92,7 +97,7 @@ export default function Popup(props) {
             setAnchorIndex(v => v+1);
         } else {
             // last anchor, no more pages
-            endTour();
+            await finishTour();
         }
     }
 
@@ -112,7 +117,7 @@ export default function Popup(props) {
 
     return <div className={popupClassName}>
         {onTour && !tourFinished && <>
-            <TourPopup currentAnchor={currentPopup} endTour={endTour} handleNext={handleNext} />
+            <TourPopup currentAnchor={currentPopup} endTour={stopTour} finishTour={finishTour} handleNext={handleNext} />
             <Backdrop />
         </>}
         {!onTour && !tourFinished && <animated.div

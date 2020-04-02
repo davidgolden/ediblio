@@ -16,3 +16,48 @@ $dark: #0B4F6C;
 $small-width: 860px;
 
 $box-shadow: rgba(9, 30, 66, 0.31) 0px 0px 1px, rgba(9, 30, 66, 0.25) 0px 20px 32px -8px;
+
+@mixin translateYTransition($start, $end) {
+  .transitionEnter {
+    transform: translateY($start);
+  }
+  .transitionEnterActive {
+    transform: translateY($start);
+  }
+  .transitionEnterDone {
+    transform: translateY($start);
+  }
+  .transitionExit {
+    transform: translateY($end);
+  }
+  .transitionExitActive {
+    transform: translateY($end);
+  }
+  .transitionExitDone {
+    transform: translateY($end);
+  }
+}
+
+@mixin opacityTransition($start, $end, $remove: false) {
+  .transitionEnter {
+    opacity: $start;
+  }
+  .transitionEnterActive {
+    opacity: $start;
+  }
+  .transitionEnterDone {
+    opacity: $start;
+  }
+  .transitionExit {
+    opacity: $end;
+  }
+  .transitionExitActive {
+    opacity: $end;
+  }
+  .transitionExitDone {
+    opacity: $end;
+    @if ($remove) {
+      display: none;
+    }
+  }
+}

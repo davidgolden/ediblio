@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {CSSTransition} from "react-transition-group";
 import styles from './styles/CookiePolicyPopup.module.scss';
 import Router from 'next/router';
@@ -14,13 +14,7 @@ const translateTransition = {
 };
 
 export default function CookiePolicyPopup() {
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        if (!cookie.get('ca')) {
-            setTimeout(() => setMounted(true), 4000);
-        }
-    }, []);
+    const [mounted, setMounted] = useState(true);
 
     async function handleClick() {
         await Router.push("/legal/cookies-policy");
@@ -28,7 +22,9 @@ export default function CookiePolicyPopup() {
 
     function handleAccept() {
         setMounted(false);
-        cookie.set('ca', 1, {expires:365});
+        setTimeout(() => {
+            cookie.set('ca', 1, {expires:365});
+        }, 500);
     }
 
     if (cookie.get('ca')) return <div/>;
@@ -37,7 +33,7 @@ export default function CookiePolicyPopup() {
         <div className={styles.container}>
             <div>
                 This site uses cookies to provide you with a great user experience. By using Ediblio. you accept our <button onClick={handleClick}>Cookies Policy</button>.
-                <button onClick={handleAccept}>Got it!</button>
+                <button onClick={handleAccept}>I Accept</button>
             </div>
         </div>
     </CSSTransition>

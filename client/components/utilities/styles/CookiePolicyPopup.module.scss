@@ -1,24 +1,24 @@
 @import "../../../styles/variables";
 
+@include opacityTransition(1, 0, true);
+
 .container {
-  transition: transform .25s ease-in-out;
-  position: fixed;
-  top: -150px;
+  transition: opacity .5s ease-in-out;
+  position: sticky;
+  top: 70px;
   width: 100%;
   z-index: 1000;
   text-align: center;
   font-size: 1.2rem;
-  height: 122px;
+  margin: 10px 0;
 
   div {
     background-color: $green;
     color: $white;
-    max-width: 100%;
-    width: 300px;
+    max-width: 90%;
     margin: 0 auto;
     padding: .5rem;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-radius: 15px;
     box-shadow: $box-shadow;
   }
 
@@ -32,11 +32,10 @@
   }
 
   button:last-of-type {
-    display: block;
     border: 1px solid $black;
     padding: .25rem;
     font-size: 1.2rem;
-    margin: .25rem auto 0;
+    margin-left: 1rem;
 
     &:hover {
       color: $white;
@@ -45,21 +44,4 @@
   }
 }
 
-.transitionEnter {
-  transform: translateY(150px);
-}
-.transitionEnterActive {
-  transform: translateY(150px);
-}
-.transitionEnterDone {
-  transform: translateY(150px);
-}
-.transitionExit {
-  transform: translateY(0);
-}
-.transitionExitActive {
-  transform: translateY(0);
-}
-.transitionExitDone {
-  transform: translateY(0);
-}
+
