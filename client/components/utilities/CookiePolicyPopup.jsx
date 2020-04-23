@@ -13,7 +13,7 @@ const translateTransition = {
     exitDone: styles.transitionExitDone,
 };
 
-export default function CookiePolicyPopup() {
+export default function CookiePolicyPopup(props) {
     const [mounted, setMounted] = useState(true);
 
     async function handleClick() {
@@ -27,7 +27,7 @@ export default function CookiePolicyPopup() {
         }, 500);
     }
 
-    if (cookie.get('ca')) return <div/>;
+    if (props.ca) return <div/>;
 
     return <CSSTransition classNames={translateTransition} in={mounted} timeout={1000}>
         <div className={styles.container}>

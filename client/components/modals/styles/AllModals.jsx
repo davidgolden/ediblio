@@ -13,17 +13,11 @@ const AllModalTypes = {
 
 const AllModals = observer(props => {
     const context = useContext(ApiStoreContext);
-    const [didMount, setDidMount] = React.useState(false);
-    React.useLayoutEffect(() => setDidMount(true), []);
 
-    if (didMount) {
-        return context.modalStack.map((modalType, i) => {
-            const ModalComponent = AllModalTypes[modalType];
-            return <ModalComponent key={i}/>
-        })
-    } else {
-        return <div />
-    }
+    return context.modalStack.map((modalType, i) => {
+        const ModalComponent = AllModalTypes[modalType];
+        return <ModalComponent key={i}/>
+    })
 });
 
 export default AllModals;

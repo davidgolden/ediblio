@@ -11,7 +11,6 @@ import "../client/styles/base.scss";
 import "draft-js/dist/Draft.css";
 import {useStaticRendering} from "mobx-react";
 import TourContainer from "../client/components/tour/TourContainer";
-import CookiePolicyPopup from "../client/components/utilities/CookiePolicyPopup";
 
 class MyDocument extends App {
 
@@ -38,10 +37,10 @@ class MyDocument extends App {
                 <ApiStoreContext.Provider value={MobxStore}>
                     <RecipeCloudHead/>
                     <AllModals />
-                    <Header {...pageProps} />
+                    <Header {...pageProps} ca={this.props.ca} />
                     <Notification {...pageProps} />
                     <Component {...pageProps} />
-                    <TourContainer/>
+                    <TourContainer td={this.props.td}/>
                 </ApiStoreContext.Provider>
             )
         } catch (error) {
@@ -49,5 +48,20 @@ class MyDocument extends App {
         }
     }
 }
+
+function getCookie(cookies, name) {
+    const value = "; " + cookies;
+    const parts = value.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+MyDocument.getInitialProps = ({ctx}) => {
+    const returnObj = {};
+    if (ctx) {
+        returnObj.td = getCookie(ctx.req.headers.cookie, 'td');
+        returnObj.ca = getCookie(ctx.req.headers.cookie, 'ca');
+    }
+    return returnObj;
+};
 
 export default MyDocument

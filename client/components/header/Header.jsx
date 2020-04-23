@@ -126,13 +126,11 @@ const SearchBar = React.forwardRef((props, ref) => {
 });
 
 const Header = observer((props) => {
-    const [didMount, setDidMount] = React.useState(false);
     const [navOpen, setNavOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [foundRecipes, setFoundRecipes] = useState([]);
     const [mobileOpen, setMobileOpen] = useState(false);
-    React.useLayoutEffect(() => setDidMount(true), []);
 
     const searchRef = useRef(null);
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -194,7 +192,7 @@ const Header = observer((props) => {
                     </div>
                 </CSSTransition>
 
-                {didMount && window.history.length > 1 &&
+                {typeof window !== 'undefined' && window.history.length > 1 &&
                 <Button className={styles.backButton} onClick={() => window.history.back()}>
                     <FontAwesomeIcon icon={faChevronLeft}/>
                 </Button>}
@@ -228,7 +226,7 @@ const Header = observer((props) => {
                     </Button>
                 </div>
             </nav>
-            <CookiePolicyPopup/>
+            <CookiePolicyPopup ca={props.ca} />
         </>
     )
 });

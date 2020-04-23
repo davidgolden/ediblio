@@ -5,10 +5,8 @@ import {observer} from "mobx-react";
 
 const UserWall = observer((props) => {
     const context = useContext(ApiStoreContext);
-    const [didMount, setDidMount] = React.useState(false);
-    React.useLayoutEffect(() => setDidMount(true), []);
 
-    if (didMount && !context.loggedIn) {
+    if (!context.loggedIn) {
         return <div className={styles.container}>You need to be logged in to be here!</div>
     }
 
