@@ -5,6 +5,6 @@ export const storeSingleton = new Store();
 
 export const ApiStoreContext = React.createContext(storeSingleton);
 
-export function loadStore() {
-    return new Store();
+export function loadStore(jwt = false) {
+    return new Store(jwt);
 }

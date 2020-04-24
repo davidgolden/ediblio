@@ -27,7 +27,7 @@ class MyDocument extends App {
             let MobxStore;
             if (isServer) {
                 useStaticRendering(true);
-                MobxStore = loadStore();
+                MobxStore = loadStore(this.props.jwt);
             } else {
                 useStaticRendering(false);
                 MobxStore = storeSingleton;
@@ -58,8 +58,9 @@ function getCookie(cookies, name) {
 MyDocument.getInitialProps = ({ctx}) => {
     const returnObj = {};
     if (ctx) {
-        returnObj.td = getCookie(ctx.req.headers.cookie, 'td');
-        returnObj.ca = getCookie(ctx.req.headers.cookie, 'ca');
+        returnObj.td = ctx.req.cookies.td;
+        returnObj.ca = ctx.req.cookies.ca;
+        returnObj.jwt = ctx.req.cookies.jwt;
     }
     return returnObj;
 };

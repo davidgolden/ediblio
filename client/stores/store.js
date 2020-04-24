@@ -15,7 +15,7 @@ class JsonWebToken {
 
 export default class Store {
 
-    constructor() {
+    constructor(token) {
         if (typeof window !== 'undefined') {
             this.fetchMeasurements();
             this.loadUserFromLocalStorage();
@@ -29,6 +29,12 @@ export default class Store {
             if (localStorage.getItem('hasInstallPromptRun') === null || localStorage.getItem('hasInstallPromptRun') > 1000 * 60 * 60 * 24) {
                 localStorage.setItem('hasInstallPromptRun', Date.now().toString());
                 this.checkIfShouldShowInstallPrompt();
+            }
+        } else if (token) {
+            // this is a roundabout way to know that the user is logged in when the store is loaded on the server
+            const decodedToken = jwt.decode(token);
+            if (decodedToken?.id) {
+                this.user.id = decodedToken.id;
             }
         }
     }
