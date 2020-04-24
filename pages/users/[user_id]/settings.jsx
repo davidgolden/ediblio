@@ -6,7 +6,7 @@ import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
 import UserWall from "../../../client/components/users/UserWall";
 import {observer} from "mobx-react";
-import {clientFetch, getCookieFromServer} from "../../../client/utils/cookies";
+import {clientFetch, getCookieFromServer, getUrlParts} from "../../../client/utils/cookies";
 import {handleJWT} from "../../../client/hooks/handleJWT";
 
 const settingsContainerClassName = classNames({
@@ -14,7 +14,7 @@ const settingsContainerClassName = classNames({
 });
 
 const Settings = observer(props => {
-    handleJWT();
+    handleJWT(props.currentFullUrl);
     const context = useContext(ApiStoreContext);
 
     const [profileImage, setProfileImage] = useState(props.user ? props.user.profile_image : '');
@@ -128,21 +128,20 @@ const Settings = observer(props => {
 });
 
 export async function getServerSideProps ({query, req}) {
+    const {currentBaseUrl, currentFullUrl, jwt} = getUrlParts(req);
     try {
-        const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
-        const jwt = getCookieFromServer('jwt', req);
-
-        const response = await axios.get(`${currentFullUrl}/api/users/${query.user_id}`, {
+        const response = await axios.get(`${currentBaseUrl}/api/users/${query.user_id}`, {
             headers: jwt ? {'x-access-token': jwt} : {},
         });
         return {
             props: {
                 user: response.data.user,
                 user_id: query.user_id,
+                currentFullUrl
             }
         }
     } catch (error) {
-        return {props: {}}
+        return {props: {currentFullUrl}}
     }
 };
 

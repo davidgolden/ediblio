@@ -9,7 +9,7 @@ import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
 import Checkbox from "../../../client/components/utilities/Checkbox";
 import UserWall from "../../../client/components/users/UserWall";
-import {clientFetch, getCookieFromServer} from "../../../client/utils/cookies";
+import {clientFetch, getCookieFromServer, getUrlParts} from "../../../client/utils/cookies";
 import {handleJWT} from "../../../client/hooks/handleJWT";
 import StaplesMenu from "../../../client/components/ingredients/StaplesMenu";
 import {observer} from "mobx-react";
@@ -25,7 +25,7 @@ const menuContainerClassName = classNames({
 });
 
 const Groceries = observer(props => {
-    handleJWT();
+    handleJWT(props.currentFullUrl);
     const context = useContext(ApiStoreContext);
 
     const [storeMode, setStoreMode] = useState(false);
@@ -192,15 +192,14 @@ const Groceries = observer(props => {
 
 
 export async function getServerSideProps({req, query}) {
-    const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
-    const jwt = getCookieFromServer('jwt', req);
+    const {currentBaseUrl, currentFullUrl, jwt} = getUrlParts(req);
 
     try {
         const response = await Promise.all([
-            await axios.get(`${currentFullUrl}/api/users/${query.user_id}/recipes`, {
+            await axios.get(`${currentBaseUrl}/api/users/${query.user_id}/recipes`, {
                 headers: jwt ? {'x-access-token': jwt} : {},
             }),
-            await axios.get(`${currentFullUrl}/api/users/${query.user_id}/ingredients`, {
+            await axios.get(`${currentBaseUrl}/api/users/${query.user_id}/ingredients`, {
                 headers: jwt ? {'x-access-token': jwt} : {},
             })
         ]);
@@ -209,10 +208,11 @@ export async function getServerSideProps({req, query}) {
             props: {
                 groceryList: response[1].data.groceryList,
                 menu: response[0].data.menu,
+                currentFullUrl
             }
         };
     } catch (error) {
-        return {props: {}};
+        return {props: {currentFullUrl}};
     }
 };
 

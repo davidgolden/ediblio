@@ -54,7 +54,7 @@ app.prepare().then(() => {
         if (token) {
             const verified = verifyJWT(token);
             if (verified) {
-                req.user = {id: verified.id};
+                req.user = {id: verified.user.id};
             }
         }
 
@@ -93,8 +93,14 @@ group by users.id`, values: [email]
             });
 
             if (userRes.rows.length > 0) {
-                const userId = userRes.rows[0].id;
-                const jwt = encodeJWT({id: userId});
+                const user = userRes.rows[0];
+                const jwt = encodeJWT({
+                    user: {
+                        id: user.id,
+                        profile_image: user.profile_image,
+                        username: user.username,
+                    }
+                });
                 res.redirect(state.request_url + '?jwt=' + jwt);
             } else {
 
@@ -109,7 +115,14 @@ group by users.id`, values: [email]
                     values: ['Favorites', userId, true]
                 });
 
-                const jwt = encodeJWT({id: userId});
+                const user = userRes.rows[0];
+                const jwt = encodeJWT({
+                    user: {
+                        id: user.id,
+                        profile_image: user.profile_image,
+                        username: user.username,
+                    }
+                });
                 res.redirect(state.request_url + '/?jwt=' + jwt);
             }
         } catch (error) {

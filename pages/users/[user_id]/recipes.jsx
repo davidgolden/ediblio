@@ -7,11 +7,11 @@ import RecipeCard from "../../../client/components/recipes/RecipeCard";
 import useScrolledBottom from "../../../client/hooks/useScrolledBottom";
 import {observer} from "mobx-react";
 import UserBanner from "../../../client/components/users/UserBanner";
-import {clientFetch, fetch, getCookieFromServer} from "../../../client/utils/cookies";
+import {clientFetch, fetch, getCookieFromServer, getUrlParts} from "../../../client/utils/cookies";
 import {handleJWT} from "../../../client/hooks/handleJWT";
 
 const Recipes = observer((props) => {
-    handleJWT();
+    handleJWT(props.currentFullUrl);
     const [recipes, setRecipes] = useState(props.recipes);
     const [collections, setCollections] = useState(props.collections || []);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
@@ -98,14 +98,13 @@ const Recipes = observer((props) => {
 });
 
 export async function getServerSideProps ({req, query}) {
-    const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
-    const jwt = getCookieFromServer('jwt', req);
+    const {currentBaseUrl, currentFullUrl, jwt} = getUrlParts(req);
 
     const responses = await Promise.all([
-        await axios.get(`${currentFullUrl}/api/users/${query.user_id}/collections`, {
+        await axios.get(`${currentBaseUrl}/api/users/${query.user_id}/collections`, {
             headers: jwt ? {'x-access-token': jwt} : {},
         }),
-        await axios.get(`${currentFullUrl}/api/recipes`, {
+        await axios.get(`${currentBaseUrl}/api/recipes`, {
             headers: jwt ? {'x-access-token': jwt} : {},
             params: {
                 orderBy: 'desc',
@@ -113,7 +112,7 @@ export async function getServerSideProps ({req, query}) {
                 author: query.user_id,
             }
         }),
-        await axios.get(`${currentFullUrl}/api/users/${query.user_id}`, {
+        await axios.get(`${currentBaseUrl}/api/users/${query.user_id}`, {
             headers: jwt ? {'x-access-token': jwt} : {},
         }),
     ]);
@@ -124,6 +123,7 @@ export async function getServerSideProps ({req, query}) {
             loadedAll: responses[1].data.recipes.length < 12,
             user: responses[2].data.user,
             user_id: query.user_id,
+            currentFullUrl
         }
     }
 }

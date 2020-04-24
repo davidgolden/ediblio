@@ -3,9 +3,10 @@ import classNames from 'classnames';
 import styles from './styles/Forgot.module.scss';
 import {ApiStoreContext} from "../client/stores/api_store";
 import {handleJWT} from "../client/hooks/handleJWT";
+import {getUrlParts} from "../client/utils/cookies";
 
 const ForgotPassword = props => {
-    handleJWT();
+    handleJWT(props.currentFullUrl);
     const [token, setToken] = useState('');
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
@@ -62,3 +63,13 @@ const ForgotPassword = props => {
 };
 
 export default ForgotPassword
+
+export async function getServerSideProps({req}) {
+    const {currentFullUrl} = getUrlParts(req);
+
+    return {
+        props: {
+            currentFullUrl,
+        }
+    }
+};

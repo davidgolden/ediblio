@@ -33,8 +33,8 @@ export default class Store {
         } else if (token) {
             // this is a roundabout way to know that the user is logged in when the store is loaded on the server
             const decodedToken = jwt.decode(token);
-            if (decodedToken?.id) {
-                this.user.id = decodedToken.id;
+            if (decodedToken?.user) {
+                this.setUser(decodedToken.user);
             }
         }
     }

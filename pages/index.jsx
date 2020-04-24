@@ -2,31 +2,26 @@ import React, {useState, useEffect, useContext} from 'react';
 import RecipeCard from "../client/components/recipes/RecipeCard";
 import classNames from 'classnames';
 import styles from './styles/BrowseRecipes.module.scss';
-import SortingBar from "../client/components/recipes/SortingBar";
 import LoadingNextPage from '../client/components/utilities/LoadingNextPage';
 import useScrolledBottom from "../client/hooks/useScrolledBottom";
 import {ApiStoreContext} from "../client/stores/api_store";
 import axios from 'axios';
-import {getCookieFromServer} from "../client/utils/cookies";
+import {getCookieFromServer, getUrlParts} from "../client/utils/cookies";
 import {handleJWT} from "../client/hooks/handleJWT";
 
-function useForceUpdate() {
-    const [value, setValue] = useState(0); // integer state
-    return () => setValue(value => ++value); // update the state to force render
-}
+const browseRecipesContainerClassName = classNames({
+    [styles.browseRecipesContainer]: true,
+});
 
 const Index = props => {
-    handleJWT();
+    handleJWT(props.currentFullUrl);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
     const [loadedAll, setLoadedAll] = useState(props.loadedAll);
     const [filterAuthor, setFilterAuthor] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [recipes, setRecipes] = useState(new Map(props.recipes || []));
 
-    const forceUpdate = useForceUpdate();
-
     const context = useContext(ApiStoreContext);
-
     const isBottom = useScrolledBottom();
 
     useEffect(() => {
@@ -76,10 +71,6 @@ const Index = props => {
         forceUpdate();
     }
 
-    const browseRecipesContainerClassName = classNames({
-        [styles.browseRecipesContainer]: true,
-    });
-
     return (
         <div>
             <div className={browseRecipesContainerClassName}>
@@ -94,11 +85,10 @@ const Index = props => {
 };
 
 
-export async function getServerSideProps({req, query}) {
-    const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
-    const jwt = getCookieFromServer('jwt', req);
+export async function getServerSideProps({req}) {
+    const {currentBaseUrl, currentFullUrl, jwt} = getUrlParts(req);
 
-    const response = await axios.get(`${currentFullUrl}/api/recipes`, {
+    const response = await axios.get(`${currentBaseUrl}/api/recipes`, {
         headers: jwt ? {'x-access-token': jwt} : {},
         params: {
             page: 0,
@@ -109,6 +99,7 @@ export async function getServerSideProps({req, query}) {
         props: {
             recipes: response.data.recipes.map(r => [r.id, r]),
             loadedAll: response.data.recipes.length < 12,
+            currentFullUrl,
         }
     }
 };

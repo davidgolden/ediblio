@@ -30,7 +30,13 @@ group by users.id;`, values: [email]
 
         if (!isCorrectPassword) res.status(404).send({detail: "Incorrect password!"});
 
-        const jwt = encodeJWT({id: user.id});
+        const jwt = encodeJWT({
+            user: {
+                id: user.id,
+                profile_image: user.profile_image,
+                username: user.username,
+            }
+        });
 
         res.redirect(redirect_url + '?jwt=' + jwt);
 
@@ -55,7 +61,14 @@ router.get('/register', async function (req, res) {
             values: ['Favorites', userRes.rows[0].id, true]
         });
 
-        const jwt = encodeJWT({id: userRes.rows[0].id});
+        const user = userRes.rows[0];
+        const jwt = encodeJWT({
+            user: {
+                id: user.id,
+                profile_image: user.profile_image,
+                username: user.username,
+            }
+        });
 
         res.redirect(redirect_url + '?jwt=' + jwt);
 

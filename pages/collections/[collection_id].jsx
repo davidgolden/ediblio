@@ -6,11 +6,11 @@ import styles from "../styles/BrowseRecipes.module.scss";
 import RecipeCard from "../../client/components/recipes/RecipeCard";
 import LoadingNextPage from "../../client/components/utilities/LoadingNextPage";
 import axios from "axios";
-import {getCookieFromServer} from "../../client/utils/cookies";
+import {getCookieFromServer, getUrlParts} from "../../client/utils/cookies";
 import {handleJWT} from "../../client/hooks/handleJWT";
 
 const Collection_id  = props => {
-    handleJWT();
+    handleJWT(props.currentFullUrl);
     const [recipes, setRecipes] = useState(new Map(props.collection.recipes.map(r => [r.id, r]) || []));
     const [title, setTitle] = useState(props.collection.name);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
@@ -65,10 +65,9 @@ const Collection_id  = props => {
 };
 
 export async function getServerSideProps({req, query}) {
-    const currentFullUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
-    const jwt = getCookieFromServer('jwt', req);
+    const {currentBaseUrl, currentFullUrl, jwt} = getUrlParts(req);
 
-    const response = await axios.get(`${currentFullUrl}/api/collections/${query.collection_id}`, {
+    const response = await axios.get(`${currentBaseUrl}/api/collections/${query.collection_id}`, {
         headers: jwt ? {'x-access-token': jwt} : {},
     });
     return {
@@ -76,6 +75,7 @@ export async function getServerSideProps({req, query}) {
             collection: response.data.collection,
             collection_id: query.collection_id,
             loadedAll: response.data.collection.recipes.length < 12,
+            currentFullUrl,
         }
     };
 };

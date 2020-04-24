@@ -53,3 +53,11 @@ export function getDaysSince(date, unix = false) {
     }
     return Math.round((new Date() - date)/(1000*60*60*24));
 }
+
+export function getUrlParts(req) {
+    const currentBaseUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+    const currentFullUrl = currentBaseUrl + req.url;
+    const jwt = getCookieFromServer('jwt', req);
+
+    return {currentBaseUrl, currentFullUrl, jwt};
+}
