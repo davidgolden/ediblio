@@ -201,12 +201,10 @@
     width: 0;
     height: 31px;
     transition: all .5s ease;
-    border: 2px solid $green;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     vertical-align: middle;
     font-size: 1.1rem;
-    padding: 0 .25rem;
     color: $dark;
     visibility: hidden;
   }
@@ -218,6 +216,8 @@
     }
     input {
       width: 200px;
+      padding: 0 .25rem;
+      border: 2px solid $green;
       visibility: visible;
     }
   }
