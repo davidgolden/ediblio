@@ -6,7 +6,7 @@ import LoadingNextPage from '../client/components/utilities/LoadingNextPage';
 import useScrolledBottom from "../client/hooks/useScrolledBottom";
 import {ApiStoreContext} from "../client/stores/api_store";
 import axios from 'axios';
-import {getCookieFromServer, getUrlParts} from "../client/utils/cookies";
+import {getUrlParts} from "../client/utils/cookies";
 import {handleJWT} from "../client/hooks/handleJWT";
 
 const browseRecipesContainerClassName = classNames({

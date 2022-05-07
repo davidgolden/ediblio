@@ -3,13 +3,8 @@ import classNames from 'classnames';
 import styles from './styles/Header.module.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
-    faSearch,
-    faListUl,
-    faPlus,
-    faBook,
-    faUser,
     faChevronLeft,
-    faChevronDown, faSignOutAlt, faBars, faImage, faTimes
+    faChevronDown, faBars, faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
@@ -17,9 +12,7 @@ import Link from "next/link";
 import {observer} from "mobx-react";
 import useDebounce from "../../hooks/useDebounce";
 import {CSSTransition} from "react-transition-group";
-import Rating from "react-rating";
 import UserImageSmall from "../users/UserImageSmall";
-import CookiePolicyPopup from "../utilities/CookiePolicyPopup";
 import NavLinks from "./NavLinks";
 import SearchBar from "./SearchBar";
 

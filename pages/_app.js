@@ -47,12 +47,6 @@ class MyDocument extends App {
     }
 }
 
-function getCookie(cookies, name) {
-    const value = "; " + cookies;
-    const parts = value.split("; " + name + "=");
-    if (parts.length === 2) return parts.pop().split(";").shift();
-}
-
 MyDocument.getInitialProps = ({ctx}) => {
     const returnObj = {};
     if (ctx) {
