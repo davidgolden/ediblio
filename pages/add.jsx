@@ -66,11 +66,9 @@ const RecipeForm = observer(props => {
                         ingredient_ids: ingredientIdsToRemove,
                     }
                 });
-                setIngredients(ingredients.filter(ing => !ingredientIdsToRemove.includes(ing.id)));
-            } else {
-                setIngredients(ingredients.filter((ing, idx) => !ingredientIdsToRemove.includes(idx)));
             }
 
+            setIngredients(ingredients.filter(ing => !ingredientIdsToRemove.includes(ing.id)));
             setIngredientIdsToRemove([]);
         } catch (error) {
             context.handleError(error)
