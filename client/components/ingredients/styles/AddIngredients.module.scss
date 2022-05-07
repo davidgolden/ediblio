@@ -11,11 +11,9 @@
 }
 
 .addIngredientForm {
-  display: table;
   width: 95%;
   border: 1px solid $green;
   border-radius: 5px;
-  height: 40px;
   padding: .5rem;
 
   > div {
@@ -51,7 +49,7 @@
   }
 
   > * {
-    display: table-cell;
+    display: inline-block;
     vertical-align: middle;
   }
 
@@ -62,15 +60,15 @@
     height: 100%;
     padding: .5rem;
     color: $black;
-    width: calc(100% - 3.5rem - 10px);
+    width: calc(100% - 3.5rem - 40px);
   }
 
   button {
     cursor: pointer;
-    float: right;
     background-color: $green;
     padding: .5rem;
     border-radius: 5px;
+    width: 45px;
 
     svg {
       color: $white;
