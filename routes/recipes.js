@@ -177,26 +177,35 @@ router.route('/recipes')
     .post(middleware.isLoggedIn, async (req, res) => {
         // create new recipe
 
-        const {name, url, notes, image, ingredients} = req.body.recipe;
-        const text = `INSERT INTO recipes (name, url, notes, image, author_id) VALUES ($1, $2, $3, $4, $5) RETURNING recipes.id;`;
-        const values = [name, url, notes, image, req.user.id];
+        const client = await db.pool.connect();
+        try {
+            await client.query("BEGIN");
+            const {name, url, notes, image, ingredients} = req.body.recipe;
+            const text = `INSERT INTO recipes (name, url, notes, image, author_id) VALUES ($1, $2, $3, $4, $5) RETURNING recipes.id;`;
+            const values = [name, url, notes, image, req.user.id];
 
-        let recipeRes = await db.query(text, values);
+            let recipeRes = await client.query(text, values);
 
-        if (ingredients && ingredients.length > 0) {
-            for (let x = 0; x < ingredients.length; x++) {
-                const ing = ingredients[x];
+            if (ingredients && ingredients.length > 0) {
+                for (let x = 0; x < ingredients.length; x++) {
+                    const ing = ingredients[x];
 
-                await db.query({
-                    text: 'INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
-                    values: [recipeRes.rows[0].id, ing.name, ing.measurement, ing.quantity]
-                })
+                    await client.query({
+                        text: 'INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
+                        values: [recipeRes.rows[0].id, ing.name, ing.measurement, ing.quantity]
+                    })
+                }
             }
+
+            await client.query("COMMIT");
+            const recipe = await getRecipe(recipeRes.rows[0].id, req.user.id);
+            return res.status(200).json({recipe});
+        } catch (e) {
+            await client.query("ROLLBACK");
+            return res.status(400).json(e);
+        } finally {
+            client.release();
         }
-
-        const recipe = await getRecipe(recipeRes.rows[0].id, req.user.id);
-
-        return res.status(200).json({recipe});
     });
 
 router.route('/recipes/:recipe_id')
