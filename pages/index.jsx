@@ -66,9 +66,8 @@ const Index = props => {
         await context.deleteRecipe(id);
         setRecipes(r => {
             r.delete(id);
-            return r;
+            return new Map(r);
         });
-        forceUpdate();
     }
 
     return (
