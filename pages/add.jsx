@@ -40,12 +40,21 @@ const RecipeForm = observer(props => {
                 const response = await clientFetch.post(`/api/recipes/${props.recipe.id}/ingredients`, ingredient);
                 setIngredients([{...ingredient, id: response.data.id}].concat(ingredients))
             } else {
-                setIngredients([ingredient].concat(ingredients))
+                setIngredients(v => [{id: String(v.length), ...ingredient}].concat(ingredients))
             }
             addToUpdated('ingredients');
         } catch (error) {
             context.handleError(error);
         }
+    }
+
+    function handleUpdateIngredient(ingredient) {
+        setIngredients(ingredients.map(ing => {
+            if (ing.id === ingredient.id) {
+                return ingredient;
+            }
+            return ing;
+        }));
     }
 
     async function removeSelectedIngredients() {
@@ -114,7 +123,8 @@ const RecipeForm = observer(props => {
             uploadObject.notes = notes;
         }
         if (updated.has('ingredients')) {
-            uploadObject.ingredients = ingredients;
+            // remove ID from ingredients
+            uploadObject.ingredients = ingredients.map(ing => ({name: ing.name, measurement: ing.measurement, quantity: ing.quantity}));
         }
         if (props.editMode) {
             context.patchRecipe(props.recipe.id, uploadObject)
@@ -161,7 +171,7 @@ const RecipeForm = observer(props => {
                 handleAddIngredient={handleAddIngredient}
                 selectedIngredientIds={ingredientIdsToRemove}
                 setSelectedIngredientIds={setIngredientIdsToRemove}
-                handleUpdateIngredient={() => {}}
+                handleUpdateIngredient={handleUpdateIngredient}
             />
             <div>
                 <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
