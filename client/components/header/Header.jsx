@@ -139,7 +139,6 @@ const Header = observer((props) => {
                     </Button>
                 </div>
             </nav>
-            <CookiePolicyPopup ca={props.ca} />
         </>
     )
 });

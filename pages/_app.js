@@ -36,7 +36,7 @@ class MyDocument extends App {
                 <ApiStoreContext.Provider value={MobxStore}>
                     <RecipeCloudHead/>
                     <AllModals />
-                    <Header {...pageProps} ca={this.props.ca} />
+                    <Header {...pageProps} />
                     <Notification {...pageProps} />
                     <Component {...pageProps} />
                 </ApiStoreContext.Provider>
@@ -56,8 +56,6 @@ function getCookie(cookies, name) {
 MyDocument.getInitialProps = ({ctx}) => {
     const returnObj = {};
     if (ctx) {
-        returnObj.td = ctx.req.cookies.td;
-        returnObj.ca = ctx.req.cookies.ca;
         returnObj.jwt = ctx.req.cookies.jwt;
     }
     return returnObj;
