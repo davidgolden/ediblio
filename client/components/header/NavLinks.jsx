@@ -10,7 +10,7 @@ const NavLinks = observer((props) => {
 
     return <ul>
         <li>
-            <Link href={context.touring ? '#' : "/"}>
+            <Link href={"/"}>
                 <a>
                     <FontAwesomeIcon icon={faSearch}/> Browse Recipes
                 </a>
@@ -18,35 +18,35 @@ const NavLinks = observer((props) => {
         </li>
         <li>
             <Link href={"/users/[user_id]/groceries"}
-                  as={context.touring ? "#" : `/users/${context.user.id}/groceries`}>
+                  as={`/users/${context.user.id}/groceries`}>
                 <a>
                     <FontAwesomeIcon icon={faListUl}/> Grocery List
                 </a>
             </Link>
         </li>
         <li>
-            <Link href={context.touring ? "#" : '/add'}>
+            <Link href={'/add'}>
                 <a>
                     <FontAwesomeIcon icon={faPlus}/> Add Recipe
                 </a>
             </Link>
         </li>
         <li>
-            <Link href={"/users/[user_id]/recipes"} as={context.touring ? "#" : `/users/${context.user.id}/recipes`}>
+            <Link href={"/users/[user_id]/recipes"} as={`/users/${context.user.id}/recipes`}>
                 <a>
                     <FontAwesomeIcon icon={faBook}/> My Recipes
                 </a>
             </Link>
         </li>
         <li>
-            <Link href={"/users/[user_id]/settings"} as={context.touring ? "#" : `/users/${context.user.id}/settings`}>
+            <Link href={"/users/[user_id]/settings"} as={`/users/${context.user.id}/settings`}>
                 <a>
                     <FontAwesomeIcon icon={faUser}/> Settings
                 </a>
             </Link>
         </li>
         <li>
-            <button onClick={() => !context.touring && context.userLogout()}><FontAwesomeIcon icon={faSignOutAlt}/> Log
+            <button onClick={context.userLogout}><FontAwesomeIcon icon={faSignOutAlt}/> Log
                 Out
             </button>
         </li>

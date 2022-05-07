@@ -7,7 +7,7 @@ import UserImageSmall from "./UserImageSmall";
 
 export default function UserBanner(props) {
     return <div className={styles.userBanner}>
-        <div className={'tour-banner'}>
+        <div>
             {props.images.map((image, i) => {
                 return <div key={i} style={{backgroundImage: `url(${image})`}}/>
             })}

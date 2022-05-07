@@ -20,7 +20,7 @@ export default class Store {
             this.fetchMeasurements();
             this.loadUserFromLocalStorage();
             autorun(() => {
-                if (this.user && this.user.id !== 'touring') {
+                if (this.user) {
                     localStorage.setItem("user", JSON.stringify(toJS(this.user)));
                 }
             });
@@ -118,9 +118,6 @@ export default class Store {
     @observable user = {};
     @observable notificationMessage = '';
     @observable notificationType = '';
-    @observable touring = false;
-
-    @action setTouring = t => this.touring = t;
 
     @observable modalStack = [];
 

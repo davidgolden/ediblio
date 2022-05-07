@@ -25,7 +25,6 @@ import SearchBar from "./SearchBar";
 
 const navContainerClassName = classNames({
     [styles.navContainer]: true,
-    ['tour-nav-highlight']: true,
 });
 const linksContainerClassName = classNames({
     [styles.linksContainer]: true,
@@ -87,7 +86,6 @@ const Header = observer((props) => {
 
     const userLinkClassName = classNames({
         [styles.userLink]: true,
-        ['tour-nav']: true,
         [styles.userLinkLogin]: !context.loggedIn,
     });
 
@@ -113,7 +111,7 @@ const Header = observer((props) => {
                 </Button>}
 
                 <h1>
-                    <Link href={context.touring ? "#" : "/"}><img src={"/images/ediblio_logo.png"}/></Link>
+                    <Link href={"/"}><img src={"/images/ediblio_logo.png"}/></Link>
                 </h1>
 
                 <div className={styles.rightNav}>

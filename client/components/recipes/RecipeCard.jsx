@@ -14,8 +14,6 @@ import {observer} from "mobx-react";
 
 const recipeCardClassName = classNames({
     [styles.recipeCard]: true,
-    ['tour-card']: true,
-    ['tour-card-highlight']: true,
 });
 const recipeCardImageClassName = classNames({
     [styles.recipeCardImage]: true,
@@ -53,7 +51,7 @@ const RecipeCard = observer(props => {
         <div className={recipeCardClassName} onMouseOver={() => setShowButtons(true)}
              onMouseLeave={() => setShowButtons(false)}>
             <Button onClick={async () => {
-                !context.touring && await context.openRecipeModal(props.recipe.id);
+                await context.openRecipeModal(props.recipe.id);
             }}>
                 <div className={recipeCardImageClassName}>
                     {props.recipe.image ? <img src={props.recipe.image}/> :
@@ -67,11 +65,11 @@ const RecipeCard = observer(props => {
                 {showButtons && <RecipeButtons
                     recipe={props.recipe}
                     inMenu={inMenu}
-                    addToGroceryList={() => !context.touring && addToGroceryList()}
-                    deleteRecipe={() => !context.touring && deleteRecipe()}
+                    addToGroceryList={addToGroceryList}
+                    deleteRecipe={deleteRecipe}
                 />}
             </div>
-            {showButtons && <Link href={context.touring ? "#" : "/users/[user_id]/recipes"} as={context.touring ? "#" : `/users/${props.recipe.author_id}/recipes`}>
+            {showButtons && <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id}/recipes`}>
                 <a>
                     <UserImageSmall profileImage={props.recipe.author_image} size={50} className={styles.userImage}/>
                 </a>

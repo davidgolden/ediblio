@@ -14,8 +14,6 @@ import classNames from 'classnames';
 
 const collectionCardClassName = classNames({
     [styles.collectionCard]: true,
-    ['tour-collection']: true,
-    ['tour-collection-highlight']: true,
 });
 
 const CollectionCard = observer((props) => {
@@ -27,7 +25,6 @@ const CollectionCard = observer((props) => {
     let button;
     if (isCollectionOwner && !props.collection.is_primary) {
         button = <DeleteButton onClick={() => {
-            if (context.touring) return;
             if (confirm('Are you sure you want to do that?')) {
                 props.deleteCollection(props.collection.id)
             }
@@ -43,7 +40,7 @@ const CollectionCard = observer((props) => {
     return (
         <div className={collectionCardClassName}>
             {button}
-            <Link href={context.touring ? "#" : "/collections/[collection._id]"} as={context.touring ? "#" : `/collections/${props.collection.id}`}>
+            <Link href={"/collections/[collection._id]"} as={`/collections/${props.collection.id}`}>
                 <a>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width={250} height={200}>
                         <path fill="#0B4F6C"
@@ -80,7 +77,7 @@ const CollectionCard = observer((props) => {
                     <h3>{props.collection.name}</h3>
                 </a>
             </Link>
-            <Link href={context.touring ? "#" : "/users/[user_id]/recipes"} as={context.touring ? "#" : `/users/${props.collection.author_id}/recipes`}>
+            <Link href={"/users/[user_id]/recipes"} as={`/users/${props.collection.author_id}/recipes`}>
                 <a>
                     <UserImageSmall profileImage={props.collection.author_image} size={50} className={styles.userImage}/>
                 </a>
