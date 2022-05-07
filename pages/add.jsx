@@ -49,6 +49,7 @@ const RecipeForm = observer(props => {
     }
 
     function handleUpdateIngredient(ingredient) {
+        addToUpdated('ingredients');
         setIngredients(ingredients.map(ing => {
             if (ing.id === ingredient.id) {
                 return ingredient;
@@ -123,8 +124,12 @@ const RecipeForm = observer(props => {
             uploadObject.notes = notes;
         }
         if (updated.has('ingredients')) {
-            // remove ID from ingredients
-            uploadObject.ingredients = ingredients.map(ing => ({name: ing.name, measurement: ing.measurement, quantity: ing.quantity}));
+            let ingredientsToSubmit = ingredients;
+            if (!props.editMode) {
+                // when creating a new recipe, IDs are fake, so we don't want to submit them
+                ingredientsToSubmit = ingredients.map(ing => ({name: ing.name, measurement: ing.measurement, quantity: ing.quantity}));
+            }
+            uploadObject.ingredients = ingredientsToSubmit;
         }
         if (props.editMode) {
             context.patchRecipe(props.recipe.id, uploadObject)
