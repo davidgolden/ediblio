@@ -329,8 +329,6 @@ router.route('/users/:user_id/recipes/:recipe_id')
                 values: [req.params.recipe_id],
             });
 
-            console.log(recipeIngredients.rows);
-
             const newGroceryList = await insertUserGroceries(req.user.id, recipeIngredients.rows);
             const menu = await selectUserMenu(req.user.id);
             await client.query("COMMIT");
