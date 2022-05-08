@@ -2,11 +2,9 @@ import React, {useState, useContext} from 'react';
 import classNames from 'classnames';
 import styles from './styles/Forgot.module.scss';
 import {ApiStoreContext} from "../client/stores/api_store";
-import {handleJWT} from "../client/hooks/handleJWT";
 import {getUrlParts} from "../client/utils/cookies";
 
 const ForgotPassword = props => {
-    handleJWT(props.currentFullUrl);
     const [token, setToken] = useState('');
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');

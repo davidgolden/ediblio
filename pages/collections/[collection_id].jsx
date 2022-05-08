@@ -6,11 +6,9 @@ import styles from "../styles/BrowseRecipes.module.scss";
 import RecipeCard from "../../client/components/recipes/RecipeCard";
 import LoadingNextPage from "../../client/components/utilities/LoadingNextPage";
 import axios from "axios";
-import {getCookieFromServer, getUrlParts} from "../../client/utils/cookies";
-import {handleJWT} from "../../client/hooks/handleJWT";
+import {getUrlParts} from "../../client/utils/cookies";
 
 const Collection_id  = props => {
-    handleJWT(props.currentFullUrl);
     const [recipes, setRecipes] = useState(new Map(props.collection.recipes.map(r => [r.id, r]) || []));
     const [title, setTitle] = useState(props.collection.name);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);

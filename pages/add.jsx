@@ -7,12 +7,10 @@ import classNames from 'classnames';
 import {ApiStoreContext} from "../client/stores/api_store";
 import {observer} from "mobx-react";
 import Router from 'next/router';
-import {handleJWT} from "../client/hooks/handleJWT";
-import {clientFetch, getCookieFromServer, getUrlParts} from "../client/utils/cookies";
+import {clientFetch, getUrlParts} from "../client/utils/cookies";
 import axios from 'axios';
 
 const RecipeForm = observer(props => {
-    handleJWT(props.currentFullUrl);
     const [name, setName] = useState(props.editMode ? props.recipe.name : '');
     const [url, setUrl] = useState(props.editMode ? props.recipe.url : '');
     const [image, setImage] = useState(props.editMode ? props.recipe.image : '');

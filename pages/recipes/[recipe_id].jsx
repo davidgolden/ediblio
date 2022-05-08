@@ -1,11 +1,9 @@
 import React from 'react';
 import axios from "axios";
 import RecipePage from "../../client/components/recipes/RecipePage";
-import {getCookieFromServer, getUrlParts} from "../../client/utils/cookies";
-import {handleJWT} from "../../client/hooks/handleJWT";
+import {getUrlParts} from "../../client/utils/cookies";
 
 function Recipe_id(props) {
-    handleJWT(props.currentFullUrl);
     return <RecipePage recipe={props.recipe} />
 }
 

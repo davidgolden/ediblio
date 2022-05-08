@@ -6,24 +6,17 @@ import {ApiStoreContext} from "../../../client/stores/api_store";
 import RecipeCard from "../../../client/components/recipes/RecipeCard";
 import useScrolledBottom from "../../../client/hooks/useScrolledBottom";
 import {observer} from "mobx-react";
+import {values} from "mobx";
 import UserBanner from "../../../client/components/users/UserBanner";
-import {clientFetch, fetch, getCookieFromServer, getUrlParts} from "../../../client/utils/cookies";
-import {handleJWT} from "../../../client/hooks/handleJWT";
+import {clientFetch, getUrlParts} from "../../../client/utils/cookies";
 
 const Recipes = observer((props) => {
-    handleJWT(props.currentFullUrl);
-    const [recipes, setRecipes] = useState(props.recipes);
     const [collections, setCollections] = useState(props.collections || []);
     const [lastRecipePageLoaded, setLastRecipePageLoaded] = useState(0);
     const [loadedAll, setLoadedAll] = useState(props.loadedAll);
     const context = useContext(ApiStoreContext);
 
     const isBottom = useScrolledBottom();
-
-    useEffect(() => {
-        // page transition
-        setRecipes(props.recipes);
-    }, [props.recipes]);
 
     useEffect(() => {
         if (props.user_id === context.user?.id) {
@@ -34,14 +27,15 @@ const Recipes = observer((props) => {
 
     useEffect(() => {
         if (!loadedAll) {
-            context.getRecipes({
+            const query = {
                 page: lastRecipePageLoaded + 1,
                 author: props.user_id,
                 orderBy: 'desc',
                 sortBy: 'created_at',
-            })
+            }
+            context.getRecipes(query)
                 .then(response => {
-                    response.forEach(r => recipes.push(r));
+                    context.addRecipes(response);
                     if (response.length < 12) {
                         setLoadedAll(true);
                     } else {
@@ -81,7 +75,7 @@ const Recipes = observer((props) => {
     return (
         <div>
             <UserBanner user={props.user}
-                        images={recipes.filter(r => r.image).slice(0, 4).map(r => r.image)}/>
+                        images={values(context.recipes).filter(r => r.image).slice(0, 4).map(r => r.image)}/>
             <div className={styles.browseRecipesContainer}>
                 {collections.map(c => <CollectionCard
                     key={c.id}
@@ -90,7 +84,7 @@ const Recipes = observer((props) => {
                     followCollection={followCollection}
                     collection={c}
                 />)}
-                {recipes.map(r => <RecipeCard recipe={r} key={r.id} deleteRecipe={() => {
+                {values(context.recipes).map(r => <RecipeCard recipe={r} key={r.id} deleteRecipe={() => {
                 }}/>)}
             </div>
         </div>

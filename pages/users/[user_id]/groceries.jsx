@@ -9,8 +9,7 @@ import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
 import Checkbox from "../../../client/components/utilities/Checkbox";
 import UserWall from "../../../client/components/users/UserWall";
-import {clientFetch, getCookieFromServer, getUrlParts} from "../../../client/utils/cookies";
-import {handleJWT} from "../../../client/hooks/handleJWT";
+import {clientFetch, getUrlParts} from "../../../client/utils/cookies";
 import StaplesMenu from "../../../client/components/ingredients/StaplesMenu";
 import {observer} from "mobx-react";
 
@@ -25,7 +24,6 @@ const menuContainerClassName = classNames({
 });
 
 const Groceries = observer(props => {
-    handleJWT(props.currentFullUrl);
     const context = useContext(ApiStoreContext);
 
     const [storeMode, setStoreMode] = useState(false);

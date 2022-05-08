@@ -1,5 +1,5 @@
 import React from "react";
-import {observable, action, autorun, toJS, computed} from "mobx";
+import {observable, action, autorun, toJS, computed, set} from "mobx";
 import cookie from 'js-cookie';
 import {clientFetch} from "../utils/cookies";
 const jwt = require('jsonwebtoken');
@@ -122,6 +122,21 @@ export default class Store {
     @observable modalStack = [];
 
     @observable measurements = [];
+
+    @observable recipes = new Map([]);
+
+    @action
+    addRecipes(r, clear = false) {
+        if (clear) {
+            this.recipes.clear();
+        }
+        r.forEach(recipe => set(this.recipes, recipe.id, recipe));
+    }
+
+    @action
+    removeRecipe(id) {
+        this.recipes.delete(id);
+    }
 
     @action
     fetchMeasurements = async () => {

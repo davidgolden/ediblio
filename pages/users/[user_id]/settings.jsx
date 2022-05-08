@@ -6,15 +6,13 @@ import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
 import UserWall from "../../../client/components/users/UserWall";
 import {observer} from "mobx-react";
-import {clientFetch, getCookieFromServer, getUrlParts} from "../../../client/utils/cookies";
-import {handleJWT} from "../../../client/hooks/handleJWT";
+import {clientFetch, getUrlParts} from "../../../client/utils/cookies";
 
 const settingsContainerClassName = classNames({
     [styles.settingsContainer]: true,
 });
 
 const Settings = observer(props => {
-    handleJWT(props.currentFullUrl);
     const context = useContext(ApiStoreContext);
 
     const [profileImage, setProfileImage] = useState(props.user ? props.user.profile_image : '');

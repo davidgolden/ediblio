@@ -10,30 +10,50 @@ import LogRocket from 'logrocket';
 import "../client/styles/base.scss";
 import "draft-js/dist/Draft.css";
 import {useStaticRendering} from "mobx-react";
+import {handleJWT} from "../client/hooks/handleJWT";
 
 class MyDocument extends App {
+    MobxStore;
+
+    constructor(props) {
+        super(props);
+
+        const isServer = typeof window === 'undefined';
+
+        if (!isServer && process.env.NODE_ENV !== 'development') {
+            LogRocket.init('gajlpv/recipe-cloud');
+        }
+
+        if (isServer) {
+            useStaticRendering(true);
+            this.MobxStore = loadStore(props.jwt);
+        } else {
+            useStaticRendering(false);
+            this.MobxStore = storeSingleton;
+        }
+
+        this.updateApp(props.pageProps);
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        this.updateApp(nextProps.pageProps);
+        return true;
+    }
+
+    updateApp(pageProps) {
+        handleJWT(this.MobxStore, pageProps.currentFullUrl);
+        if (pageProps.recipes) {
+            console.log('update recipes with ', pageProps.recipes);
+            this.MobxStore.addRecipes(pageProps.recipes, true);
+        }
+    }
 
     render() {
         try {
             const {Component, pageProps} = this.props;
 
-            const isServer = typeof window === 'undefined';
-
-            if (!isServer && process.env.NODE_ENV !== 'development') {
-                LogRocket.init('gajlpv/recipe-cloud');
-            }
-
-            let MobxStore;
-            if (isServer) {
-                useStaticRendering(true);
-                MobxStore = loadStore(this.props.jwt);
-            } else {
-                useStaticRendering(false);
-                MobxStore = storeSingleton;
-            }
-
             return (
-                <ApiStoreContext.Provider value={MobxStore}>
+                <ApiStoreContext.Provider value={this.MobxStore}>
                     <RecipeCloudHead/>
                     <AllModals />
                     <Header {...pageProps} />
