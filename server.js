@@ -25,22 +25,13 @@ const userRoutes = require('./routes/users'),
 
 const env = process.env.NODE_ENV || "development";
 
-const forceSsl = function (req, res, next) {
-    if (req.headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(['https://', req.get('Host'), req.url].join(''));
-    }
-    return next();
-};
-
 const googleRedirectUrl = (process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://ediblio.com") + "/auth/google/callback";
 
 const {usersSelector, encodeJWT, verifyJWT} = require("./utils");
 
 app.prepare().then(() => {
     const server = express();
-    if (process.env.NODE_ENV === 'production') {
-        server.use(forceSsl);
-    }
+
     server.enable('trust proxy');
     server.use(compression());
 
