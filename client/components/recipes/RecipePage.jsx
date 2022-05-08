@@ -64,12 +64,12 @@ const RecipePage = observer(props => {
         })
     }
 
-    const deleteRecipe = () => {
+    const deleteRecipe = async () => {
         if (confirm('Are you sure you want to do that?')) {
-            context.deleteRecipe(props.recipe.id)
-                .then(() => {
-                    Router.push("/");
-                });
+            await context.deleteRecipe(props.recipe.id);
+            context.removeRecipe(props.recipe.id);
+            context.removeTopModal();
+            await Router.push("/");
         }
     };
 
