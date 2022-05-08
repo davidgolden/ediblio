@@ -172,24 +172,26 @@ const Groceries = observer(props => {
     return (
         <UserWall>
             <div className={groceryListContainerClassName}>
-                <h2>Menu</h2>
-                <ul className={menuContainerClassName}>
-                    {context.menu.map((item) => {
-                        return <li key={item.id}>
-                            <Checkbox checked={menuIdsToRemove.includes(item.id)}
-                                      onChange={() => toggleMenuIdToRemove(item.id)}/>
-                            <button onClick={() => context.openRecipeModal(item.id)}>{item.name}</button>
-                            {item.url && <a target='_blank' href={item.url}>
-                                <FontAwesomeIcon icon={faExternalLinkAlt}/>
-                            </a>}
-                        </li>
-                    })}
-                </ul>
-                <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
-                <h2>Staples</h2>
-                <AddIngredientForm handleAddIngredient={handleAddStaple} />
-                <h2>Grocery List</h2>
-                {!storeMode && <StaplesMenu staples={staples} handleDeleteStaple={handleDeleteStaple} handleAddIngredient={handleAddIngredient}/>}
+                {storeMode || <>
+                    <h2>Menu</h2>
+                    <ul className={menuContainerClassName}>
+                        {context.menu.map((item) => {
+                            return <li key={item.id}>
+                                <Checkbox checked={menuIdsToRemove.includes(item.id)}
+                                          onChange={() => toggleMenuIdToRemove(item.id)}/>
+                                <button onClick={() => context.openRecipeModal(item.id)}>{item.name}</button>
+                                {item.url && <a target='_blank' href={item.url}>
+                                    <FontAwesomeIcon icon={faExternalLinkAlt}/>
+                                </a>}
+                            </li>
+                        })}
+                    </ul>
+                    <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
+                    <h2>Staples</h2>
+                    <AddIngredientForm handleAddIngredient={handleAddStaple} />
+                    <h2>Grocery List</h2>
+                    <StaplesMenu staples={staples} handleDeleteStaple={handleDeleteStaple} handleAddIngredient={handleAddIngredient}/>
+                </>}
                 <AddIngredients
                     canAdd={true}
                     containerClassName={ingredientsContainerClassName}
