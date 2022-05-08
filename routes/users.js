@@ -4,12 +4,10 @@ const express = require('express'),
     middleware = require('../middleware');
 
 const cloudinary = require('cloudinary');
-const {usersSelector, encodeJWT} = require("../utils");
+const {usersSelector} = require("../utils");
 const {addIngredient, canBeAdded} = require("../client/utils/conversions");
 
 const db = require("../db/index");
-const {Pool} = require('pg');
-const pool = new Pool();
 
 cloudinary.config({
     cloud_name: 'recipecloud',
@@ -47,7 +45,7 @@ async function selectUserMenu(user_id) {
 }
 
 async function insertUserGroceries(user_id, ingredients) {
-    const client = await pool.connect();
+    const client = await db.pool.connect();
 
     try {
         await client.query("BEGIN");
@@ -263,7 +261,7 @@ router.route('/users/:user_id/staples/:staple_id')
 router.route('/users/:user_id/ingredients/order')
     .post(middleware.isLoggedIn, async (req, res) => {
         // expects req.body.ingredients to be an ordered list of all grocery IDs
-        const client = await pool.connect();
+        const client = await db.pool.connect();
         try {
             await client.query('BEGIN');
 
@@ -315,25 +313,34 @@ router.route('/users/:user_id/ingredients/:ingredient_id')
 router.route('/users/:user_id/recipes/:recipe_id')
     .post(middleware.isLoggedIn, async (req, res) => {
         // add full recipe to grocery list
+
+        const client = await db.pool.connect();
+
         try {
             // insert recipe into menu
+            await client.query("BEGIN");
             await db.query({
                 text: `INSERT INTO users_recipes_menu (user_id, recipe_id) VALUES ($1, $2)`,
                 values: [req.user.id, req.params.recipe_id]
             });
 
             const recipeIngredients = await db.query({
-                text: `SELECT * FROM recipes_ingredients WHERE recipes_ingredients.recipe_id = $1`,
+                text: `SELECT name, quantity, (SELECT short_name as measurement FROM measurements m WHERE m.id = r.measurement_id) FROM recipes_ingredients r WHERE r.recipe_id = $1`,
                 values: [req.params.recipe_id],
             });
 
+            console.log(recipeIngredients.rows);
+
             const newGroceryList = await insertUserGroceries(req.user.id, recipeIngredients.rows);
             const menu = await selectUserMenu(req.user.id);
-
+            await client.query("COMMIT");
             res.status(200).send({groceryList: newGroceryList, menu});
 
         } catch (error) {
+            await client.query("ROLLBACK");
             res.status(404).send({detail: error.message});
+        } finally {
+            client.release();
         }
     })
     .patch(middleware.isLoggedIn, async (req, res) => {
