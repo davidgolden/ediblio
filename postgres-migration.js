@@ -185,6 +185,14 @@ async function create() {
         quantity NUMERIC NOT NULL
         item_index INT DEFAULT 0
     );
+    CREATE TABLE users_staples (
+        id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
+        created_at DATE NOT NULL DEFAULT CURRENT_DATE,
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        quantity NUMERIC NOT NULL,
+        name TEXT NOT NULL,
+        measurement_id UUID REFERENCES measurements(id) ON DELETE CASCADE NOT NULL
+    );
     CREATE TABLE users_collections_followers (
         id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v1(),
         created_at DATE NOT NULL DEFAULT CURRENT_DATE,

@@ -23,8 +23,6 @@ const userRoutes = require('./routes/users'),
     measurementRoutes = require('./routes/measurements'),
     indexRoutes = require('./routes/index');
 
-const env = process.env.NODE_ENV || "development";
-
 const googleRedirectUrl = (process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://ediblio.com") + "/auth/google/callback";
 
 const {usersSelector, encodeJWT, verifyJWT} = require("./utils");

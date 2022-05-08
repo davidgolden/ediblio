@@ -210,6 +210,56 @@ router.route('/users/:user_id/ingredients')
         }
     });
 
+router.route('/users/:user_id/staples')
+    .post(middleware.isLoggedIn, async (req, res) => {
+        // add ingredient to grocery list
+        try {
+            const {name, measurement, quantity} = req.body;
+
+            const response = await db.query({
+                text: `
+                            INSERT INTO users_staples (user_id, name, measurement_id, quantity) 
+                            VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)
+                            RETURNING id, name, $3 as measurement, quantity
+                            `,
+                values: [req.user.id, name, measurement, quantity]
+            })
+
+            return res.status(200).send(response.rows);
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    })
+    .get(middleware.isLoggedIn, async (req, res) => {
+        try {
+            const response = await db.query({
+                text: `
+                    SELECT id, name, quantity, (SELECT short_name as measurement FROM measurements where id = measurement_id) 
+                    FROM users_staples 
+                    WHERE user_id = $1
+                    `,
+                values: [req.user.id],
+            })
+
+            res.status(200).send({staples: response.rows});
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    })
+
+router.route('/users/:user_id/staples/:staple_id')
+    .delete(middleware.isLoggedIn, async (req, res) => {
+        try {
+            await db.query({
+                text: `DELETE FROM users_staples WHERE id = $1 AND user_id = $2`,
+                values: [req.params.staple_id, req.user.id]
+            })
+            res.sendStatus(200);
+        } catch (error) {
+            res.status(404).send({detail: error.message});
+        }
+    })
+
 router.route('/users/:user_id/ingredients/order')
     .post(middleware.isLoggedIn, async (req, res) => {
         // expects req.body.ingredients to be an ordered list of all grocery IDs
@@ -241,31 +291,6 @@ router.route('/users/:user_id/ingredients/order')
             res.status(404).send({detail: error.message});
         } finally {
             client.release();
-        }
-    });
-
-router.route('/users/:user_id/staples')
-    .get(middleware.isLoggedIn, async (req, res) => {
-        try {
-            const offset = req.query.offset || 0;
-            const limit = req.query.limit || 10;
-
-            const suggestedStaples = await db.query({
-                text: `
-                SELECT g.name, count(g.name) c
-                FROM users_ingredients_groceries g
-                WHERE g.user_id = $1
-                GROUP BY g.name
-                HAVING count(g.name) >= 3
-                ORDER BY c
-                LIMIT $2
-                OFFSET $3;`,
-                values: [req.user.id, limit, offset],
-            });
-
-            res.status(200).send({suggestedStaples: suggestedStaples.rows});
-        } catch (error) {
-            res.status(404).send({detail: error.message});
         }
     });
 

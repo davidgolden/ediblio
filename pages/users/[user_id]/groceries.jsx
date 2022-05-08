@@ -12,6 +12,7 @@ import UserWall from "../../../client/components/users/UserWall";
 import {clientFetch, getUrlParts} from "../../../client/utils/cookies";
 import StaplesMenu from "../../../client/components/ingredients/StaplesMenu";
 import {observer} from "mobx-react";
+import {AddIngredientForm} from "../../../client/components/ingredients/AddIngredientForm";
 
 const groceryListContainerClassName = classNames({
     [styles.groceryListContainer]: true,
@@ -29,6 +30,7 @@ const Groceries = observer(props => {
     const [storeMode, setStoreMode] = useState(false);
     const [ingredientIdsToRemove, setIngredientIdsToRemove] = useState([]);
     const [menuIdsToRemove, setMenuIdsToRemove] = useState([]);
+    const [staples, setStaples] = useState(props.staples);
 
     useEffect(() => {
         context.setGroceryList(props.groceryList || []);
@@ -56,11 +58,11 @@ const Groceries = observer(props => {
         } catch (error) {
             context.handleError(error)
         }
-    };
+    }
 
     const toggleStoreMode = () => {
         setStoreMode(!storeMode);
-    };
+    }
 
     async function removeSelectedIngredients() {
         try {
@@ -101,6 +103,24 @@ const Groceries = observer(props => {
             context.setGroceryList(response.data.groceryList);
         } catch (error) {
             context.handleError(error)
+        }
+    }
+
+    async function handleAddStaple(staple) {
+        try {
+            const response = await clientFetch.post(`/api/users/${context.user.id}/staples`, staple);
+            setStaples(v => [...v, response.data[0]]);
+        } catch (error) {
+            context.handleError(error)
+        }
+    }
+
+    async function handleDeleteStaple(stapleId) {
+        try {
+            await clientFetch.delete(`/api/users/${context.user.id}/staples/${stapleId}`);
+            setStaples(v => v.filter(s => s.id !== stapleId));
+        } catch (error) {
+            context.handleError(error);
         }
     }
 
@@ -152,7 +172,7 @@ const Groceries = observer(props => {
     return (
         <UserWall>
             <div className={groceryListContainerClassName}>
-                <h2>My Menu</h2>
+                <h2>Menu</h2>
                 <ul className={menuContainerClassName}>
                     {context.menu.map((item) => {
                         return <li key={item.id}>
@@ -166,8 +186,10 @@ const Groceries = observer(props => {
                     })}
                 </ul>
                 <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
-                <h2>My Grocery List</h2>
-                {!storeMode && <StaplesMenu handleAddIngredient={handleAddIngredient}/>}
+                <h2>Staples</h2>
+                <AddIngredientForm handleAddIngredient={handleAddStaple} />
+                <h2>Grocery List</h2>
+                {!storeMode && <StaplesMenu staples={staples} handleDeleteStaple={handleDeleteStaple} handleAddIngredient={handleAddIngredient}/>}
                 <AddIngredients
                     canAdd={true}
                     containerClassName={ingredientsContainerClassName}
@@ -199,11 +221,15 @@ export async function getServerSideProps({req, query}) {
             }),
             await axios.get(`${currentBaseUrl}/api/users/${query.user_id}/ingredients`, {
                 headers: jwt ? {'x-access-token': jwt} : {},
+            }),
+            await axios.get(`${currentBaseUrl}/api/users/${query.user_id}/staples`, {
+                headers: jwt ? {'x-access-token': jwt} : {},
             })
         ]);
 
         return {
             props: {
+                staples: response[2].data.staples,
                 groceryList: response[1].data.groceryList,
                 menu: response[0].data.menu,
                 currentFullUrl
@@ -212,6 +238,6 @@ export async function getServerSideProps({req, query}) {
     } catch (error) {
         return {props: {currentFullUrl}};
     }
-};
+}
 
 export default Groceries;

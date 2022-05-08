@@ -1,23 +1,13 @@
-import React, {useState} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Ingredient from './IngredientListItem'
 import classNames from 'classnames';
 import styles from './styles/AddIngredients.module.scss';
-import {faQuestion, faPlus} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ReactSortable} from "react-sortablejs";
-import {extractIngredient} from "../../utils/ingredients";
 import {toJS} from "mobx";
+import {AddIngredientForm} from "./AddIngredientForm";
 
 const AddIngredients = (props) => {
-    const [value, setValue] = useState("");
-
-    function getIngredient(e) {
-        e.preventDefault();
-        const ingredient = extractIngredient(value);
-        setValue("");
-        props.handleAddIngredient(ingredient);
-    }
 
     function handleUpdateIngredient(id, update) {
         props.handleUpdateIngredient({
@@ -37,25 +27,12 @@ const AddIngredients = (props) => {
     const ingredientsContainerClassName = classNames({
         [styles.ingredientsContainer]: true,
         [props.containerClassName]: props.containerClassName,
-    });
-    const addIngredientFormClassName = classNames({
-        [styles.addIngredientForm]: true,
-    });
-
+    })
 
     return (
         <div className={ingredientsContainerClassName}>
             <h3>Ingredient List</h3>
-            {props.canAdd && <form onSubmit={getIngredient} className={addIngredientFormClassName}>
-                <div>
-                    <FontAwesomeIcon icon={faQuestion}/>
-                    <div>
-                        Add an ingredients like "1 cup rice, 1 apple, or 1 1/2 tbsp salt".
-                    </div>
-                </div>
-                <input placeholder={"1.5 cups milk"} value={value} onChange={e => setValue(e.target.value)}/>
-                <button role={'submit'}><FontAwesomeIcon icon={faPlus}/></button>
-            </form>}
+            {props.canAdd && <AddIngredientForm handleAddIngredient={props.handleAddIngredient} />}
             <ReactSortable
                 tag={"ul"}
                 handle={'.drag-handler'}

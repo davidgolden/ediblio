@@ -5,10 +5,9 @@
   background-color: $green;
   border-radius: 10px;
   color: $white;
-  padding: .5rem 1rem;
+  padding: .5rem .5rem .5rem 1rem;
   font-size: 1.5rem;
   margin: 5px;
-  transition: opacity .5s ease;
 
   button {
     background-color: $white;
@@ -26,23 +25,4 @@
       padding: 5px;
     }
   }
-}
-
-.transitionEnter {
-  opacity: 1;
-}
-.transitionEnterActive {
-  opacity: 1;
-}
-.transitionEnterDone {
-  opacity: 1;
-}
-.transitionExit {
-  opacity: 0;
-}
-.transitionExitActive {
-  opacity: 0;
-}
-.transitionExitDone {
-  opacity: 0;
 }
