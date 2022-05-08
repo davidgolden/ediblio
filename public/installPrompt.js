@@ -1,7 +1,7 @@
 var deferredPrompt;
-console.log('install prompt loaded')
+console.debug('install prompt loaded')
 window.addEventListener('beforeinstallprompt', function(e) {
-    console.log('install prompt event fired')
+    console.debug('install prompt event fired')
     e.preventDefault();
     deferredPrompt = e;
     var installBtn = document.querySelector('#installAppButton');

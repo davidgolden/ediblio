@@ -17,7 +17,6 @@ function Modal(props) {
     }, []);
 
     function handleClick(e) {
-        console.log(modalRef.current, e.target);
         if (!modalRef.current.contains(e.target)) {
             handleClose();
         }
