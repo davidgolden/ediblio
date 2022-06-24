@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ssh root@206.189.76.69 'cd /root/ediblio; git pull; ./release-to-production.sh'
+ssh root@144.126.212.244 'cd /var/www/ediblio; git pull; ./release-to-production.sh'
