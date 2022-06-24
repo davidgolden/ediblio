@@ -22,7 +22,7 @@ export async function handleJWT(MobxStore, currentFullUrl) {
             const response = await axios.get(`/api/users/${decodedJWT.user.id}`, {
                 headers: {'x-access-token': query.jwt},
             });
-            cookie.set('jwt', query.jwt);
+            cookie.set('jwt', query.jwt, {expires: 365, secure: true});
             MobxStore.setUser(response.data.user);
             currentFullUrl = currentFullUrlParts.removeQuery('jwt').path();
             await Router.replace(currentFullUrl);
