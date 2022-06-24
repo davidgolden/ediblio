@@ -187,8 +187,6 @@ const Groceries = observer(props => {
                         })}
                     </ul>
                     <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
-                    <h2>Staples</h2>
-                    <AddIngredientForm handleAddIngredient={handleAddStaple} />
                     <h2>Grocery List</h2>
                     <StaplesMenu staples={staples} handleDeleteStaple={handleDeleteStaple} handleAddIngredient={handleAddIngredient}/>
                 </>}
@@ -207,6 +205,10 @@ const Groceries = observer(props => {
                 <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
                 <Button className={clearListClassName} onClick={removeAllIngredients}>Remove All Ingredients</Button>
                 <Button onClick={toggleStoreMode}>Toggle Store Mode</Button>
+                {storeMode || <>
+                    <h2>Staples</h2>
+                    <AddIngredientForm handleAddIngredient={handleAddStaple} />
+                </>}
             </div>
         </UserWall>
     )
