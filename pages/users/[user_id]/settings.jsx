@@ -45,7 +45,7 @@ const Settings = observer(props => {
                     fd.append('upload_preset', 'profile_image');
                     fd.append('resource_type', 'image');
                     fd.append('folder', props.user.id);
-                    const response = await clientFetch.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
+                    const response = await axios.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
                     query.profileImage = response.data.secure_url;
                 }
 
