@@ -31,6 +31,7 @@ const Groceries = observer(props => {
     const [ingredientIdsToRemove, setIngredientIdsToRemove] = useState([]);
     const [menuIdsToRemove, setMenuIdsToRemove] = useState([]);
     const [staples, setStaples] = useState(props.staples);
+    const [addingStaples, setAddingStaples] = useState(false);
 
     useEffect(() => {
         context.setGroceryList(props.groceryList || []);
@@ -188,7 +189,14 @@ const Groceries = observer(props => {
                     </ul>
                     <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>
                     <h2>Grocery List</h2>
-                    <StaplesMenu staples={staples} handleDeleteStaple={handleDeleteStaple} handleAddIngredient={handleAddIngredient}/>
+                    {storeMode || <div className={styles.addStaplesContainer}>
+                        <button onClick={() => setAddingStaples(v => !v)}>Toggle Add Staples Menu</button>
+                        {addingStaples && <>
+                            <h2>Staples</h2>
+                            <AddIngredientForm handleAddIngredient={handleAddStaple} />
+                        </>}
+                    </div>}
+                    {storeMode || <StaplesMenu staples={staples} handleDeleteStaple={handleDeleteStaple} handleAddIngredient={handleAddIngredient}/>}
                 </>}
                 <AddIngredients
                     canAdd={true}
@@ -205,10 +213,6 @@ const Groceries = observer(props => {
                 <Button className={saveListClassName} onClick={removeSelectedIngredients}>Remove Selected</Button>
                 <Button className={clearListClassName} onClick={removeAllIngredients}>Remove All Ingredients</Button>
                 <Button onClick={toggleStoreMode}>Toggle Store Mode</Button>
-                {storeMode || <>
-                    <h2>Staples</h2>
-                    <AddIngredientForm handleAddIngredient={handleAddStaple} />
-                </>}
             </div>
         </UserWall>
     )
