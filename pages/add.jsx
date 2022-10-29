@@ -128,16 +128,20 @@ const RecipeForm = observer(props => {
             uploadObject.ingredients = ingredientsToSubmit;
         }
         if (props.editMode) {
-            context.patchRecipe(props.recipe.id, uploadObject)
-                .then(recipe => {
-                    props.updateRecipe(recipe);
-                    props.toggleEdit();
-                })
+            try {
+                const recipe = await context.patchRecipe(props.recipe.id, uploadObject);
+                props.updateRecipe(recipe);
+                props.toggleEdit();
+            } catch (e) {
+                setSubmitted(false);
+            }
         } else {
-            context.createRecipe(uploadObject)
-                .then(() => {
-                    Router.push("/");
-                })
+            try {
+                await context.createRecipe(uploadObject);
+                await Router.push("/");
+            } catch (e) {
+                setSubmitted(false);
+            }
         }
     };
 

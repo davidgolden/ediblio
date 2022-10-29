@@ -252,6 +252,7 @@ export default class Store {
                 })
                 .catch(err => {
                     this.handleError(err.response.data.detail);
+                    rej(err);
                 })
         })
     };
@@ -264,6 +265,7 @@ export default class Store {
                 })
                 .catch(err => {
                     this.handleError(err.response.data.detail);
+                    rej(err);
                 })
         });
     };
