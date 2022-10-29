@@ -42,7 +42,7 @@ const RecipeForm = observer(props => {
             }
             addToUpdated('ingredients');
         } catch (error) {
-            context.handleError(error);
+            context.handleError(error.response.data.detail);
         }
     }
 
