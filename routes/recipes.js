@@ -74,11 +74,11 @@ async function getRecipe(recipe_id, user_id) {
     } else {
         response = await db.query({
             text: `
-                SELECT recipes.*, avg(ratings.rating) avg_rating, count(ratings) total_ratings, author.username author_username,
+                SELECT recipes.*, ratings.avg avg_rating, ratings.total total_ratings, author.username author_username,
                 COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
                 FROM recipes
                 LEFT JOIN LATERAL (
-                    select rating from ratings
+                    select avg(ratings.rating) avg, count(*) total from ratings
                     where ratings.recipe_id = recipes.id
                 ) ratings ON TRUE 
                 LEFT JOIN LATERAL (
@@ -96,7 +96,7 @@ async function getRecipe(recipe_id, user_id) {
                     where users.id = recipes.author_id
                 ) author ON TRUE
                 WHERE recipes.id = $1
-                group by recipes.id, author.username;`,
+                group by recipes.id, author.username, ratings.avg, ratings.total;`,
             values: [recipe_id]
         });
     }
