@@ -13,6 +13,7 @@ import RecipeForm from "../../../pages/add";
 import ShowRecipe from "./ShowRecipe";
 import JsonLd from "../utilities/JsonLd";
 import {clientFetch} from "../../utils/cookies";
+import {getCdnImageUrl} from "../../utils/images";
 
 const recipeContainerClassName = classNames({
     [styles.recipeContainer]: true,
@@ -113,7 +114,7 @@ const RecipePage = observer(props => {
                 "sameAs": recipe.url,
                 "recipeIngredient": recipe.ingredients,
                 "name": recipe.name,
-                "image": recipe.image,
+                "image": getCdnImageUrl(recipe.image),
             }}/>
         </div>
     )

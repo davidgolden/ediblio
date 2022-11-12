@@ -11,6 +11,7 @@ import Button from "../utilities/buttons/Button";
 import Link from "next/link";
 import {clientFetch} from "../../utils/cookies";
 import {observer} from "mobx-react";
+import {getCdnImageUrl} from "../../utils/images";
 
 const recipeCardClassName = classNames({
     [styles.recipeCard]: true,
@@ -54,7 +55,7 @@ const RecipeCard = observer(props => {
                 await context.openRecipeModal(props.recipe.id);
             }}>
                 <div className={recipeCardImageClassName}>
-                    {props.recipe.image ? <img src={props.recipe.image}/> :
+                    {props.recipe.image ? <img src={getCdnImageUrl(props.recipe.image)}/> :
                         <div><FontAwesomeIcon icon={faImage}/></div>}
                 </div>
                 <div className={recipeCardTextClassName}>

@@ -3,6 +3,15 @@ const express = require('express'),
     middleware = require('../middleware'),
     cloudinary = require('cloudinary');
 
+const multer = require('multer');
+const upload = multer();
+
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+})
+
 const db = require('../db');
 
 const {Pool} = require('pg');
@@ -174,25 +183,36 @@ router.route('/recipes')
             res.status(404).send({detail: error.message});
         }
     })
-    .post(middleware.isLoggedIn, async (req, res) => {
+    .post(middleware.isLoggedIn, upload.single("image"), async (req, res) => {
         // create new recipe
 
         const client = await db.pool.connect();
         try {
             await client.query("BEGIN");
-            const {name, url, notes, image, ingredients} = req.body.recipe;
-            const text = `INSERT INTO recipes (name, url, notes, image, author_id) VALUES ($1, $2, $3, $4, $5) RETURNING recipes.id;`;
-            const values = [name, url, notes, image, req.user.id];
+            const {name, url, notes, ingredients} = req.body;
+            const text = `INSERT INTO recipes (name, url, notes, author_id) VALUES ($1, $2, $3, $4) RETURNING recipes.id;`;
+            const values = [name, url, notes, req.user.id];
 
             let recipeRes = await client.query(text, values);
 
+            // upload image to s3
+            const recipeId = recipeRes.rows[0].id;
+
+            if (req.file) {
+                const imagePath = `users/${req.user.id}/recipes/${recipeId}/image`;
+                const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
+
+                await client.query(`UPDATE recipes SET image = $1 WHERE id = $2`, [data.Key, recipeId]);
+            }
+
             if (ingredients && ingredients.length > 0) {
-                for (let x = 0; x < ingredients.length; x++) {
-                    const ing = ingredients[x];
+                const parsedIngredients = JSON.parse(ingredients);
+                for (let x = 0; x < parsedIngredients.length; x++) {
+                    const ing = parsedIngredients[x];
 
                     await client.query({
                         text: 'INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
-                        values: [recipeRes.rows[0].id, ing.name, ing.measurement, ing.quantity]
+                        values: [recipeId, ing.name, ing.measurement, ing.quantity]
                     })
                 }
             }
@@ -216,13 +236,13 @@ router.route('/recipes/:recipe_id')
             recipe
         })
     })
-    .patch(middleware.checkRecipeOwnership, async (req, res) => {
+    .patch(middleware.checkRecipeOwnership, upload.single("image"), async (req, res) => {
         const client = await pool.connect();
 
         try {
             await client.query('BEGIN');
 
-            const {name, url, image, notes} = req.body;
+            const {name, url, notes} = req.body;
             let {ingredients} = req.body;
             const updateValues = [];
             const values = [];
@@ -238,9 +258,6 @@ router.route('/recipes/:recipe_id')
             if (typeof url === 'string') {
                 updateQuery('url', url);
             }
-            if (typeof image === 'string') {
-                updateQuery('image', image);
-            }
             if (typeof notes === 'string') {
                 updateQuery('notes', notes);
             }
@@ -251,8 +268,9 @@ router.route('/recipes/:recipe_id')
                     values: [req.params.recipe_id]
                 });
 
-                for (let x = 0; x < ingredients.length; x++) {
-                    const ing = ingredients[x];
+                const parsedIngredients = JSON.parse(ingredients);
+                for (let x = 0; x < parsedIngredients.length; x++) {
+                    const ing = parsedIngredients[x];
 
                     await client.query({
                         text: 'INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4);',
@@ -266,6 +284,13 @@ router.route('/recipes/:recipe_id')
                     text: `UPDATE recipes SET ${updateValues.join(", ")} WHERE id = $${values.length + 1}`,
                     values: values.concat([req.params.recipe_id]),
                 });
+            }
+
+            if (req.file) {
+                const imagePath = `users/${req.user.id}/recipes/${req.params.recipe_id}/image`;
+                const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
+
+                await client.query(`UPDATE recipes SET image = $1 WHERE id = $2`, [data.Key, req.params.recipe_id]);
             }
 
             await client.query('COMMIT');

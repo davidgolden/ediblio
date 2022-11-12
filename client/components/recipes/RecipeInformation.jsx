@@ -16,11 +16,12 @@ const RecipeInformation = props => {
         clientFetch.post('/api/scrape', {
             imageUrl: link,
         })
-            .then(response => {
+            .then(async response => {
                 setLoading(false);
                 setFoundImage(true);
-
-                props.handleRecipeImageChange(response.data.imageUrl);
+                let binary = Buffer.from(response.data);
+                let imgData = new Blob([binary], { type: 'application/octet-binary' });
+                props.handleRecipeImageChange(imgData);
             })
             .catch(() => {
                 setLoading(false);
@@ -72,8 +73,8 @@ const RecipeInformation = props => {
                 uploadedImage={uploadedImage}
                 image={props.image}
             />
-            <label htmlFor={'file'}>Recipe Image</label>
-            <input type={'file'} name={'file'}
+            <label htmlFor={'image'}>Recipe Image</label>
+            <input type={'file'} name={'image'}
                    onChange={e => handleFileUpload(e.target.files[0])}
                    accept={'image/*'}
             />

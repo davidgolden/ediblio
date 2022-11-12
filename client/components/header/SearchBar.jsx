@@ -6,6 +6,7 @@ import Button from "../utilities/buttons/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faImage, faSearch} from "@fortawesome/free-solid-svg-icons";
 import Rating from "react-rating";
+import {getCdnImageUrl} from "../../utils/images";
 
 const SearchBar = React.forwardRef((props, ref) => {
     const context = useContext(ApiStoreContext);
@@ -25,7 +26,7 @@ const SearchBar = React.forwardRef((props, ref) => {
                 {props.foundRecipes.map(recipe => {
                     return <li>
                         <Button onClick={async () => await context.openRecipeModal(recipe.id)}>
-                            {recipe.image ? <img src={recipe.image} alt={"Recipe Image"}/> :
+                            {recipe.image ? <img src={getCdnImageUrl(recipe.image)} alt={"Recipe Image"}/> :
                                 <div className={styles.noImage}><FontAwesomeIcon icon={faImage}/></div>}
                             <div>
                                 <span>{recipe.name}</span>

@@ -4,12 +4,13 @@ import styles from './styles/UserBanner.module.scss';
 import {faUser} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserImageSmall from "./UserImageSmall";
+import {getCdnImageUrl} from "../../utils/images";
 
 export default function UserBanner(props) {
     return <div className={styles.userBanner}>
         <div>
             {props.images.map((image, i) => {
-                return <div key={i} style={{backgroundImage: `url(${image})`}}/>
+                return <div key={i} style={{backgroundImage: `url(${getCdnImageUrl(image)})`}}/>
             })}
         </div>
 

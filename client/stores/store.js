@@ -243,9 +243,7 @@ export default class Store {
 
     createRecipe = recipe => {
         return new Promise((res, rej) => {
-            clientFetch.post('/api/recipes', {
-                recipe: recipe,
-            })
+            clientFetch.post('/api/recipes', recipe)
                 .then(response => {
                     // do something
                     res();
@@ -278,9 +276,7 @@ export default class Store {
 
     patchRecipe = (id, partialRecipeObj) => {
         return new Promise((res, rej) => {
-            clientFetch.patch(`/api/recipes/${id}`, {
-                ...partialRecipeObj
-            })
+            clientFetch.patch(`/api/recipes/${id}`, partialRecipeObj)
                 .then(response => {
                     res(response.data.recipe);
                 })

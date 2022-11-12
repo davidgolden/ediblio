@@ -12,6 +12,7 @@ import {observer} from "mobx-react";
 import Rating from 'react-rating';
 import {clientFetch} from "../../utils/cookies";
 import Markdown from 'react-markdown';
+import {getCdnImageUrl} from "../../utils/images";
 
 const showRecipeContainerClassName = classNames({
     [styles.showRecipeContainer]: true,
@@ -88,7 +89,7 @@ const ShowRecipe = observer(props => {
                 </div>
             </div>
             <div className={showRecipeImageClassName}>
-                <img src={props.recipe.image}/>
+                <img src={getCdnImageUrl(props.recipe.image)}/>
             </div>
             <div className={showRecipeIngredientsClassName}>
                 <h3>Recipe Notes</h3>

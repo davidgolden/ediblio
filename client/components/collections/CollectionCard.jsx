@@ -11,6 +11,7 @@ import UserImageSmall from "../users/UserImageSmall";
 import {ApiStoreContext} from "../../stores/api_store";
 import RemoveButton from "../utilities/buttons/RemoveButton";
 import classNames from 'classnames';
+import {getCdnImageUrl} from "../../utils/images";
 
 const collectionCardClassName = classNames({
     [styles.collectionCard]: true,
@@ -70,7 +71,7 @@ const CollectionCard = observer((props) => {
                                 x = i === 0 || i === 2 ? 15 : 15 + 145;
                                 y = i < 2 ? 45 : 45 + 90;
                             }
-                            return <image key={i} preserveAspectRatio="xMidYMid slice" href={recipe.image} width={width}
+                            return <image key={i} preserveAspectRatio="xMidYMid slice" href={getCdnImageUrl(recipe.image)} width={width}
                                           height={height} x={x} y={y}/>
                         })}
                     </svg>

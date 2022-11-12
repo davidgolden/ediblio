@@ -8,7 +8,6 @@ import {ApiStoreContext} from "../client/stores/api_store";
 import {observer} from "mobx-react";
 import Router from 'next/router';
 import {clientFetch, getUrlParts} from "../client/utils/cookies";
-import axios from 'axios';
 
 const RecipeForm = observer(props => {
     const [name, setName] = useState(props.editMode ? props.recipe.name : '');
@@ -75,13 +74,9 @@ const RecipeForm = observer(props => {
 
     function handleRecipeImageChange(data, raw = false) {
         addToUpdated('image');
-        if (!raw) {
-            setImage(data);
-        } else {
-            const blobURL = window.URL.createObjectURL(data);
-            setImage(blobURL);
-            setRawImage(data);
-        }
+        const blobURL = window.URL.createObjectURL(data);
+        setImage(blobURL);
+        setRawImage(data);
     }
 
     function handleUrlChange(e) {
@@ -101,23 +96,19 @@ const RecipeForm = observer(props => {
 
     const handleSubmit = async () => {
         setSubmitted(true);
-        const uploadObject = {};
+        const fd = new FormData();
         if (updated.has('name')) {
-            uploadObject.name = name;
+            fd.append("name", name);
         }
         if (updated.has('url')) {
-            uploadObject.url = url;
+            fd.append("url", url);
         }
         if (updated.has('image')) {
-            const fd = new FormData();
-            fd.append('file', rawImage ? rawImage : image);
-            fd.append('upload_preset', 'l9apptfs');
-            fd.append('resource_type', 'image');
-            const response = await axios.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
-            uploadObject.image = response.data.secure_url;
+            console.log(image);
+            fd.append("image", rawImage ? rawImage : image);
         }
         if (updated.has('notes')) {
-            uploadObject.notes = notes;
+            fd.append("notes", notes);
         }
         if (updated.has('ingredients')) {
             let ingredientsToSubmit = ingredients;
@@ -125,11 +116,11 @@ const RecipeForm = observer(props => {
                 // when creating a new recipe, IDs are fake, so we don't want to submit them
                 ingredientsToSubmit = ingredients.map(ing => ({name: ing.name, measurement: ing.measurement, quantity: ing.quantity}));
             }
-            uploadObject.ingredients = ingredientsToSubmit;
+            fd.append("ingredients", JSON.stringify(ingredientsToSubmit));
         }
         if (props.editMode) {
             try {
-                const recipe = await context.patchRecipe(props.recipe.id, uploadObject);
+                const recipe = await context.patchRecipe(props.recipe.id, fd);
                 props.updateRecipe(recipe);
                 props.toggleEdit();
             } catch (e) {
@@ -137,7 +128,7 @@ const RecipeForm = observer(props => {
             }
         } else {
             try {
-                await context.createRecipe(uploadObject);
+                await context.createRecipe(fd);
                 await Router.push("/");
             } catch (e) {
                 setSubmitted(false);
