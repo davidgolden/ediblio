@@ -1,8 +1,6 @@
-const withOffline = require('next-offline');
-
 const CACHE_NAME = "1.0.0";
 
-module.exports = withOffline({
+module.exports = {
     publicRuntimeConfig: {
         CDN_URL: "https://d1q5lezvbow9x7.cloudfront.net/",
     },
@@ -63,4 +61,4 @@ module.exports = withOffline({
     //         },
     //     }]
     // }
-});
+};
