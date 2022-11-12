@@ -43,7 +43,7 @@ const RecipeCard = observer(props => {
     };
 
     const deleteRecipe = () => {
-        if (confirm('Are you sure you want to do that?')) {
+        if (confirm('Are you sure you want to do that? This cannot be undone.')) {
             props.deleteRecipe(props.recipe.id);
         }
     };

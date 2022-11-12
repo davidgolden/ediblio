@@ -66,7 +66,7 @@ const RecipePage = observer(props => {
     }
 
     const deleteRecipe = async () => {
-        if (confirm('Are you sure you want to do that?')) {
+        if (confirm('Are you sure you want to do that? This cannot be undone.')) {
             await context.deleteRecipe(props.recipe.id);
             context.removeRecipe(props.recipe.id);
             context.removeTopModal();

@@ -339,10 +339,26 @@ router.route('/recipes/:recipe_id')
     })
     .delete(middleware.checkRecipeOwnership, async (req, res) => {
         try {
-            await db.query({
-                text: `DELETE FROM recipes WHERE id = $1`,
+            const response = await db.query({
+                text: `DELETE FROM recipes WHERE id = $1 RETURNING *`,
                 values: [req.params.recipe_id],
             });
+
+            if (response.rows[0].image) {
+                // delete all resources associated with the recipe
+                const recipePath = `users/${req.user.id}/recipes/${response.rows[0].id}/`;
+
+                const data = await s3.listObjects({Bucket: "ediblio", Prefix: recipePath}).promise();
+
+                const deleteParams = {Bucket: "ediblio"};
+                deleteParams.Delete = {Objects:[]};
+
+                data.Contents.forEach(function(content) {
+                    deleteParams.Delete.Objects.push({Key: content.Key});
+                });
+
+                await s3.deleteObjects(deleteParams).promise();
+            }
 
             return res.status(200).send('Success!')
         } catch (error) {
