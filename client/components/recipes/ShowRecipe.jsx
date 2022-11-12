@@ -92,7 +92,7 @@ const ShowRecipe = observer(props => {
             <div className={showRecipeIngredientsClassName}>
                 <h3>Recipe Notes</h3>
                 <div className={recipeNotesClassName}>
-                    <Markdown source={props.recipe.notes}/>
+                    <Markdown children={props.recipe.notes}/>
                 </div>
                 <AddIngredients
                     canAdd={false}
