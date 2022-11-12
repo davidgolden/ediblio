@@ -9,8 +9,10 @@ import {ApiStoreContext, loadStore, storeSingleton} from "../client/stores/api_s
 import LogRocket from 'logrocket';
 import "../client/styles/base.scss";
 import "draft-js/dist/Draft.css";
-import {useStaticRendering} from "mobx-react";
+import {enableStaticRendering} from "mobx-react";
 import {handleJWT} from "../client/hooks/handleJWT";
+import axios from "axios";
+import JWT from "jsonwebtoken";
 
 class MyDocument extends App {
     MobxStore;
@@ -25,11 +27,16 @@ class MyDocument extends App {
         }
 
         if (isServer) {
-            useStaticRendering(true);
-            this.MobxStore = loadStore(props.jwt);
+            enableStaticRendering(true);
+            this.MobxStore = loadStore();
+
         } else {
-            useStaticRendering(false);
+            enableStaticRendering(false);
             this.MobxStore = storeSingleton;
+        }
+
+        if (props.user) {
+            this.MobxStore.setUser(props.user);
         }
 
         this.updateApp(props.pageProps);
@@ -66,10 +73,18 @@ class MyDocument extends App {
     }
 }
 
-MyDocument.getInitialProps = ({ctx}) => {
+MyDocument.getInitialProps = async ({ctx}) => {
     const returnObj = {};
     if (ctx) {
-        returnObj.jwt = ctx.req.cookies.jwt;
+        const jwt = ctx.query.jwt || ctx.req.cookies.jwt;
+
+        if (jwt) {
+            const decodedJWT = JWT.decode(jwt);
+            const response = await axios.get(`http://localhost:5000/api/users/${decodedJWT.user.id}`, {
+                headers: {'x-access-token': jwt},
+            });
+            returnObj.user = response.data.user;
+        }
     }
     return returnObj;
 };

@@ -164,7 +164,6 @@ router.route('/recipes')
                 text += ` GROUP BY recipes.id, users.profile_image ${req.user ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
             }
 
-
             const recipes = await db.query({
                 text,
                 values,

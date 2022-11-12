@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useEffect} from 'react';
+import React, {useContext, useRef} from 'react';
 import styles from './styles/Modal.module.scss';
 import Button from "../utilities/buttons/Button";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
@@ -10,11 +10,6 @@ import classNames from 'classnames';
 function Modal(props) {
     const context = useContext(ApiStoreContext);
     const modalRef = useRef(null);
-
-    useEffect(() => {
-        window.addEventListener('click', handleClick);
-        return () => window.removeEventListener('click', handleClick);
-    }, []);
 
     function handleClick(e) {
         if (!modalRef.current.contains(e.target)) {
@@ -32,7 +27,7 @@ function Modal(props) {
         props.onClose && props.onClose();
     }
 
-    return <div className={containerClassName}>
+    return <div className={containerClassName} onClick={handleClick}>
         <div className={styles.modalContainer} style={props.style} ref={modalRef}>
             <Button aria-label={"Close"} onClick={handleClose}>
                 <FontAwesomeIcon icon={faTimes} />

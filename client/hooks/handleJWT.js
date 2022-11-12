@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from "axios";
 import jwt from 'jsonwebtoken';
 import URI from 'urijs';
 import Router from 'next/router';
@@ -12,20 +11,11 @@ export async function handleJWT(MobxStore, currentFullUrl) {
 
     if (currentFullUrlParts.hasQuery('jwt')) {
         const query = currentFullUrlParts.query(true);
-        const decodedJWT = jwt.decode(query.jwt);
 
-        if (isServer) {
-            // decoded JWT consists of partial user
-            MobxStore.setUser(decodedJWT.user);
-        } else {
-            // on the client, fetch the entirety of the user
-            const response = await axios.get(`/api/users/${decodedJWT.user.id}`, {
-                headers: {'x-access-token': query.jwt},
-            });
+        if (!isServer && query.jwt) {
             cookie.set('jwt', query.jwt, {expires: 365, secure: true});
-            MobxStore.setUser(response.data.user);
             currentFullUrl = currentFullUrlParts.removeQuery('jwt').path();
-            await Router.replace(currentFullUrl);
+            await Router.push(currentFullUrl, currentFullUrl, {shallow: true});
         }
     }
 }

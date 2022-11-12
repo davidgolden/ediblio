@@ -71,9 +71,7 @@ const RecipeCard = observer(props => {
                 />}
             </div>
             {showButtons && <Link href={"/users/[user_id]/recipes"} as={`/users/${props.recipe.author_id}/recipes`}>
-                <a>
-                    <UserImageSmall profileImage={getCdnImageUrl(props.recipe.author_image)} size={50} className={styles.userImage}/>
-                </a>
+                <UserImageSmall profileImage={getCdnImageUrl(props.recipe.author_image)} size={50} className={styles.userImage}/>
             </Link>}
             {showButtons && props.recipe.total_ratings > 0 && <div className={styles.recipeRating}>
                 <FontAwesomeIcon

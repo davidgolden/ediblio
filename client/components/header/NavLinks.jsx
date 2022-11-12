@@ -11,38 +11,28 @@ const NavLinks = observer((props) => {
     return <ul>
         <li>
             <Link href={"/"}>
-                <a>
-                    <FontAwesomeIcon icon={faSearch}/> Browse Recipes
-                </a>
+                <FontAwesomeIcon icon={faSearch}/> Browse Recipes
             </Link>
         </li>
         <li>
             <Link href={"/users/[user_id]/groceries"}
                   as={`/users/${context.user.id}/groceries`}>
-                <a>
-                    <FontAwesomeIcon icon={faListUl}/> Grocery List
-                </a>
+                <FontAwesomeIcon icon={faListUl}/> Grocery List
             </Link>
         </li>
         <li>
             <Link href={'/add'}>
-                <a>
-                    <FontAwesomeIcon icon={faPlus}/> Add Recipe
-                </a>
+                <FontAwesomeIcon icon={faPlus}/> Add Recipe
             </Link>
         </li>
         <li>
             <Link href={"/users/[user_id]/recipes"} as={`/users/${context.user.id}/recipes`}>
-                <a>
-                    <FontAwesomeIcon icon={faBook}/> My Recipes
-                </a>
+                <FontAwesomeIcon icon={faBook}/> My Recipes
             </Link>
         </li>
         <li>
             <Link href={"/users/[user_id]/settings"} as={`/users/${context.user.id}/settings`}>
-                <a>
-                    <FontAwesomeIcon icon={faUser}/> Settings
-                </a>
+                <FontAwesomeIcon icon={faUser}/> Settings
             </Link>
         </li>
         <li>
