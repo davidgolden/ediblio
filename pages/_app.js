@@ -48,7 +48,7 @@ class MyDocument extends App {
     }
 
     updateApp(pageProps) {
-        handleJWT(this.MobxStore, pageProps.currentFullUrl);
+        handleJWT();
         if (pageProps.recipes) {
             this.MobxStore.addRecipes(pageProps.recipes, true);
         }
