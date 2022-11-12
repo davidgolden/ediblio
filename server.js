@@ -6,7 +6,7 @@ const path = require('path');
 const URI = require('urijs');
 
 const dev = process.env.NODE_ENV === 'development';
-const app = next({dev});
+const app = next({dev, port: Number(process.env.PORT)});
 const handle = app.getRequestHandler();
 const jwt = require('jsonwebtoken');
 
