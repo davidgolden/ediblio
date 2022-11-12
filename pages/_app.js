@@ -80,7 +80,7 @@ MyDocument.getInitialProps = async ({ctx}) => {
 
         if (jwt) {
             const decodedJWT = JWT.decode(jwt);
-            const response = await axios.get(`http://localhost:5000/api/users/${decodedJWT.user.id}`, {
+            const response = await axios.get(`${process.env.HOST}/api/users/${decodedJWT.user.id}`, {
                 headers: {'x-access-token': jwt},
             });
             returnObj.user = response.data.user;

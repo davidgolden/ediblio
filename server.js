@@ -22,8 +22,6 @@ const userRoutes = require('./routes/users'),
     measurementRoutes = require('./routes/measurements'),
     indexRoutes = require('./routes/index');
 
-const googleRedirectUrl = (process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://ediblio.com") + "/auth/google/callback";
-
 const {usersSelector, encodeJWT, verifyJWT} = require("./utils");
 
 app.prepare().then(() => {
@@ -64,7 +62,7 @@ app.prepare().then(() => {
                 client_secret: process.env.GOOGLE_CLIENT_SECRET,
                 code: req.query.code,
                 grant_type: "authorization_code",
-                redirect_uri: googleRedirectUrl,
+                redirect_uri: process.env.HOST+"/auth/google/callback",
             })
             const response = await fetch(uri.toString(),{
                 method: "POST",
