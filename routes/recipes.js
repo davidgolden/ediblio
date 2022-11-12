@@ -192,7 +192,7 @@ router.route('/recipes')
             const recipeId = recipeRes.rows[0].id;
 
             if (req.file) {
-                const imagePath = `users/${req.user.id}/recipes/${recipeId}/image`;
+                const imagePath = `users/${req.user.id}/recipes/${recipeId}/${req.file.originalname}`;
                 const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
 
                 await client.query(`UPDATE recipes SET image = $1 WHERE id = $2`, [data.Key, recipeId]);
@@ -280,7 +280,7 @@ router.route('/recipes/:recipe_id')
             }
 
             if (req.file) {
-                const imagePath = `users/${req.user.id}/recipes/${req.params.recipe_id}/image`;
+                const imagePath = `users/${req.user.id}/recipes/${req.params.recipe_id}/${req.file.originalname}`;
                 const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
 
                 await client.query(`UPDATE recipes SET image = $1 WHERE id = $2`, [data.Key, req.params.recipe_id]);

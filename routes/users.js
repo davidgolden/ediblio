@@ -419,7 +419,7 @@ router.route('/users/:user_id')
             }
 
             if (req.file) {
-                const imagePath = `users/${req.user.id}/profile_picture`;
+                const imagePath = `users/${req.user.id}/${req.file.originalname}`;
                 const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
                 updateQuery('profile_image', data.Key);
             }

@@ -104,8 +104,8 @@ const RecipeForm = observer(props => {
             fd.append("url", url);
         }
         if (updated.has('image')) {
-            console.log(image);
-            fd.append("image", rawImage ? rawImage : image);
+            const img = rawImage || image;
+            fd.append("image", img, img.name);
         }
         if (updated.has('notes')) {
             fd.append("notes", notes);

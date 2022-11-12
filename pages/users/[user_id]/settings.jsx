@@ -39,9 +39,8 @@ const Settings = observer(props => {
                 if (password !== props.user.password) {
                     fd.append("password", password);
                 }
-                console.log(profileImage);
                 if (profileImage !== props.user.profile_image) {
-                    fd.append("profile_picture", profileImage);
+                    fd.append("profile_picture", profileImage, profileImage.name);
                 }
 
                 const response = await clientFetch.patch(`/api/users/${context.user.id}`, fd);
@@ -70,6 +69,7 @@ const Settings = observer(props => {
         };
         try {
             const compressedFile = await imageCompression(file, options);
+            console.log(compressedFile);
             const blobURL = window.URL.createObjectURL(compressedFile);
             setDisplayImage(blobURL);
             setProfileImage(compressedFile);
