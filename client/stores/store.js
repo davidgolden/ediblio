@@ -18,12 +18,6 @@ export default class Store {
     constructor() {
         if (typeof window !== 'undefined') {
             this.fetchMeasurements();
-            this.loadUserFromLocalStorage();
-            autorun(() => {
-                if (this.user) {
-                    localStorage.setItem("user", JSON.stringify(toJS(this.user)));
-                }
-            });
 
             // open prompt if never visited or not visited in past 24 hours
             if (localStorage.getItem('hasInstallPromptRun') === null || localStorage.getItem('hasInstallPromptRun') > 1000 * 60 * 60 * 24) {
