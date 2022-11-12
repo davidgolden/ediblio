@@ -3,7 +3,6 @@ const express = require('express'),
     {hashPassword} = require("../utils"),
     middleware = require('../middleware');
 
-const cloudinary = require('cloudinary');
 const {usersSelector} = require("../utils");
 const {addIngredient, canBeAdded} = require("../client/utils/conversions");
 
@@ -17,12 +16,6 @@ const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 })
-
-cloudinary.config({
-    cloud_name: 'recipecloud',
-    api_key: process.env.CLOUDINARY_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET
-});
 
 async function selectUserGroceries(user_id) {
     const groceries = await db.query({

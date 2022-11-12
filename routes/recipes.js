@@ -1,7 +1,6 @@
 const express = require('express'),
     router = express.Router(),
-    middleware = require('../middleware'),
-    cloudinary = require('cloudinary');
+    middleware = require('../middleware');
 
 const multer = require('multer');
 const upload = multer();
@@ -30,12 +29,6 @@ const pool = new Pool();
 /u/:u/r/:r -> get specific user recipe
 
  */
-
-cloudinary.config({
-    cloud_name: 'recipecloud',
-    api_key: process.env.CLOUDINARY_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET
-});
 
 async function getRecipe(recipe_id, user_id) {
     let response;
