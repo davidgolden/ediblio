@@ -36,31 +36,31 @@ module.exports = withOffline({
 
         return config;
     },
-    workboxOpts: {
-        runtimeCaching: [{
-            urlPattern: /\.(eot|woff|woff2|ttf|ttc|png|svg|jpg|jpeg|gif|cgm|tiff|webp|bmp|ico)$/i,
-            handler: 'CacheFirst',
-            options: {
-                cacheName: CACHE_NAME + "-media",
-                expiration: {
-                    maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-                },
-                cacheableResponse: {
-                    statuses: [200],
-                },
-            },
-        }, {
-            urlPattern: /.*$/,
-            handler: 'NetworkFirst',
-            options: {
-                cacheName: CACHE_NAME + "-pages",
-                expiration: {
-                    maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-                },
-                cacheableResponse: {
-                    statuses: [200],
-                },
-            },
-        }]
-    }
+    // workboxOpts: {
+    //     runtimeCaching: [{
+    //         urlPattern: /\.(eot|woff|woff2|ttf|ttc|png|svg|jpg|jpeg|gif|cgm|tiff|webp|bmp|ico)$/i,
+    //         handler: 'CacheFirst',
+    //         options: {
+    //             cacheName: CACHE_NAME + "-media",
+    //             expiration: {
+    //                 maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+    //             },
+    //             cacheableResponse: {
+    //                 statuses: [200],
+    //             },
+    //         },
+    //     }, {
+    //         urlPattern: /.*$/,
+    //         handler: 'NetworkFirst',
+    //         options: {
+    //             cacheName: CACHE_NAME + "-pages",
+    //             expiration: {
+    //                 maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+    //             },
+    //             cacheableResponse: {
+    //                 statuses: [200],
+    //             },
+    //         },
+    //     }]
+    // }
 });
