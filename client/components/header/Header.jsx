@@ -99,10 +99,9 @@ const Header = observer((props) => {
                     </div>
                 </CSSTransition>
 
-                {typeof window !== 'undefined' && window.history.length > 1 &&
                 <Button className={styles.backButton} onClick={() => window.history.back()}>
                     <FontAwesomeIcon icon={faChevronLeft}/>
-                </Button>}
+                </Button>
 
                 <h1>
                     <Link href={"/"}><img src={"/images/ediblio_logo.png"}/></Link>

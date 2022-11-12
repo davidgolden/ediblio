@@ -3,11 +3,10 @@ const express = require('express');
 const compression = require('compression');
 const next = require('next');
 const path = require('path');
-const axios = require('axios');
-const qs = require('qs');
+const URI = require('urijs');
 
 const dev = process.env.NODE_ENV === 'development';
-const app = next({dev});
+const app = next({dev, port: Number(process.env.PORT)});
 const handle = app.getRequestHandler();
 const jwt = require('jsonwebtoken');
 
@@ -22,8 +21,6 @@ const userRoutes = require('./routes/users'),
     ratingRoutes = require('./routes/ratings'),
     measurementRoutes = require('./routes/measurements'),
     indexRoutes = require('./routes/index');
-
-const googleRedirectUrl = (process.env.NODE_ENV === 'development' ? "http://localhost:5000" : "https://ediblio.com") + "/auth/google/callback";
 
 const {usersSelector, encodeJWT, verifyJWT} = require("./utils");
 
@@ -59,19 +56,23 @@ app.prepare().then(() => {
 
     server.get('/auth/google/callback', async function (req, res) {
         try {
-            const response = await axios.post('https://oauth2.googleapis.com/token', qs.stringify({
+            const uri = new URI('https://oauth2.googleapis.com/token');
+            uri.setSearch({
                 client_id: process.env.GOOGLE_CLIENT_ID,
                 client_secret: process.env.GOOGLE_CLIENT_SECRET,
                 code: req.query.code,
                 grant_type: "authorization_code",
-                redirect_uri: googleRedirectUrl,
-            }), {
+                redirect_uri: process.env.HOST+"/auth/google/callback",
+            })
+            const response = await fetch(uri.toString(),{
+                method: "POST",
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 }
             });
+            const data = await response.json();
 
-            const decodedIdToken = jwt.decode(response.data.id_token);
+            const decodedIdToken = jwt.decode(data.id_token);
             const {email, picture, name, sub} = decodedIdToken;
             const state = JSON.parse(req.query.state);
 

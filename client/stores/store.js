@@ -1,5 +1,5 @@
 import React from "react";
-import {observable, action, autorun, toJS, computed, set} from "mobx";
+import {autorun, toJS, set, makeAutoObservable} from "mobx";
 import cookie from 'js-cookie';
 import {clientFetch} from "../utils/cookies";
 const jwt = require('jsonwebtoken');
@@ -15,28 +15,18 @@ class JsonWebToken {
 
 export default class Store {
 
-    constructor(token) {
+    constructor() {
         if (typeof window !== 'undefined') {
             this.fetchMeasurements();
-            this.loadUserFromLocalStorage();
-            autorun(() => {
-                if (this.user) {
-                    localStorage.setItem("user", JSON.stringify(toJS(this.user)));
-                }
-            });
 
             // open prompt if never visited or not visited in past 24 hours
             if (localStorage.getItem('hasInstallPromptRun') === null || localStorage.getItem('hasInstallPromptRun') > 1000 * 60 * 60 * 24) {
                 localStorage.setItem('hasInstallPromptRun', Date.now().toString());
                 this.checkIfShouldShowInstallPrompt();
             }
-        } else if (token) {
-            // this is a roundabout way to know that the user is logged in when the store is loaded on the server
-            const decodedToken = jwt.decode(token);
-            if (decodedToken?.user) {
-                this.setUser(decodedToken.user);
-            }
         }
+
+        makeAutoObservable(this);
     }
 
     checkIfShouldShowInstallPrompt = () => {
@@ -76,7 +66,6 @@ export default class Store {
         }
     };
 
-    @action
     loadUserFromLocalStorage() {
         const userJson = localStorage.getItem("user");
         if (userJson) {
@@ -89,7 +78,6 @@ export default class Store {
         }
     }
 
-    @action
     setUser(user) {
         for (let k in user) {
             if (user.hasOwnProperty(k)) {
@@ -98,34 +86,30 @@ export default class Store {
         }
     }
 
-    @action
     setMenu(menu) {
         this.menu = menu;
     }
 
-    @action
     setGroceryList(groceryList) {
         this.groceryList = groceryList;
     }
 
-    @computed
     get loggedIn() {
         return !!this.user?.id;
     }
 
-    @observable menu = [];
-    @observable groceryList = [];
-    @observable user = {};
-    @observable notificationMessage = '';
-    @observable notificationType = '';
+    menu = [];
+    groceryList = [];
+    user = {};
+    notificationMessage = '';
+    notificationType = '';
 
-    @observable modalStack = [];
+    modalStack = [];
 
-    @observable measurements = [];
+    measurements = [];
 
-    @observable recipes = new Map([]);
+    recipes = new Map([]);
 
-    @action
     addRecipes(r, clear = false) {
         if (clear) {
             this.recipes.clear();
@@ -133,30 +117,25 @@ export default class Store {
         r.forEach(recipe => set(this.recipes, recipe.id, recipe));
     }
 
-    @action
     removeRecipe(id) {
         this.recipes.delete(id);
     }
 
-    @action
     fetchMeasurements = async () => {
         const response = await clientFetch.get('/api/measurements');
         this.measurements = response.data.measurements;
     };
 
-    @action
     addModal = (type) => {
         this.modalStack.push(type)
     };
 
-    @action
     removeTopModal = () => {
         this.modalStack.pop();
     };
 
-    @observable baseURL = "";
+    baseURL = "";
 
-    @action
     openRecipeModal = async (id) => {
         this.baseURL = window.location.href;
         window.history.pushState({}, document.title, `/recipes/${id}`);
@@ -178,13 +157,11 @@ export default class Store {
         }, 4000);
     };
 
-    @action
     userLogin = (email, password) => {
         const jwt = new JsonWebToken();
         window.location.href = '/api/login?jwt='+jwt.encode({email, password, redirect_url: window.location.pathname});
     };
 
-    @action
     userLogout = async () => {
         this.user = {};
         localStorage.setItem('jwt', null);
@@ -214,7 +191,6 @@ export default class Store {
         })
     };
 
-    @action
     createCollection = name => {
         return new Promise((res, rej) => {
             clientFetch.post(`/api/collections`, {name})
@@ -229,7 +205,6 @@ export default class Store {
         });
     };
 
-    @action
     deleteCollection = async id => {
         return new Promise((res, rej) => {
             clientFetch.delete(`/api/collections/${id}`)
@@ -268,7 +243,6 @@ export default class Store {
         });
     };
 
-    @action
     registerUser = user => {
         const jwt = new JsonWebToken();
         window.location.href = '/api/register?jwt='+jwt.encode({email: user.email, username: user.username, password: user.password, redirect_url: window.location.pathname});

@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "installing dependencies"
-npm ci
+npm ci --legacy-peer-deps
 
 echo "building next"
 npm run build
