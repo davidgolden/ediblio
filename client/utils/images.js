@@ -55,5 +55,10 @@ export function processFile(dataURI, max_height, max_width, type = "image/jpeg")
 }
 
 export function getCdnImageUrl(imagePath) {
-    return publicRuntimeConfig.CDN_URL + imagePath;
+    if (/^http:\/\//.exec(imagePath)) {
+        return imagePath;
+    } else if (imagePath) {
+        return publicRuntimeConfig.CDN_URL + imagePath;
+    }
+    return imagePath;
 }

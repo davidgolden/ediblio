@@ -7,6 +7,7 @@ import axios from "axios";
 import UserWall from "../../../client/components/users/UserWall";
 import {observer} from "mobx-react";
 import {clientFetch, getUrlParts} from "../../../client/utils/cookies";
+import {getCdnImageUrl} from "../../../client/utils/images";
 
 const settingsContainerClassName = classNames({
     [styles.settingsContainer]: true,
@@ -28,28 +29,22 @@ const Settings = observer(props => {
             return alert('Passwords do not match!')
         } else {
             try {
-                const query = {};
-
+                const fd = new FormData();
                 if (username !== props.user.username) {
-                    query.username = username;
+                    fd.append("username", username);
                 }
                 if (email !== props.user.email) {
-                    query.email = email;
+                    fd.append("email", email);
                 }
                 if (password !== props.user.password) {
-                    query.password = password;
+                    fd.append("password", password);
                 }
+                console.log(profileImage);
                 if (profileImage !== props.user.profile_image) {
-                    const fd = new FormData();
-                    fd.append('file', profileImage);
-                    fd.append('upload_preset', 'profile_image');
-                    fd.append('resource_type', 'image');
-                    fd.append('folder', props.user.id);
-                    const response = await axios.post(`https://api.cloudinary.com/v1_1/recipecloud/upload`, fd);
-                    query.profileImage = response.data.secure_url;
+                    fd.append("profile_picture", profileImage);
                 }
 
-                const response = await clientFetch.patch(`/api/users/${context.user.id}`, query);
+                const response = await clientFetch.patch(`/api/users/${context.user.id}`, fd);
 
                 context.user = {
                     ...context.user,
@@ -93,7 +88,7 @@ const Settings = observer(props => {
             <div className={settingsContainerClassName}>
                 <h1>Edit Profile</h1>
                 <div>
-                    {(profileImage || displayImage) && <img src={displayImage || profileImage}/>}
+                    {(profileImage || displayImage) && <img src={displayImage || getCdnImageUrl(profileImage)}/>}
                     <input onChange={e => handleFileUpload(e.target.files[0])} type={'file'} accept={'image/*'}/>
                 </div>
                 <div>

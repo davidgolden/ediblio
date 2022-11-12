@@ -15,6 +15,7 @@ import {CSSTransition} from "react-transition-group";
 import UserImageSmall from "../users/UserImageSmall";
 import NavLinks from "./NavLinks";
 import SearchBar from "./SearchBar";
+import {getCdnImageUrl} from "../../utils/images";
 
 const navContainerClassName = classNames({
     [styles.navContainer]: true,
@@ -115,7 +116,7 @@ const Header = observer((props) => {
                     {context.loggedIn ?
                         <div onMouseEnter={() => setNavOpen(true)} onMouseLeave={() => setNavOpen(false)}
                              className={userLinkClassName}>
-                            <UserImageSmall size={35} profileImage={context.user.profile_image}/>
+                            <UserImageSmall size={35} profileImage={getCdnImageUrl(context.user.profile_image)}/>
                             <FontAwesomeIcon icon={faChevronDown}/>
                             {navOpen && context.loggedIn && <div className={linksContainerClassName}>
                                 <NavLinks/>

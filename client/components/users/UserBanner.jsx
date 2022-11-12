@@ -15,7 +15,7 @@ export default function UserBanner(props) {
         </div>
 
         <div>
-            <UserImageSmall size={200} profileImage={props.user.profile_image}/>
+            <UserImageSmall size={200} profileImage={getCdnImageUrl(props.user.profile_image)}/>
             {/*{props.user.profile_image ? <img src={props.user.profile_image}/> : <FontAwesomeIcon icon={faUser} />}*/}
             <h2>{props.user.username}</h2>
         </div>

@@ -7,7 +7,16 @@ const cloudinary = require('cloudinary');
 const {usersSelector} = require("../utils");
 const {addIngredient, canBeAdded} = require("../client/utils/conversions");
 
+const multer = require('multer');
+const upload = multer();
+
 const db = require("../db/index");
+
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+})
 
 cloudinary.config({
     cloud_name: 'recipecloud',
@@ -388,7 +397,7 @@ router.route('/users/:user_id/collections/:collection_id')
 
 router.route('/users/:user_id')
     // update user
-    .patch(middleware.isLoggedIn, async (req, res) => {
+    .patch(middleware.isLoggedIn, upload.single("profile_picture"), async (req, res) => {
         try {
             const {username, email, profileImage, password} = req.body;
 
@@ -415,8 +424,11 @@ router.route('/users/:user_id')
                     updateQuery('password', await hashPassword(password));
                 }
             }
-            if (typeof profileImage === 'string') {
-                updateQuery('profile_image', profileImage);
+
+            if (req.file) {
+                const imagePath = `users/${req.user.id}/profile_picture`;
+                const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
+                updateQuery('profile_image', data.Key);
             }
 
             if (updateValues.length > 0) {
