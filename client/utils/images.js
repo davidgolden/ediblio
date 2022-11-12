@@ -1,3 +1,6 @@
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
+
 export function resize(img, max_height, max_width, type) {
     const canvas = document.createElement('canvas');
 
@@ -49,4 +52,8 @@ export function processFile(dataURI, max_height, max_width, type = "image/jpeg")
             res(resized); // send it to canvas
         }
     })
+}
+
+export function getCdnImageUrl(imagePath) {
+    return publicRuntimeConfig.CDN_URL + imagePath;
 }

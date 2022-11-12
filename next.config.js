@@ -6,8 +6,8 @@ module.exports = withOffline({
     cssLoaderOptions: {
         localIdentName: '[local]_[hash:base64:5]',
     },
-    env: {
-        NEXT_PUBLIC_CDN_URL: "https://d1q5lezvbow9x7.cloudfront.net/",
+    publicRuntimeConfig: {
+        CDN_URL: "https://d1q5lezvbow9x7.cloudfront.net/",
     },
     // generateInDevMode: true,
     webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
