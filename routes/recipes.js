@@ -16,6 +16,10 @@ const db = require('../db');
 const {Pool} = require('pg');
 const pool = new Pool();
 
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient()
+
+
 /*
 
 /reset
@@ -115,6 +119,35 @@ router.route('/recipes')
 
         try {
 
+            let recipes = await prisma.recipes.findMany({
+                include: {
+                    author: {
+                        select: {
+                            username: true,
+                            profile_image: true,
+                            ratings: true,
+                        },
+                    },
+                    recipes_ingredients: true,
+                    ratings: true,
+                },
+                take: page_size,
+                skip,
+            })
+
+            recipes = recipes.map(recipe => {
+                console.log(recipe);
+                let total_ratings = 0;
+                let cumm_ratings = 0;
+                recipe.ratings.forEach(rating => {
+                    total_ratings += 1;
+                    cumm_ratings += rating.rating;
+                })
+                recipe.avg_rating = cumm_ratings/total_ratings;
+                recipe.total_ratings = total_ratings;
+                // delete recipe.ratings;
+            })
+
             let text = `
             SELECT DISTINCT recipes.*, users.profile_image AS author_image, avg(ratings.rating) avg_rating, count(ratings) total_ratings
             `,
@@ -164,12 +197,12 @@ router.route('/recipes')
                 text += ` GROUP BY recipes.id, users.profile_image ${req.user ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
             }
 
-            const recipes = await db.query({
-                text,
-                values,
-            });
+            // const recipes = await db.query({
+            //     text,
+            //     values,
+            // });
 
-            return res.status(200).send({recipes: recipes.rows});
+            return res.status(200).send({recipes: recipes});
         } catch (error) {
             console.log(error);
             res.status(404).send({detail: error.message});

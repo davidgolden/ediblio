@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model collections {
+  id                          String                        @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at                  DateTime                      @default(dbgenerated("CURRENT_DATE")) @db.Date
+  name                        String
+  author_id                   String?                       @db.Uuid
+  is_primary                  Boolean?                      @default(false)
+  users                       users?                        @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  recipes_collections         recipes_collections[]
+  users_collections_followers users_collections_followers[]
+}
+
+model measurements {
+  id                          String                        @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  short_name                  String                        @unique
+  long_name                   String                        @unique
+  long_name_plural            String                        @unique
+  type                        String
+  recipes_ingredients         recipes_ingredients[]
+  users_ingredients_groceries users_ingredients_groceries[]
+  users_staples               users_staples[]
+}
+
+model ratings {
+  id         String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
+  recipe_id  String?  @db.Uuid
+  author_id  String?  @db.Uuid
+  rating     Decimal  @db.Decimal
+  users      users?   @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  recipes    recipes? @relation(fields: [recipe_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([recipe_id, author_id])
+}
+
+model recipes {
+  id                  String                @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at          DateTime              @default(now()) @db.Timestamp(6)
+  name                String
+  url                 String?
+  notes               String?
+  image               String?
+  author_id           String?               @db.Uuid
+  author              users?                @relation(fields: [author_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ratings             ratings[]
+  recipes_collections recipes_collections[]
+  recipes_ingredients recipes_ingredients[]
+  users_recipes_menu  users_recipes_menu[]
+}
+
+model recipes_collections {
+  id            String       @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at    DateTime     @default(dbgenerated("CURRENT_DATE")) @db.Date
+  collection_id String?      @db.Uuid
+  recipe_id     String?      @db.Uuid
+  collections   collections? @relation(fields: [collection_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  recipes       recipes?     @relation(fields: [recipe_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([recipe_id, collection_id])
+}
+
+model recipes_ingredients {
+  id             String       @id @unique(map: "id_unique") @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at     DateTime     @default(dbgenerated("CURRENT_DATE")) @db.Date
+  recipe_id      String?      @db.Uuid
+  quantity       Decimal      @db.Decimal
+  name           String
+  measurement_id String       @db.Uuid
+  measurements   measurements @relation(fields: [measurement_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  recipes        recipes?     @relation(fields: [recipe_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model session {
+  sid    String   @id @db.VarChar
+  sess   Json     @db.Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "IDX_session_expire")
+}
+
+model users {
+  id                          String                        @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at                  DateTime                      @default(dbgenerated("CURRENT_DATE")) @db.Date
+  username                    String                        @unique
+  email                       String                        @unique
+  profile_image               String?
+  password                    String?
+  reset_token                 String?
+  token_expires               DateTime?                     @db.Timestamp(6)
+  third_party_domain          String?
+  third_party_id              String?                       @unique
+  collections                 collections[]
+  ratings                     ratings[]
+  recipes                     recipes[]
+  users_collections_followers users_collections_followers[]
+  users_ingredients_groceries users_ingredients_groceries[]
+  users_recipes_menu          users_recipes_menu[]
+  users_staples               users_staples[]
+}
+
+model users_collections_followers {
+  id            String       @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at    DateTime     @default(dbgenerated("CURRENT_DATE")) @db.Date
+  user_id       String?      @db.Uuid
+  collection_id String?      @db.Uuid
+  collections   collections? @relation(fields: [collection_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users         users?       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, collection_id])
+}
+
+model users_ingredients_groceries {
+  id             String       @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at     DateTime     @default(dbgenerated("CURRENT_DATE")) @db.Date
+  deleted        Boolean?     @default(false)
+  user_id        String?      @db.Uuid
+  name           String
+  measurement_id String       @db.Uuid
+  quantity       Decimal      @db.Decimal
+  item_index     Int?         @default(0)
+  measurements   measurements @relation(fields: [measurement_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users          users?       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users_recipes_menu {
+  id         String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
+  deleted    Boolean? @default(false)
+  user_id    String?  @db.Uuid
+  recipe_id  String?  @db.Uuid
+  recipes    recipes? @relation(fields: [recipe_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users_staples {
+  id             String       @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at     DateTime     @default(dbgenerated("CURRENT_DATE")) @db.Date
+  user_id        String?      @db.Uuid
+  quantity       Decimal      @db.Decimal
+  name           String
+  measurement_id String       @db.Uuid
+  measurements   measurements @relation(fields: [measurement_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users          users?       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
