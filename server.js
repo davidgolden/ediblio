@@ -38,9 +38,13 @@ app.prepare().then(() => {
         let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
 
         if (token) {
-            const verified = verifyJWT(token);
-            if (verified) {
-                req.user = {id: verified.user.id};
+            try {
+                const verified = verifyJWT(token);
+                if (verified) {
+                    req.user = {id: verified.user.id};
+                }
+            } catch (e) {
+                console.log(e);
             }
         }
 
