@@ -6,7 +6,6 @@ import Header from "../client/components/header/Header";
 import Notification from "../client/components/header/Notification";
 import AllModals from "../client/components/modals/styles/AllModals";
 import {ApiStoreContext, loadStore, storeSingleton} from "../client/stores/api_store";
-import LogRocket from 'logrocket';
 import "../client/styles/base.scss";
 import "draft-js/dist/Draft.css";
 import {enableStaticRendering} from "mobx-react";
@@ -21,10 +20,6 @@ class MyDocument extends App {
         super(props);
 
         const isServer = typeof window === 'undefined';
-
-        if (!isServer && process.env.NODE_ENV !== 'development') {
-            LogRocket.init('gajlpv/recipe-cloud');
-        }
 
         if (isServer) {
             enableStaticRendering(true);
