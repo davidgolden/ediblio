@@ -47,37 +47,37 @@ group by users.id;`, values: [email]
     }
 });
 
-router.get('/register', async function (req, res) {
-    try {
-        const {email, password, username, redirect_url} = decodeJWT(req.query.jwt);
-
-        const userRes = await db.query({
-            text: `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *`,
-            values: [username, email.toLowerCase(), await hashPassword(password)]
-        });
-
-        // create a favorites collection
-        await db.query({
-            text: `INSERT INTO collections (name, author_id, is_primary) VALUES ($1, $2, $3)`,
-            values: ['Favorites', userRes.rows[0].id, true]
-        });
-
-        const user = userRes.rows[0];
-        const jwt = encodeJWT({
-            user: {
-                id: user.id,
-                profile_image: user.profile_image,
-                username: user.username,
-            }
-        });
-
-        res.redirect(redirect_url + '?jwt=' + jwt);
-
-    } catch (error) {
-        // TODO need to handle error
-        res.redirect(500, `/_error?err=${error.message}`);
-    }
-});
+// router.get('/register', async function (req, res) {
+//     try {
+//         const {email, password, username, redirect_url} = decodeJWT(req.query.jwt);
+//
+//         const userRes = await db.query({
+//             text: `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *`,
+//             values: [username, email.toLowerCase(), await hashPassword(password)]
+//         });
+//
+//         // create a favorites collection
+//         await db.query({
+//             text: `INSERT INTO collections (name, author_id, is_primary) VALUES ($1, $2, $3)`,
+//             values: ['Favorites', userRes.rows[0].id, true]
+//         });
+//
+//         const user = userRes.rows[0];
+//         const jwt = encodeJWT({
+//             user: {
+//                 id: user.id,
+//                 profile_image: user.profile_image,
+//                 username: user.username,
+//             }
+//         });
+//
+//         res.redirect(redirect_url + '?jwt=' + jwt);
+//
+//     } catch (error) {
+//         // TODO need to handle error
+//         res.redirect(500, `/_error?err=${error.message}`);
+//     }
+// });
 
 //logout
 router.post('/logout', function (req, res) {
