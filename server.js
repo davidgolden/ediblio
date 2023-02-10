@@ -1,19 +1,14 @@
-require('dotenv').config({path: './.env'});
 const express = require('express');
 const compression = require('compression');
 const next = require('next');
 const path = require('path');
-const URI = require('urijs');
 
 const dev = process.env.NODE_ENV === 'development';
 const app = next({dev, port: Number(process.env.PORT)});
 const handle = app.getRequestHandler();
-const jwt = require('jsonwebtoken');
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-
-const db = require("./db/index");
 
 const userRoutes = require('./routes/users'),
     recipeRoutes = require('./routes/recipes'),
@@ -22,7 +17,7 @@ const userRoutes = require('./routes/users'),
     measurementRoutes = require('./routes/measurements'),
     indexRoutes = require('./routes/index');
 
-const {usersSelector, encodeJWT, verifyJWT} = require("./utils");
+const {verifyJWT} = require("./utils");
 
 app.prepare().then(() => {
     const server = express();
@@ -57,73 +52,6 @@ app.prepare().then(() => {
     server.use('/api/', collectionRoutes);
     server.use('/api/', ratingRoutes);
     server.use('/api/', measurementRoutes);
-
-    server.get('/auth/google/callback', async function (req, res) {
-        try {
-            const uri = new URI('https://oauth2.googleapis.com/token');
-            uri.setSearch({
-                client_id: process.env.GOOGLE_CLIENT_ID,
-                client_secret: process.env.GOOGLE_CLIENT_SECRET,
-                code: req.query.code,
-                grant_type: "authorization_code",
-                redirect_uri: process.env.HOST+"/auth/google/callback",
-            })
-            const response = await fetch(uri.toString(),{
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            });
-            const data = await response.json();
-
-            const decodedIdToken = jwt.decode(data.id_token);
-            const {email, picture, name, sub} = decodedIdToken;
-            const state = JSON.parse(req.query.state);
-
-            const userRes = await db.query({
-                text: `${usersSelector}
-where users.email = $1
-group by users.id`, values: [email]
-            });
-
-            if (userRes.rows.length > 0) {
-                const user = userRes.rows[0];
-                const jwt = encodeJWT({
-                    user: {
-                        id: user.id,
-                        profile_image: user.profile_image,
-                        username: user.username,
-                    }
-                });
-                res.redirect(state.request_url + '?jwt=' + jwt);
-            } else {
-
-                const userRes = await db.query({
-                    text: `INSERT INTO users (username, email, third_party_id, third_party_domain, profile_image) VALUES ($1, $2, $3, 'google', $4) RETURNING *`,
-                    values: [name, email.toLowerCase(), sub, picture]
-                });
-                // create a favorites collection
-                const userId = userRes.rows[0].id;
-                await db.query({
-                    text: `INSERT INTO collections (name, author_id, is_primary) VALUES ($1, $2, $3)`,
-                    values: ['Favorites', userId, true]
-                });
-
-                const user = userRes.rows[0];
-                const jwt = encodeJWT({
-                    user: {
-                        id: user.id,
-                        profile_image: user.profile_image,
-                        username: user.username,
-                    }
-                });
-                res.redirect(state.request_url + '/?jwt=' + jwt);
-            }
-        } catch (error) {
-            res.redirect(`/_error?err=${error.message}`);
-        }
-
-    });
 
     server.get('/service-worker.js', (req, res) => {
         const filePath = path.join(__dirname, '.next/service-worker.js');

@@ -2,7 +2,7 @@ const CACHE_NAME = "1.0.0";
 
 module.exports = {
     publicRuntimeConfig: {
-        CDN_URL: "https://d1q5lezvbow9x7.cloudfront.net/",
+        CDN_URL: process.env.CDN_URL,
     },
     // generateInDevMode: true,
     webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
