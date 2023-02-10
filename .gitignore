@@ -1,6 +1,5 @@
 node_modules
 .env
-.env-docker
 client/dist/*
 .idea
 migration
