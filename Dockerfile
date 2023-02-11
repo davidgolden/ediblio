@@ -14,7 +14,6 @@ COPY package-lock.json /app/package-lock.json
 COPY server.js /app/server.js
 COPY ./utils.js /app/utils.js
 COPY ./next.config.js /app/next.config.js
-COPY ./polyfills.js /app/polyfills.js
 
 RUN npm ci
 
