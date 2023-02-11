@@ -2,7 +2,7 @@ import db from "../../../../../db/index";
 import {getUserIdFromRequest, insertUserGroceries} from "../../../../../utils/serverUtils";
 import {selectUserMenu} from "../../../../../utils/serverUtils";
 
-export async function handler(req, res) {
+export default async function handler(req, res) {
     if (req.method === "POST") {
         // add full recipe to grocery list
         const userId = getUserIdFromRequest(req);
