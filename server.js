@@ -14,8 +14,7 @@ const userRoutes = require('./routes/users'),
     recipeRoutes = require('./routes/recipes'),
     collectionRoutes = require('./routes/collections'),
     ratingRoutes = require('./routes/ratings'),
-    measurementRoutes = require('./routes/measurements'),
-    indexRoutes = require('./routes/index');
+    measurementRoutes = require('./routes/measurements');
 
 const {verifyJWT} = require("./utils");
 
@@ -46,7 +45,6 @@ app.prepare().then(() => {
         next();
     });
 
-    server.use('/api/', indexRoutes);
     server.use('/api/', userRoutes);
     server.use('/api/', recipeRoutes);
     server.use('/api/', collectionRoutes);

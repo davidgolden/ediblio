@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import styles from './styles/Forgot.module.scss';
 import {ApiStoreContext} from "../client/stores/api_store";
 import {getUrlParts} from "../client/utils/cookies";
+import {useRouter} from "next/router";
 
 const ForgotPassword = props => {
     const [token, setToken] = useState('');
@@ -10,14 +11,12 @@ const ForgotPassword = props => {
     const [confirm, setConfirm] = useState('');
 
     const context = useContext(ApiStoreContext);
+    const router = useRouter();
 
-    const handleReset = e => {
+    const handleReset = async e => {
         e.preventDefault();
-        context.resetPassword(token, password)
-            .then(() => {
-                alert('Successfully updated password!');
-                return props.navigate('/');
-            });
+        const {jwt} = await context.resetPassword(token, password);
+        await router.push("/?jwt="+jwt);
     };
 
     const containerClassName = classNames({

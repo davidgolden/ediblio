@@ -7,7 +7,7 @@ function hashPassword(password) {
     return new Promise((res, rej) => {
         bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
             if (err) rej(err);
-            bcrypt.hash(password, salt, false, function(err, hash) {
+            bcrypt.hash(password, salt, function(err, hash) {
                 if (err) rej(err);
                 res(hash);
             });
