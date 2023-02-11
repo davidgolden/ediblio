@@ -3,7 +3,6 @@ const express = require('express'),
     {hashPassword} = require("../utils"),
     middleware = require('../middleware');
 
-const {usersSelector} = require("../utils");
 const {addIngredient, canBeAdded} = require("../client/utils/conversions");
 
 const multer = require('multer');
@@ -131,15 +130,6 @@ async function insertUserGroceries(user_id, ingredients) {
         client.release();
     }
 }
-
-router.route('/users')
-    // get all users
-    .get(async (req, res) => {
-        const response = await db.query({
-            text: `SELECT profile_image, username FROM users`
-        });
-        return res.status(200).send({users: response.rows});
-    });
 
 router.route('/users/:user_id/recipes')
     .get(middleware.isLoggedIn, async (req, res) => {
@@ -439,58 +429,5 @@ router.route('/users/:user_id')
             res.status(404).send({detail: error.message});
         }
     })
-    .get(async (req, res) => {
-        let response;
-        if (req.user && req.user.id && req.user.id.toString() === req.params.user_id) {
-
-            response = await db.query({
-                text: `${usersSelector}
-where users.id = $1
-group by users.id;`,
-                values: [req.params.user_id]
-            });
-        } else {
-            response = await db.query({
-                text: `SELECT username, profile_image FROM users
-                WHERE users.id = $1`,
-                values: [req.params.user_id]
-            })
-        }
-        return res.status(200).json({
-            user: response.rows[0]
-        });
-    })
-    // delete user account
-    .delete((req, res) => {
-        res.sendStatus(404);
-    });
-
-// get certain collection details about a user's collections
-router.get('/users/:user_id/collections', async (req, res) => {
-    const query = await db.query({
-        text: `
-        SELECT collections.*, author.profile_image author_image,
-        COALESCE(json_agg(recipes.*) FILTER (WHERE recipes.id IS NOT NULL), '[]') recipes
-        FROM collections
-        LEFT JOIN LATERAL (
-            select recipes.* from recipes
-            where recipes.id in (
-                select recipe_id from recipes_collections
-                where recipes_collections.collection_id = collections.id
-            )
-        ) recipes ON TRUE 
-        LEFT JOIN LATERAL (
-            select profile_image from users
-            where users.id = collections.author_id
-        ) author ON TRUE
-        WHERE collections.author_id = $1 OR collections.id IN (
-            SELECT collection_id FROM users_collections_followers
-            WHERE users_collections_followers.user_id = $1
-        )
-        group by collections.id, author.profile_image;`,
-        values: [req.params.user_id],
-    });
-    return res.status(200).send({collections: query.rows});
-});
 
 module.exports = router;
