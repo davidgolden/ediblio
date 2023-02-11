@@ -24,32 +24,6 @@ WHERE users.id = $1
 GROUP BY users.id;
         `;
 
-const selectCollectionWithRecipes = `
-SELECT collections.*,
-COALESCE(json_agg(recipes) FILTER (WHERE recipes.id IS NOT NULL), '[]') recipes
-FROM collections
-LEFT JOIN LATERAL (
-    select recipes.*, users.profile_image author_image, avg(ratings.rating) avg_rating, count(ratings) total_ratings
-    from recipes
-    LEFT JOIN LATERAL (
-        select profile_image
-        from users
-        where users.id = recipes.author_id
-    ) users ON True
-    LEFT JOIN LATERAL (
-                    select rating from ratings
-                    where ratings.recipe_id = recipes.id
-                ) ratings ON TRUE
-    where recipes.id in (
-        select recipe_id
-        from recipes_collections
-        where recipes_collections.collection_id = collections.id
-    )
-    GROUP BY recipes.id, users.profile_image
-) recipes ON TRUE 
-WHERE collections.id = $1
-GROUP BY collections.id;`;
-
 router.post('/collections', middleware.isLoggedIn, async (req, res) => {
     await db.query({
         text: `INSERT INTO collections (name, author_id) VALUES ($1, $2)`,
@@ -65,15 +39,6 @@ router.post('/collections', middleware.isLoggedIn, async (req, res) => {
 });
 
 router.route('/collections/:collection_id')
-    .get(async (req, res) => {
-        const response = await db.query({
-            text: selectCollectionWithRecipes,
-            values: [req.params.collection_id]
-        });
-        res.status(200).json({
-            collection: response.rows[0],
-        });
-    })
     .delete(middleware.isLoggedIn, async (req, res) => {
         try {
             const collectionRes = await db.query({
