@@ -159,7 +159,6 @@ export default class Store {
 
     userLogin = async (email, password) => {
         const jwt = await new JsonWebToken().encode({email, password, redirect_url: window.location.pathname});
-        console.log(jwt);
         window.location.href = '/api/login?jwt='+jwt;
     };
 
