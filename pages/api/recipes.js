@@ -1,7 +1,9 @@
 import db from "../../db";
+import {getUserIdFromRequest} from "../../utils/serverUtils";
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
+        const userId = getUserIdFromRequest(req);
         let page_size = req.query.page_size || 12;
         let page = req.query.page || 0;
         const skip = page * page_size;
@@ -13,9 +15,9 @@ export default async function handler(req, res) {
             `,
                 values = [];
 
-            if (req.user) {
+            if (userId) {
                 text += `, CASE WHEN in_menu.id IS NULL THEN FALSE ELSE TRUE END AS in_menu `;
-                values.push(req.user.id);
+                values.push(userId);
             }
 
             text += `FROM recipes 
@@ -25,7 +27,7 @@ export default async function handler(req, res) {
                     where ratings.recipe_id = recipes.id
                 ) ratings ON TRUE `;
 
-            if (req.user) {
+            if (userId) {
                 text += `
                 LEFT JOIN LATERAL (
                     SELECT id FROM users_recipes_menu
@@ -40,21 +42,21 @@ export default async function handler(req, res) {
                 text += `
                     INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
                     WHERE recipes.author_id = $${values.length + 1} AND (lower(recipes.name) LIKE $${values.length + 2} OR lower(recipes_ingredients.name) LIKE $${values.length + 2}) 
-                    GROUP BY recipes.id, users.profile_image ${req.user ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
+                    GROUP BY recipes.id, users.profile_image ${userId ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push(req.query.author, "%" + req.query.searchTerm.toLowerCase() + "%");
             } else if (req.query.author) {
                 text += `
                     WHERE recipes.author_id = $${values.length + 1}  
-                    GROUP BY recipes.id, users.profile_image ${req.user ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
+                    GROUP BY recipes.id, users.profile_image ${userId ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push(req.query.author);
             } else if (req.query.searchTerm) {
                 text += `
                     INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
                     WHERE (lower(recipes.name) LIKE $${values.length + 1} OR lower(recipes_ingredients.name) LIKE $${values.length + 1}) 
-                    GROUP BY recipes.id, users.profile_image ${req.user ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
+                    GROUP BY recipes.id, users.profile_image ${userId ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
                 values.push("%" + req.query.searchTerm.toLowerCase() + "%");
             } else {
-                text += ` GROUP BY recipes.id, users.profile_image ${req.user ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
+                text += ` GROUP BY recipes.id, users.profile_image ${userId ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
             }
 
             const recipes = await db.query({

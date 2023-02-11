@@ -1,7 +1,7 @@
 const express = require('express'),
     router = express.Router(),
     {hashPassword} = require("../utils"),
-    middleware = require('../middleware');
+    middleware = require('../middleware/legacy');
 
 const {addIngredient, canBeAdded} = require("../client/utils/conversions");
 

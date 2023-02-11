@@ -1,6 +1,6 @@
 const express = require('express'),
     router = express.Router(),
-    middleware = require('../middleware');
+    middleware = require('../middleware/legacy');
 
 const db = require("../db/index");
 

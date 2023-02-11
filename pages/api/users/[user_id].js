@@ -1,10 +1,12 @@
 import db from "../../../db/index";
 import {usersSelector} from "../../../utils";
+import {getUserIdFromRequest} from "../../../utils/serverUtils";
 
 export default async function handler(req, res) {
     if (req.method === "GET") {
         let response;
-        if (req.user && req.user.id && req.user.id.toString() === req.query.user_id) {
+        const userId = getUserIdFromRequest(req);
+        if (userId === req.query.user_id) {
 
             response = await db.query({
                 text: `${usersSelector}

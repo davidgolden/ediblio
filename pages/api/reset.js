@@ -26,7 +26,7 @@ export default async function handler(req, res) {
 
         const user = userRes.rows[0];
 
-        const jwt = encodeJWT({
+        const jwt = await encodeJWT({
             user: {
                 id: user.id,
                 profile_image: user.profile_image,

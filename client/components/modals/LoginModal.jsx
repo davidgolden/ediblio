@@ -1,10 +1,8 @@
 import React, {useContext, useState} from 'react';
 import Modal from "./Modal";
-import Button from "../utilities/buttons/Button";
 import {ApiStoreContext} from "../../stores/api_store";
 import styles from './styles/LoginModal.module.scss';
 import Router from "next/router";
-import classNames from 'classnames';
 
 function Login(props) {
     const context = useContext(ApiStoreContext);
@@ -47,62 +45,6 @@ function Login(props) {
     </div>
 }
 
-function Register(props) {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirm, setConfirm] = useState('');
-
-    const context = useContext(ApiStoreContext);
-
-    const registerButtonClassName = classNames({
-        [styles.registerButton]: true,
-        [styles.registerButtonDisabled]: password.length < 8 || confirm.length < 8 || (password !== confirm) || !email || !username,
-    });
-
-    const handleSubmit = e => {
-        e.preventDefault();
-        if (password !== confirm) {
-            return alert('Passwords do not match!')
-        }
-        context.removeTopModal();
-        context.registerUser({
-            username: username,
-            email: email,
-            password: password,
-        })
-    };
-
-    return <div>
-        <h2>Create an Account</h2>
-        <p>It's free and your information will stay private.</p>
-        <form onSubmit={handleSubmit}>
-            <div>
-                <input type='text' value={username} name='username'
-                       onChange={e => setUsername(e.target.value)}
-                       placeholder='Choose a Username'/>
-            </div>
-            <div>
-                <input type='email' value={email} name='email' onChange={e => setEmail(e.target.value)}
-                       placeholder='Email (used for login)'/>
-            </div>
-            <div>
-                <input type='password' id='password' placeholder='Password' onChange={e => setPassword(e.target.value)}
-                       name='password' value={password}/>
-                <small>Must be at least 8 characters.</small>
-            </div>
-            <div>
-                <input type='password' id='confirm' onChange={e => setConfirm(e.target.value)}
-                       placeholder='Confirm Password' value={confirm}/>
-            </div>
-            <div>
-                <Button className={registerButtonClassName} role={'submit'}>Create Account</Button>
-            </div>
-        </form>
-
-    </div>
-}
-
 function Forgot(props) {
     const [email, setEmail] = useState('');
 
@@ -142,7 +84,6 @@ function Forgot(props) {
 
 const component = {
     login: Login,
-    register: Register,
     forgot: Forgot,
 };
 

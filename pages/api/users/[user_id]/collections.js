@@ -3,7 +3,6 @@ import db from "../../../../db";
 export default async function handler(req, res) {
     // get certain collection details about a user's collections
     if (req.method === "GET") {
-        console.log("QUERY: ", req.query);
         const query = await db.query({
             text: `
         SELECT collections.*, author.profile_image author_image,

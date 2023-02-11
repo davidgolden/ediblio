@@ -20,7 +20,7 @@ group by users.id;`, values: [email]
 
             if (!isCorrectPassword) res.status(404).send({detail: "Incorrect password!"});
 
-            const jwt = encodeJWT({
+            const jwt = await encodeJWT({
                 user: {
                     id: user.id,
                     profile_image: user.profile_image,

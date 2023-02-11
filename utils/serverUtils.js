@@ -1,6 +1,16 @@
-const db = require("../db");
+import db from "../db";
+import {decodeJWT} from "../utils";
 
-async function getRecipe(recipe_id, user_id) {
+export function getUserIdFromRequest(request) {
+    try {
+        const decoded = decodeJWT(request.headers["x-access-token"]);
+        return decoded.user.id;
+    } catch (e) {
+        return false;
+    }
+}
+
+export async function getRecipe(recipe_id, user_id) {
     let response;
 
     if (user_id) {
@@ -74,8 +84,4 @@ async function getRecipe(recipe_id, user_id) {
     }
 
     return response.rows[0];
-}
-
-module.exports = {
-    getRecipe,
 }

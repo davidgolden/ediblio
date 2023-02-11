@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const {verify, decode, sign} = require("jsonwebtoken");
+const {jwtVerify, decodeJwt: decode, SignJWT, importJWK} = require("jose");
 
 function hashPassword(password) {
     var SALT_FACTOR = 5;
@@ -38,8 +38,13 @@ LEFT JOIN LATERAL (
 ) c ON true
 `;
 
-function encodeJWT(payload) {
-    return sign(payload, process.env.JWT_SECRET);
+const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
+async function encodeJWT(payload) {
+    return await new SignJWT(payload)
+        .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .sign(secret)
 }
 
 function decodeJWT(jwt) {
@@ -47,7 +52,7 @@ function decodeJWT(jwt) {
 }
 
 function verifyJWT(jwt) {
-    return verify(jwt, process.env.JWT_SECRET);
+    return jwtVerify(jwt, secret);
 }
 
 module.exports = {
