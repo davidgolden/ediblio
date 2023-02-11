@@ -92,23 +92,18 @@ const Recipes = observer((props) => {
 });
 
 export async function getServerSideProps ({req, query}) {
-    const {currentBaseUrl, currentFullUrl, jwt} = getUrlParts(req);
+    const {currentBaseUrl, currentFullUrl} = getUrlParts(req);
 
     const responses = await Promise.all([
-        await axios.get(`${currentBaseUrl}/api/users/${query.user_id}/collections`, {
-            headers: jwt ? {'x-access-token': jwt} : {},
-        }),
+        await axios.get(`${currentBaseUrl}/api/users/${query.user_id}/collections`),
         await axios.get(`${currentBaseUrl}/api/recipes`, {
-            headers: jwt ? {'x-access-token': jwt} : {},
             params: {
                 orderBy: 'desc',
                 sortBy: 'created_at',
                 author: query.user_id,
             }
         }),
-        await axios.get(`${currentBaseUrl}/api/users/${query.user_id}`, {
-            headers: jwt ? {'x-access-token': jwt} : {},
-        }),
+        await axios.get(`${currentBaseUrl}/api/users/${query.user_id}`),
     ]);
     return {
         props: {

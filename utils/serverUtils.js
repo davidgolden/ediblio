@@ -10,6 +10,19 @@ export function getUserIdFromRequest(request) {
     }
 }
 
+export async function selectUserMenu(user_id) {
+    const menu = await db.query({
+        text: `
+                SELECT * FROM recipes
+                WHERE recipes.id IN (
+                    SELECT recipe_id FROM users_recipes_menu
+                    WHERE users_recipes_menu.user_id = $1
+                );`,
+        values: [user_id],
+    });
+    return menu.rows;
+}
+
 export async function getRecipe(recipe_id, user_id) {
     let response;
 

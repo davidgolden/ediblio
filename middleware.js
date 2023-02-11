@@ -1,23 +1,29 @@
 import { NextResponse } from 'next/server'
 import {verifyJWT} from "./utils";
 
-// http://localhost:3000/?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYzdiMTY1MzgtNTEwNC0xMWVhLTg5NmItOWU2ZTRhYmQ1YWExIiwicHJvZmlsZV9pbWFnZSI6InVzZXJzL2M3YjE2NTM4LTUxMDQtMTFlYS04OTZiLTllNmU0YWJkNWFhMS9fTUdfMjU0My5qcGVnIiwidXNlcm5hbWUiOiJEYXZpZCJ9LCJpYXQiOjE2NzYxMjc5NjZ9.epcFopmw0UM9qT8AiPT5LXYBiEvOJtOo2Ho239LJPSw
-
 async function isLoggedIn(request) {
-    let token = request.headers.get('x-access-token') || request.headers.get('authorization');
+    const token = request.cookies.get('jwt');
 
-    if (token) {
-        try {
-            const verified = await verifyJWT(token);
-            if (verified) {
-                request.user = {id: verified.payload.user.id};
-            }
-        } catch (e) {
-            console.log(e);
-        }
+    try {
+        await verifyJWT(token?.value);
+        return true;
+    } catch (e) {
+        return false;
     }
 }
 
-export async function middleware(request) {
+const routesThatRequireAuthentication = [
+    /\/users\/[\w-]+\/recipes/
+]
 
+export async function middleware(request) {
+    if (routesThatRequireAuthentication.some(regex => regex.exec(request.nextUrl.pathname))) {
+        if (await isLoggedIn(request)) {
+            return NextResponse.next();
+        } else {
+            return new NextResponse(JSON.stringify({ detail: 'You need to be logged in to do that!' }), {
+                status: 404, headers: { 'content-type': 'application/json' }
+            })
+        }
+    }
 }

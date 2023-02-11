@@ -132,17 +132,6 @@ async function insertUserGroceries(user_id, ingredients) {
 }
 
 router.route('/users/:user_id/recipes')
-    .get(middleware.isLoggedIn, async (req, res) => {
-        // get menu
-        try {
-            const menu = await selectUserMenu(req.user.id);
-
-            res.status(200).send({menu});
-
-        } catch (error) {
-            res.status(404).send({detail: error.message});
-        }
-    })
     .delete(middleware.isLoggedIn, async (req, res) => {
         // remove list of recipes from menu
         try {
