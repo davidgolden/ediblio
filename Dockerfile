@@ -4,16 +4,15 @@ WORKDIR /app
 
 COPY ./client /app/client
 COPY ./db /app/db
-COPY ./middleware /app/middleware
 COPY ./pages /app/pages
 COPY ./public /app/public
-COPY ./routes /app/routes
+COPY ./utils /app/utils
 
 COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
-COPY server.js /app/server.js
 COPY ./utils.js /app/utils.js
 COPY ./next.config.js /app/next.config.js
+COPY ./middleware.js /app/middleware.js
 
 RUN npm ci
 

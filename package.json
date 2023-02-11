@@ -12,7 +12,7 @@
     "test": "jest",
     "dev": "next",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production next start",
     "storybook": "start-storybook -s ./public"
   },
   "author": "David Golden",

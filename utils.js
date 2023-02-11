@@ -1,8 +1,8 @@
-const bcrypt = require('bcryptjs');
-const {jwtVerify, decodeJwt: decode, SignJWT, importJWK} = require("jose");
+import bcrypt from "bcryptjs";
+import {jwtVerify, decodeJwt as decode, SignJWT} from "jose";
 
-function hashPassword(password) {
-    var SALT_FACTOR = 5;
+export function hashPassword(password) {
+    const SALT_FACTOR = 5;
 
     return new Promise((res, rej) => {
         bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
@@ -15,7 +15,7 @@ function hashPassword(password) {
     });
 }
 
-const usersSelector = `
+export const usersSelector = `
 SELECT users.*,
 COALESCE(json_agg(c) FILTER (WHERE c.id IS NOT NULL), '[]') collections
 FROM users
@@ -40,25 +40,17 @@ LEFT JOIN LATERAL (
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-async function encodeJWT(payload) {
+export async function encodeJWT(payload) {
     return await new SignJWT(payload)
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .sign(secret)
 }
 
-function decodeJWT(jwt) {
+export function decodeJWT(jwt) {
     return decode(jwt);
 }
 
-async function verifyJWT(jwt) {
+export async function verifyJWT(jwt) {
     return await jwtVerify(jwt, secret);
 }
-
-module.exports = {
-    usersSelector,
-    hashPassword,
-    encodeJWT,
-    decodeJWT,
-    verifyJWT,
-};
