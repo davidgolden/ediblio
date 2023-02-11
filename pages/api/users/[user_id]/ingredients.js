@@ -1,5 +1,5 @@
 import {getUserIdFromRequest, insertUserGroceries, selectUserGroceries} from "../../../../utils/serverUtils";
-import db from "../db/index";
+import db from "../../../../db/index";
 
 export default async function handler(req, res) {
     if (req.method === "POST") {

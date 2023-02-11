@@ -1,10 +1,11 @@
 import {getUserIdFromRequest, selectUserMenu} from "../../../../utils/serverUtils";
-import db from "../db/index";
+import db from "../../../../db/index";
 
 export default async function handler(req, res) {
     if (req.method === "GET") {
         try {
             const userId = getUserIdFromRequest(req);
+
             const menu = await selectUserMenu(userId);
 
             res.status(200).send({menu});
