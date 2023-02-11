@@ -222,6 +222,7 @@ export async function getServerSideProps({req, query}) {
     const {currentBaseUrl, currentFullUrl, jwt} = getUrlParts(req);
 
     try {
+        console.log(query.user_id);
         const response = await Promise.all([
             await axios.get(`${currentBaseUrl}/api/users/${query.user_id}/recipes`, {
                 headers: jwt ? {'x-access-token': jwt} : {},

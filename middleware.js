@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import {verifyJWT} from "./utils";
+import db from "./db/index";
+import {getUserIdFromRequest} from "./utils/serverUtils";
 
 async function isLoggedIn(request) {
     const token = request.cookies.get('jwt');
@@ -12,18 +14,130 @@ async function isLoggedIn(request) {
     }
 }
 
-const routesThatRequireAuthentication = [
-    /\/users\/[\w-]+\/recipes/
+export async function checkIngredientOwnership(req, res) {
+    const userId = getUserIdFromRequest(req);
+
+    if (userId) {
+        const response = await db.query({
+            text: `SELECT * FROM users_ingredients_groceries WHERE id = $1 AND user_id = $2`,
+            values: [req.query.ingredient_id, userId]
+        });
+
+        if (response.rows.length === 0) {
+            res.status(403);
+        }
+    } else {
+        res.status(403);
+    }
+}
+
+export async function checkCollectionOwnership(req, res) {
+    const userId = getUserIdFromRequest(req);
+
+    if (userId) {
+        const response = await db.query({
+            text: `SELECT * FROM collections WHERE id = $1 AND author_id = $2`,
+            values: [req.query.collection_id, userId]
+        });
+
+        if (response.rows.length === 0) {
+            res.status(403);
+        }
+    } else {
+        res.status(403);
+    }
+}
+
+export async function checkRecipeOwnership(req, res) {
+    const userId = getUserIdFromRequest(req);
+
+    if (userId) {
+        const response = await db.query({
+            text: `SELECT * FROM recipes WHERE id = $1 AND author_id = $2`,
+            values: [req.query.recipe_id, userId]
+        });
+
+        if (response.rows.length === 0) {
+            res.status(403);
+        }
+    } else {
+        res.status(403);
+    }
+}
+
+const authentication = [
+    {
+        route: /\/users\/[\w-]+\/recipes/,
+        methods: ["GET", "DELETE"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/users\/[\w-]+/,
+        methods: ["PATCH"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/recipes/,
+        methods: ["POST"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/collections/,
+        methods: ["POST"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/rating/,
+        methods: ["POST"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/users\/[\w-]+\/ingredients/,
+        methods: ["POST", "GET", "DELETE"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/users\/[\w-]+\/staples/,
+        methods: ["POST", "GET"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/users\/[\w-]+\/staples\/[\w-]+/,
+        methods: ["DELETE"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/users\/[\w-]+\/ingredients\/order/,
+        methods: ["POST"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/users\/[\w-]+\/recipes\/[\w-]+/,
+        methods: ["POST", "PATCH"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/users\/[\w-]+\/collections\/[\w-]+/,
+        methods: ["POST", "DELETE"],
+        check: isLoggedIn,
+    },
 ]
 
 export async function middleware(request) {
-    if (routesThatRequireAuthentication.some(regex => regex.exec(request.nextUrl.pathname))) {
-        if (await isLoggedIn(request)) {
-            return NextResponse.next();
-        } else {
-            return new NextResponse(JSON.stringify({ detail: 'You need to be logged in to do that!' }), {
-                status: 404, headers: { 'content-type': 'application/json' }
-            })
+    for (let i = 0; i < authentication.length; i++) {
+        const rule = authentication[i];
+        if (rule.route.exec(request.nextUrl.pathname)) {
+            for (let n = 0; n < rule.methods.length; n++) {
+                const method = rule.methods[n];
+                if (request.method === method) {
+                    const isValid = await authentication[i].check(request);
+                    if (!isValid) {
+                        return new NextResponse(JSON.stringify({ detail: 'You need to be logged in to do that!' }), {
+                            status: 404, headers: { 'content-type': 'application/json' }
+                        })
+                    }
+                }
+            }
         }
     }
 }

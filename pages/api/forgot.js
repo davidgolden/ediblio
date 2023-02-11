@@ -2,11 +2,14 @@ import URLSafeBase64 from "urlsafe-base64";
 import db from "../../db/index";
 import nodemailer from "nodemailer";
 import mg from "nodemailer-mailgun-transport";
+import {getUserIdFromRequest} from "../../utils/serverUtils";
 
 export default async function handler(req, res) {
     if (req.method === "POST") {
+        const userId = getUserIdFromRequest(req);
+
         let email = req.body.email;
-        if (req.user) {
+        if (userId) {
             return res.status(404).send({detail: 'User is already logged in!'})
         }
 

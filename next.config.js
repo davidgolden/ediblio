@@ -18,6 +18,8 @@ module.exports = {
             ]
         });
 
+        config.plugins.push(new webpack.IgnorePlugin({ resourceRegExp: /^pg-native$/ }))
+
         return config;
     },
     // workboxOpts: {

@@ -1,4 +1,6 @@
 import db from "../../../db/index";
+import {getUserIdFromRequest} from "../../../utils/serverUtils";
+import {checkCollectionOwnership} from "../../../middleware";
 
 const selectCollectionWithRecipes = `
 SELECT collections.*,
@@ -26,6 +28,26 @@ LEFT JOIN LATERAL (
 WHERE collections.id = $1
 GROUP BY collections.id;`;
 
+const selectUserWithCollections = `
+        SELECT users.*,
+        COALESCE(json_agg(c) FILTER (WHERE c IS NOT NULL), '[]') collections
+        FROM users
+        LEFT JOIN LATERAL (
+            SELECT collections.*, COALESCE(json_agg(cr) FILTER (WHERE cr IS NOT NULL), '[]') recipes
+                FROM collections LEFT JOIN LATERAL (
+                SELECT * FROM recipes
+        WHERE recipes.id IN (
+            SELECT recipe_id FROM recipes_collections
+            WHERE recipes_collections.collection_id = collections.id
+        )
+   ) cr ON true
+   WHERE collections.author_id = users.id
+   GROUP BY collections.id
+) c ON true
+WHERE users.id = $1
+GROUP BY users.id;
+        `;
+
 export default async function handler(req, res) {
     if (req.method === "GET") {
         const response = await db.query({
@@ -35,5 +57,32 @@ export default async function handler(req, res) {
         res.status(200).json({
             collection: response.rows[0],
         });
+    } else if (req.method === "DELETE") {
+        try {
+            await checkCollectionOwnership(req, res);
+
+            const userId = getUserIdFromRequest(req);
+
+            const collectionRes = await db.query({
+                text: `DELETE FROM collections WHERE id = $1 AND is_primary != true`,
+                values: [req.query.collection_id],
+            });
+
+            if (collectionRes.rows.length > 0) {
+                await db.query({
+                    text: `DELETE FROM users_collections_followers WHERE collection_id = $1`,
+                    values: [req.query.collection_id],
+                });
+            }
+
+            const response = await db.query({
+                text: selectUserWithCollections,
+                values: [userId],
+            });
+
+            return res.status(200).json({user: response.rows[0]});
+        } catch (error) {
+            return res.status(404);
+        }
     }
 }

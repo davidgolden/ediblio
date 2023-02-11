@@ -40,7 +40,8 @@ const RecipeInformation = props => {
         const options = {
             maxSizeMB: 1,
             maxWidthOrHeight: 1920,
-            useWebWorker: true
+            useWebWorker: true,
+            onProgress: () => {},
         };
         try {
             const compressedFile = await imageCompression(file, options);
