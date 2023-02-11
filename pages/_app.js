@@ -75,7 +75,10 @@ MyDocument.getInitialProps = async ({ctx}) => {
 
         if (jwt) {
             const decodedJWT = JWT.decode(jwt);
-            const response = await axios.get(`http://${ctx.req.headers.host}/api/users/${decodedJWT.user.id}`, {
+            const host = ctx.req.headers.host;
+            const scheme = ctx.req.headers["x-forwarded-proto"] || "http";
+
+            const response = await axios.get(`${scheme}://${host}/api/users/${decodedJWT.user.id}`, {
                 headers: {'x-access-token': jwt},
             });
             returnObj.user = response.data.user;
