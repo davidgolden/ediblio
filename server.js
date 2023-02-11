@@ -13,8 +13,7 @@ const cookieParser = require('cookie-parser');
 const userRoutes = require('./routes/users'),
     recipeRoutes = require('./routes/recipes'),
     collectionRoutes = require('./routes/collections'),
-    ratingRoutes = require('./routes/ratings'),
-    measurementRoutes = require('./routes/measurements');
+    ratingRoutes = require('./routes/ratings');
 
 const {verifyJWT} = require("./utils");
 
@@ -49,7 +48,6 @@ app.prepare().then(() => {
     server.use('/api/', recipeRoutes);
     server.use('/api/', collectionRoutes);
     server.use('/api/', ratingRoutes);
-    server.use('/api/', measurementRoutes);
 
     server.get('/service-worker.js', (req, res) => {
         const filePath = path.join(__dirname, '.next/service-worker.js');
