@@ -51,8 +51,8 @@ function decodeJWT(jwt) {
     return decode(jwt);
 }
 
-function verifyJWT(jwt) {
-    return jwtVerify(jwt, secret);
+async function verifyJWT(jwt) {
+    return await jwtVerify(jwt, secret);
 }
 
 module.exports = {

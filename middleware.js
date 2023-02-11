@@ -4,10 +4,10 @@ import db from "./db/index";
 import {getUserIdFromRequest} from "./utils/serverUtils";
 
 async function isLoggedIn(request) {
-    const token = request.cookies.get('jwt');
+    const token = request.headers.get('x-access-token');
 
     try {
-        await verifyJWT(token?.value);
+        await verifyJWT(token);
         return true;
     } catch (e) {
         return false;
@@ -67,57 +67,57 @@ export async function checkRecipeOwnership(req, res) {
 
 const authentication = [
     {
-        route: /\/users\/[\w-]+\/recipes/,
+        route: /\/api\/users\/[\w-]+\/recipes/,
         methods: ["GET", "DELETE"],
         check: isLoggedIn,
     },
     {
-        route: /\/users\/[\w-]+/,
+        route: /\/api\/users\/[\w-]+/,
         methods: ["PATCH"],
         check: isLoggedIn,
     },
     {
-        route: /\/recipes/,
+        route: /\/api\/recipes/,
         methods: ["POST"],
         check: isLoggedIn,
     },
     {
-        route: /\/collections/,
+        route: /\/api\/collections/,
         methods: ["POST"],
         check: isLoggedIn,
     },
     {
-        route: /\/rating/,
+        route: /\/api\/rating/,
         methods: ["POST"],
         check: isLoggedIn,
     },
     {
-        route: /\/users\/[\w-]+\/ingredients/,
+        route: /\/api\/users\/[\w-]+\/ingredients/,
         methods: ["POST", "GET", "DELETE"],
         check: isLoggedIn,
     },
     {
-        route: /\/users\/[\w-]+\/staples/,
+        route: /\/api\/users\/[\w-]+\/staples/,
         methods: ["POST", "GET"],
         check: isLoggedIn,
     },
     {
-        route: /\/users\/[\w-]+\/staples\/[\w-]+/,
+        route: /\/api\/users\/[\w-]+\/staples\/[\w-]+/,
         methods: ["DELETE"],
         check: isLoggedIn,
     },
     {
-        route: /\/users\/[\w-]+\/ingredients\/order/,
+        route: /\/api\/users\/[\w-]+\/ingredients\/order/,
         methods: ["POST"],
         check: isLoggedIn,
     },
     {
-        route: /\/users\/[\w-]+\/recipes\/[\w-]+/,
+        route: /\/api\/users\/[\w-]+\/recipes\/[\w-]+/,
         methods: ["POST", "PATCH"],
         check: isLoggedIn,
     },
     {
-        route: /\/users\/[\w-]+\/collections\/[\w-]+/,
+        route: /\/api\/users\/[\w-]+\/collections\/[\w-]+/,
         methods: ["POST", "DELETE"],
         check: isLoggedIn,
     },

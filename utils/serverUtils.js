@@ -5,10 +5,16 @@ import {addIngredient, canBeAdded} from "../client/utils/conversions";
 export function getUserIdFromRequest(request) {
     try {
         // this conditional handles request coming from either API routes or middleware
-        const accessToken = request.headers["x-access-token"] || request.headers.get("x-access-token");
+        let accessToken = "";
+        if (request.headers["x-access-token"]) {
+            accessToken = request.headers["x-access-token"];
+        } else if (request.headers.hasOwnProperty("get")) {
+            accessToken = request.headers.get("x-access-token");
+        }
         const decoded = decodeJWT(accessToken);
         return decoded.user.id;
     } catch (e) {
+        console.error(e);
         return false;
     }
 }
