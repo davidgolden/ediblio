@@ -80,7 +80,7 @@ group by users.id;`,
                     return res.status(200).send({user: response.rows[0]})
                 }
 
-                return res.status(200);
+                return res.status(200).send();
 
             } catch (error) {
                 res.status(404).send({detail: error.message});

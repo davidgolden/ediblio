@@ -12,7 +12,7 @@ export default async function handler(req, res) {
                 values: [req.query.recipe_id, req.query.collection_id],
             });
 
-            return res.status(200);
+            return res.status(200).send();
         } catch (error) {
             return res.status(404).send({detail: error.message});
         }
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
                 values: [req.query.recipe_id, req.query.collection_id],
             });
 
-            return res.status(200);
+            return res.status(200).send();
         } catch (error) {
             return res.status(404).send({detail: error.message});
         }

@@ -10,7 +10,7 @@ export default async function handler(req, res) {
                 text: `DELETE FROM users_staples WHERE id = $1 AND user_id = $2`,
                 values: [req.query.staple_id, userId]
             })
-            res.status(200);
+            res.status(200).send();
         } catch (error) {
             res.status(404).send({detail: error.message});
         }

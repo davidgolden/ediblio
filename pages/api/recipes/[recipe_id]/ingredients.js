@@ -34,7 +34,7 @@ export default async function handler(req, res) {
                 `,
             });
 
-            res.status(200);
+            res.status(200).send();
         } catch (error) {
             res.status(404).send({detail: error.message});
         }
