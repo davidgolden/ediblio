@@ -1,5 +1,4 @@
 import React from 'react';
-import jwt from 'jsonwebtoken';
 import URI from 'urijs';
 import Router from 'next/router';
 import cookie from 'js-cookie';

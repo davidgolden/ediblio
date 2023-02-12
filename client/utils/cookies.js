@@ -55,7 +55,8 @@ export function getDaysSince(date, unix = false) {
 }
 
 export function getUrlParts(req) {
-    const currentBaseUrl = req.protocol + "://" + req.headers.host.replace(/\/$/, "");
+    const scheme = req.headers["x-forwarded-proto"] || "http";
+    const currentBaseUrl = scheme + "://" + req.headers.host.replace(/\/$/, "");
     const currentFullUrl = currentBaseUrl + req.url;
     const jwt = getCookieFromServer('jwt', req);
 

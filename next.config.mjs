@@ -1,6 +1,6 @@
 const CACHE_NAME = "1.0.0";
 
-module.exports = {
+const nextConfig = {
     publicRuntimeConfig: {
         CDN_URL: process.env.CDN_URL,
     },
@@ -17,6 +17,8 @@ module.exports = {
                 }
             ]
         });
+
+        // config.plugins.push(new webpack.IgnorePlugin({ resourceRegExp: /^pg-native$/ }))
 
         return config;
     },
@@ -48,3 +50,5 @@ module.exports = {
     //     }]
     // }
 };
+
+export default nextConfig;

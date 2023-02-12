@@ -69,7 +69,6 @@ const Settings = observer(props => {
         };
         try {
             const compressedFile = await imageCompression(file, options);
-            console.log(compressedFile);
             const blobURL = window.URL.createObjectURL(compressedFile);
             setDisplayImage(blobURL);
             setProfileImage(compressedFile);

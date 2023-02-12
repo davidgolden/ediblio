@@ -1,15 +1,15 @@
 import React from "react";
-import {autorun, toJS, set, makeAutoObservable} from "mobx";
+import {set, makeAutoObservable} from "mobx";
 import cookie from 'js-cookie';
 import {clientFetch} from "../utils/cookies";
-const jwt = require('jsonwebtoken');
+import {SignJWT} from "jose";
 
 class JsonWebToken {
-    encode(payload) {
-        return jwt.sign(payload, 'my-password');
-    }
-    decode(jwt) {
-        return jwt.verify(jwt);
+    async encode(payload) {
+        const secret = new TextEncoder().encode("my-password");
+        return await new SignJWT(payload)
+            .setProtectedHeader({ alg: "HS256" })
+            .sign(secret)
     }
 }
 
@@ -157,9 +157,9 @@ export default class Store {
         }, 4000);
     };
 
-    userLogin = (email, password) => {
-        const jwt = new JsonWebToken();
-        window.location.href = '/api/login?jwt='+jwt.encode({email, password, redirect_url: window.location.pathname});
+    userLogin = async (email, password) => {
+        const jwt = await new JsonWebToken().encode({email, password, redirect_url: window.location.pathname});
+        window.location.href = '/api/login?jwt='+jwt;
     };
 
     userLogout = async () => {
@@ -241,11 +241,6 @@ export default class Store {
                     rej(err);
                 })
         });
-    };
-
-    registerUser = user => {
-        const jwt = new JsonWebToken();
-        window.location.href = '/api/register?jwt='+jwt.encode({email: user.email, username: user.username, password: user.password, redirect_url: window.location.pathname});
     };
 
     patchRecipe = (id, partialRecipeObj) => {

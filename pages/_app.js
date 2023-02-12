@@ -11,7 +11,7 @@ import "draft-js/dist/Draft.css";
 import {enableStaticRendering} from "mobx-react";
 import {handleJWT} from "../client/hooks/handleJWT";
 import axios from "axios";
-import JWT from "jsonwebtoken";
+import {decodeJWT} from "../utils";
 
 class MyDocument extends App {
     MobxStore;
@@ -74,7 +74,7 @@ MyDocument.getInitialProps = async ({ctx}) => {
         const jwt = ctx.query.jwt || ctx.req.cookies.jwt;
 
         if (jwt) {
-            const decodedJWT = JWT.decode(jwt);
+            const decodedJWT = decodeJWT(jwt);
             const host = ctx.req.headers.host;
             const scheme = ctx.req.headers["x-forwarded-proto"] || "http";
 

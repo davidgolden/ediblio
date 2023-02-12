@@ -1,13 +1,13 @@
-const bcrypt = require('bcryptjs');
-const {verify, decode, sign} = require("jsonwebtoken");
+import bcrypt from "bcryptjs";
+import {jwtVerify, decodeJwt, SignJWT} from "jose";
 
-function hashPassword(password) {
-    var SALT_FACTOR = 5;
+export function hashPassword(password) {
+    const SALT_FACTOR = 5;
 
     return new Promise((res, rej) => {
         bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
             if (err) rej(err);
-            bcrypt.hash(password, salt, false, function(err, hash) {
+            bcrypt.hash(password, salt, function(err, hash) {
                 if (err) rej(err);
                 res(hash);
             });
@@ -15,7 +15,7 @@ function hashPassword(password) {
     });
 }
 
-const usersSelector = `
+export const usersSelector = `
 SELECT users.*,
 COALESCE(json_agg(c) FILTER (WHERE c.id IS NOT NULL), '[]') collections
 FROM users
@@ -38,22 +38,19 @@ LEFT JOIN LATERAL (
 ) c ON true
 `;
 
-function encodeJWT(payload) {
-    return sign(payload, process.env.JWT_SECRET);
+const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
+export async function encodeJWT(payload) {
+    return await new SignJWT(payload)
+        .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .sign(secret)
 }
 
-function decodeJWT(jwt) {
-    return decode(jwt);
+export function decodeJWT(jwt) {
+    return decodeJwt(jwt);
 }
 
-function verifyJWT(jwt) {
-    return verify(jwt, process.env.JWT_SECRET);
+export async function verifyJWT(jwt) {
+    return await jwtVerify(jwt, secret);
 }
-
-module.exports = {
-    usersSelector,
-    hashPassword,
-    encodeJWT,
-    decodeJWT,
-    verifyJWT,
-};
