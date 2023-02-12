@@ -53,14 +53,15 @@ export async function selectUserMenu(user_id) {
 }
 
 export async function getRecipe(recipe_id, user_id) {
+    let recipes;
     if (user_id) {
-        return await prismaClient.$queryRaw`
+         recipes = await prismaClient.$queryRaw`
                 SELECT recipes.*, COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients,
                 ratings.avg avg_rating, ratings.total total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
                 CASE WHEN in_menu.id IS NULL THEN FALSE ELSE TRUE END AS in_menu
                 FROM recipes
                 LEFT JOIN LATERAL (
-                    select avg(ratings.rating) avg, count(*) total from ratings
+                    select avg(ratings.rating) avg, count(*)::text total from ratings
                     where ratings.recipe_id = recipes.id
                 ) ratings ON TRUE 
                 LEFT JOIN LATERAL (
@@ -91,12 +92,12 @@ export async function getRecipe(recipe_id, user_id) {
                 WHERE recipes.id = ${recipe_id}::uuid
                 group by recipes.id, author.username, in_menu.id, ratings.avg, ratings.total;`
     } else {
-        return await prismaClient.$queryRaw`
+        recipes = await prismaClient.$queryRaw`
                 SELECT recipes.*, ratings.avg avg_rating, ratings.total total_ratings, author.username author_username,
                 COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
                 FROM recipes
                 LEFT JOIN LATERAL (
-                    select avg(ratings.rating) avg, count(*) total from ratings
+                    select avg(ratings.rating) avg, count(*)::text total from ratings
                     where ratings.recipe_id = recipes.id
                 ) ratings ON TRUE 
                 LEFT JOIN LATERAL (
@@ -116,6 +117,7 @@ export async function getRecipe(recipe_id, user_id) {
                 WHERE recipes.id = ${recipe_id}::uuid
                 group by recipes.id, author.username, ratings.avg, ratings.total;`;
     }
+    return recipes[0];
 }
 
 export async function insertUserGroceries(user_id, ingredients) {
