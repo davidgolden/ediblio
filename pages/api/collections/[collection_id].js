@@ -1,12 +1,14 @@
-import db from "../../../db/index";
-import {checkCollectionOwnership, getUserIdFromRequest} from "../../../utils/serverUtils";
+import {prismaClient} from "../../../db/index";
+import {checkCollectionOwnership, getUserIdFromRequest, selectUserWithCollections} from "../../../utils/serverUtils";
 
-const selectCollectionWithRecipes = `
+export default async function handler(req, res) {
+    if (req.method === "GET") {
+        const collections = await prismaClient.$queryRaw`
 SELECT collections.*,
 COALESCE(json_agg(recipes) FILTER (WHERE recipes.id IS NOT NULL), '[]') recipes
 FROM collections
 LEFT JOIN LATERAL (
-    select recipes.*, users.profile_image author_image, avg(ratings.rating) avg_rating, count(ratings) total_ratings
+    select recipes.*, users.profile_image author_image, avg(ratings.rating) avg_rating, count(ratings)::text total_ratings
     from recipes
     LEFT JOIN LATERAL (
         select profile_image
@@ -24,37 +26,11 @@ LEFT JOIN LATERAL (
     )
     GROUP BY recipes.id, users.profile_image
 ) recipes ON TRUE 
-WHERE collections.id = $1
+WHERE collections.id = ${req.query.collection_id}::uuid
 GROUP BY collections.id;`;
 
-const selectUserWithCollections = `
-        SELECT users.*,
-        COALESCE(json_agg(c) FILTER (WHERE c IS NOT NULL), '[]') collections
-        FROM users
-        LEFT JOIN LATERAL (
-            SELECT collections.*, COALESCE(json_agg(cr) FILTER (WHERE cr IS NOT NULL), '[]') recipes
-                FROM collections LEFT JOIN LATERAL (
-                SELECT * FROM recipes
-        WHERE recipes.id IN (
-            SELECT recipe_id FROM recipes_collections
-            WHERE recipes_collections.collection_id = collections.id
-        )
-   ) cr ON true
-   WHERE collections.author_id = users.id
-   GROUP BY collections.id
-) c ON true
-WHERE users.id = $1
-GROUP BY users.id;
-        `;
-
-export default async function handler(req, res) {
-    if (req.method === "GET") {
-        const response = await db.query({
-            text: selectCollectionWithRecipes,
-            values: [req.query.collection_id]
-        });
         res.status(200).json({
-            collection: response.rows[0],
+            collection: collections[0],
         });
     } else if (req.method === "DELETE") {
         try {
@@ -62,24 +38,15 @@ export default async function handler(req, res) {
 
             const userId = getUserIdFromRequest(req);
 
-            const collectionRes = await db.query({
-                text: `DELETE FROM collections WHERE id = $1 AND is_primary != true`,
-                values: [req.query.collection_id],
-            });
+            const collections = await prismaClient.$queryRaw`DELETE FROM collections WHERE id = ${req.query.collection_id}::uuid AND is_primary != true;`;
 
-            if (collectionRes.rows.length > 0) {
-                await db.query({
-                    text: `DELETE FROM users_collections_followers WHERE collection_id = $1`,
-                    values: [req.query.collection_id],
-                });
+            if (collections.length > 0) {
+                await prismaClient.$queryRaw`DELETE FROM users_collections_followers WHERE collection_id = ${req.query.collection_id}::uuid;`;
             }
 
-            const response = await db.query({
-                text: selectUserWithCollections,
-                values: [userId],
-            });
+            const userWithCollections = await selectUserWithCollections(userId);
 
-            return res.status(200).json({user: response.rows[0]});
+            return res.status(200).json({user: userWithCollections});
         } catch (error) {
             return res.status(404);
         }

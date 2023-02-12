@@ -19,7 +19,8 @@ export function getUserIdFromRequest(request) {
     }
 }
 
-export const selectUserWithCollections = `
+export async function selectUserWithCollections(userId) {
+    const users = await prismaClient.$queryRaw`
         SELECT users.*,
         COALESCE(json_agg(c) FILTER (WHERE c IS NOT NULL), '[]') collections
         FROM users
@@ -35,9 +36,11 @@ export const selectUserWithCollections = `
    WHERE collections.author_id = users.id
    GROUP BY collections.id
 ) c ON true
-WHERE users.id = $1
+WHERE users.id = ${userId}::uuid
 GROUP BY users.id;
         `;
+    return users[0];
+}
 
 export async function selectUserMenu(user_id) {
     return await prismaClient.$queryRaw`

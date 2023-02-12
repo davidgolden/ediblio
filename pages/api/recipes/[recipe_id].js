@@ -1,8 +1,5 @@
 import {checkRecipeOwnership, getRecipe, getUserIdFromRequest} from "../../../utils/serverUtils";
-import db, {prismaClient} from "../../../db";
-
-const {Pool} = require('pg');
-const pool = new Pool();
+import {prismaClient} from "../../../db";
 
 const multer = require('multer');
 const upload = multer();

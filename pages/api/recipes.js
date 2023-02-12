@@ -48,11 +48,11 @@ export default async function handler(req, res) {
             if (req.query.author && req.query.searchTerm) {
                 text += `
                     INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
-                    WHERE recipes.author_id = ${req.query.author} AND (lower(recipes.name) LIKE ${"%" + req.query.searchTerm.toLowerCase() + "%"} OR lower(recipes_ingredients.name) LIKE ${"%" + req.query.searchTerm.toLowerCase() + "%"}) 
+                    WHERE recipes.author_id = '${req.query.author}' AND (lower(recipes.name) LIKE ${"%" + req.query.searchTerm.toLowerCase() + "%"} OR lower(recipes_ingredients.name) LIKE ${"%" + req.query.searchTerm.toLowerCase() + "%"}) 
                     GROUP BY recipes.id, users.profile_image ${userId ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
             } else if (req.query.author) {
                 text += `
-                    WHERE recipes.author_id = ${req.query.author}  
+                    WHERE recipes.author_id = '${req.query.author}' 
                     GROUP BY recipes.id, users.profile_image ${userId ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
             } else if (req.query.searchTerm) {
                 text += `

@@ -19,7 +19,7 @@ export default async function handler(req, res) {
         if (userId === req.query.user_id) {
             response = await prismaClient.$queryRawUnsafe(`${usersSelector} where users.id = '${req.query.user_id}' group by users.id;`)
         } else {
-            response = await prismaClient.$queryRaw`SELECT username, profile_image FROM users WHERE users.id = ${req.query.user_id};`
+            response = await prismaClient.$queryRaw`SELECT username, profile_image FROM users WHERE users.id = ${req.query.user_id}::uuid;`
         }
         return res.status(200).json({
             user: response[0]
