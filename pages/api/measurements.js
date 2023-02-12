@@ -1,9 +1,9 @@
-import db from "../../db/index";
+import {prismaClient} from "../../db/index";
 
 export default async function handler(req, res) {
     if (req.method === "GET") {
-        const response = await db.query('SELECT * FROM measurements');
+        const response = prismaClient.$queryRaw`SELECT * from measurements;`
 
-        res.status(200).send({measurements: response.rows});
+        res.status(200).send({measurements: response});
     }
 }

@@ -1,4 +1,4 @@
-import db from "../../../db/index";
+import {prismaClient} from "../../../db/index";
 import {usersSelector} from "../../../utils";
 import {getUserIdFromRequest} from "../../../utils/serverUtils";
 import {hashPassword} from "../../../utils";
@@ -17,22 +17,12 @@ export default async function handler(req, res) {
         let response;
         const userId = getUserIdFromRequest(req);
         if (userId === req.query.user_id) {
-
-            response = await db.query({
-                text: `${usersSelector}
-where users.id = $1
-group by users.id;`,
-                values: [req.query.user_id]
-            });
+            response = await prismaClient.$queryRawUnsafe(`${usersSelector} where users.id = '${req.query.user_id}' group by users.id;`)
         } else {
-            response = await db.query({
-                text: `SELECT username, profile_image FROM users
-                WHERE users.id = $1`,
-                values: [req.query.user_id]
-            })
+            response = await prismaClient.$queryRaw`SELECT username, profile_image FROM users WHERE users.id = ${req.query.user_id};`
         }
         return res.status(200).json({
-            user: response.rows[0]
+            user: response[0]
         });
     } else if (req.method === "PATCH") {
         upload.single("profile_picture")(req, {}, async err => {
