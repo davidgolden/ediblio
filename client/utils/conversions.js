@@ -1,6 +1,6 @@
 // if number of teaspoons divides into 4, then convert to tablespoons
 // but if there's leftover, divide
-const convert = require('convert-units');
+import convert from "convert-units";
 
 // groups of what measurements can be added
 const canBeAddedLookup = [
@@ -9,7 +9,7 @@ const canBeAddedLookup = [
     ['g', 'oz', 'lb'],
 ];
 
-const canBeAdded = (m1, m2) => {
+export const canBeAdded = (m1, m2) => {
     if (m1 === m2) return true;
     return canBeAddedLookup.find(g => g.find(t => t === m1)).includes(m2);
 };
@@ -26,7 +26,7 @@ function roundToTwo(num) {
     return +(Math.round(num + "e+2")  + "e-2");
 }
 
-const addIngredient = (q1, m1, q2, m2) => {
+export const addIngredient = (q1, m1, q2, m2) => {
     let q = q1 + q2, m = m1;
     if (m1 === m2) return { quantity: `${q}`, measurement: m };
 
@@ -45,9 +45,4 @@ const addIngredient = (q1, m1, q2, m2) => {
     q = roundToTwo(q1 + q2);
 
     return { quantity: `${q}`, measurement: m };
-};
-
-module.exports = {
-    addIngredient,
-    canBeAdded,
 };

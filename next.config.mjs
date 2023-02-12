@@ -1,8 +1,8 @@
 const CACHE_NAME = "1.0.0";
 
-module.exports = {
+const nextConfig = {
     publicRuntimeConfig: {
-        CDN_URL: "https://d1q5lezvbow9x7.cloudfront.net/",
+        CDN_URL: process.env.CDN_URL,
     },
     // generateInDevMode: true,
     webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
@@ -18,19 +18,7 @@ module.exports = {
             ]
         });
 
-        const originalEntry = config.entry;
-        config.entry = async () => {
-            const entries = await originalEntry();
-
-            if (
-                entries['main.js'] &&
-                !entries['main.js'].includes('./polyfills.js')
-            ) {
-                entries['main.js'].unshift('./polyfills.js')
-            }
-
-            return entries
-        }
+        // config.plugins.push(new webpack.IgnorePlugin({ resourceRegExp: /^pg-native$/ }))
 
         return config;
     },
@@ -62,3 +50,5 @@ module.exports = {
     //     }]
     // }
 };
+
+export default nextConfig;

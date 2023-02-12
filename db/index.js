@@ -1,4 +1,5 @@
-const { Pool } = require('pg');
+import {Pool} from "pg";
+
 const pool = new Pool({
     user: process.env.PGUSER,
     password: process.env.PGPASSWORD,
@@ -6,9 +7,8 @@ const pool = new Pool({
     port: process.env.PGPORT,
     database: process.env.PGDATABASE
 });
-module.exports = {
-    query: (text, params, callback) => {
-        return pool.query(text, params, callback)
-    },
-    pool,
+export const query = (text, params, callback) => {
+    return pool.query(text, params, callback)
 };
+
+export default pool;

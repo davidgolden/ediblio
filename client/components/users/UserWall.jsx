@@ -9,7 +9,7 @@ const UserWall = observer((props) => {
     if (context.loggedIn) {
         return <div>{props.children}</div>
     } else {
-        return <div className={styles.container}>You need to be logged in to be here!"</div>
+        return <div className={styles.container}>You need to be logged in to be here!</div>
     }
 });
 

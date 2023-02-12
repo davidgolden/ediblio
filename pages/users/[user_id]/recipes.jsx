@@ -99,12 +99,12 @@ export async function getServerSideProps ({req, query}) {
             headers: jwt ? {'x-access-token': jwt} : {},
         }),
         await axios.get(`${currentBaseUrl}/api/recipes`, {
-            headers: jwt ? {'x-access-token': jwt} : {},
             params: {
                 orderBy: 'desc',
                 sortBy: 'created_at',
                 author: query.user_id,
-            }
+            },
+            headers: jwt ? {'x-access-token': jwt} : {},
         }),
         await axios.get(`${currentBaseUrl}/api/users/${query.user_id}`, {
             headers: jwt ? {'x-access-token': jwt} : {},

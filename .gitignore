@@ -6,3 +6,4 @@ migration
 .next
 push-to-production.sh
 !/push-to-production.sh
+makefile

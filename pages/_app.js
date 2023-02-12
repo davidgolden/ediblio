@@ -6,13 +6,12 @@ import Header from "../client/components/header/Header";
 import Notification from "../client/components/header/Notification";
 import AllModals from "../client/components/modals/styles/AllModals";
 import {ApiStoreContext, loadStore, storeSingleton} from "../client/stores/api_store";
-import LogRocket from 'logrocket';
 import "../client/styles/base.scss";
 import "draft-js/dist/Draft.css";
 import {enableStaticRendering} from "mobx-react";
 import {handleJWT} from "../client/hooks/handleJWT";
 import axios from "axios";
-import JWT from "jsonwebtoken";
+import {decodeJWT} from "../utils";
 
 class MyDocument extends App {
     MobxStore;
@@ -21,10 +20,6 @@ class MyDocument extends App {
         super(props);
 
         const isServer = typeof window === 'undefined';
-
-        if (!isServer && process.env.NODE_ENV !== 'development') {
-            LogRocket.init('gajlpv/recipe-cloud');
-        }
 
         if (isServer) {
             enableStaticRendering(true);
@@ -79,8 +74,11 @@ MyDocument.getInitialProps = async ({ctx}) => {
         const jwt = ctx.query.jwt || ctx.req.cookies.jwt;
 
         if (jwt) {
-            const decodedJWT = JWT.decode(jwt);
-            const response = await axios.get(`${process.env.HOST}/api/users/${decodedJWT.user.id}`, {
+            const decodedJWT = decodeJWT(jwt);
+            const host = ctx.req.headers.host;
+            const scheme = ctx.req.headers["x-forwarded-proto"] || "http";
+
+            const response = await axios.get(`${scheme}://${host}/api/users/${decodedJWT.user.id}`, {
                 headers: {'x-access-token': jwt},
             });
             returnObj.user = response.data.user;
