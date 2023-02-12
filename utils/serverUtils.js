@@ -40,22 +40,18 @@ GROUP BY users.id;
         `;
 
 export async function selectUserMenu(user_id) {
-    const menu = await db.query({
-        text: `
+    return await prismaClient.$queryRaw`
                 SELECT * FROM recipes
                 WHERE recipes.id IN (
                     SELECT recipe_id FROM users_recipes_menu
-                    WHERE users_recipes_menu.user_id = $1
-                );`,
-        values: [user_id],
-    });
-    return menu.rows;
+                    WHERE users_recipes_menu.user_id = ${user_id}::uuid
+                );`
 }
 
 export async function getRecipe(recipe_id, user_id) {
     let recipes;
     if (user_id) {
-         recipes = await prismaClient.$queryRaw`
+        recipes = await prismaClient.$queryRaw`
                 SELECT recipes.*, COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients,
                 ratings.avg avg_rating, ratings.total total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
                 CASE WHEN in_menu.id IS NULL THEN FALSE ELSE TRUE END AS in_menu
@@ -207,31 +203,24 @@ export async function insertUserGroceries(user_id, ingredients) {
 }
 
 export async function selectUserGroceries(user_id) {
-    const groceries = await db.query({
-        text: `
+    return await prismaClient.$queryRaw`
                 SELECT g.id, g.quantity, g.name, m.short_name measurement, g.item_index
                 FROM users_ingredients_groceries g
                 LEFT JOIN LATERAL (
                     SELECT short_name FROM measurements
                     WHERE measurements.id = g.measurement_id
                 ) m ON true
-                WHERE g.user_id = $1 AND g.deleted = false
-                ORDER BY g.item_index;`,
-        values: [user_id],
-    });
-    return groceries.rows;
+                WHERE g.user_id = ${user_id}::uuid AND g.deleted = false
+                ORDER BY g.item_index;`
 }
 
 export async function checkIngredientOwnership(req, res) {
     const userId = getUserIdFromRequest(req);
 
     if (userId) {
-        const response = await db.query({
-            text: `SELECT * FROM users_ingredients_groceries WHERE id = $1 AND user_id = $2`,
-            values: [req.query.ingredient_id, userId]
-        });
+        const ingredients = await prismaClient.$queryRaw`SELECT * FROM users_ingredients_groceries WHERE id = ${req.query.ingredient_id}::uuid AND user_id = ${userId}::uuid;`
 
-        if (response.rows.length === 0) {
+        if (ingredients.length === 0) {
             res.status(403);
         }
     } else {
@@ -243,12 +232,9 @@ export async function checkCollectionOwnership(req, res) {
     const userId = getUserIdFromRequest(req);
 
     if (userId) {
-        const response = await db.query({
-            text: `SELECT * FROM collections WHERE id = $1 AND author_id = $2`,
-            values: [req.query.collection_id, userId]
-        });
+        const collections = await prismaClient.$queryRaw`SELECT * FROM collections WHERE id = ${req.query.collection_id}::uuid AND author_id = ${userId}::uuid;`
 
-        if (response.rows.length === 0) {
+        if (collections.length === 0) {
             res.status(403);
         }
     } else {
@@ -260,12 +246,9 @@ export async function checkRecipeOwnership(req, res) {
     const userId = getUserIdFromRequest(req);
 
     if (userId) {
-        const response = await db.query({
-            text: `SELECT * FROM recipes WHERE id = $1 AND author_id = $2`,
-            values: [req.query.recipe_id, userId]
-        });
+        const recipes = await prismaClient.$queryRaw`SELECT * FROM recipes WHERE id = ${req.query.recipe_id}::uuid AND author_id = ${userId}::uuid;`
 
-        if (response.rows.length === 0) {
+        if (recipes.length === 0) {
             res.status(403);
         }
     } else {

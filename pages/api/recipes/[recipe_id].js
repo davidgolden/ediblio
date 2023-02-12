@@ -1,5 +1,5 @@
 import {checkRecipeOwnership, getRecipe, getUserIdFromRequest} from "../../../utils/serverUtils";
-import db from "../../../db";
+import db, {prismaClient} from "../../../db";
 
 const {Pool} = require('pg');
 const pool = new Pool();
@@ -133,14 +133,11 @@ export default async function handler(req, res) {
 
             const userId = getUserIdFromRequest(req);
 
-            const response = await db.query({
-                text: `DELETE FROM recipes WHERE id = $1 RETURNING *`,
-                values: [req.query.recipe_id],
-            });
+            const response = await prismaClient.$queryRaw`DELETE FROM recipes WHERE id = ${req.query.recipe_id}::uuid RETURNING *;`
 
-            if (response.rows[0].image) {
+            if (response[0].image) {
                 // delete all resources associated with the recipe
-                const recipePath = `users/${userId}/recipes/${response.rows[0].id}/`;
+                const recipePath = `users/${userId}/recipes/${response[0].id}/`;
 
                 const data = await s3.listObjects({Bucket: "ediblio", Prefix: recipePath}).promise();
 
