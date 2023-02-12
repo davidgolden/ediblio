@@ -4,8 +4,8 @@ import {getRecipe, getUserIdFromRequest} from "../../utils/serverUtils";
 const multer = require('multer');
 const upload = multer();
 
-const AWS = require("aws-sdk");
-const s3 = new AWS.S3({
+import {S3} from "aws-sdk";
+const s3 = new S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 })
