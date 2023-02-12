@@ -1,4 +1,4 @@
-import db from "../db";
+import {prismaClient} from "../db";
 import {decodeJWT} from "../utils";
 import {addIngredient, canBeAdded} from "../client/utils/conversions";
 
@@ -53,11 +53,8 @@ export async function selectUserMenu(user_id) {
 }
 
 export async function getRecipe(recipe_id, user_id) {
-    let response;
-
     if (user_id) {
-        response = await db.query({
-            text: `
+        return await prismaClient.$queryRaw`
                 SELECT recipes.*, COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients,
                 ratings.avg avg_rating, ratings.total total_ratings, avg(user_ratings.rating) user_rating, author.username author_username,
                 CASE WHEN in_menu.id IS NULL THEN FALSE ELSE TRUE END AS in_menu
@@ -69,7 +66,7 @@ export async function getRecipe(recipe_id, user_id) {
                 LEFT JOIN LATERAL (
                     select rating from ratings
                     where ratings.recipe_id = recipes.id
-                    and ratings.author_id = $1
+                    and ratings.author_id = ${user_id}::uuid
                 ) user_ratings ON TRUE
                 LEFT JOIN LATERAL (
                     SELECT recipes_ingredients.id, recipes_ingredients.quantity, recipes_ingredients.name, recipes_ingredients.measurement_id, m.short_name measurement
@@ -88,16 +85,13 @@ export async function getRecipe(recipe_id, user_id) {
                 LEFT JOIN LATERAL (
                     SELECT id FROM users_recipes_menu
                     WHERE users_recipes_menu.recipe_id = recipes.id
-                    AND users_recipes_menu.user_id = $1
+                    AND users_recipes_menu.user_id = ${user_id}::uuid
                     LIMIT 1
                 ) in_menu ON True
-                WHERE recipes.id = $2
-                group by recipes.id, author.username, in_menu.id, ratings.avg, ratings.total;`,
-            values: [user_id, recipe_id]
-        })
+                WHERE recipes.id = ${recipe_id}::uuid
+                group by recipes.id, author.username, in_menu.id, ratings.avg, ratings.total;`
     } else {
-        response = await db.query({
-            text: `
+        return await prismaClient.$queryRaw`
                 SELECT recipes.*, ratings.avg avg_rating, ratings.total total_ratings, author.username author_username,
                 COALESCE(json_agg(ingredients) FILTER (WHERE ingredients IS NOT NULL), '[]') ingredients
                 FROM recipes
@@ -119,13 +113,9 @@ export async function getRecipe(recipe_id, user_id) {
                     from users
                     where users.id = recipes.author_id
                 ) author ON TRUE
-                WHERE recipes.id = $1
-                group by recipes.id, author.username, ratings.avg, ratings.total;`,
-            values: [recipe_id]
-        });
+                WHERE recipes.id = ${recipe_id}::uuid
+                group by recipes.id, author.username, ratings.avg, ratings.total;`;
     }
-
-    return response.rows[0];
 }
 
 export async function insertUserGroceries(user_id, ingredients) {

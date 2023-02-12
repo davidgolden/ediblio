@@ -75,45 +75,37 @@ export default async function handler(req, res) {
         upload.single("image")(req, {}, async err => {
             const userId = getUserIdFromRequest(req);
 
-            const client = await db.connect();
             try {
-                await client.query("BEGIN");
-                const {name, url, notes, ingredients} = req.body;
-                const text = `INSERT INTO recipes (name, url, notes, author_id) VALUES ($1, $2, $3, $4) RETURNING recipes.id;`;
-                const values = [name, url, notes, userId];
+                await prismaClient.$transaction(async (tx) => {
+                    const {name, url, notes, ingredients} = req.body;
 
-                let recipeRes = await client.query(text, values);
+                    const recipes = await tx.$queryRaw`INSERT INTO recipes (name, url, notes, author_id) VALUES (${name}, ${url}, ${notes}, ${userId}::uuid) RETURNING recipes.id;`
+                    const recipeId = recipes[0].id;
 
-                // upload image to s3
-                const recipeId = recipeRes.rows[0].id;
+                    if (req.file) {
+                        const imagePath = `users/${userId}/recipes/${recipeId}/${req.file.originalname}`;
+                        const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
 
-                if (req.file) {
-                    const imagePath = `users/${userId}/recipes/${recipeId}/${req.file.originalname}`;
-                    const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
-
-                    await client.query(`UPDATE recipes SET image = $1 WHERE id = $2`, [data.Key, recipeId]);
-                }
-
-                if (ingredients && ingredients.length > 0) {
-                    const parsedIngredients = JSON.parse(ingredients);
-                    for (let x = 0; x < parsedIngredients.length; x++) {
-                        const ing = parsedIngredients[x];
-
-                        await client.query({
-                            text: 'INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4)',
-                            values: [recipeId, ing.name, ing.measurement, ing.quantity]
-                        })
+                        await tx.$queryRaw`UPDATE recipes SET image = ${data.Key} WHERE id = ${recipeId};`;
                     }
-                }
 
-                await client.query("COMMIT");
-                const recipe = await getRecipe(recipeRes.rows[0].id, userId);
-                return res.status(200).json({recipe});
+                    if (ingredients && ingredients.length > 0) {
+                        const parsedIngredients = JSON.parse(ingredients);
+                        for (let x = 0; x < parsedIngredients.length; x++) {
+                            const ing = parsedIngredients[x];
+
+                            await tx.$queryRaw`INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES (${recipeId}, ${ing.name}, (SELECT id FROM measurements WHERE short_name = ${ing.measurement}), ${ing.quantity});`
+                        }
+                    }
+
+                    console.log(recipeId, userId);
+                    const response = await getRecipe(recipeId, userId);
+                    console.log(response);
+                    return res.status(200).json({recipe: response});
+                })
             } catch (e) {
-                await client.query("ROLLBACK");
+                console.log(e);
                 return res.status(400).json(e);
-            } finally {
-                client.release();
             }
         })
     }
