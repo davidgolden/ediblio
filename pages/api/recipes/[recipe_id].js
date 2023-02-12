@@ -1,6 +1,5 @@
-import {getRecipe, getUserIdFromRequest} from "../../../utils/serverUtils";
+import {checkRecipeOwnership, getRecipe, getUserIdFromRequest} from "../../../utils/serverUtils";
 import db from "../../../db";
-import {checkRecipeOwnership} from "../../../middleware";
 
 const {Pool} = require('pg');
 const pool = new Pool();

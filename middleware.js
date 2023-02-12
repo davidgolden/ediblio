@@ -1,7 +1,5 @@
-import { NextResponse } from 'next/server'
+import {NextResponse} from 'next/server'
 import {verifyJWT} from "./utils";
-import db from "./db/index";
-import {getUserIdFromRequest} from "./utils/serverUtils";
 
 async function isLoggedIn(request) {
     const token = request.headers.get('x-access-token');
@@ -11,57 +9,6 @@ async function isLoggedIn(request) {
         return true;
     } catch (e) {
         return false;
-    }
-}
-
-export async function checkIngredientOwnership(req, res) {
-    const userId = getUserIdFromRequest(req);
-
-    if (userId) {
-        const response = await db.query({
-            text: `SELECT * FROM users_ingredients_groceries WHERE id = $1 AND user_id = $2`,
-            values: [req.query.ingredient_id, userId]
-        });
-
-        if (response.rows.length === 0) {
-            res.status(403);
-        }
-    } else {
-        res.status(403);
-    }
-}
-
-export async function checkCollectionOwnership(req, res) {
-    const userId = getUserIdFromRequest(req);
-
-    if (userId) {
-        const response = await db.query({
-            text: `SELECT * FROM collections WHERE id = $1 AND author_id = $2`,
-            values: [req.query.collection_id, userId]
-        });
-
-        if (response.rows.length === 0) {
-            res.status(403);
-        }
-    } else {
-        res.status(403);
-    }
-}
-
-export async function checkRecipeOwnership(req, res) {
-    const userId = getUserIdFromRequest(req);
-
-    if (userId) {
-        const response = await db.query({
-            text: `SELECT * FROM recipes WHERE id = $1 AND author_id = $2`,
-            values: [req.query.recipe_id, userId]
-        });
-
-        if (response.rows.length === 0) {
-            res.status(403);
-        }
-    } else {
-        res.status(403);
     }
 }
 

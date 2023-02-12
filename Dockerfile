@@ -11,7 +11,7 @@ COPY ./utils /app/utils
 COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
 COPY ./utils.js /app/utils.js
-COPY ./next.config.js /app/next.config.js
+COPY next.config.mjs /app/next.config.mjs
 COPY ./middleware.js /app/middleware.js
 
 RUN npm ci

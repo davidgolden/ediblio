@@ -1,5 +1,5 @@
 import db from "../../../../../db/index";
-import {checkIngredientOwnership} from "../../../../../middleware";
+import {checkIngredientOwnership} from "../../../../../utils/serverUtils";
 
 export default async function handler(req, res) {
     if (req.method === "PATCH") {

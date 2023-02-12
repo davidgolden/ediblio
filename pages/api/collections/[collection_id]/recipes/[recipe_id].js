@@ -1,5 +1,5 @@
 import db from "../../../../../db";
-import {checkCollectionOwnership} from "../../../../../middleware";
+import {checkCollectionOwnership} from "../../../../../utils/serverUtils";
 
 export default async function handler(req, res) {
     if (req.method === "POST") {

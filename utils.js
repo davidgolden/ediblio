@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import {jwtVerify, decodeJwt as decode, SignJWT} from "jose";
+import {jwtVerify, decodeJwt, SignJWT} from "jose";
 
 export function hashPassword(password) {
     const SALT_FACTOR = 5;
@@ -48,7 +48,7 @@ export async function encodeJWT(payload) {
 }
 
 export function decodeJWT(jwt) {
-    return decode(jwt);
+    return decodeJwt(jwt);
 }
 
 export async function verifyJWT(jwt) {

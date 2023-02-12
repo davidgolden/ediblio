@@ -1,6 +1,5 @@
 import db from "../../../db/index";
-import {getUserIdFromRequest} from "../../../utils/serverUtils";
-import {checkCollectionOwnership} from "../../../middleware";
+import {checkCollectionOwnership, getUserIdFromRequest} from "../../../utils/serverUtils";
 
 const selectCollectionWithRecipes = `
 SELECT collections.*,
