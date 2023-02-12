@@ -1,5 +1,5 @@
 import {decodeJWT, encodeJWT, usersSelector} from "../../utils";
-import db from "../../db/index";
+import {prismaClient} from "../../db/index";
 import bcrypt from "bcryptjs";
 
 export default async function handler(req, res) {
@@ -7,12 +7,9 @@ export default async function handler(req, res) {
         try {
             const {email, password, redirect_url} = decodeJWT(req.query.jwt);
 
-            const userRes = await db.query({
-                text: `${usersSelector}
-where users.email = $1
-group by users.id;`, values: [email]
-            });
-            const user = userRes.rows[0];
+            const users = await prismaClient.$queryRawUnsafe(`${usersSelector} where users.email = '${email}' group by users.id;`)
+
+            const user = users[0];
 
             if (!user) res.status(404).send({detail: "No user found with that email!"});
 

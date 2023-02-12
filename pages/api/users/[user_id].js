@@ -32,11 +32,9 @@ export default async function handler(req, res) {
                 const {username, email, password} = req.body;
 
                 const updateValues = [];
-                const values = [];
 
                 function updateQuery(key, value) {
-                    updateValues.push(`${key} = $${values.length + 1}`);
-                    values.push(value);
+                    updateValues.push(`${key} = '${value}'`);
                 }
 
                 if (typeof username === 'string') {
@@ -46,11 +44,9 @@ export default async function handler(req, res) {
                     updateQuery('email', email);
                 }
                 if (typeof password === 'string') {
-                    const userRes = await db.query({
-                        text: `SELECT password FROM users WHERE id = $1`,
-                        values: [userId],
-                    });
-                    if (password !== userRes.rows[0].password) {
+                    const userPasswords = await prismaClient.$queryRaw`SELECT password FROM users WHERE id = ${userId}::uuid;`;
+
+                    if (password !== userPasswords[0].password) {
                         updateQuery('password', await hashPassword(password));
                     }
                 }
@@ -62,17 +58,14 @@ export default async function handler(req, res) {
                 }
 
                 if (updateValues.length > 0) {
-                    const response = await db.query({
-                        text: `UPDATE users SET ${updateValues.join(", ")} WHERE id = $${values.length + 1} RETURNING *`,
-                        values: values.concat([userId]),
-                    });
-
-                    return res.status(200).send({user: response.rows[0]})
+                    const users = await prismaClient.$queryRawUnsafe(`UPDATE users SET ${updateValues.join(", ")} WHERE id = '${userId}' RETURNING *;`)
+                    return res.status(200).send({user: users[0]})
                 }
 
                 return res.status(200).send();
 
             } catch (error) {
+                console.error(error);
                 res.status(404).send({detail: error.message});
             }
         })
