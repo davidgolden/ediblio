@@ -24,9 +24,13 @@ export default async function handler(req, res) {
         try {
             await checkRecipeOwnership(req, res);
 
-            await prismaClient.$queryRaw`
-                DELETE FROM recipes_ingredients
-                WHERE id IN (${req.body.ingredient_ids.join(", ")}::uuid);`;
+            await prismaClient.recipes_ingredients.deleteMany({
+                where: {
+                    id: {
+                        in: req.body.ingredient_ids,
+                    }
+                }
+            });
 
             res.status(200).send();
         } catch (error) {

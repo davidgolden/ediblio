@@ -52,7 +52,7 @@ export default async function handler(req, res) {
                 }
 
                 if (req.file) {
-                    const imagePath = `users/${userId}/${req.file.originalname}`;
+                    const imagePath = `users/${userId}/${req.file.originalname.replace(/'/g, "%27")}`;
                     const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
                     updateQuery('profile_image', data.Key);
                 }

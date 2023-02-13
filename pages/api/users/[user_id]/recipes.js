@@ -16,10 +16,13 @@ export default async function handler(req, res) {
     } else if (req.method === "DELETE") {
         // remove list of recipes from menu
         try {
-            await prismaClient.$queryRaw`
-                DELETE FROM users_recipes_menu
-                WHERE recipe_id IN (${req.body.recipe_ids.join(", ")})::uuid;
-                `
+            await prismaClient.users_recipes_menu.deleteMany({
+                where: {
+                    recipe_id: {
+                        in: req.body.recipe_ids,
+                    }
+                }
+            });
 
             res.status(200).send();
         } catch (error) {

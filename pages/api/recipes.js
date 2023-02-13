@@ -48,7 +48,7 @@ export default async function handler(req, res) {
             if (req.query.author && req.query.searchTerm) {
                 text += `
                     INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
-                    WHERE recipes.author_id = '${req.query.author}' AND (lower(recipes.name) LIKE ${"%" + req.query.searchTerm.toLowerCase() + "%"} OR lower(recipes_ingredients.name) LIKE ${"%" + req.query.searchTerm.toLowerCase() + "%"}) 
+                    WHERE recipes.author_id = '${req.query.author}' AND (lower(recipes.name) LIKE '%${req.query.searchTerm.toLowerCase()}%' OR lower(recipes_ingredients.name) LIKE '%${req.query.searchTerm.toLowerCase()}%') 
                     GROUP BY recipes.id, users.profile_image ${userId ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
             } else if (req.query.author) {
                 text += `
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
             } else if (req.query.searchTerm) {
                 text += `
                     INNER JOIN recipes_ingredients ON recipes_ingredients.recipe_id = recipes.id
-                    WHERE (lower(recipes.name) LIKE ${"%" + req.query.searchTerm.toLowerCase() + "%"} OR lower(recipes_ingredients.name) LIKE ${"%" + req.query.searchTerm.toLowerCase() + "%"}) 
+                    WHERE (lower(recipes.name) LIKE '%${req.query.searchTerm.toLowerCase()}%' OR lower(recipes_ingredients.name) LIKE '%${req.query.searchTerm.toLowerCase()}%') 
                     GROUP BY recipes.id, users.profile_image ${userId ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
             } else {
                 text += ` GROUP BY recipes.id, users.profile_image ${userId ? ', in_menu.id' : ''} ORDER BY created_at desc LIMIT ${page_size} OFFSET ${skip};`;
@@ -94,7 +94,7 @@ export default async function handler(req, res) {
                         for (let x = 0; x < parsedIngredients.length; x++) {
                             const ing = parsedIngredients[x];
 
-                            await tx.$queryRaw`INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES (${recipeId}, ${ing.name}, (SELECT id FROM measurements WHERE short_name = ${ing.measurement}), ${ing.quantity});`
+                            await tx.$queryRaw`INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES (${recipeId}::uuid, ${ing.name}, (SELECT id FROM measurements WHERE short_name = ${ing.measurement}), ${ing.quantity});`
                         }
                     }
 

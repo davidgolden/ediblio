@@ -122,6 +122,8 @@ export async function getRecipe(recipe_id, user_id) {
 export async function insertUserGroceries(user_id, ingredients) {
     try {
         await prismaClient.$transaction(async (tx) => {
+            let normalAddToList = false;
+
             for (let x = 0; x < ingredients.length; x++) {
                 const ing = ingredients[x];
 
@@ -136,8 +138,7 @@ export async function insertUserGroceries(user_id, ingredients) {
                     OR users_ingredients_groceries.name ILIKE ${ing.name.slice(0, -1)}
                     OR users_ingredients_groceries.name ILIKE ${ing.name.slice(0, -2)})
                     AND users_ingredients_groceries.user_id = ${user_id}::uuid
-                    AND deleted = false
-                    LIMIT 1;`;
+                    AND deleted = false LIMIT 1;`;
 
                 if (similarIngredient.length > 0) {
                     // if there's a similar ingredient
@@ -149,28 +150,25 @@ export async function insertUserGroceries(user_id, ingredients) {
                         // if it can be added, add it
                         let newQM = addIngredient(Number(q), m, Number(ing.quantity), ing.measurement);
 
-                        await tx.$queryRaw`UPDATE users_ingredients_groceries SET quantity = ${newQM.quantity}, measurement_id = (SELECT id FROM measurements WHERE short_name = ${newQM.measurement}) WHERE id = ${similarIngredient.rows[0].id}::uuid;`
+                        await tx.$queryRaw`UPDATE users_ingredients_groceries SET quantity = ${newQM.quantity}::numeric, measurement_id = (SELECT id FROM measurements WHERE short_name = ${newQM.measurement}) WHERE id = ${similarIngredient[0].id}::uuid;`
 
                     } else {
                         // if it can't be added, push it to grocery list
-                        await tx.$queryRaw`
-                            INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity, item_index) 
-                            VALUES (${user_id}::uuid, ${ing.name}, (SELECT id FROM measurements WHERE short_name = ${ing.measurement}), ${ing.quantity}, (
-                                SELECT count(*)
-                                FROM users_ingredients_groceries ug
-                                WHERE ug.user_id = $1 AND ug.deleted = false
-                                )
-                            );`;
+                        normalAddToList = true;
                     }
 
                 } else {
                     // if there aren't any matching ingredients
+                    normalAddToList = true;
+                }
+
+                if (normalAddToList) {
                     await tx.$queryRaw`
                             INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity, item_index) 
-                            VALUES (${user_id}::uuid, ${ing.name}, (SELECT id FROM measurements WHERE short_name = ${ing.measurement}), ${ing.quantity}, (
+                            VALUES (${user_id}::uuid, ${ing.name}, (SELECT id FROM measurements WHERE short_name = ${ing.measurement}), ${Number(ing.quantity).toFixed(1)}::numeric, (
                                 SELECT count(*)
                                 FROM users_ingredients_groceries ug
-                                WHERE ug.user_id = $1 AND ug.deleted = false
+                                WHERE ug.user_id = ${user_id}::uuid AND ug.deleted = false
                                 )
                             );`;
                 }
@@ -180,11 +178,8 @@ export async function insertUserGroceries(user_id, ingredients) {
         return await selectUserGroceries(user_id);
 
     } catch (error) {
-        await client.query("ROLLBACK");
-
+        console.error(error);
         return error;
-    } finally {
-        client.release();
     }
 }
 
