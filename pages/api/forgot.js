@@ -1,5 +1,5 @@
 import URLSafeBase64 from "urlsafe-base64";
-import db from "../../db/index";
+import {prismaClient} from "../../db/index";
 import nodemailer from "nodemailer";
 import mg from "nodemailer-mailgun-transport";
 import {getUserIdFromRequest} from "../../utils/serverUtils";
@@ -25,22 +25,16 @@ export default async function handler(req, res) {
                     return res.status(404).send({detail: 'There was a problem assigning a token!'})
                 }
 
-                await db.query('BEGIN');
-                const response = await db.query({
-                    text: `SELECT * FROM users WHERE email = $1`,
-                    values: [email],
-                });
+                await prismaClient.$transaction(async (tx) => {
+                    const response = await tx.$queryRaw`SELECT * FROM users WHERE email = ${email};`
 
-                if (response.rows.length === 0) {
-                    await db.query('ROLLBACK');
-                    return res.status(404).send({detail: 'No user found!'})
-                }
+                    if (response.length === 0) {
+                        return res.status(404).send({detail: 'No user found!'})
+                    }
 
-                await db.query({
-                    text: `UPDATE users SET reset_token = $1, token_expires = $2 WHERE email = $3`,
-                    values: [token, new Date(Date.now() + 3600000), email],
-                });
-                await db.query('COMMIT');
+                    await tx.$queryRaw`UPDATE users SET reset_token = ${token}, token_expires = ${new Date(Date.now() + 3600000)} WHERE email = ${email};`
+                })
+
 
                 const auth = {
                     auth: {
