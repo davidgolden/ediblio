@@ -1,5 +1,5 @@
 import {getUserIdFromRequest, selectUserMenu} from "../../../../utils/serverUtils";
-import db from "../../../../db/index";
+import {prismaClient} from "../../../../db/index";
 
 export default async function handler(req, res) {
     if (req.method === "GET") {
@@ -16,11 +16,12 @@ export default async function handler(req, res) {
     } else if (req.method === "DELETE") {
         // remove list of recipes from menu
         try {
-            await db.query({
-                text: `
-                DELETE FROM users_recipes_menu
-                WHERE recipe_id IN (${req.body.recipe_ids.map(id => "'" + id + "'").join(", ")})
-                `,
+            await prismaClient.users_recipes_menu.deleteMany({
+                where: {
+                    recipe_id: {
+                        in: req.body.recipe_ids,
+                    }
+                }
             });
 
             res.status(200).send();

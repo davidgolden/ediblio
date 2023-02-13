@@ -1,4 +1,4 @@
-import db from "../../../db/index";
+import {prismaClient} from "../../../db/index";
 import {usersSelector} from "../../../utils";
 import {getUserIdFromRequest} from "../../../utils/serverUtils";
 import {hashPassword} from "../../../utils";
@@ -17,22 +17,12 @@ export default async function handler(req, res) {
         let response;
         const userId = getUserIdFromRequest(req);
         if (userId === req.query.user_id) {
-
-            response = await db.query({
-                text: `${usersSelector}
-where users.id = $1
-group by users.id;`,
-                values: [req.query.user_id]
-            });
+            response = await prismaClient.$queryRawUnsafe(`${usersSelector} where users.id = '${req.query.user_id}' group by users.id;`)
         } else {
-            response = await db.query({
-                text: `SELECT username, profile_image FROM users
-                WHERE users.id = $1`,
-                values: [req.query.user_id]
-            })
+            response = await prismaClient.$queryRaw`SELECT username, profile_image FROM users WHERE users.id = ${req.query.user_id}::uuid;`
         }
         return res.status(200).json({
-            user: response.rows[0]
+            user: response[0]
         });
     } else if (req.method === "PATCH") {
         upload.single("profile_picture")(req, {}, async err => {
@@ -42,11 +32,9 @@ group by users.id;`,
                 const {username, email, password} = req.body;
 
                 const updateValues = [];
-                const values = [];
 
                 function updateQuery(key, value) {
-                    updateValues.push(`${key} = $${values.length + 1}`);
-                    values.push(value);
+                    updateValues.push(`${key} = '${value}'`);
                 }
 
                 if (typeof username === 'string') {
@@ -56,33 +44,28 @@ group by users.id;`,
                     updateQuery('email', email);
                 }
                 if (typeof password === 'string') {
-                    const userRes = await db.query({
-                        text: `SELECT password FROM users WHERE id = $1`,
-                        values: [userId],
-                    });
-                    if (password !== userRes.rows[0].password) {
+                    const userPasswords = await prismaClient.$queryRaw`SELECT password FROM users WHERE id = ${userId}::uuid;`;
+
+                    if (password !== userPasswords[0].password) {
                         updateQuery('password', await hashPassword(password));
                     }
                 }
 
                 if (req.file) {
-                    const imagePath = `users/${userId}/${req.file.originalname}`;
+                    const imagePath = `users/${userId}/${req.file.originalname.replace(/'/g, "%27")}`;
                     const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
                     updateQuery('profile_image', data.Key);
                 }
 
                 if (updateValues.length > 0) {
-                    const response = await db.query({
-                        text: `UPDATE users SET ${updateValues.join(", ")} WHERE id = $${values.length + 1} RETURNING *`,
-                        values: values.concat([userId]),
-                    });
-
-                    return res.status(200).send({user: response.rows[0]})
+                    const users = await prismaClient.$queryRawUnsafe(`UPDATE users SET ${updateValues.join(", ")} WHERE id = '${userId}' RETURNING *;`)
+                    return res.status(200).send({user: users[0]})
                 }
 
                 return res.status(200).send();
 
             } catch (error) {
+                console.error(error);
                 res.status(404).send({detail: error.message});
             }
         })

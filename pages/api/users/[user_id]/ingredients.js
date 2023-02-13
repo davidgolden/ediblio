@@ -1,5 +1,5 @@
 import {getUserIdFromRequest, insertUserGroceries, selectUserGroceries} from "../../../../utils/serverUtils";
-import db from "../../../../db/index";
+import {prismaClient} from "../../../../db/index";
 
 export default async function handler(req, res) {
     if (req.method === "POST") {
@@ -12,6 +12,7 @@ export default async function handler(req, res) {
 
             return res.status(200).send({groceryList: newGroceryList});
         } catch (error) {
+            console.error(error);
             res.status(404).send({detail: error.message});
         }
     } else if (req.method === "GET") {
@@ -30,18 +31,22 @@ export default async function handler(req, res) {
         try {
             const userId = getUserIdFromRequest(req);
 
-            await db.query({
-                text: `
-                UPDATE users_ingredients_groceries
-                SET deleted = true
-                WHERE id IN (${req.body.ingredient_ids.map(id => "'" + id + "'").join(", ")})
-                `,
+            await prismaClient.users_ingredients_groceries.updateMany({
+                where: {
+                    id: {
+                        in: req.body.ingredient_ids
+                    },
+                },
+                data: {
+                    deleted: true,
+                }
             });
 
             const groceryList = await selectUserGroceries(userId);
 
             res.status(200).send({groceryList});
         } catch (error) {
+            console.error(error);
             res.status(404).send({detail: error.message});
         }
     }

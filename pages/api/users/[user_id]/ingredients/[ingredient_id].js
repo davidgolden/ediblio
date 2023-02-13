@@ -1,4 +1,4 @@
-import db from "../../../../../db/index";
+import {prismaClient} from "../../../../../db/index";
 import {checkIngredientOwnership} from "../../../../../utils/serverUtils";
 
 export default async function handler(req, res) {
@@ -6,16 +6,13 @@ export default async function handler(req, res) {
         try {
             await checkIngredientOwnership(req, res);
 
-            const response = await db.query({
-                text: `
+            const response = await prismaClient.$queryRaw`
             UPDATE users_ingredients_groceries
-            SET name = $1, quantity = $2, measurement_id = (SELECT id FROM measurements WHERE short_name = $3)
-            WHERE id = $4 RETURNING *
-            `,
-                values: [req.body.name, req.body.quantity, req.body.measurement, req.query.ingredient_id],
-            });
+            SET name = ${req.body.name}, quantity = ${req.body.quantity}, measurement_id = (SELECT id FROM measurements WHERE short_name = ${req.body.measurement})
+            WHERE id = ${req.query.ingredient_id}::uuid RETURNING *;
+            `
 
-            res.status(200).send(response.rows[0]);
+            res.status(200).send(response[0]);
         } catch (error) {
             res.status(404).send({detail: error.message});
         }

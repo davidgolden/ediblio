@@ -1,20 +1,14 @@
-import db from "../../db/index";
+import {prismaClient} from "../../db/index";
 import {getUserIdFromRequest, selectUserWithCollections} from "../../utils/serverUtils";
 
 export default async function handler(req, res) {
     if (req.method === "POST") {
         const userId = getUserIdFromRequest(req);
 
-        await db.query({
-            text: `INSERT INTO collections (name, author_id) VALUES ($1, $2)`,
-            values: [req.body.name, userId],
-        });
+        await prismaClient.$queryRaw`INSERT INTO collections (name, author_id) VALUES (${req.body.name}, ${userId}::uuid);`;
 
-        const response = await db.query({
-            text: selectUserWithCollections,
-            values: [userId]
-        });
+        const userWithCollections = await selectUserWithCollections(userId);
 
-        return res.status(200).json({user: response.rows[0]});
+        return res.status(200).json({user: userWithCollections});
     }
 }

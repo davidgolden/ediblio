@@ -1,4 +1,4 @@
-import db from "../../../../../db/index";
+import {prismaClient} from "../../../../../db/index";
 import {getUserIdFromRequest} from "../../../../../utils/serverUtils";
 
 export default async function handler(req, res) {
@@ -6,10 +6,7 @@ export default async function handler(req, res) {
         try {
             const userId = getUserIdFromRequest(req);
 
-            await db.query({
-                text: `INSERT INTO users_collections_followers (user_id, collection_id) VALUES ($1, $2)`,
-                values: [userId, req.query.collection_id],
-            });
+            await prismaClient.$queryRaw`INSERT INTO users_collections_followers (user_id, collection_id) VALUES (${userId}::uuid, ${req.query.collection_id}::uuid);`
 
             return res.status(200).send();
         } catch (error) {
@@ -19,10 +16,7 @@ export default async function handler(req, res) {
         try {
             const userId = getUserIdFromRequest(req);
 
-            await db.query({
-                text: `DELETE FROM users_collections_followers WHERE user_id = $1 AND collection_id = $2`,
-                values: [userId, req.query.collection_id],
-            });
+            await prismaClient.$queryRaw`DELETE FROM users_collections_followers WHERE user_id = ${userId}::uuid AND collection_id = ${req.query.collection_id}::uuid;`
 
             return res.status(200).send();
         } catch (error) {
