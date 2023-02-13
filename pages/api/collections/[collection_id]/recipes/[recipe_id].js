@@ -1,4 +1,4 @@
-import db from "../../../../../db";
+import {prismaClient} from "../../../../../db";
 import {checkCollectionOwnership} from "../../../../../utils/serverUtils";
 
 export default async function handler(req, res) {
@@ -7,10 +7,7 @@ export default async function handler(req, res) {
         try {
             await checkCollectionOwnership(req, res);
 
-            await db.query({
-                text: `INSERT INTO recipes_collections (recipe_id, collection_id) VALUES ($1, $2)`,
-                values: [req.query.recipe_id, req.query.collection_id],
-            });
+            await prismaClient.$queryRaw`INSERT INTO recipes_collections (recipe_id, collection_id) VALUES (${req.query.recipe_id}::uuid, ${req.query.collection_id}::uuid);`
 
             return res.status(200).send();
         } catch (error) {
@@ -21,10 +18,7 @@ export default async function handler(req, res) {
         try {
             await checkCollectionOwnership(req, res);
 
-            await db.query({
-                text: `DELETE FROM recipes_collections WHERE recipe_id = $1 AND collection_id = $2`,
-                values: [req.query.recipe_id, req.query.collection_id],
-            });
+            await prismaClient.$queryRaw`DELETE FROM recipes_collections WHERE recipe_id = ${req.query.recipe_id}::uuid AND collection_id = ${req.query.collection_id}::uuid;`
 
             return res.status(200).send();
         } catch (error) {

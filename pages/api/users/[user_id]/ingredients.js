@@ -1,5 +1,5 @@
 import {getUserIdFromRequest, insertUserGroceries, selectUserGroceries} from "../../../../utils/serverUtils";
-import db from "../../../../db/index";
+import {prismaClient} from "../../../../db/index";
 
 export default async function handler(req, res) {
     if (req.method === "POST") {
@@ -30,13 +30,11 @@ export default async function handler(req, res) {
         try {
             const userId = getUserIdFromRequest(req);
 
-            await db.query({
-                text: `
+            await prismaClient.$queryRaw`
                 UPDATE users_ingredients_groceries
                 SET deleted = true
-                WHERE id IN (${req.body.ingredient_ids.map(id => "'" + id + "'").join(", ")})
-                `,
-            });
+                WHERE id IN (${req.body.ingredient_ids.join(", ")})::uuid;
+                `
 
             const groceryList = await selectUserGroceries(userId);
 

@@ -120,79 +120,62 @@ export async function getRecipe(recipe_id, user_id) {
 }
 
 export async function insertUserGroceries(user_id, ingredients) {
-    const client = await db.connect();
-
     try {
-        await client.query("BEGIN");
+        await prismaClient.$transaction(async (tx) => {
+            for (let x = 0; x < ingredients.length; x++) {
+                const ing = ingredients[x];
 
-        for (let x = 0; x < ingredients.length; x++) {
-            const ing = ingredients[x];
-
-            // find a similar ingredient on user's grocery list
-            const similarIngredient = await client.query({
-                text: `
+                // find a similar ingredient on user's grocery list
+                const similarIngredient = await tx.$queryRawUnsafe`
                     SELECT users_ingredients_groceries.*, measurements.short_name AS measurement
                     FROM users_ingredients_groceries
                     INNER JOIN measurements ON measurements.id = users_ingredients_groceries.measurement_id
-                    WHERE (users_ingredients_groceries.name ILIKE $1
-                    OR users_ingredients_groceries.name ILIKE $2
-                    OR users_ingredients_groceries.name ILIKE $3
-                    OR users_ingredients_groceries.name ILIKE $4
-                    OR users_ingredients_groceries.name ILIKE $5)
-                    AND users_ingredients_groceries.user_id = $6
+                    WHERE (users_ingredients_groceries.name ILIKE ${ing.name}
+                    OR users_ingredients_groceries.name ILIKE ${ing.name + "s"}
+                    OR users_ingredients_groceries.name ILIKE ${ing.name + "es"}
+                    OR users_ingredients_groceries.name ILIKE ${ing.name.slice(0, -1)}
+                    OR users_ingredients_groceries.name ILIKE ${ing.name.slice(0, -2)})
+                    AND users_ingredients_groceries.user_id = ${user_id}::uuid
                     AND deleted = false
-                    LIMIT 1
-                    `,
-                values: [ing.name, ing.name + "s", ing.name + "es", ing.name.slice(0, -1), ing.name.slice(0, -2), user_id],
-            });
+                    LIMIT 1;`;
 
-            if (similarIngredient.rows.length > 0) {
-                // if there's a similar ingredient
-                // check if it can be added
-                let m = similarIngredient.rows[0].measurement;
-                let q = similarIngredient.rows[0].quantity;
-                // check if item can be added
-                if (canBeAdded(m, ing.measurement)) {
-                    // if it can be added, add it
-                    let newQM = addIngredient(Number(q), m, Number(ing.quantity), ing.measurement);
+                if (similarIngredient.length > 0) {
+                    // if there's a similar ingredient
+                    // check if it can be added
+                    let m = similarIngredient[0].measurement;
+                    let q = similarIngredient[0].quantity;
+                    // check if item can be added
+                    if (canBeAdded(m, ing.measurement)) {
+                        // if it can be added, add it
+                        let newQM = addIngredient(Number(q), m, Number(ing.quantity), ing.measurement);
 
-                    await client.query({
-                        text: `UPDATE users_ingredients_groceries SET quantity = $1, measurement_id = (SELECT id FROM measurements WHERE short_name = $2) WHERE id = $3`,
-                        values: [newQM.quantity, newQM.measurement, similarIngredient.rows[0].id],
-                    });
+                        await tx.$queryRaw`UPDATE users_ingredients_groceries SET quantity = ${newQM.quantity}, measurement_id = (SELECT id FROM measurements WHERE short_name = ${newQM.measurement}) WHERE id = ${similarIngredient.rows[0].id}::uuid;`
+
+                    } else {
+                        // if it can't be added, push it to grocery list
+                        await tx.$queryRaw`
+                            INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity, item_index) 
+                            VALUES (${user_id}::uuid, ${ing.name}, (SELECT id FROM measurements WHERE short_name = ${ing.measurement}), ${ing.quantity}, (
+                                SELECT count(*)
+                                FROM users_ingredients_groceries ug
+                                WHERE ug.user_id = $1 AND ug.deleted = false
+                                )
+                            );`;
+                    }
 
                 } else {
-                    // if it can't be added, push it to grocery list
-                    await client.query({
-                        text: `
+                    // if there aren't any matching ingredients
+                    await tx.$queryRaw`
                             INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity, item_index) 
-                            VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4, (
+                            VALUES (${user_id}::uuid, ${ing.name}, (SELECT id FROM measurements WHERE short_name = ${ing.measurement}), ${ing.quantity}, (
                                 SELECT count(*)
                                 FROM users_ingredients_groceries ug
                                 WHERE ug.user_id = $1 AND ug.deleted = false
                                 )
-                            )`,
-                        values: [user_id, ing.name, ing.measurement, ing.quantity]
-                    })
+                            );`;
                 }
-
-            } else {
-                // if there aren't any matching ingredients
-                await client.query({
-                    text: `
-                            INSERT INTO users_ingredients_groceries (user_id, name, measurement_id, quantity, item_index) 
-                            VALUES ($1, $2, (SELECT id FROM measurements WHERE short_name = $3), $4, (
-                                SELECT count(*)
-                                FROM users_ingredients_groceries ug
-                                WHERE ug.user_id = $1 AND ug.deleted = false
-                                )
-                            )`,
-                    values: [user_id, ing.name, ing.measurement, ing.quantity]
-                })
             }
-        }
-
-        await client.query("COMMIT");
+        })
 
         return await selectUserGroceries(user_id);
 
