@@ -86,7 +86,7 @@ export default async function handler(req, res) {
                         const imagePath = `users/${userId}/recipes/${recipeId}/${req.file.originalname}`;
                         const data = await s3.upload({Bucket: "ediblio", Key: imagePath, Body: req.file.buffer}).promise();
 
-                        await tx.$queryRaw`UPDATE recipes SET image = ${data.Key} WHERE id = ${recipeId};`;
+                        await tx.$queryRaw`UPDATE recipes SET image = ${data.Key} WHERE id = ${recipeId}::uuid;`;
                     }
 
                     if (ingredients && ingredients.length > 0) {
