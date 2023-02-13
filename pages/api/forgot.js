@@ -46,7 +46,7 @@ export default async function handler(req, res) {
                 const transporter = nodemailer.createTransport(mg(auth));
 
                 let mailOptions = {
-                    from: 'Recipe Cloud <donotreply@recipe-cloud.com>', // sender address
+                    from: 'Ediblio <donotreply@ediblio.com>', // sender address
                     to: req.body.email, // list of receivers
                     subject: 'Password Reset', // Subject line
                     html: `You are receiving this because you (or someone else) have requested the reset of the password for your account.<br /><br />
