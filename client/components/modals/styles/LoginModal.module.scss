@@ -30,6 +30,7 @@
 
     form {
       button {
+        transition: all .5s ease;
         background-color: $green;
         color: $white;
         padding: .5rem 1rem;
@@ -38,6 +39,11 @@
         margin: 10px auto;
         font-size: 1.5rem;
         border-radius: 10px;
+
+        &:disabled {
+          opacity: .5;
+          cursor: default;
+        }
       }
     }
   }

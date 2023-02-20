@@ -1,6 +1,17 @@
 import {prismaClient} from "../db";
 import {decodeJWT} from "../utils";
 import {addIngredient, canBeAdded} from "../client/utils/conversions";
+import nodemailer from "nodemailer";
+import mg from "nodemailer-mailgun-transport";
+
+const auth = {
+    auth: {
+        api_key: process.env.MAILGUN_API,
+        domain: 'mg.recipe-cloud.com'
+    }
+};
+
+const transporter = nodemailer.createTransport(mg(auth));
 
 export function getUserIdFromRequest(request) {
     try {
@@ -235,4 +246,12 @@ export async function checkRecipeOwnership(req, res) {
     } else {
         res.status(403);
     }
+}
+
+export function sendMail(options, callback) {
+    const mailOptions = {
+        from: 'Ediblio <donotreply@ediblio.com>', // sender address
+        ...options,
+    }
+    return transporter.sendMail(mailOptions, callback);
 }
