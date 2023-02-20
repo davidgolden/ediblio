@@ -1,8 +1,6 @@
 import URLSafeBase64 from "urlsafe-base64";
 import {prismaClient} from "../../db/index";
-import nodemailer from "nodemailer";
-import mg from "nodemailer-mailgun-transport";
-import {getUserIdFromRequest} from "../../utils/serverUtils";
+import {getUserIdFromRequest, sendMail} from "../../utils/serverUtils";
 
 export default async function handler(req, res) {
     if (req.method === "POST") {
@@ -35,33 +33,20 @@ export default async function handler(req, res) {
                     await tx.$queryRaw`UPDATE users SET reset_token = ${token}, token_expires = ${new Date(Date.now() + 3600000)} WHERE email = ${email};`
                 })
 
-
-                const auth = {
-                    auth: {
-                        api_key: process.env.MAILGUN_API,
-                        domain: 'mg.recipe-cloud.com'
-                    }
-                };
-
-                const transporter = nodemailer.createTransport(mg(auth));
-
-                let mailOptions = {
-                    from: 'Ediblio <donotreply@ediblio.com>', // sender address
+                sendMail({
                     to: req.body.email, // list of receivers
                     subject: 'Password Reset', // Subject line
                     html: `You are receiving this because you (or someone else) have requested the reset of the password for your account.<br /><br />
                     Your password reset token is ${token}. Enter this token on the forgot password page to change your
                     password. Note: This token will expire after 1 hour.<br /><br />
                     If you did not request this, please ignore this email and your password will remain unchanged.` // html body
-                };
-
-                transporter.sendMail(mailOptions, (error, info) => {
+                }, (error, info) => {
                     if (error) {
                         return res.status(404).send({detail: 'There was a problem sending reset email.'})
                     } else {
                         return res.status(200).send('Success!')
                     }
-                });
+                })
             })();
         })();
     }

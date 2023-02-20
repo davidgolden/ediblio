@@ -1,9 +1,10 @@
 import {prismaClient} from "../db/index";
-import React, {useContext, useState} from "react";
+import React, {useContext, useMemo, useState} from "react";
 import styles from "../client/components/modals/styles/LoginModal.module.scss";
 import {clientFetch} from "../client/utils/cookies";
 import {ApiStoreContext} from "../client/stores/api_store";
 import Router from "next/router";
+import URI from 'urijs';
 
 const Register = (props) => {
     const context = useContext(ApiStoreContext);
@@ -12,8 +13,13 @@ const Register = (props) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
-    const [inviteToken, setInviteToken] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+
+    const inviteToken = useMemo(() => {
+        const query = new URI().search();
+        const parsed = URI.parseQuery(query);
+        return parsed.token ? parsed.token : "";
+    }, [])
 
     async function handleRegister(e) {
         e.preventDefault();
@@ -60,10 +66,6 @@ const Register = (props) => {
                     {password !== passwordConfirm && passwordConfirm.length > 0 &&
                         <small>Passwords don't match!</small>}
                 </div>
-                {props.userCount > 0 && <div>
-                    <input type={"text"} name={"invite_token"} placeholder={"Invite Token"} value={inviteToken}
-                           onChange={e => setInviteToken(e.target.value)}/>
-                </div>}
                 <div>
                     <button type='submit' disabled={!validated}
                             value='Register'>Register
