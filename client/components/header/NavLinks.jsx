@@ -3,7 +3,7 @@ import {observer} from "mobx-react";
 import {ApiStoreContext} from "../../stores/api_store";
 import Link from "next/link";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBook, faListUl, faPlus, faSearch, faSignOutAlt, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faBook, faListUl, faPlus, faSearch, faSignOutAlt, faUser, faUsers} from "@fortawesome/free-solid-svg-icons";
 
 const NavLinks = observer((props) => {
     const context = useContext(ApiStoreContext);
@@ -33,6 +33,11 @@ const NavLinks = observer((props) => {
         <li>
             <Link href={"/users/[user_id]/settings"} as={`/users/${context.user.id}/settings`}>
                 <FontAwesomeIcon icon={faUser}/> Settings
+            </Link>
+        </li>
+        <li>
+            <Link href={"/invites"} as={`/invites`}>
+                <FontAwesomeIcon icon={faUsers}/> User Invites
             </Link>
         </li>
         <li>
