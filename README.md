@@ -21,3 +21,16 @@ Ediblio uses NextJS to server-side render a Node/React application with PostgreS
 - Autopopulate grocery list with auto-conversions and auto-totaling.
 - Rate yours' and others' recipes
 - Follow others' collections 
+
+#### Setup
+
+The following environmental variables are required:
+  - AWS_ACCESS_KEY_ID
+  - AWS_SECRET_ACCESS_KEY
+  - MAILGUN_API
+  - CDN_URL
+  - JWT_SECRET
+  - DATABASE_URL
+  - APP_URL
+
+When logging on for the first time, visit <APP_URL>/register. The application will allow the first user to register without an invite token. All future users must be invited.
