@@ -68,6 +68,16 @@ const authentication = [
         methods: ["POST", "DELETE"],
         check: isLoggedIn,
     },
+    {
+        route: /\/api\/invites/,
+        methods: ["GET", "POST"],
+        check: isLoggedIn,
+    },
+    {
+        route: /\/api\/invites\/[\w-]+/,
+        methods: ["DELETE"],
+        check: isLoggedIn,
+    },
 ]
 
 export async function middleware(request) {

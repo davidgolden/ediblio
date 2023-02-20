@@ -1,0 +1,27 @@
+@import "./client/styles/variables";
+
+.container {
+  table {
+    margin: 0 auto;
+    text-align: left;
+    border-spacing: 0;
+
+    th, td {
+      padding: .5rem 1rem;
+      border-bottom: 1px solid #dddddd;
+    }
+
+    tr button {
+      width: 15px;
+    }
+  }
+
+  .inviteButton {
+    border: 1px solid $black;
+    padding: .5rem 1rem;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    margin: 10px auto;
+    vertical-align: top;
+  }
+}

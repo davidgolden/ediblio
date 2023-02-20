@@ -4,9 +4,28 @@ import {encodeJWT, hashPassword} from "../../../utils";
 export default async function handler(req, res) {
     if (req.method === "POST") {
         const usersCount = await prismaClient.users.count();
-        if (usersCount > 0 && !req.body.invite_token) {
+        if (usersCount > 0 && !req.body.inviteToken) {
             // only the initial user is allowed to be created without an invite token
-            return res.status(413).send();
+            return res.status(413).send({detail: "Not allowed"});
+        } else if (req.body.inviteToken) {
+            const matchingToken = await prismaClient.invite_token.findFirst({
+                where: {
+                    id: req.body.invite_token,
+                    claimed: false,
+                }
+            })
+            if (!matchingToken) {
+                return res.status(413).send({detail: "Invalid Token"});
+            } else {
+                await prismaClient.invite_token.update({
+                    where: {
+                        id: matchingToken.id,
+                    },
+                    data: {
+                        claimed: true,
+                    }
+                })
+            }
         }
 
         const user = await prismaClient.users.create({
