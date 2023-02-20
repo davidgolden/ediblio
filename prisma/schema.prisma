@@ -106,6 +106,7 @@ model users {
   users_ingredients_groceries users_ingredients_groceries[]
   users_recipes_menu          users_recipes_menu[]
   users_staples               users_staples[]
+  invites                     invite_token[]
 }
 
 model users_collections_followers {
@@ -151,4 +152,13 @@ model users_staples {
   measurement_id String       @db.Uuid
   measurements   measurements @relation(fields: [measurement_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   users          users?       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model invite_token {
+    id          String      @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+    created_at  DateTime    @default(dbgenerated("CURRENT_DATE")) @db.Date
+    email       String
+    inviter_id  String      @db.Uuid
+    claimed     Boolean     @default(false)
+    users       users       @relation(fields: [inviter_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
