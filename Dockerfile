@@ -9,6 +9,7 @@ COPY ./db /app/db
 COPY ./pages /app/pages
 COPY ./public /app/public
 COPY ./utils /app/utils
+COPY ./prisma /app/prisma
 
 COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
