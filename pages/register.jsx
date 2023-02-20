@@ -1,4 +1,3 @@
-import {prismaClient} from "../db/index";
 import React, {useContext, useMemo, useState} from "react";
 import styles from "../client/components/modals/styles/LoginModal.module.scss";
 import {clientFetch} from "../client/utils/cookies";
@@ -77,10 +76,8 @@ const Register = (props) => {
 }
 
 export async function getServerSideProps() {
-    const userCount = await prismaClient.users.count();
-
     return {
-        props: {userCount}
+        props: {}
     }
 }
 
