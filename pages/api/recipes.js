@@ -74,13 +74,14 @@ export default async function handler(req, res) {
         // create new recipe
         upload.single("image")(req, {}, async err => {
             const userId = getUserIdFromRequest(req);
+            let recipeId;
 
             try {
                 await prismaClient.$transaction(async (tx) => {
                     const {name, url, notes, ingredients} = req.body;
 
                     const recipes = await tx.$queryRaw`INSERT INTO recipes (name, url, notes, author_id) VALUES (${name}, ${url}, ${notes}, ${userId}::uuid) RETURNING recipes.id;`
-                    const recipeId = recipes[0].id;
+                    recipeId = recipes[0].id;
 
                     if (req.file) {
                         const imagePath = `users/${userId}/recipes/${recipeId}/${req.file.originalname}`;
@@ -97,12 +98,11 @@ export default async function handler(req, res) {
                             await tx.$queryRaw`INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES (${recipeId}::uuid, ${ing.name}, (SELECT id FROM measurements WHERE short_name = ${ing.measurement}), ${ing.quantity});`
                         }
                     }
-
-                    console.log(recipeId, userId);
-                    const response = await getRecipe(recipeId, userId);
-                    console.log(response);
-                    return res.status(200).json({recipe: response});
                 })
+
+                const response = await getRecipe(recipeId, userId);
+                return res.status(200).json({recipe: response});
+
             } catch (e) {
                 console.log(e);
                 return res.status(400).json(e);

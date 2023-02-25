@@ -26,11 +26,17 @@ Ediblio uses NextJS to server-side render a Node/React application with PostgreS
 
 The following environmental variables are required:
   - AWS_ACCESS_KEY_ID
-  - AWS_SECRET_ACCESS_KEY
-  - MAILGUN_API
-  - CDN_URL
-  - JWT_SECRET
-  - DATABASE_URL
-  - APP_URL
+  - AWS_SECRET_ACCESS_KEY 
+  - CDN_URL (AWS credentials and CDN_URL are required for image uploads and access to work)
+  - MAILGUN_API (necessary for forgot password and user invites to work)
+  - JWT_SECRET (some random string)
+  - DATABASE_URL (connection uri, i.e. postgresql://username:password@host:port/database)
+  - APP_URL (full url the app is hosted on)
 
 When logging on for the first time, visit <APP_URL>/register. The application will allow the first user to register without an invite token. All future users must be invited.
+
+#### Roadmap
+
+- Add admin permissions structure, so only admins can invite other users, and admins can delete non-admin users. This probably requires superadmin permissions as well, for designating other admins.
+- Revamp how email works so we don't require a Mailgun API key
+- Revamp how image storage works so we don't require AWS credentials or CDN_URL
