@@ -92,10 +92,26 @@ export default async function handler(req, res) {
 
                     if (ingredients && ingredients.length > 0) {
                         const parsedIngredients = JSON.parse(ingredients);
+                        const measurements = await tx.measurements.findMany();
                         for (let x = 0; x < parsedIngredients.length; x++) {
                             const ing = parsedIngredients[x];
 
-                            await tx.$queryRaw`INSERT INTO recipes_ingredients (recipe_id, name, measurement_id, quantity) VALUES (${recipeId}::uuid, ${ing.name}, (SELECT id FROM measurements WHERE short_name = ${ing.measurement}), ${ing.quantity});`
+                            await tx.recipes_ingredients.create({
+                                data: {
+                                    recipes: {
+                                        connect: {
+                                            id: recipeId,
+                                        }
+                                    },
+                                    name: ing.name,
+                                    measurements: {
+                                        connect: {
+                                            id: measurements.find(m => m.short_name === ing.measurement).id,
+                                        }
+                                    },
+                                    quantity: ing.quantity,
+                                }
+                            })
                         }
                     }
                 })
