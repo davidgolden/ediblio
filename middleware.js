@@ -1,11 +1,13 @@
 import {NextResponse} from 'next/server'
-import {verifyJWT} from "./utils";
+import {jwtVerify} from "jose";
+
+const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 async function isLoggedIn(request) {
     const token = request.headers.get('x-access-token');
 
     try {
-        await verifyJWT(token);
+        await jwtVerify(token, secret);
         return true;
     } catch (e) {
         return false;

@@ -1,7 +1,6 @@
 import {prismaClient} from "../../../db/index";
-import {usersSelector} from "../../../utils";
 import {getUserIdFromRequest} from "../../../utils/serverUtils";
-import {hashPassword} from "../../../utils";
+import {hashPassword, usersSelector} from "../../../utils/serverUtils";
 
 const multer = require('multer');
 const upload = multer();

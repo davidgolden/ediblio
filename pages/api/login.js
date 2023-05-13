@@ -1,11 +1,12 @@
-import {decodeJWT, encodeJWT, usersSelector} from "../../utils";
 import {prismaClient} from "../../db/index";
 import bcrypt from "bcryptjs";
+import {encodeJWT, usersSelector} from "../../utils/serverUtils";
+import {decodeJwt} from "jose";
 
 export default async function handler(req, res) {
     if (req.method === "GET") {
         try {
-            const {email, password, redirect_url} = decodeJWT(req.query.jwt);
+            const {email, password, redirect_url} = decodeJwt(req.query.jwt);
 
             const users = await prismaClient.$queryRawUnsafe(`${usersSelector} where users.email = '${email}' group by users.id;`)
 

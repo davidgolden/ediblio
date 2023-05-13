@@ -1,5 +1,5 @@
 import {prismaClient} from "../../../db/index";
-import {encodeJWT, hashPassword} from "../../../utils";
+import {encodeJWT, hashPassword} from "../../../utils/serverUtils";
 
 export default async function handler(req, res) {
     if (req.method === "POST") {
