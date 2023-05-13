@@ -1,5 +1,11 @@
 const CACHE_NAME = "1.0.0";
 
+import NextBundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = NextBundleAnalyzer({
+    enabled: process.env.ANALYZE,
+});
+
 const nextConfig = {
     publicRuntimeConfig: {
         CDN_URL: process.env.CDN_URL,
