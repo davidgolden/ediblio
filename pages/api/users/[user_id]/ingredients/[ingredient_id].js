@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
             const response = await prismaClient.$queryRaw`
             UPDATE users_ingredients_groceries
-            SET name = ${req.body.name}, quantity = ${req.body.quantity}, measurement_id = (SELECT id FROM measurements WHERE short_name = ${req.body.measurement})
+            SET name = ${req.body.name}, quantity = ${req.body.quantity}::numeric, measurement_id = (SELECT id FROM measurements WHERE short_name = ${req.body.measurement})
             WHERE id = ${req.query.ingredient_id}::uuid RETURNING *;
             `
 
