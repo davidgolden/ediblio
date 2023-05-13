@@ -1,12 +1,12 @@
 const CACHE_NAME = "1.0.0";
 
-import NextBundleAnalyzer from "@next/bundle-analyzer";
-
-const withBundleAnalyzer = NextBundleAnalyzer({
-    enabled: process.env.ANALYZE,
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+    enabled: process.env.ANALYZE === "true",
 });
 
-const nextConfig = {
+const plugins = [withBundleAnalyzer];
+
+const nextConfig = withBundleAnalyzer({
     publicRuntimeConfig: {
         CDN_URL: process.env.CDN_URL,
     },
@@ -55,6 +55,8 @@ const nextConfig = {
     //         },
     //     }]
     // }
-};
+});
 
-export default nextConfig;
+// export default plugins.reduce((acc, next) => next(acc), nextConfig)
+
+module.exports = () => plugins.reduce((acc, next) => next(acc), nextConfig)

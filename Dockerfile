@@ -14,7 +14,7 @@ COPY ./prisma /app/prisma
 COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
 COPY ./utils.js /app/utils.js
-COPY next.config.mjs /app/next.config.mjs
+COPY next.config.js /app/next.config.js
 COPY ./middleware.js /app/middleware.js
 COPY ./boot.sh /app/boot.sh
 

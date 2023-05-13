@@ -1,14 +1,12 @@
 import React, {useContext} from 'react';
 import {observer} from "mobx-react";
 import {ApiStoreContext} from "../../../stores/api_store";
-import InstallPromptModal from "../InstallPromptModal";
-import LoginModal from "../LoginModal";
-import RecipeModal from "../RecipeModal";
+import dynamic from "next/dynamic";
 
 const AllModalTypes = {
-    'installPrompt': InstallPromptModal,
-    'login': LoginModal,
-    'recipe': RecipeModal,
+    'installPrompt': dynamic(() => import("../InstallPromptModal")),
+    'login': dynamic(() => import("../LoginModal")),
+    'recipe': dynamic(() => import("../RecipeModal")),
 };
 
 const AllModals = observer(props => {

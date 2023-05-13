@@ -12,6 +12,7 @@
     "test": "jest",
     "dev": "next",
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
     "start": "NODE_ENV=production next start",
     "storybook": "start-storybook -s ./public"
   },
