@@ -18,8 +18,4 @@ fi
 
 echo "Database is ready"
 
-echo "Migrating database"
-
-/app/node_modules/.bin/prisma migrate deploy --schema /app/prisma/schema.prisma
-
 npm run start
