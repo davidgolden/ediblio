@@ -38,6 +38,12 @@
 }
 
 .menuContainer {
+  margin-top: 1rem;
+
+  span {
+    font-size: 1.2rem;
+  }
+
   li {
     font-size: 1rem;
     margin: 2px 0;
@@ -60,6 +66,12 @@
     button:last-of-type {
       font-size: 1.2rem;
       cursor: pointer;
+    }
+
+    input {
+      font-size: 1.4rem;
+      font-family: inherit;
+      background-color: inherit;
     }
 
     a {

@@ -3,16 +3,15 @@ import AddIngredients from '../../../client/components/ingredients/AddIngredient
 import styles from '../../styles/GroceryList.module.scss';
 import classNames from 'classnames';
 import Button from "../../../client/components/utilities/buttons/Button";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons'
 import {ApiStoreContext} from "../../../client/stores/api_store";
 import axios from "axios";
-import Checkbox from "../../../client/components/utilities/Checkbox";
 import UserWall from "../../../client/components/users/UserWall";
 import {clientFetch, getUrlParts} from "../../../client/utils/cookies";
 import StaplesMenu from "../../../client/components/ingredients/StaplesMenu";
 import {observer} from "mobx-react";
 import {AddIngredientForm} from "../../../client/components/ingredients/AddIngredientForm";
+import {MenuItem} from "../../../client/components/recipes/MenuItem";
+import {AddMenuItemForm} from "../../../client/components/ingredients/AddMenuItemForm";
 
 const groceryListContainerClassName = classNames({
     [styles.groceryListContainer]: true,
@@ -54,7 +53,7 @@ const Groceries = observer(props => {
                 }
             });
 
-            context.setMenu(context.menu.filter(item => !menuIdsToRemove.includes(item.id)));
+            context.setMenu(context.menu.filter(item => !menuIdsToRemove.includes(item.menu_id)));
             setMenuIdsToRemove([]);
         } catch (error) {
             context.handleError(error)
@@ -155,6 +154,17 @@ const Groceries = observer(props => {
         }
     }
 
+    async function handleAddNewMenuItem(newItem) {
+        const response = await clientFetch.post(`/api/users/${context.user.id}/menu`, {
+            name: newItem,
+        });
+        context.menu.push({
+            ...response.data,
+            menu_id: response.data.id,
+            menu_name: response.data.name,
+        });
+    }
+
     const saveListClassName = classNames({
         [styles.saveListButton]: true,
         [styles.saveListButtonDisabled]: ingredientIdsToRemove.length === 0,
@@ -174,16 +184,14 @@ const Groceries = observer(props => {
         <UserWall>
             <div className={groceryListContainerClassName}>
                 <h2>Menu</h2>
+                {storeMode || <AddMenuItemForm handleAddMenuItem={handleAddNewMenuItem}/>}
                 <ul className={menuContainerClassName}>
                     {context.menu.map((item) => {
-                        return <li key={item.id}>
-                            {storeMode || <Checkbox checked={menuIdsToRemove.includes(item.id)}
-                                      onChange={() => toggleMenuIdToRemove(item.id)}/>}
-                            <button onClick={() => context.openRecipeModal(item.id)}>{item.name}</button>
-                            {item.url && <a target='_blank' href={item.url}>
-                                <FontAwesomeIcon icon={faExternalLinkAlt}/>
-                            </a>}
-                        </li>
+                        return <MenuItem
+                            checked={menuIdsToRemove.includes(item.menu_id)}
+                            onCheck={() => toggleMenuIdToRemove(item.menu_id)}
+                            item={item}
+                        />
                     })}
                 </ul>
                 {storeMode || <Button className={saveMenuClassName} onClick={handleDeleteMenuItems}>Remove Selected</Button>}

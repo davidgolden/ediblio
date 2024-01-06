@@ -107,11 +107,10 @@ GROUP BY users.id;
 
 export async function selectUserMenu(user_id) {
     return await prismaClient.$queryRaw`
-                SELECT * FROM recipes
-                WHERE recipes.id IN (
-                    SELECT recipe_id FROM users_recipes_menu
-                    WHERE users_recipes_menu.user_id = ${user_id}::uuid
-                );`
+            SELECT r.*, m.id as menu_id, m.date as date, m.name as menu_name FROM users_recipes_menu m
+            LEFT JOIN recipes r ON r.id = m.recipe_id
+            WHERE m.user_id = ${user_id}::uuid ORDER BY m.date ASC
+                `;
 }
 
 export async function getRecipe(recipe_id, user_id) {

@@ -18,7 +18,7 @@ export default async function handler(req, res) {
         try {
             await prismaClient.users_recipes_menu.deleteMany({
                 where: {
-                    recipe_id: {
+                    id: {
                         in: req.body.recipe_ids,
                     }
                 }
