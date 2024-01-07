@@ -40,8 +40,9 @@
 .menuContainer {
   margin-top: 1rem;
 
-  span {
-    font-size: 1.2rem;
+  svg {
+    width: 1rem;
+    vertical-align: sub;
   }
 
   li {
@@ -63,7 +64,7 @@
       margin-right: 10px;
     }
 
-    button:last-of-type {
+    button:last-of-type, label {
       font-size: 1.2rem;
       cursor: pointer;
     }
