@@ -12,7 +12,7 @@ function getWeekday(date) {
 
 function getDateString(utcDate) {
     const date = new Date(utcDate);
-    return `${getWeekday(date.getDay())} ${date.getMonth() + 1}/${date.getDate()}`;
+    return `${getWeekday(date.getUTCDay())} ${date.getUTCMonth() + 1}/${date.getUTCDate()}`;
 }
 
 export const MenuItem = observer((props) => {
@@ -42,8 +42,7 @@ export const MenuItem = observer((props) => {
     return <li key={props.item.id}>
         {props.storeMode || <Checkbox checked={props.checked}
                                       onChange={props.onCheck}/>}
-        {itemDisplay}
-        - <label
+        {itemDisplay}&nbsp;&nbsp;-&nbsp;&nbsp;<label
         onClick={() => document.getElementById(`date-${props.item.menu_id}`).showPicker()}
         htmlFor={`date-${props.item.menu_id}`}>
         {props.item.date ? getDateString(props.item.date) : <FontAwesomeIcon icon={faCalendarDays} />}

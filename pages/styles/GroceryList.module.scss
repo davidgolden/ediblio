@@ -40,6 +40,10 @@
 .menuContainer {
   margin-top: 1rem;
 
+  span {
+    font-size: 1.2rem;
+  }
+
   svg {
     width: 1rem;
     vertical-align: sub;
@@ -55,18 +59,18 @@
       vertical-align: middle;
     }
 
-    span {
+    > label:first-of-type span:first-of-type {
       margin-right: 1rem;
     }
 
     button:first-of-type {
       border-radius: 5px;
-      margin-right: 10px;
     }
 
     button:last-of-type, label {
       font-size: 1.2rem;
       cursor: pointer;
+      vertical-align: middle;
     }
 
     input {
