@@ -32,7 +32,7 @@ const AddIngredients = (props) => {
     return (
         <div className={ingredientsContainerClassName}>
             <h3>Ingredient List</h3>
-            {props.canAdd && !props.storeMode && <AddIngredientForm handleAddIngredient={props.handleAddIngredient} />}
+            {props.canAdd && <AddIngredientForm handleAddIngredient={props.handleAddIngredient} />}
             <ReactSortable
                 tag={"ul"}
                 handle={'.drag-handler'}
