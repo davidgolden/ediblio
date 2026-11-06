@@ -134,13 +134,15 @@ model users_ingredients_groceries {
 }
 
 model users_recipes_menu {
-  id         String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
-  created_at DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
-  deleted    Boolean? @default(false)
-  user_id    String?  @db.Uuid
-  recipe_id  String?  @db.Uuid
-  recipes    recipes? @relation(fields: [recipe_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users      users?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id         String    @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  created_at DateTime  @default(dbgenerated("CURRENT_DATE")) @db.Date
+  deleted    Boolean?  @default(false)
+  user_id    String?   @db.Uuid
+  recipe_id  String?   @db.Uuid
+  date       DateTime? @db.Date
+  name       String?
+  recipes    recipes?  @relation(fields: [recipe_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model users_staples {
