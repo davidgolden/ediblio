@@ -1,0 +1,11 @@
+.git
+node_modules
+.next
+.env
+.env.*
+!.env.example
+backup
+analyze
+.idea
+.storybook
+.DS_Store

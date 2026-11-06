@@ -16,6 +16,9 @@ class Doc extends Document {
                     <link rel={"manifest"} href={"/manifest.webmanifest"}/>
                     <link href="https://fonts.googleapis.com/css?family=EB+Garamond|Quicksand" rel="stylesheet"/>
                     <script src={"/installPrompt.js"} />
+                    {/* _document only renders on the server, so this reads CDN_URL at runtime
+                        (publicRuntimeConfig is frozen at build time in standalone output). */}
+                    <script dangerouslySetInnerHTML={{__html: `window.__CDN_URL__=${JSON.stringify(process.env.CDN_URL || "")};`}} />
                 </Head>
                 <body>
                 <Main />

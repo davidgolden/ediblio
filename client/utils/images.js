@@ -1,5 +1,7 @@
-import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+// Read at runtime: from the server env during SSR, and from the value _document injects in the browser.
+function getCdnUrl() {
+    return (typeof window === 'undefined' ? process.env.CDN_URL : window.__CDN_URL__) || '';
+}
 
 export function resize(img, max_height, max_width, type) {
     const canvas = document.createElement('canvas');
@@ -58,7 +60,7 @@ export function getCdnImageUrl(imagePath) {
     if (/^http:\/\//.exec(imagePath)) {
         return imagePath;
     } else if (imagePath) {
-        return publicRuntimeConfig.CDN_URL + imagePath;
+        return getCdnUrl() + imagePath;
     }
     return imagePath;
 }

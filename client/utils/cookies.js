@@ -56,8 +56,11 @@ export function getDaysSince(date, unix = false) {
 
 export function getUrlParts(req) {
     const scheme = req.headers["x-forwarded-proto"] || "http";
-    const currentBaseUrl = scheme + "://" + req.headers.host.replace(/\/$/, "");
-    const currentFullUrl = currentBaseUrl + req.url;
+    const publicBaseUrl = scheme + "://" + req.headers.host.replace(/\/$/, "");
+    const currentFullUrl = publicBaseUrl + req.url;
+    // Server-side API calls go straight to this process rather than out through the public domain/proxy.
+    // 127.0.0.1 (not "localhost") because Next binds IPv4 and Node may resolve localhost to ::1.
+    const currentBaseUrl = `http://127.0.0.1:${process.env.PORT || 3000}`;
     const jwt = getCookieFromServer('jwt', req);
 
     return {currentBaseUrl, currentFullUrl, jwt};

@@ -7,9 +7,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const plugins = [withBundleAnalyzer];
 
 const nextConfig = withBundleAnalyzer({
-    publicRuntimeConfig: {
-        CDN_URL: process.env.CDN_URL,
-    },
+    output: 'standalone',
     // generateInDevMode: true,
     webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
         config.module.rules.push({

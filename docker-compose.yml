@@ -31,13 +31,8 @@ services:
       # Overrides DATABASE_URL from .env so the app container talks to the db service.
       # If POSTGRES_PASSWORD has URL-special characters, set POSTGRES_PASSWORD_URLENCODED too.
       DATABASE_URL: postgresql://${POSTGRES_USER:-ediblio}:${POSTGRES_PASSWORD_URLENCODED:-${POSTGRES_PASSWORD}}@db:5432/${POSTGRES_DB:-ediblio}
-      # SSR fetches its own API via the request's Host header (client/utils/cookies.js),
-      # so the container must listen on the same port it's published on.
-      PORT: ${APP_PORT:-3000}
-      # Next listens on 0.0.0.0 (IPv4) but Node 18 resolves "localhost" to ::1 first.
-      NODE_OPTIONS: --dns-result-order=ipv4first
     ports:
-      - "${APP_PORT:-3000}:${APP_PORT:-3000}"
+      - "${APP_PORT:-3000}:3000"
     depends_on:
       db:
         condition: service_healthy

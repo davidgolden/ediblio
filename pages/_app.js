@@ -12,6 +12,7 @@ import {enableStaticRendering} from "mobx-react";
 import {handleJWT} from "../client/hooks/handleJWT";
 import axios from "axios";
 import {decodeJwt} from "jose";
+import {getUrlParts} from "../client/utils/cookies";
 
 class MyDocument extends App {
     MobxStore;
@@ -75,10 +76,9 @@ MyDocument.getInitialProps = async ({ctx}) => {
 
         if (jwt) {
             const decodedJWT = decodeJwt(jwt);
-            const host = ctx.req.headers.host;
-            const scheme = ctx.req.headers["x-forwarded-proto"] || "http";
+            const {currentBaseUrl} = getUrlParts(ctx.req);
 
-            const response = await axios.get(`${scheme}://${host}/api/users/${decodedJWT.user.id}`, {
+            const response = await axios.get(`${currentBaseUrl}/api/users/${decodedJWT.user.id}`, {
                 headers: {'x-access-token': jwt},
             });
             returnObj.user = response.data.user;
