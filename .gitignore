@@ -7,3 +7,5 @@ migration
 push-to-production.sh
 !/push-to-production.sh
 makefile
+backup/*
+!backup/.gitkeep

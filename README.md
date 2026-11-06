@@ -33,6 +33,24 @@ The following environmental variables are required:
   - DATABASE_URL (connection uri, i.e. postgresql://username:password@host:port/database)
   - APP_URL (full url the app is hosted on)
 
+#### Running with Docker
+
+The app and its PostgreSQL 15 database are defined in `docker-compose.yml`.
+
+1. `cp .env.example .env` and fill in the values (`POSTGRES_PASSWORD` is required). If the password has
+   URL-special characters (`%`, `@`, `:`, ...), also set `POSTGRES_PASSWORD_URLENCODED`.
+2. Optionally drop a `pg_dump -Fc` backup into `./backup/` (gitignored). On first boot of an empty data volume,
+   the newest file there is restored by `docker/db/init.sh`.
+3. `docker compose up -d --build`
+
+The app is served on `APP_PORT` (default 3000), and the database is published on `DB_PORT` (default 5434) for
+connecting from the host, e.g. `npm run dev` with `DATABASE_URL=postgresql://...@localhost:5434/ediblio`.
+Data lives in the `ediblio-pg15-data` volume. To re-restore from a backup, run
+`docker compose down && docker volume rm ediblio-pg15-data && docker compose up -d`.
+
+To take a new backup:
+`docker compose exec db pg_dump -Fc -U ediblio ediblio > backup/ediblio_backup_$(date +%Y%m%d).dump`
+
 When logging on for the first time, visit <APP_URL>/register. The application will allow the first user to register without an invite token. All future users must be invited.
 
 #### Roadmap

@@ -1,0 +1,47 @@
+services:
+
+  db:
+    image: postgres:15-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ediblio}
+      POSTGRES_DB: ${POSTGRES_DB:-ediblio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    ports:
+      # Host port for connecting from outside docker (e.g. npm run dev). Inside compose the app always uses db:5432.
+      - "${DB_PORT:-5434}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/db/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+      - ./backup:/backup:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ediblio:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Overrides DATABASE_URL from .env so the app container talks to the db service.
+      # If POSTGRES_PASSWORD has URL-special characters, set POSTGRES_PASSWORD_URLENCODED too.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-ediblio}:${POSTGRES_PASSWORD_URLENCODED:-${POSTGRES_PASSWORD}}@db:5432/${POSTGRES_DB:-ediblio}
+      # SSR fetches its own API via the request's Host header (client/utils/cookies.js),
+      # so the container must listen on the same port it's published on.
+      PORT: ${APP_PORT:-3000}
+      # Next listens on 0.0.0.0 (IPv4) but Node 18 resolves "localhost" to ::1 first.
+      NODE_OPTIONS: --dns-result-order=ipv4first
+    ports:
+      - "${APP_PORT:-3000}:${APP_PORT:-3000}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+    name: ediblio-pg15-data
