@@ -9,3 +9,5 @@ push-to-production.sh
 makefile
 backup/*
 !backup/.gitkeep
+.DS_Store
+analyze/

@@ -18,4 +18,9 @@ fi
 
 echo "Database is ready"
 
+echo "Migrating database"
+# A DB restored from a pre-migration dump has no _prisma_migrations table; baseline it once with
+#   npx prisma migrate resolve --applied 20230213153218_initial
+/app/node_modules/.bin/prisma migrate deploy --schema /app/prisma/schema.prisma || exit 1
+
 npm run start

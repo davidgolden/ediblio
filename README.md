@@ -48,6 +48,10 @@ connecting from the host, e.g. `npm run dev` with `DATABASE_URL=postgresql://...
 Data lives in the `ediblio-pg15-data` volume. To re-restore from a backup, run
 `docker compose down && docker volume rm ediblio-pg15-data && docker compose up -d`.
 
+The app container runs `prisma migrate deploy` on boot. If you restore a dump taken before Prisma migrations
+existed (no `_prisma_migrations` table, e.g. `ediblio_backup_20221113.sql`), baseline it once before starting the app:
+`DATABASE_URL=postgresql://...@localhost:5434/ediblio npx prisma migrate resolve --applied 20230213153218_initial`
+
 To take a new backup:
 `docker compose exec db pg_dump -Fc -U ediblio ediblio > backup/ediblio_backup_$(date +%Y%m%d).dump`
 
