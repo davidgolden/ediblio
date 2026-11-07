@@ -41,6 +41,7 @@ const Header = observer((props) => {
     const [mobileOpen, setMobileOpen] = useState(false);
 
     const searchRef = useRef(null);
+    const mobileSearchRef = useRef(null);
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
     useEffect(() => {
@@ -68,10 +69,12 @@ const Header = observer((props) => {
             setNavOpen(false);
         }
 
-        if (mobileOpen && !searchRef.current?.contains(e.target)) {
+        const clickedInSearch = searchRef.current?.contains(e.target) || mobileSearchRef.current?.contains(e.target);
+
+        if (mobileOpen && !clickedInSearch) {
             setSearchOpen(false);
             setFoundRecipes([]);
-        } else if (searchOpen && !searchRef.current?.contains(e.target)) {
+        } else if (searchOpen && !clickedInSearch) {
             setSearchOpen(false);
             setFoundRecipes([]);
             setSearchTerm("");
@@ -88,7 +91,7 @@ const Header = observer((props) => {
             <nav className={navContainerClassName}>
                 <CSSTransition in={mobileOpen} classNames={mobileTransition} timeout={500}>
                     <div className={styles.mobileMenu}>
-                        <SearchBar ref={searchRef} searchOpen={false} setSearchOpen={setSearchOpen}
+                        <SearchBar ref={mobileSearchRef} searchOpen={mobileOpen} setSearchOpen={setSearchOpen}
                                    searchTerm={searchTerm}
                                    setSearchTerm={setSearchTerm} foundRecipes={foundRecipes}/>
                         {context.loggedIn ? <NavLinks/> : <div>
